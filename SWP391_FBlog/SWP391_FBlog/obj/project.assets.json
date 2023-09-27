@@ -442,11 +442,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ADMIN\\source\\repos\\SWP391_FBlog\\SWP391_FBlog\\SWP391_FBlog.csproj",
+      "projectUniqueName": "D:\\major_document_5\\SWP391\\SWP391_FBlog-Academy\\SWP391_FBlog\\SWP391_FBlog\\SWP391_FBlog.csproj",
       "projectName": "SWP391_FBlog",
-      "projectPath": "C:\\Users\\ADMIN\\source\\repos\\SWP391_FBlog\\SWP391_FBlog\\SWP391_FBlog.csproj",
+      "projectPath": "D:\\major_document_5\\SWP391\\SWP391_FBlog-Academy\\SWP391_FBlog\\SWP391_FBlog\\SWP391_FBlog.csproj",
       "packagesPath": "C:\\Users\\ADMIN\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ADMIN\\source\\repos\\SWP391_FBlog\\SWP391_FBlog\\obj\\",
+      "outputPath": "D:\\major_document_5\\SWP391\\SWP391_FBlog-Academy\\SWP391_FBlog\\SWP391_FBlog\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\ADMIN\\AppData\\Roaming\\NuGet\\NuGet.Config",
