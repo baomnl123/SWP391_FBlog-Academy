@@ -1,23 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+
+#nullable disable
 
 namespace backend.Models
 {
-    [Table("post_list")]
-    public class PostList
+    public partial class PostList
     {
-        [Key]
-        [Column("save_list_id")]
-        [Required]
         public int SaveListId { get; set; }
-        
-        [Key]
-        [Column("post_id")]
-        [Required]
-        public int PostId { get; set; }
+        public int SavePostId { get; set; }
 
-        // Relation
-        public SaveList SaveList { get; set; }
-        public Post Post { get; set; }
+        public virtual SaveList SaveList { get; set; }
+        public virtual Post SavePost { get; set; }
     }
 }

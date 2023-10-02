@@ -1,56 +1,49 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
+
+#nullable disable
 
 namespace backend.Models
 {
-    [Table("user")]
-    public class User
+    public partial class User
     {
-        [Key]
-        [Column("id")]
-        [Required]
+        public User()
+        {
+            Categories = new HashSet<Category>();
+            Comments = new HashSet<Comment>();
+            FollowUserFolloweds = new HashSet<FollowUser>();
+            FollowUserFollowers = new HashSet<FollowUser>();
+            PostReviewers = new HashSet<Post>();
+            PostUsers = new HashSet<Post>();
+            ReportPostAdmins = new HashSet<ReportPost>();
+            ReportPostReporters = new HashSet<ReportPost>();
+            SaveLists = new HashSet<SaveList>();
+            Tags = new HashSet<Tag>();
+            VoteComments = new HashSet<VoteComment>();
+            VotePosts = new HashSet<VotePost>();
+        }
+
         public int Id { get; set; }
-
-        [Column("name")]
-        [Required]
         public string Name { get; set; }
-
-        [Column ("email")]
-        [Required]
-        public string? Email { get; set; }
-
-        [Column("password")]
-        [Required]
+        public string Email { get; set; }
         public string Password { get; set; }
-
-        [Column("role_id")]
-        [Required]
-        public int RoleId { get; set; }
-        
-        [Column("created_at")]
-        [Required]
+        public string Role { get; set; }
         public DateTime CreatedAt { get; set; }
-
-        [Column("updated_at")]
-        public DateTime UpdatedAt { get; set; }
-
-        [Column("status")]
-        [Required]
+        public DateTime? UpdatedAt { get; set; }
         public bool Status { get; set; }
+        public bool? IsAwarded { get; set; }
 
-        [Column("is_awarded")]
-        [Required]
-        public bool IsAwarded{ get; set; }
-
-        // Relation
-        // FollowUser, ReportUser table
-        public Role Role { get; set; }
-        public ICollection<SaveList> SaveLists { get; set; }
-        public ICollection<Comment> Comments { get; set; }
-        public ICollection<Post> Posts{ get; set; }
-        public ICollection<Post> ReviewPosts{ get; set; }
-        public ICollection<VotePost> VotePosts { get; set; }
-        public ICollection<Tag> Tags { get; set; }
-        public ICollection<Category> Categories { get; set; }
+        public virtual ICollection<Category> Categories { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<FollowUser> FollowUserFolloweds { get; set; }
+        public virtual ICollection<FollowUser> FollowUserFollowers { get; set; }
+        public virtual ICollection<Post> PostReviewers { get; set; }
+        public virtual ICollection<Post> PostUsers { get; set; }
+        public virtual ICollection<ReportPost> ReportPostAdmins { get; set; }
+        public virtual ICollection<ReportPost> ReportPostReporters { get; set; }
+        public virtual ICollection<SaveList> SaveLists { get; set; }
+        public virtual ICollection<Tag> Tags { get; set; }
+        public virtual ICollection<VoteComment> VoteComments { get; set; }
+        public virtual ICollection<VotePost> VotePosts { get; set; }
     }
 }

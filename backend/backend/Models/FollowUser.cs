@@ -1,27 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
+
+#nullable disable
 
 namespace backend.Models
 {
-    [Table("follow_user")]
-    public class FollowUser
+    public partial class FollowUser
     {
-        [Key]
-        [Column("follower_id")]
-        [Required]
         public int FollowerId { get; set; }
-
-        [Key]
-        [Column("followed_id")]
-        [Required]
         public int FollowedId { get; set; }
-
-        [Column("created_at")]
-        [Required]
         public DateTime CreatedAt { get; set; }
+        public bool Status { get; set; }
 
-        [Column("status")]
-        [Required]
-        public bool status { get; set; }
+        public virtual User Followed { get; set; }
+        public virtual User Follower { get; set; }
     }
 }
