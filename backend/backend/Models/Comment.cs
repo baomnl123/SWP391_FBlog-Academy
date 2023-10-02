@@ -1,34 +1,25 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
+
+#nullable disable
 
 namespace backend.Models
 {
-    [Table("comment")]
-    public class Comment
+    public partial class Comment
     {
-        [Key]
-        [Column("id")]
-        [Required]
+        public Comment()
+        {
+            VoteComments = new HashSet<VoteComment>();
+        }
+
         public int Id { get; set; }
-
-        [Column("post_id")]
-        [Required]
         public int PostId { get; set; }
-
-        [Column("user_id")]
-        [Required]
         public int UserId { get; set; }
-
-        [Column("content")]
-        [Required]
         public string Content { get; set; }
-
-        [Column("status")]
-        [Required]
         public bool Status { get; set; }
 
-        // Relation
-        public User User { get; set; }
-        public Post Post { get; set; }
+        public virtual Post Post { get; set; }
+        public virtual User User { get; set; }
+        public virtual ICollection<VoteComment> VoteComments { get; set; }
     }
 }

@@ -1,23 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
+
+#nullable disable
 
 namespace backend.Models
 {
-    [Table("category_tag")]
-    public class CategoryTag
+    public partial class CategoryTag
     {
-        [Key]
-        [Column("tag_id")]
-        [Required]
         public int TagId { get; set; }
-
-        [Key]
-        [Column("category_id")]
-        [Required]
         public int CategoryId { get; set; }
 
-        // Relation
-        public Tag Tag { get; set; }
-        public Category Category { get; set; }
+        public virtual Category Category { get; set; }
+        public virtual Tag Tag { get; set; }
     }
 }

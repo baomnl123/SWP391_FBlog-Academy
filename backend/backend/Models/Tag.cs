@@ -1,38 +1,27 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+
+#nullable disable
 
 namespace backend.Models
 {
-    [Table("tag")]
-    public class Tag
+    public partial class Tag
     {
-        [Key]
-        [Column("id")]
-        [Required]
+        public Tag()
+        {
+            CategoryTags = new HashSet<CategoryTag>();
+            PostTags = new HashSet<PostTag>();
+        }
+
         public int Id { get; set; }
-
-        [Column("user_id")]
-        [Required]
-        public int UserId { get; set; }
-
-        [Column("tag_name")]
-        [Required]
+        public int AdminId { get; set; }
         public string TagName { get; set; }
-
-        [Column("created_at")]
-        [Required]
         public DateTime CreatedAt { get; set; }
-
-        [Column("updated_at")]
-        public DateTime UpdatedAt { get; set; }
-
-        [Column("status")]
-        [Required]
+        public DateTime? UpdatedAt { get; set; }
         public bool Status { get; set; }
 
-        // Relation
-        public User User { get; set; }
-        public ICollection<CategoryTag> CategoryTags { get; set; }
-        public ICollection<PostTag> PostTags { get; set; }
+        public virtual User Admin { get; set; }
+        public virtual ICollection<CategoryTag> CategoryTags { get; set; }
+        public virtual ICollection<PostTag> PostTags { get; set; }
     }
 }

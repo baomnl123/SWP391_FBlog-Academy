@@ -1,46 +1,39 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
+
+#nullable disable
 
 namespace backend.Models
 {
-    [Table("post")]
-    public class Post
+    public partial class Post
     {
-        [Key]
-        [Column("id")]
-        [Required]
+        public Post()
+        {
+            Comments = new HashSet<Comment>();
+            PostCategories = new HashSet<PostCategory>();
+            PostLists = new HashSet<PostList>();
+            PostTags = new HashSet<PostTag>();
+            ReportPosts = new HashSet<ReportPost>();
+            VotePosts = new HashSet<VotePost>();
+        }
+
         public int Id { get; set; }
-
-        [Column("user_id")]
-        [Required]
         public int UserId { get; set; }
-
-        [Column("reviewer_id")]
-        [Required]
         public int ReviewerId { get; set; }
-
-        [Column("created_at")]
-        [Required]
+        public string Content { get; set; }
         public DateTime CreatedAt { get; set; }
-
-        [Column("updated_at")]
-        public DateTime UpdatedAt { get; set; }
-
-        [Column("is_approved")]
-        [Required]
-        public bool IsApproved { get; set; }
-
-        [Column("status")]
-        [Required]
+        public DateTime? UpdatedAt { get; set; }
+        public bool? IsApproved { get; set; }
+        public int? IsSaved { get; set; }
         public bool Status { get; set; }
 
-        // Relation
-        public User User { get; set; }
-        public User Reviewer { get; set; }
-        public ICollection<Comment> Comments { get; set; }
-        public ICollection<VotePost> VotePosts { get; set; }
-        public ICollection<PostList> PostLists { get; set; }
-        public ICollection<PostCategory> PostCategories { get; set; }
-        public ICollection<PostTag> PostTags { get; set; }
+        public virtual User Reviewer { get; set; }
+        public virtual User User { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<PostCategory> PostCategories { get; set; }
+        public virtual ICollection<PostList> PostLists { get; set; }
+        public virtual ICollection<PostTag> PostTags { get; set; }
+        public virtual ICollection<ReportPost> ReportPosts { get; set; }
+        public virtual ICollection<VotePost> VotePosts { get; set; }
     }
 }
