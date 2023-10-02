@@ -24,10 +24,10 @@
 
   <ItemGroup>
     <Folder Include="Controllers\" />
+    <Folder Include="DTO\" />
     <Folder Include="Handlers\Implementors\" />
     <Folder Include="Handlers\IHandlers\" />
     <Folder Include="Enumerables\" />
-    <Folder Include="DTO\" />
     <Folder Include="Migrates\" />
     <Folder Include="Utils\" />
   </ItemGroup>
