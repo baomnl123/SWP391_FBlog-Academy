@@ -23,8 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="DTO\" />
     <Folder Include="Handlers\Implementors\" />
     <Folder Include="Handlers\IHandlers\" />
     <Folder Include="Enumerables\" />
