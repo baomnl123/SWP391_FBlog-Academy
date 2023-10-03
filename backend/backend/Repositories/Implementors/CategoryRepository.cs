@@ -14,9 +14,10 @@ namespace backend.Repositories.Implementors
             _context = context;
         }
 
-        public bool CategoryExists(string id)
+        public bool CategoryExists(string name)
         {
-            return _context.Categories.Any(c => c.Id.Equals(id) && c.Status.Equals(true));
+            return _context.Categories.Any(c => c.CategoryName.Trim().ToUpper() == name.Trim().ToUpper() 
+                                           && c.Status.Equals(true));
         }
 
         public bool CreateCategory(Category category)

@@ -7,7 +7,7 @@ namespace backend.Repositories.IRepositories
         ICollection<Tag> GetTags();
         Tag GetTag(string id);
         ICollection<Post> GetPostByTag(string tagId);
-        bool TagExists(string id);
+        bool TagExists(string name);
         bool CreateTag(Tag tag);
         bool UpdateTag(Tag tag);
         bool DeleteTag(Tag tag);

@@ -8,7 +8,7 @@ namespace backend.Repositories.IRepositories
         User GetUser(string email, string password);
         ICollection<Category> GetCategoryByAdmin(string adminId);
         ICollection<Tag> GetTagByAdmin(string adminId);
-        bool UserExists(string id);
+        bool UserExists(string email);
         bool CreateUser(User user);
         bool UpdateUser(User user);
         bool DeleteUser(User user);
