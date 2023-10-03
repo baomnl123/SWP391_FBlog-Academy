@@ -112,9 +112,17 @@ namespace backend.Models
                     .HasMaxLength(255)
                     .HasColumnName("content");
 
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("created_at");
+
                 entity.Property(e => e.PostId).HasColumnName("post_id");
 
                 entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.Property(e => e.UpdatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updated_at");
 
                 entity.Property(e => e.UserId).HasColumnName("user_id");
 
