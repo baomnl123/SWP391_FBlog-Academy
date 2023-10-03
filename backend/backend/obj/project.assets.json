@@ -3102,19 +3102,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\mglon\\.nuget\\packages\\": {}
+    "C:\\Users\\ADMIN\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Documents\\FPT\\Semester 5\\SWP391_FBlog-Academy\\backend\\backend\\backend.csproj",
+      "projectUniqueName": "D:\\major_document_5\\SWP391\\SWP391_FBlog-Academy\\backend\\backend\\backend.csproj",
       "projectName": "backend",
-      "projectPath": "D:\\Documents\\FPT\\Semester 5\\SWP391_FBlog-Academy\\backend\\backend\\backend.csproj",
-      "packagesPath": "C:\\Users\\mglon\\.nuget\\packages\\",
-      "outputPath": "D:\\Documents\\FPT\\Semester 5\\SWP391_FBlog-Academy\\backend\\backend\\obj\\",
+      "projectPath": "D:\\major_document_5\\SWP391\\SWP391_FBlog-Academy\\backend\\backend\\backend.csproj",
+      "packagesPath": "C:\\Users\\ADMIN\\.nuget\\packages\\",
+      "outputPath": "D:\\major_document_5\\SWP391\\SWP391_FBlog-Academy\\backend\\backend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\mglon\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\ADMIN\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
