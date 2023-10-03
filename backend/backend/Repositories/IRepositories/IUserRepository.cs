@@ -7,7 +7,7 @@ namespace backend.Repositories.IRepositories
     {
         //Get Users
         public ICollection<User> GetAllUsers();
-        public User GetUserByID(string id);
+        public User GetUserByID(int id);
         public User GetUserByEmail(string email);
         public ICollection<User> GetUsersByUsername(string username);
         //CRUD Users

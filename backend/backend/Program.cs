@@ -1,6 +1,8 @@
 
 using backend.DTO;
 using backend.Models;
+using backend.Repositories.Implementors;
+using backend.Repositories.IRepositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
@@ -11,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddSingleton<IRestClient, RestClient>();
+builder.Services.AddScoped<IUserRepository,UserRepository>();
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
