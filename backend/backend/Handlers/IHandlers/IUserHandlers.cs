@@ -6,16 +6,24 @@ namespace backend.Handlers.IHandlers
     public interface IUserHandlers
     {
         //Authentication
-        public UserDTO CheckLogin();
-        public UserDTO Register(UserDTO user);
+        public UserDTO CheckLogin(string email,string password);
+        public UserDTO LogOut();
         //Follow User
-        public ICollection<User> GetFollowingUsers();
-        public ICollection<User> GetFollowedUsers();
+        public ICollection<UserDTO> GetFollowingUsers();
+        public ICollection<UserDTO> GetFollowedUsers();
+        //User Account
+        public ICollection<UserDTO> GetAllUsers();
+        public UserDTO CreateUser(string name, string username,string password);
+        public UserDTO UpdateUser(int userID);
+        public UserDTO DisableUser(int userID);
         //Lecturers' Account
-        public ICollection<User> GetLecturers();
+        public ICollection<UserDTO> GetLecturers();
         public UserDTO CreateLecturer();
-        public UserDTO UpdateLecturer();
-        public UserDTO DeleteLecturer();
-        //
+        public UserDTO UpdateLecturer(int userID);
+        public UserDTO DisableLecturer(int userID);
+        //Promote/Demote
+        public UserDTO PromoteStudent(int userID);
+        public UserDTO DemoteStudent(int userID);
+
     }
 }

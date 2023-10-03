@@ -1,14 +1,14 @@
-﻿using backend.Models;
+﻿using backend.DTO;
+using backend.Models;
 
 namespace backend.Handlers.IHandlers
 {
     public interface ISaveList
     {
-        public ICollection<SaveList> GetAllSaveList(User user);
-        public SaveList AddSaveList(User user, SaveList savelist);
-        public void DisableSaveList(User user,SaveList savelist);
-        public SaveList UpdateSaveList(User user,SaveList savelist);
-        
-
+        public ICollection<SaveListDTO> GetAllSaveList();
+        public ICollection<SaveListDTO> GetSaveListByName(string saveListName);
+        public SaveListDTO AddSaveList();
+        public void DisableSaveList(int saveListID);
+        public SaveListDTO UpdateSaveList(int saveListID);
     }
 }
