@@ -5,12 +5,14 @@ using System.Collections.Generic;
 
 namespace backend.Models
 {
-    public partial class PostCategory
+    public partial class PostVideo
     {
+        public int Id { get; set; }
         public int PostId { get; set; }
-        public int CategoryId { get; set; }
+        public string Content { get; set; }
+        public bool? Status { get; set; }
+        public DateTime? CreatedAt { get; set; }
 
-        public virtual Category Category { get; set; }
         public virtual Post Post { get; set; }
     }
 }

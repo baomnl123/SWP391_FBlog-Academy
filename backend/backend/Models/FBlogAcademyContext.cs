@@ -23,29 +23,23 @@ namespace backend.Models
         public virtual DbSet<FollowUser> FollowUsers { get; set; }
         public virtual DbSet<Post> Posts { get; set; }
         public virtual DbSet<PostCategory> PostCategories { get; set; }
+        public virtual DbSet<PostImage> PostImages { get; set; }
         public virtual DbSet<PostList> PostLists { get; set; }
         public virtual DbSet<PostTag> PostTags { get; set; }
+        public virtual DbSet<PostVideo> PostVideos { get; set; }
         public virtual DbSet<ReportPost> ReportPosts { get; set; }
         public virtual DbSet<SaveList> SaveLists { get; set; }
         public virtual DbSet<Tag> Tags { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<VoteComment> VoteComments { get; set; }
         public virtual DbSet<VotePost> VotePosts { get; set; }
-        private string GetConnectionString()
-        {
-            IConfiguration config = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", true, true)
-                .Build();
-            var strConn = config["ConnectionStrings:FBlogDB"];
-            return strConn;
-        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(GetConnectionString());
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseSqlServer("Server=(local);uid=sa;pwd=12345;database=FBlogAcademy;TrustServerCertificate=True");
             }
         }
 
@@ -235,6 +229,31 @@ namespace backend.Models
                     .HasConstraintName("FKPostCatego519402");
             });
 
+            modelBuilder.Entity<PostImage>(entity =>
+            {
+                entity.ToTable("PostImage");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Content)
+                    .HasMaxLength(255)
+                    .HasColumnName("content");
+
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("created_at");
+
+                entity.Property(e => e.PostId).HasColumnName("post_id");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.HasOne(d => d.Post)
+                    .WithMany(p => p.PostImages)
+                    .HasForeignKey(d => d.PostId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FKPostImage282377");
+            });
+
             modelBuilder.Entity<PostList>(entity =>
             {
                 entity.HasKey(e => new { e.SaveListId, e.SavePostId })
@@ -281,6 +300,31 @@ namespace backend.Models
                     .HasForeignKey(d => d.TagId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FKPostTag277175");
+            });
+
+            modelBuilder.Entity<PostVideo>(entity =>
+            {
+                entity.ToTable("PostVideo");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Content)
+                    .HasMaxLength(255)
+                    .HasColumnName("content");
+
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("created_at");
+
+                entity.Property(e => e.PostId).HasColumnName("post_id");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.HasOne(d => d.Post)
+                    .WithMany(p => p.PostVideos)
+                    .HasForeignKey(d => d.PostId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FKPostVideo392925");
             });
 
             modelBuilder.Entity<ReportPost>(entity =>
