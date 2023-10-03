@@ -26,7 +26,7 @@ namespace backend.Models
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public bool? IsApproved { get; set; }
-        public int? IsSaved { get; set; }
+        public bool? IsSaved { get; set; }
         public bool Status { get; set; }
 
         public virtual User Reviewer { get; set; }
