@@ -16,7 +16,7 @@ namespace backend.Repositories.Implementors
 
         public bool CategoryExists(string id)
         {
-            return _context.Categories.Any(c => c.Id.Equals(id));
+            return _context.Categories.Any(c => c.Id.Equals(id) && c.Status.Equals(true));
         }
 
         public bool CreateCategory(Category category)
@@ -33,24 +33,25 @@ namespace backend.Repositories.Implementors
 
         public ICollection<Category> GetCategories()
         {
-            return _context.Categories.ToList();
+            return _context.Categories.Where(c => c.Status.Equals(true)).ToList();
         }
 
         public Category GetCategory(string id)
         {
-            return _context.Categories.Where(e => e.Id.Equals(id)).FirstOrDefault();
+            return _context.Categories.Where(e => e.Id.Equals(id) && e.Status.Equals(true)).FirstOrDefault();
         }
 
         public ICollection<Post> GetPostByCategory(string categoryId)
         {
             return _context.PostCategories.Where(e => e.PostId.Equals(categoryId))
-                                          .Select(c => c.Post).ToList();
+                                          .Select(c => c.Post)
+                                          .Where(c => c.Status.Equals(true)).ToList();
         }
 
         public bool Save()
         {
             var saved = _context.SaveChanges();
-            return saved > 0 ? true : false;
+            return saved > 0;
         }
 
         public bool UpdateCategory(Category category)

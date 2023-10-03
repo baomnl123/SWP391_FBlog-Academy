@@ -24,26 +24,26 @@ namespace backend.Repositories.Implementors
             return Save();
         }
 
-        public ICollection<Category> GetCategoryByAdmin(int adminId)
+        public ICollection<Category> GetCategoryByAdmin(string adminId)
         {
-            return (ICollection<Category>)_context.Categories.Where(e => e.AdminId.Equals(adminId))
-                                             .Select(c => c.CategoryName).ToList();
+            return _context.Categories.Where(c => c.AdminId.Equals(adminId) && c.Status.Equals(true)).ToList();
         }
 
         public ICollection<Tag> GetTagByAdmin(string adminId)
         {
-            return (ICollection<Tag>)_context.Tags.Where(e => e.AdminId.Equals(adminId))
-                                             .Select(c => c.TagName).ToList();
+            return _context.Tags.Where(c => c.AdminId.Equals(adminId) && c.Status.Equals(true)).ToList();
         }
 
-        public User GetUser(string id)
+        public User GetUser(string email, string password)
         {
-            return _context.Users.Where(c => c.Id.Equals(id)).FirstOrDefault();
+            return _context.Users.Where(c => c.Email.Equals(email)
+                                        && c.Password.Equals(password)
+                                        && c.Status.Equals(true)).FirstOrDefault();
         }
 
         public ICollection<User> GetUsers()
         {
-            return _context.Users.ToList();
+            return _context.Users.Where(c => c.Status.Equals(true)).ToList();
         }
 
         public bool Save()
@@ -60,7 +60,7 @@ namespace backend.Repositories.Implementors
 
         public bool UserExists(string id)
         {
-            return _context.Users.Any(c => c.Id.Equals(id));
+            return _context.Users.Any(c => c.Id.Equals(id) && c.Status.Equals(true));
         }
     }
 }

@@ -26,18 +26,19 @@ namespace backend.Repositories.Implementors
 
         public ICollection<Tag> GetTags()
         {
-            return _context.Tags.ToList();
+            return _context.Tags.Where(c => c.Status.Equals(true)).ToList();
         }
 
         public ICollection<Post> GetPostByTag(string tagId)
         {
             return _context.PostTags.Where(e => e.PostId.Equals(tagId))
-                                    .Select(c => c.Post).ToList();
+                                    .Select(c => c.Post)
+                                    .Where(c => c.Status.Equals(true)).ToList();
         }
 
         public Tag GetTag(string id)
         {
-            return _context.Tags.Where(c => c.Id.Equals(id)).FirstOrDefault();
+            return _context.Tags.Where(c => c.Id.Equals(id) && c.Status.Equals(true)).FirstOrDefault();
         }
 
         public bool Save()
@@ -48,7 +49,7 @@ namespace backend.Repositories.Implementors
 
         public bool TagExists(string id)
         {
-            return _context.Tags.Any(c => c.Id.Equals(id));
+            return _context.Tags.Any(c => c.Id.Equals(id) && c.Status.Equals(true));
         }
 
         public bool UpdateTag(Tag tag)

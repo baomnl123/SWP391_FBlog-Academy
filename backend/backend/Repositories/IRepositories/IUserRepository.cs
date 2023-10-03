@@ -1,12 +1,11 @@
 ﻿using backend.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace backend.Repositories.IRepositories
 {
     public interface IUserRepository
     {
         ICollection<User> GetUsers();
-        User GetUser(string id);
+        User GetUser(string email, string password);
         ICollection<Category> GetCategoryByAdmin(string adminId);
         ICollection<Tag> GetTagByAdmin(string adminId);
         bool UserExists(string id);
