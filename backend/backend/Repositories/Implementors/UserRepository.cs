@@ -58,9 +58,10 @@ namespace backend.Repositories.Implementors
             return Save();
         }
 
-        public bool UserExists(string id)
+        public bool UserExists(string email)
         {
-            return _context.Users.Any(c => c.Id.Equals(id) && c.Status.Equals(true));
+            return _context.Users.Any(c => c.Email.Trim().ToUpper() == email.Trim().ToUpper()
+                                      && c.Status.Equals(true));
         }
     }
 }

@@ -47,9 +47,10 @@ namespace backend.Repositories.Implementors
             return saved > 0 ? true : false;
         }
 
-        public bool TagExists(string id)
+        public bool TagExists(string name)
         {
-            return _context.Tags.Any(c => c.Id.Equals(id) && c.Status.Equals(true));
+            return _context.Tags.Any(c => c.TagName.Trim().ToUpper() == name.Trim().ToUpper()
+                                     && c.Status.Equals(true));
         }
 
         public bool UpdateTag(Tag tag)

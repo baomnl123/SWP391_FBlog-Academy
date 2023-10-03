@@ -10,12 +10,12 @@ namespace backend.Controllers
     [ApiController]
     public class CategoryController : Controller
     {
-        private readonly IRepositoryBase<Category> _repositoryBase;
+        private readonly ICategoryRepository _categoryRepository;
         private readonly IMapper _mapper;
 
-        public CategoryController(IRepositoryBase<Category> repositoryBase, IMapper mapper) 
+        public CategoryController(ICategoryRepository categoryRepository, IMapper mapper) 
         {
-           _repositoryBase = repositoryBase;
+            _categoryRepository = categoryRepository;
             _mapper = mapper;
         }
 
@@ -23,7 +23,7 @@ namespace backend.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
         public IActionResult GetCategories()
         {
-            var categories = _mapper.Map<List<CategoryDTO>>(_repositoryBase.GetAll());
+            var categories = _mapper.Map<List<CategoryDTO>>(_categoryRepository.GetCategories());
 
             if(!ModelState.IsValid)
             {
@@ -35,16 +35,52 @@ namespace backend.Controllers
         [HttpGet("{categoryId}")]
         [ProducesResponseType(200, Type = typeof(Category))]
         [ProducesResponseType(400)]
-        public IActionResult GetCategory(Category categoryId)
+        public IActionResult GetCategory(string categoryId)
         {
-            if(!_repositoryBase.IsExists(categoryId)) return NotFound();
+            if(!_categoryRepository.CategoryExists(categoryId)) return NotFound();
 
-            var category = _mapper.Map<CategoryDTO>(_repositoryBase.GetOne(categoryId));
+            var category = _mapper.Map<CategoryDTO>(_categoryRepository.GetCategory(categoryId));
             if(!ModelState.IsValid) return BadRequest(ModelState);
 
             return Ok(category);
         }
 
+        [HttpGet("{categoryId}/post")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
+        [ProducesResponseType(400)]
+        public IActionResult GetPostByCategory(string categoryId)
+        {
+            var posts = _mapper.Map<List<Post>>(_categoryRepository.GetPostByCategory(categoryId));
 
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            return Ok(posts);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public IActionResult CreateCategory(Category category)
+        {
+            if (category == null) return BadRequest(ModelState);
+
+            var isCategoryExists = _categoryRepository.CategoryExists(category.CategoryName);
+            if(isCategoryExists == true)
+            {
+                ModelState.AddModelError("", "Category already exists!");
+                return StatusCode(422, ModelState);
+            }
+
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var categoryMap = _mapper.Map<Category>(category);
+            if(!_categoryRepository.CreateCategory(categoryMap))
+            {
+                ModelState.AddModelError("", "Something went wrong while saving");
+                return StatusCode(500, ModelState);
+            }
+
+            return Ok("Successfully create!");
+        }
     }
 }
