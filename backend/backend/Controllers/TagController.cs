@@ -88,11 +88,11 @@ namespace backend.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateCategory([FromQuery] int adminId, Tag tag, [FromBody] string updateTagName)
+        public IActionResult UpdateCategory(int tagId, [FromBody] TagDTO updateTagName)
         {
             if (updateTagName == null) return BadRequest(ModelState);
 
-            if (!_tagRepository.TagExists(tag.Id))
+            if (!_tagRepository.TagExists(tagId))
                 return NotFound();
 
             if (!ModelState.IsValid) return BadRequest();
