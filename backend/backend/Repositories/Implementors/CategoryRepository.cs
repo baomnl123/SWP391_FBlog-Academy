@@ -37,14 +37,14 @@ namespace backend.Repositories.Implementors
             return _context.Categories.Where(c => c.Status.Equals(true)).ToList();
         }
 
-        public Category GetCategory(string id)
+        public Category GetCategory(int id)
         {
-            return _context.Categories.Where(e => e.Id.Equals(id) && e.Status.Equals(true)).FirstOrDefault();
+            return _context.Categories.Where(e => e.Id == id && e.Status.Equals(true)).FirstOrDefault();
         }
 
-        public ICollection<Post> GetPostByCategory(string categoryId)
+        public ICollection<Post> GetPostByCategory(int categoryId)
         {
-            return _context.PostCategories.Where(e => e.PostId.Equals(categoryId))
+            return _context.PostCategories.Where(e => e.PostId == categoryId)
                                           .Select(c => c.Post)
                                           .Where(c => c.Status.Equals(true)).ToList();
         }

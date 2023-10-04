@@ -4,13 +4,13 @@ namespace backend.Repositories.IRepositories
 {
     public interface ITagRepository
     {
-        ICollection<Tag> GetTags();
-        Tag GetTag(string id);
-        ICollection<Post> GetPostByTag(string tagId);
-        bool TagExists(string name);
-        bool CreateTag(Tag tag);
-        bool UpdateTag(Tag tag);
-        bool DeleteTag(Tag tag);
-        bool Save();
+        public ICollection<Tag> GetTags();
+        public Tag GetTag(int tagId);
+        public ICollection<Post> GetPostByTag(int tagId);
+        public bool TagExists(string name);
+        public bool CreateTag(Tag tag);
+        public bool UpdateTag(Tag tag);
+        public bool DeleteTag(Tag tag);
+        public bool Save();
     }
 }
