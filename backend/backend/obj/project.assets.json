@@ -11703,19 +11703,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\thinh\\.nuget\\packages\\": {}
+    "C:\\Users\\mglon\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\FPT\\SWP391_FBlog-Academy\\backend\\backend\\backend.csproj",
+      "projectUniqueName": "D:\\Documents\\FPT\\Semester 5\\SWP391_FBlog-Academy\\backend\\backend\\backend.csproj",
       "projectName": "backend",
-      "projectPath": "C:\\FPT\\SWP391_FBlog-Academy\\backend\\backend\\backend.csproj",
-      "packagesPath": "C:\\Users\\thinh\\.nuget\\packages\\",
-      "outputPath": "C:\\FPT\\SWP391_FBlog-Academy\\backend\\backend\\obj\\",
+      "projectPath": "D:\\Documents\\FPT\\Semester 5\\SWP391_FBlog-Academy\\backend\\backend\\backend.csproj",
+      "packagesPath": "C:\\Users\\mglon\\.nuget\\packages\\",
+      "outputPath": "D:\\Documents\\FPT\\Semester 5\\SWP391_FBlog-Academy\\backend\\backend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\thinh\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\mglon\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -11809,7 +11809,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100-rc.1.23455.8\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.400\\RuntimeIdentifierGraph.json"
       }
     }
   }
