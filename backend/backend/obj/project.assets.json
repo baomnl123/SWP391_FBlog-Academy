@@ -3187,19 +3187,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\ADMIN\\.nuget\\packages\\": {}
+    "C:\\Users\\mglon\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\major_document_5\\SWP391\\SWP391_FBlog-Academy\\backend\\backend\\backend.csproj",
+      "projectUniqueName": "D:\\Documents\\FPT\\Semester 5\\SWP391_FBlog-Academy\\backend\\backend\\backend.csproj",
       "projectName": "backend",
-      "projectPath": "D:\\major_document_5\\SWP391\\SWP391_FBlog-Academy\\backend\\backend\\backend.csproj",
-      "packagesPath": "C:\\Users\\ADMIN\\.nuget\\packages\\",
-      "outputPath": "D:\\major_document_5\\SWP391\\SWP391_FBlog-Academy\\backend\\backend\\obj\\",
+      "projectPath": "D:\\Documents\\FPT\\Semester 5\\SWP391_FBlog-Academy\\backend\\backend\\backend.csproj",
+      "packagesPath": "C:\\Users\\mglon\\.nuget\\packages\\",
+      "outputPath": "D:\\Documents\\FPT\\Semester 5\\SWP391_FBlog-Academy\\backend\\backend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\ADMIN\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\mglon\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -3284,13 +3284,5 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.400\\RuntimeIdentifierGraph.json"
       }
     }
-  },
-  "logs": [
-    {
-      "code": "Undefined",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Problem reading the cache file D:\\Documents\\FPT\\Semester 5\\SWP391_FBlog-Academy\\backend\\backend\\obj\\project.nuget.cache : Invalid property identifier character: <. Path 'version', line 3, position 0."
-    }
-  ]
+  }
 }
