@@ -88,11 +88,11 @@ namespace backend.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateCategory([FromQuery]int adminId, Category category, [FromBody] string updateCategoryName)
+        public IActionResult UpdateCategory(int categoryId, [FromBody] CategoryDTO updateCategoryName)
         {
             if (updateCategoryName == null) return BadRequest(ModelState);
 
-            if(!_categoryRepository.CategoryExists(category.Id))
+            if(!_categoryRepository.CategoryExists(categoryId))
                 return NotFound();
 
             if (!ModelState.IsValid) return BadRequest();
