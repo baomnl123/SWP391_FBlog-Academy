@@ -34,7 +34,7 @@ namespace backend.Controllers
         [HttpGet("{tagId}")]
         [ProducesResponseType(200, Type = typeof(Tag))]
         [ProducesResponseType(400)]
-        public IActionResult GetTag(string tagId)
+        public IActionResult GetTag(int tagId)
         {
             if (!_tagRepository.TagExists(tagId)) return NotFound();
 
@@ -47,7 +47,7 @@ namespace backend.Controllers
         [HttpGet("{tagId}/post")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Tag>))]
         [ProducesResponseType(400)]
-        public IActionResult GetPostByTag(string tagId)
+        public IActionResult GetPostByTag(int tagId)
         {
             var posts = _mapper.Map<List<Post>>(_tagRepository.GetPostByTag(tagId));
 
@@ -63,7 +63,7 @@ namespace backend.Controllers
         {
             if (tag == null) return BadRequest(ModelState);
 
-            var isTagExists = _tagRepository.TagExists(tag.TagName);
+            var isTagExists = _tagRepository.TagExists(tag.Id);
             if (isTagExists != null)
             {
                 ModelState.AddModelError("", "Tag already exists!");
@@ -92,7 +92,7 @@ namespace backend.Controllers
         {
             if (updateTagName == null) return BadRequest(ModelState);
 
-            if (!_tagRepository.TagExists(tag.TagName))
+            if (!_tagRepository.TagExists(tag.Id))
                 return NotFound();
 
             if (!ModelState.IsValid) return BadRequest();

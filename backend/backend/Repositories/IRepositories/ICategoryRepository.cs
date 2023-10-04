@@ -7,7 +7,7 @@ namespace backend.Repositories.IRepositories
         public ICollection<Category> GetCategories();
         public Category GetCategory(int categoryId);
         public ICollection<Post> GetPostByCategory(int categoryId);
-        public bool CategoryExists(string name);
+        public bool CategoryExists(int categoryId);
         public bool CreateCategory(Category category);
         public bool UpdateCategory(Category category);
         public bool DeleteCategory(Category category);
