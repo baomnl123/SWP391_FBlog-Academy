@@ -34,7 +34,7 @@ namespace backend.Controllers
         [HttpGet("{categoryId}")]
         [ProducesResponseType(200, Type = typeof(Category))]
         [ProducesResponseType(400)]
-        public IActionResult GetCategory(string categoryId)
+        public IActionResult GetCategory(int categoryId)
         {
             if(!_categoryRepository.CategoryExists(categoryId)) return NotFound();
 
@@ -47,7 +47,7 @@ namespace backend.Controllers
         [HttpGet("{categoryId}/post")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
         [ProducesResponseType(400)]
-        public IActionResult GetPostByCategory(string categoryId)
+        public IActionResult GetPostByCategory(int categoryId)
         {
             var posts = _mapper.Map<List<Post>>(_categoryRepository.GetPostByCategory(categoryId));
 
@@ -63,7 +63,7 @@ namespace backend.Controllers
         {
             if (category == null) return BadRequest(ModelState);
 
-            var isCategoryExists = _categoryRepository.CategoryExists(category.CategoryName);
+            var isCategoryExists = _categoryRepository.CategoryExists(category.Id);
             if(isCategoryExists != null)
             {
                 ModelState.AddModelError("", "Category already exists!");
@@ -92,7 +92,7 @@ namespace backend.Controllers
         {
             if (updateCategoryName == null) return BadRequest(ModelState);
 
-            if(!_categoryRepository.CategoryExists(category.CategoryName))
+            if(!_categoryRepository.CategoryExists(category.Id))
                 return NotFound();
 
             if (!ModelState.IsValid) return BadRequest();
