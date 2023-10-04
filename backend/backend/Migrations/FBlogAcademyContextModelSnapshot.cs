@@ -203,6 +203,38 @@ namespace backend.Migrations
                     b.ToTable("PostCategory");
                 });
 
+            modelBuilder.Entity("backend.Models.PostImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Content")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("content");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime")
+                        .HasColumnName("created_at");
+
+                    b.Property<int>("PostId")
+                        .HasColumnType("int")
+                        .HasColumnName("post_id");
+
+                    b.Property<bool?>("Status")
+                        .HasColumnType("bit")
+                        .HasColumnName("status");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("PostImage");
+                });
+
             modelBuilder.Entity("backend.Models.PostList", b =>
                 {
                     b.Property<int>("SaveListId")
@@ -237,6 +269,38 @@ namespace backend.Migrations
                     b.HasIndex("TagId");
 
                     b.ToTable("PostTag");
+                });
+
+            modelBuilder.Entity("backend.Models.PostVideo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Content")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("content");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime")
+                        .HasColumnName("created_at");
+
+                    b.Property<int>("PostId")
+                        .HasColumnType("int")
+                        .HasColumnName("post_id");
+
+                    b.Property<bool?>("Status")
+                        .HasColumnType("bit")
+                        .HasColumnName("status");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("PostVideo");
                 });
 
             modelBuilder.Entity("backend.Models.ReportPost", b =>
@@ -576,6 +640,17 @@ namespace backend.Migrations
                     b.Navigation("Post");
                 });
 
+            modelBuilder.Entity("backend.Models.PostImage", b =>
+                {
+                    b.HasOne("backend.Models.Post", "Post")
+                        .WithMany("PostImages")
+                        .HasForeignKey("PostId")
+                        .HasConstraintName("FKPostImage282377")
+                        .IsRequired();
+
+                    b.Navigation("Post");
+                });
+
             modelBuilder.Entity("backend.Models.PostList", b =>
                 {
                     b.HasOne("backend.Models.SaveList", "SaveList")
@@ -612,6 +687,17 @@ namespace backend.Migrations
                     b.Navigation("Post");
 
                     b.Navigation("Tag");
+                });
+
+            modelBuilder.Entity("backend.Models.PostVideo", b =>
+                {
+                    b.HasOne("backend.Models.Post", "Post")
+                        .WithMany("PostVideos")
+                        .HasForeignKey("PostId")
+                        .HasConstraintName("FKPostVideo392925")
+                        .IsRequired();
+
+                    b.Navigation("Post");
                 });
 
             modelBuilder.Entity("backend.Models.ReportPost", b =>
@@ -719,9 +805,13 @@ namespace backend.Migrations
 
                     b.Navigation("PostCategories");
 
+                    b.Navigation("PostImages");
+
                     b.Navigation("PostLists");
 
                     b.Navigation("PostTags");
+
+                    b.Navigation("PostVideos");
 
                     b.Navigation("ReportPosts");
 
