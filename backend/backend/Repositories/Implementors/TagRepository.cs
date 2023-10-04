@@ -29,16 +29,16 @@ namespace backend.Repositories.Implementors
             return _context.Tags.Where(c => c.Status.Equals(true)).ToList();
         }
 
-        public ICollection<Post> GetPostByTag(string tagId)
+        public ICollection<Post> GetPostByTag(int tagId)
         {
-            return _context.PostTags.Where(e => e.PostId.Equals(tagId))
+            return _context.PostTags.Where(e => e.PostId == tagId)
                                     .Select(c => c.Post)
                                     .Where(c => c.Status.Equals(true)).ToList();
         }
 
-        public Tag GetTag(string id)
+        public Tag GetTag(int tagId)
         {
-            return _context.Tags.Where(c => c.Id.Equals(id) && c.Status.Equals(true)).FirstOrDefault();
+            return _context.Tags.Where(c => c.Id == tagId && c.Status.Equals(true)).FirstOrDefault();
         }
 
         public bool Save()
@@ -47,10 +47,9 @@ namespace backend.Repositories.Implementors
             return saved > 0 ? true : false;
         }
 
-        public bool TagExists(string name)
+        public bool TagExists(int id)
         {
-            return _context.Tags.Any(c => c.TagName.Trim().ToUpper() == name.Trim().ToUpper()
-                                     && c.Status.Equals(true));
+            return _context.Tags.Any(c => c.Id == id && c.Status.Equals(true));
         }
 
         public bool UpdateTag(Tag tag)
