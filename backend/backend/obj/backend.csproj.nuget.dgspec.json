@@ -44,9 +44,15 @@
               "target": "Package",
               "version": "[12.0.1, )"
             },
+<<<<<<< Updated upstream
             "AutoMapper.Extensions.Microsoft.DependencyInjection": {
               "target": "Package",
               "version": "[12.0.1, )"
+=======
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[6.0.22, )"
+>>>>>>> Stashed changes
             },
             "Microsoft.AspNetCore.Routing": {
               "target": "Package",
@@ -72,6 +78,21 @@
               "target": "Package",
               "version": "[5.0.17, )"
             },
+<<<<<<< Updated upstream
+=======
+            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
+              "target": "Package",
+              "version": "[6.0.16, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
+            },
+            "RestSharp": {
+              "target": "Package",
+              "version": "[106.15.0, )"
+            },
+>>>>>>> Stashed changes
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.5.0, )"
