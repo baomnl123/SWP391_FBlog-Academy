@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Documents\\FPT\\Semester 5\\SWP391_FBlog-Academy\\backend\\backend\\backend.csproj": {}
+    "D:\\major_document_5\\SWP391\\SWP391_FBlog-Academy\\backend\\backend\\backend.csproj": {}
   },
   "projects": {
-    "D:\\Documents\\FPT\\Semester 5\\SWP391_FBlog-Academy\\backend\\backend\\backend.csproj": {
+    "D:\\major_document_5\\SWP391\\SWP391_FBlog-Academy\\backend\\backend\\backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Documents\\FPT\\Semester 5\\SWP391_FBlog-Academy\\backend\\backend\\backend.csproj",
+        "projectUniqueName": "D:\\major_document_5\\SWP391\\SWP391_FBlog-Academy\\backend\\backend\\backend.csproj",
         "projectName": "backend",
-        "projectPath": "D:\\Documents\\FPT\\Semester 5\\SWP391_FBlog-Academy\\backend\\backend\\backend.csproj",
-        "packagesPath": "C:\\Users\\mglon\\.nuget\\packages\\",
-        "outputPath": "D:\\Documents\\FPT\\Semester 5\\SWP391_FBlog-Academy\\backend\\backend\\obj\\",
+        "projectPath": "D:\\major_document_5\\SWP391\\SWP391_FBlog-Academy\\backend\\backend\\backend.csproj",
+        "packagesPath": "C:\\Users\\ADMIN\\.nuget\\packages\\",
+        "outputPath": "D:\\major_document_5\\SWP391\\SWP391_FBlog-Academy\\backend\\backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\mglon\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\ADMIN\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -44,15 +44,9 @@
               "target": "Package",
               "version": "[12.0.1, )"
             },
-<<<<<<< Updated upstream
             "AutoMapper.Extensions.Microsoft.DependencyInjection": {
               "target": "Package",
               "version": "[12.0.1, )"
-=======
-            "Microsoft.AspNetCore.Authentication.JwtBearer": {
-              "target": "Package",
-              "version": "[6.0.22, )"
->>>>>>> Stashed changes
             },
             "Microsoft.AspNetCore.Routing": {
               "target": "Package",
@@ -78,21 +72,6 @@
               "target": "Package",
               "version": "[5.0.17, )"
             },
-<<<<<<< Updated upstream
-=======
-            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
-              "target": "Package",
-              "version": "[6.0.16, )"
-            },
-            "Newtonsoft.Json": {
-              "target": "Package",
-              "version": "[13.0.3, )"
-            },
-            "RestSharp": {
-              "target": "Package",
-              "version": "[106.15.0, )"
-            },
->>>>>>> Stashed changes
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.5.0, )"
