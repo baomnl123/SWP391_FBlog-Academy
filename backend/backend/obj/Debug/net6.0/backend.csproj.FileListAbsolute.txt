@@ -1,0 +1,142 @@
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\appsettings.Development.json
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\appsettings.json
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\backend.exe
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\backend.deps.json
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\backend.runtimeconfig.json
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\backend.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\backend.pdb
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.OpenApi.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.csproj.AssemblyReference.cache
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.GeneratedMSBuildEditorConfig.editorconfig
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.AssemblyInfoInputs.cache
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.AssemblyInfo.cs
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.csproj.CoreCompileInputs.cache
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.MvcApplicationPartsAssemblyInfo.cs
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.MvcApplicationPartsAssemblyInfo.cache
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\staticwebassets\msbuild.backend.Microsoft.AspNetCore.StaticWebAssets.props
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\staticwebassets\msbuild.build.backend.props
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\staticwebassets\msbuild.buildMultiTargeting.backend.props
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\staticwebassets\msbuild.buildTransitive.backend.props
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\staticwebassets.pack.json
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\staticwebassets.build.json
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\staticwebassets.development.json
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\scopedcss\bundle\backend.styles.css
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.csproj.CopyComplete
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\refint\backend.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.pdb
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.genruntimeconfig.cache
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\ref\backend.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Azure.Core.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Azure.Identity.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Humanizer.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.Bcl.AsyncInterfaces.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.Data.SqlClient.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Design.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Relational.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.SqlServer.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.Identity.Client.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.Identity.Client.Extensions.Msal.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.IdentityModel.Logging.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.IdentityModel.Protocols.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.IdentityModel.Tokens.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.Win32.SystemEvents.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\System.Configuration.ConfigurationManager.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\System.Drawing.Common.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\System.IdentityModel.Tokens.Jwt.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\System.Runtime.Caching.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\System.Security.Cryptography.ProtectedData.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\System.Security.Permissions.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\System.Windows.Extensions.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\unix\lib\netcoreapp3.1\Microsoft.Data.SqlClient.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.1\Microsoft.Data.SqlClient.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\win-arm\native\Microsoft.Data.SqlClient.SNI.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\win-arm64\native\Microsoft.Data.SqlClient.SNI.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.0\Microsoft.Win32.SystemEvents.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\unix\lib\netcoreapp3.0\System.Drawing.Common.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.0\System.Drawing.Common.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\win\lib\netstandard2.0\System.Runtime.Caching.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.0\System.Windows.Extensions.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\AutoMapper.dll
+D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\appsettings.Development.json
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\appsettings.json
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\backend.exe
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\backend.deps.json
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\backend.runtimeconfig.json
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\backend.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\backend.pdb
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\AutoMapper.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Azure.Core.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Azure.Identity.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Humanizer.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.Bcl.AsyncInterfaces.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.Data.SqlClient.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Design.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Relational.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.SqlServer.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.Identity.Client.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.Identity.Client.Extensions.Msal.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.IdentityModel.Logging.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.IdentityModel.Protocols.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.IdentityModel.Tokens.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.OpenApi.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Microsoft.Win32.SystemEvents.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\System.Configuration.ConfigurationManager.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\System.Drawing.Common.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\System.IdentityModel.Tokens.Jwt.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\System.Runtime.Caching.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\System.Security.Cryptography.ProtectedData.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\System.Security.Permissions.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\System.Windows.Extensions.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\unix\lib\netcoreapp3.1\Microsoft.Data.SqlClient.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.1\Microsoft.Data.SqlClient.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\win-arm\native\Microsoft.Data.SqlClient.SNI.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\win-arm64\native\Microsoft.Data.SqlClient.SNI.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.0\Microsoft.Win32.SystemEvents.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\unix\lib\netcoreapp3.0\System.Drawing.Common.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.0\System.Drawing.Common.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\win\lib\netstandard2.0\System.Runtime.Caching.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.0\System.Windows.Extensions.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.csproj.AssemblyReference.cache
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.GeneratedMSBuildEditorConfig.editorconfig
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.AssemblyInfoInputs.cache
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.AssemblyInfo.cs
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.csproj.CoreCompileInputs.cache
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.MvcApplicationPartsAssemblyInfo.cs
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.MvcApplicationPartsAssemblyInfo.cache
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\staticwebassets\msbuild.backend.Microsoft.AspNetCore.StaticWebAssets.props
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\staticwebassets\msbuild.build.backend.props
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\staticwebassets\msbuild.buildMultiTargeting.backend.props
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\staticwebassets\msbuild.buildTransitive.backend.props
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\staticwebassets.pack.json
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\staticwebassets.build.json
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\staticwebassets.development.json
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\scopedcss\bundle\backend.styles.css
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.csproj.CopyComplete
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\refint\backend.dll
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.pdb
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.genruntimeconfig.cache
+D:\major_document_5\SWP391\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\ref\backend.dll
