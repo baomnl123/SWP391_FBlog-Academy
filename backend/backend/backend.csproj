@@ -15,7 +15,11 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
+<<<<<<< HEAD
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.22" />
+=======
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+>>>>>>> main
     <PackageReference Include="Microsoft.AspNetCore.Routing" Version="2.2.2" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="3.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.17">
@@ -34,8 +38,16 @@
   </ItemGroup>
 
   <ItemGroup>
+<<<<<<< HEAD
     <Folder Include="Enumerables\" />
     <Folder Include="Handlers\Implementors\" />
+=======
+    <Folder Include="Handlers\Implementors\" />
+    <Folder Include="Handlers\IHandlers\" />
+    <Folder Include="Enumerables\" />
+    <Folder Include="Migrates\" />
+    <Folder Include="Utils\" />
+>>>>>>> main
   </ItemGroup>
 
 </Project>

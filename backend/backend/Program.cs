@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 using backend.DTO;
 using backend.Models;
@@ -14,7 +15,20 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddSingleton<IRestClient, RestClient>();
 builder.Services.AddScoped<IUserRepository,UserRepository>();
+=======
+using backend.Models;
+using backend.Repositories.Implementors;
+using backend.Repositories.IRepositories;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+>>>>>>> main
 builder.Services.AddControllers();
+builder.Services.AddTransient<FBlogAcademyContext>();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
