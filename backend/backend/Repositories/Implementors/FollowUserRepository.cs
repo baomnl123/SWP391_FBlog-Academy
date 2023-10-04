@@ -7,6 +7,7 @@ namespace backend.Repositories.Implementors
     {
         private readonly ServiceProvider _serviceProvider;
         private readonly FBlogAcademyContext _fblogAcademyContext;
+
         public FollowUserRepository()
         {
             _fblogAcademyContext = new();
@@ -57,30 +58,11 @@ namespace backend.Repositories.Implementors
             return userList;
         }
 
-        public ICollection<User> GetFollowerUsersByUsername(User user, string username)
+        public FollowUser GetFollowRelationship(User followUser, User followedUser)
         {
-            var list = _fblogAcademyContext.FollowUsers.Where(u => u.FollowedId.Equals(user.Id)
-                                                                && u.Followed.Name.Equals(user.Name)).ToList();
-            List<User> userList = new List<User>();
-            var userRepository = _serviceProvider.GetRequiredService<IUserRepository>();
-            foreach (var userInList in list)
-            {
-                userList.Add(userRepository.GetUserByID(userInList.FollowerId));
-            }
-            return userList;
-        }
-
-        public ICollection<User> GetFollowingUsersByUsername(User user, string username)
-        {
-            var list = _fblogAcademyContext.FollowUsers.Where(u => u.FollowerId.Equals(user.Id)
-                                                                && u.Follower.Name.Equals(user.Name)).ToList();
-            List<User> userList = new List<User>();
-            var userRepository = _serviceProvider.GetRequiredService<IUserRepository>();
-            foreach (var userInList in list)
-            {
-                userList.Add(userRepository.GetUserByID(userInList.FollowedId));
-            }
-            return userList;
+            var relationship = _fblogAcademyContext.FollowUsers.FirstOrDefault(u => u.FollowedId.Equals(followedUser.Id)
+                                                                                    && u.FollowerId.Equals(followUser.Id));
+            return relationship;
         }
 
         public bool isExisted(FollowUser followuser)

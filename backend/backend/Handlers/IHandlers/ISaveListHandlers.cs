@@ -5,9 +5,9 @@ namespace backend.Handlers.IHandlers
 {
     public interface ISaveListHandlers
     {
-        public ICollection<SaveList> GetAllSaveList();
-        public SaveList AddSaveList(string name);
+        public ICollection<SaveListDTO> GetAllSaveList();
+        public SaveListDTO AddSaveList(string name);
         public bool DisableSaveList(int saveListID);
-        public SaveList UpdateSaveList(int saveListID);
+        public SaveListDTO UpdateSaveList(int saveListID);
     }
 }

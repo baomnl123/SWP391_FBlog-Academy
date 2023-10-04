@@ -30,7 +30,7 @@ namespace backend.Handlers.Implementors
                 var currentUser = _userRepository.GetUserByID(currentUserID);
                 var followedUser = _userRepository.GetUserByID(userID);
 
-                var followRelationship = _followUserRepositoy.GetFollowRelationship(currentUser, followedUser);
+                var followRelationship = _followUserRepositoy.GetFollowRelationship(currentUser,followedUser);
 
                 if(followRelationship != null)
                 {
@@ -44,12 +44,22 @@ namespace backend.Handlers.Implementors
             return true;
         }
 
-        public ICollection<User> GetAllFollowedUsers()
+        public ICollection<UserDTO> GetAllFollowedUsers()
         {
             throw new NotImplementedException();
         }
 
-        public ICollection<User> GetAllFollowingUsers()
+        public ICollection<UserDTO> GetAllFollowingUsers()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ICollection<UserDTO> GetFollowedUsersByUsername(string username)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ICollection<UserDTO> GetFollowingUsersByUsername(string username)
         {
             throw new NotImplementedException();
         }
@@ -58,5 +68,6 @@ namespace backend.Handlers.Implementors
         {
             throw new NotImplementedException();
         }
+
     }
 }

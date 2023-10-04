@@ -7,8 +7,7 @@ namespace backend.Repositories.IRepositories
         //Get Following | Follower
         public ICollection<User> GetAllFollowingUsers(User user);
         public ICollection<User> GetAllFollowerUsers(User user);
-        public ICollection<User> GetFollowingUsersByUsername(User user,string username);
-        public ICollection<User> GetFollowerUsersByUsername(User user,string username);
+        public FollowUser GetFollowRelationship(User followUser, User followedUser);
         //Follow Other User
         public bool CreateFollowRelationShip(FollowUser followuser);
         public bool DisableFollowRelationship(FollowUser followuser);

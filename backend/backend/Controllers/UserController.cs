@@ -7,5 +7,10 @@ namespace backend.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+        [HttpGet]
+        public IActionResult actionResult()
+        {
+            return Ok();
+        }
     }
 }

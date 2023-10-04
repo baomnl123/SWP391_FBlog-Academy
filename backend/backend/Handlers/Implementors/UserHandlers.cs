@@ -6,37 +6,32 @@ namespace backend.Handlers.Implementors
 {
     public class UserHandlers : IUserHandlers
     {
-        public User CreateLecturer(string name, string email, string password)
+        public UserDTO CheckLogin(string email, string password)
         {
             throw new NotImplementedException();
         }
 
-        public User CreateUser(string name, string email, string password)
+        public UserDTO CreateLecturer()
         {
             throw new NotImplementedException();
         }
 
-        public User DemoteStudent(int id)
+        public UserDTO CreateUser(string name, string username, string password)
         {
             throw new NotImplementedException();
         }
 
-        public bool DisableUser(int id)
+        public UserDTO DemoteStudent(int userID)
         {
             throw new NotImplementedException();
         }
 
-        public ICollection<User> GetAllFollowedUsers()
+        public UserDTO DisableLecturer(int userID)
         {
             throw new NotImplementedException();
         }
 
-        public ICollection<User> GetAllFollowingUsers()
-        {
-            throw new NotImplementedException();
-        }
-
-        public ICollection<User> GetAllStudentAndModerators()
+        public UserDTO DisableUser(int userID)
         {
             throw new NotImplementedException();
         }
@@ -46,32 +41,37 @@ namespace backend.Handlers.Implementors
             throw new NotImplementedException();
         }
 
-        public ICollection<User> GetLecturers()
+        public ICollection<UserDTO> GetFollowedUsers()
         {
             throw new NotImplementedException();
         }
 
-        public bool IsTimeOut()
+        public ICollection<UserDTO> GetFollowingUsers()
         {
             throw new NotImplementedException();
         }
 
-        public User LogIn(string email)
+        public ICollection<UserDTO> GetLecturers()
         {
             throw new NotImplementedException();
         }
 
-        public bool LogOut()
+        public UserDTO LogOut()
         {
             throw new NotImplementedException();
         }
 
-        public User PromoteStudent(int id)
+        public UserDTO PromoteStudent(int userID)
         {
             throw new NotImplementedException();
         }
 
-        public User UpdateUser(int id, string name, string email, string password)
+        public UserDTO UpdateLecturer(int userID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public UserDTO UpdateUser(int userID)
         {
             throw new NotImplementedException();
         }

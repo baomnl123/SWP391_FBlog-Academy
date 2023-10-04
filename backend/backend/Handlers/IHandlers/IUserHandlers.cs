@@ -12,7 +12,7 @@ namespace backend.Handlers.IHandlers
         public ICollection<UserDTO> GetFollowingUsers();
         public ICollection<UserDTO> GetFollowedUsers();
         //User Account
-        public ICollection<UserDTO> GetAllUsers();
+        public ICollection<User> GetAllUsers();
         public UserDTO CreateUser(string name, string username,string password);
         public UserDTO UpdateUser(int userID);
         public UserDTO DisableUser(int userID);

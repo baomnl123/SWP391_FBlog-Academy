@@ -6,7 +6,7 @@ namespace backend.Handlers.Implementors
 {
     public class SaveListHandlers : ISaveListHandlers
     {
-        public SaveList AddSaveList(string name)
+        public SaveListDTO AddSaveList(string name)
         {
             throw new NotImplementedException();
         }
@@ -16,12 +16,12 @@ namespace backend.Handlers.Implementors
             throw new NotImplementedException();
         }
 
-        public ICollection<SaveList> GetAllSaveList()
+        public ICollection<SaveListDTO> GetAllSaveList()
         {
             throw new NotImplementedException();
         }
 
-        public SaveList UpdateSaveList(int saveListID)
+        public SaveListDTO UpdateSaveList(int saveListID)
         {
             throw new NotImplementedException();
         }
