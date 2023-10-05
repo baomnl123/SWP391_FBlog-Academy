@@ -26,7 +26,7 @@ namespace backend.Controllers
         public IActionResult GetTags()
         {
             var tags = _mapper.Map<List<TagDTO>>(_tagRepository.GetTags);
-            if(!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             return Ok(tags);
         }

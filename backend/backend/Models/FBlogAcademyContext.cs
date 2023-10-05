@@ -38,7 +38,7 @@ namespace backend.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=(local);uid=sa;pwd=12345;database=FBlogAcademy;TrustServerCertificate=True");
+                optionsBuilder.UseSqlServer("Server= LAPTOP-MTQOB6QD\\ANHTAI;uid=sa;pwd=12345;database=FBlogAcademy;TrustServerCertificate=True");
             }
         }
 
@@ -49,6 +49,8 @@ namespace backend.Models
             modelBuilder.Entity<Category>(entity =>
             {
                 entity.ToTable("Category");
+
+                entity.HasIndex(e => e.AdminId, "IX_Category_admin_id");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
@@ -83,6 +85,8 @@ namespace backend.Models
 
                 entity.ToTable("CategoryTag");
 
+                entity.HasIndex(e => e.CategoryId, "IX_CategoryTag_category_id");
+
                 entity.Property(e => e.TagId).HasColumnName("tag_id");
 
                 entity.Property(e => e.CategoryId).HasColumnName("category_id");
@@ -104,6 +108,10 @@ namespace backend.Models
             {
                 entity.ToTable("Comment");
 
+                entity.HasIndex(e => e.PostId, "IX_Comment_post_id");
+
+                entity.HasIndex(e => e.UserId, "IX_Comment_user_id");
+
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Content)
@@ -111,17 +119,9 @@ namespace backend.Models
                     .HasMaxLength(255)
                     .HasColumnName("content");
 
-                entity.Property(e => e.CreatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("created_at");
-
                 entity.Property(e => e.PostId).HasColumnName("post_id");
 
                 entity.Property(e => e.Status).HasColumnName("status");
-
-                entity.Property(e => e.UpdatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("updated_at");
 
                 entity.Property(e => e.UserId).HasColumnName("user_id");
 
@@ -144,6 +144,8 @@ namespace backend.Models
                     .HasName("PK__FollowUs__838707A3A1740FC4");
 
                 entity.ToTable("FollowUser");
+
+                entity.HasIndex(e => e.FollowedId, "IX_FollowUser_followed_id");
 
                 entity.Property(e => e.FollowerId).HasColumnName("follower_id");
 
@@ -171,6 +173,10 @@ namespace backend.Models
             modelBuilder.Entity<Post>(entity =>
             {
                 entity.ToTable("Post");
+
+                entity.HasIndex(e => e.ReviewerId, "IX_Post_reviewer_id");
+
+                entity.HasIndex(e => e.UserId, "IX_Post_user_id");
 
                 entity.Property(e => e.Id)
                     .ValueGeneratedNever()
@@ -202,7 +208,6 @@ namespace backend.Models
                 entity.HasOne(d => d.Reviewer)
                     .WithMany(p => p.PostReviewers)
                     .HasForeignKey(d => d.ReviewerId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FKPost548405");
 
                 entity.HasOne(d => d.User)
@@ -218,6 +223,8 @@ namespace backend.Models
                     .HasName("PK__PostCate__638369FD53652869");
 
                 entity.ToTable("PostCategory");
+
+                entity.HasIndex(e => e.CategoryId, "IX_PostCategory_category_id");
 
                 entity.Property(e => e.PostId).HasColumnName("post_id");
 
@@ -239,6 +246,8 @@ namespace backend.Models
             modelBuilder.Entity<PostImage>(entity =>
             {
                 entity.ToTable("PostImage");
+
+                entity.HasIndex(e => e.PostId, "IX_PostImage_post_id");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
@@ -268,6 +277,8 @@ namespace backend.Models
 
                 entity.ToTable("PostList");
 
+                entity.HasIndex(e => e.SavePostId, "IX_PostList_save_post_id");
+
                 entity.Property(e => e.SaveListId).HasColumnName("save_list_id");
 
                 entity.Property(e => e.SavePostId).HasColumnName("save_post_id");
@@ -292,6 +303,8 @@ namespace backend.Models
 
                 entity.ToTable("PostTag");
 
+                entity.HasIndex(e => e.TagId, "IX_PostTag_tag_id");
+
                 entity.Property(e => e.PostId).HasColumnName("post_id");
 
                 entity.Property(e => e.TagId).HasColumnName("tag_id");
@@ -312,6 +325,8 @@ namespace backend.Models
             modelBuilder.Entity<PostVideo>(entity =>
             {
                 entity.ToTable("PostVideo");
+
+                entity.HasIndex(e => e.PostId, "IX_PostVideo_post_id");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
@@ -340,6 +355,10 @@ namespace backend.Models
                     .HasName("PK__ReportPo__39154D75FBC281C9");
 
                 entity.ToTable("ReportPost");
+
+                entity.HasIndex(e => e.AdminId, "IX_ReportPost_admin_id");
+
+                entity.HasIndex(e => e.PostId, "IX_ReportPost_post_id");
 
                 entity.Property(e => e.ReporterId).HasColumnName("reporter_id");
 
@@ -386,6 +405,8 @@ namespace backend.Models
             {
                 entity.ToTable("SaveList");
 
+                entity.HasIndex(e => e.UserId, "IX_SaveList_user_id");
+
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CreatedAt)
@@ -415,6 +436,8 @@ namespace backend.Models
             modelBuilder.Entity<Tag>(entity =>
             {
                 entity.ToTable("Tag");
+
+                entity.HasIndex(e => e.AdminId, "IX_Tag_admin_id");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
@@ -494,6 +517,8 @@ namespace backend.Models
 
                 entity.ToTable("VoteComment");
 
+                entity.HasIndex(e => e.CommentId, "IX_VoteComment_comment_id");
+
                 entity.Property(e => e.UserId).HasColumnName("user_id");
 
                 entity.Property(e => e.CommentId).HasColumnName("comment_id");
@@ -525,6 +550,8 @@ namespace backend.Models
                     .HasName("PK__VotePost__CA534F7969D23565");
 
                 entity.ToTable("VotePost");
+
+                entity.HasIndex(e => e.PostId, "IX_VotePost_post_id");
 
                 entity.Property(e => e.UserId).HasColumnName("user_id");
 
