@@ -31,7 +31,7 @@ namespace backend.Repositories.Implementors
 
         public ICollection<Post> GetPostsByTag(int tagId)
         {
-            return _context.PostTags.Where(e => e.PostId == tagId)
+            return _context.PostTags.Where(e => e.TagId == tagId)
                                     .Select(c => c.Post)
                                     .Where(c => c.Status.Equals(true)).ToList();
         }
