@@ -41,9 +41,9 @@ namespace backend.Repositories.Implementors
             return _context.Categories.Where(e => e.Id == id && e.Status.Equals(true)).FirstOrDefault();
         }
 
-        public ICollection<Post> GetPostByCategory(int categoryId)
+        public ICollection<Post> GetPostsByCategory(int categoryId)
         {
-            return _context.PostCategories.Where(e => e.PostId == categoryId)
+            return _context.PostCategories.Where(e => e.CategoryId == categoryId)
                                           .Select(c => c.Post)
                                           .Where(c => c.Status.Equals(true)).ToList();
         }

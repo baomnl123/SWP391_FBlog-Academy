@@ -10,9 +10,10 @@ namespace PokemonReviewApp.Helper
         {
             CreateMap<Category, CategoryDTO>();
             CreateMap<Tag, TagDTO>();
-            CreateMap<Post, PostDTO>();
-            CreateMap<Comment, CommentDTO>();
-            CreateMap<VoteComment, VoteCommentDTO>();
+
+            CreateMap<CategoryDTO, Category>();
+            CreateMap<TagDTO, Tag>();
+
         }
     }
 }

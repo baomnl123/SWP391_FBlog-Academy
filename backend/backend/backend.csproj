@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrates\**" />
+    <Content Remove="Migrates\**" />
+    <EmbeddedResource Remove="Migrates\**" />
+    <None Remove="Migrates\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Routing" Version="2.2.2" />
@@ -20,14 +27,15 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="RestSharp" Version="106.15.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Handlers\Implementors\" />
     <Folder Include="Enumerables\" />
-    <Folder Include="Migrates\" />
-    <Folder Include="Utils\" />
+    <Folder Include="Handlers\Implementors\" />
   </ItemGroup>
 
 </Project>

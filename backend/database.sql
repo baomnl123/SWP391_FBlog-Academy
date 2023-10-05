@@ -1,8 +1,7 @@
-/****** Object:  Database [FBlogAcademy]    Script Date: 10/3/2023 2:23:01 PM ******/
-DROP DATABASE [FBlogAcademy]
+USE [master]
 GO
 
-/****** Object:  Database [FBlogAcademy]    Script Date: 10/3/2023 2:23:01 PM ******/
+/****** Object:  Database [FBlogAcademy]    Script Date: 10/2/2023 10:09:59 AM ******/
 CREATE DATABASE [FBlogAcademy]
  CONTAINMENT = NONE
  ON  PRIMARY 
@@ -116,5 +115,4 @@ GO
 
 ALTER DATABASE [FBlogAcademy] SET  READ_WRITE 
 GO
-
 
