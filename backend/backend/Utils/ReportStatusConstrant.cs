@@ -10,28 +10,27 @@
 
         public ReportStatusConstrant()
         {
-            this._configHelper = new();
-            // Initialize _student here after _configHelper is assigned
-            _pending = _configHelper.configuration["ReportPostStatus:Pending"];
-            _declined = _configHelper.configuration["ReportPostStatus:Declined"];
-            _approved = _configHelper.configuration["ReportPostStatus:Approved"];
-            _disable = _configHelper.configuration["ReportPostStatus:Disable"];
+            this._configHelper = new ConfigHelper();
         }
 
         public string GetPendingStatus()
         {
-            return this._pending;
+            _pending = _configHelper.config["ReportPostStatus:Pending"];
+            return _pending;
         }
         public string GetDeclinedStatus()
         {
+            _declined = _configHelper.config["ReportPostStatus:Declined"];
             return this._declined;
         }
         public string GetApprovedStatus()
         {
+            _approved = _configHelper.config["ReportPostStatus:Approved"];
             return this._approved;
         }
         public string GetDisableStatus()
         {
+            _disable = _configHelper.config["ReportPostStatus:Disable"];
             return this._disable;
         }
     }

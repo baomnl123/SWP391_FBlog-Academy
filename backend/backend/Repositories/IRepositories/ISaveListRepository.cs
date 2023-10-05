@@ -5,13 +5,13 @@ namespace backend.Repositories.IRepositories
     public interface ISaveListRepository
     {
         //Get Save List
-        public ICollection<SaveList> GetAllSaveLists(User user);
-        public ICollection<SaveList> GetSaveListsByListName(User user, string listname);
+        public ICollection<SaveList>? GetAllSaveLists(int userID);
+        public SaveList? GetSaveListBySaveListID(int saveListID);
         //CRUD Save List
         public bool CreateSaveList(SaveList savelist);
         public bool UpdateSaveList(SaveList savelist);
-        public bool DisableSaveList(SaveList savelist);
+        public bool DisableSaveList(int saveListID);
         //Check Existed
-        public bool isExisted(SaveList savelist);
+        public bool isExisted(int saveListID);
     }
 }

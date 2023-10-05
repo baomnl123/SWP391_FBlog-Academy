@@ -11,27 +11,26 @@
         public UserRoleConstrant()
         {
             this._configHelper = new();
-            // Initialize _student here after _configHelper is assigned
-            _student = _configHelper.configuration["Roles:Student"];
-            _moderator = _configHelper.configuration["Roles:Moderator"];
-            _lecturer = _configHelper.configuration["Roles:Lecturer"];
-            _admin = _configHelper.configuration["Roles:Admin"];
         }
 
         public string GetStudentRole()
         {
+            _student = _configHelper.config["Roles:Student"];
             return this._student;
         }
         public string GetModeratorRole()
         {
+            _moderator = _configHelper.config["Roles:Moderator"];
             return this._moderator;
         }
         public string GetLecturerRole()
         {
+            _lecturer = _configHelper.config["Roles:Lecturer"];
             return this._lecturer;
         }
         public string GetAdminRole()
         {
+            _admin = _configHelper.config["Roles:Admin"];
             return this._admin;
         }
     }

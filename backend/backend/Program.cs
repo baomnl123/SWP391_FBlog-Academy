@@ -1,24 +1,20 @@
 
-using backend.DTO;
+using Microsoft.Extensions.DependencyInjection;
 using backend.Handlers.IHandlers;
 using backend.Handlers.Implementors;
-using backend.Models;
 using backend.Repositories.Implementors;
 using backend.Repositories.IRepositories;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.IdentityModel.Tokens;
 using RestSharp;
-using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddSingleton<IRestClient, RestClient>();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 //
 builder.Services.AddScoped<IUserRepository,UserRepository>();
-builder.Services.AddScoped<IFollowUserRepositoy, FollowUserRepository>();
-builder.Services.AddScoped<IReportPostRepositoy, ReportPostRepository>();
+builder.Services.AddScoped<IFollowUserRepository, FollowUserRepository>();
+builder.Services.AddScoped<IReportPostRepository, ReportPostRepository>();
 builder.Services.AddScoped<ISaveListRepository, SaveListRepository>();
 //
 builder.Services.AddScoped<IFollowUserHandlers, FollowUserHandlers>();

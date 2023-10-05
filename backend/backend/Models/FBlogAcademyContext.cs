@@ -34,11 +34,22 @@ namespace backend.Models
         public virtual DbSet<VoteComment> VoteComments { get; set; }
         public virtual DbSet<VotePost> VotePosts { get; set; }
 
+        private string GetConnectionString()
+        {
+            IConfiguration config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", true, true)
+                .Build();
+            var strConn = config["ConnectionStrings:FBlogDB"];
+            return strConn;
+        }
+
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=(local);uid=sa;pwd=12345;database=FBlogAcademy;TrustServerCertificate=True");
+                optionsBuilder.UseSqlServer(GetConnectionString());
             }
         }
 

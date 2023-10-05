@@ -6,10 +6,10 @@ namespace backend.Handlers.IHandlers
     public interface IFollowUserHandlers
     {
         //Get Following | Followers
-        public ICollection<UserDTO> GetAllFollowingUsers();
-        public ICollection<UserDTO> GetAllFollowedUsers();
+        public ICollection<UserDTO>? GetAllFollowerUsers(int currentUserID);
+        public ICollection<UserDTO>? GetAllFollowingUsers(int currentUserID);
         //Follow Other Student
-        public bool FollowUser(int userID);
-        public bool UnFollowUser(int userID);
+        public bool FollowOtherUser(int currentUserID, int userID);
+        public bool UnfollowUser(int currentUserID, int userID);
     }
 }

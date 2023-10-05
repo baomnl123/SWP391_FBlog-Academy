@@ -13,48 +13,104 @@ namespace backend.Repositories.Implementors
         public bool CreateSaveList(SaveList savelist)
         {
             _fblogacademycontext.SaveLists.Add(savelist);
-            if (_fblogacademycontext.SaveChanges() != 0) return true;
-            else return false;
-        }
-
-        public bool DisableSaveList(SaveList savelist)
-        {
-            if (!this.isExisted(savelist))
+            if (_fblogacademycontext.SaveChanges() == 0)
             {
                 return false;
             }
             else
             {
-                savelist.Status = false;
-                if (this.UpdateSaveList(savelist)) return true;
-                else return false;
+                return true;
             }
         }
 
-        public ICollection<SaveList> GetAllSaveLists(User user)
+        public bool DisableSaveList(int saveListID)
         {
-            var list = _fblogacademycontext.SaveLists.ToList();
-            return list;
+            if (!this.isExisted(saveListID))
+            {
+                return false;
+            }
+            else
+            {
+                var savelist = GetSaveListBySaveListID(saveListID);
+
+                if(savelist == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    savelist.Status = false;
+                    if (!this.UpdateSaveList(savelist))
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    } 
+                }
+                
+            }
         }
 
-        public ICollection<SaveList> GetSaveListsByListName(User user, string listname)
+        public SaveList? GetSaveListBySaveListID(int saveListID)
         {
-            var list = _fblogacademycontext.SaveLists.Where(u => u.Name.Equals(listname)).ToList();
-            return list;
+            try
+            {
+                var saveList = _fblogacademycontext.SaveLists.FirstOrDefault(u => u.Id.Equals(saveListID));
+                return saveList;
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
+            }
         }
 
-        public bool isExisted(SaveList savelist)
+        public ICollection<SaveList>? GetAllSaveLists(int userID)
         {
-            var checkSaveList = _fblogacademycontext.SaveLists.FirstOrDefault(u => u.Id.Equals(savelist));
-            if (checkSaveList == null) return false;
-            else return true;
+            try
+            {
+                var list = _fblogacademycontext.SaveLists.Where(u => u.UserId.Equals(userID) && u.Status == true).ToList();
+                if(list.Count == 0)
+                {
+                    return null;
+                }
+                else
+                {
+                    return list;
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
+            }
+        }
+
+        public bool isExisted(int saveListID)
+        {
+            var checkSaveList = _fblogacademycontext.SaveLists.FirstOrDefault(u => u.Id.Equals(saveListID));
+
+            if (checkSaveList == null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
 
         public bool UpdateSaveList(SaveList savelist)
         {
             _fblogacademycontext.SaveLists.Update(savelist);
-            if (_fblogacademycontext.SaveChanges() != 0) return true;
-            else return false;
+            if (_fblogacademycontext.SaveChanges() == 0)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 

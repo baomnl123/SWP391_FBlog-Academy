@@ -5,10 +5,10 @@ namespace backend.Handlers.IHandlers
 {
     public interface IReportPostHandlers
     {
-        public ReportPostDTO CreateReportPost(string reporterID, string postID, string content);
-        public ReportPostDTO UpdateReportPost(int reportPostID);
-        public ReportPostDTO UpdateReportPostStatus(int reportPostID);
-        public ReportPostDTO GetAllReportPost();
+        public ReportPostDTO? AddReportPost(int reporterID, int postID, string content);
+        public ReportPostDTO? UpdateReportPost(int reportPostID, string content);
+        public ReportPostDTO? UpdateReportPostStatus(int reportPostID, string status);
+        public ICollection<ReportPostDTO>? GetAllPendingReportPost();
         public bool DenyReportPost(int reportPostID);
     }
 }
