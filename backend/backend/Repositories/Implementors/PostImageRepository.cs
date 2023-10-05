@@ -24,14 +24,9 @@ namespace backend.Repositories.Implementors
             return Save();
         }
 
-        public ICollection<Post> GetImageByPost(int postId)
+        public ICollection<PostImage> GetImagesByPost(int postId)
         {
-            throw new NotImplementedException();
-        }
-
-        public ICollection<User> GetImageByUser(int userId)
-        {
-            throw new NotImplementedException();
+            return _context.PostImages.Where(c => c.PostId == postId).ToList();
         }
 
         public bool Save()
