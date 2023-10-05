@@ -1,22 +1,38 @@
-﻿using backend.Models;
+﻿using backend.DTO;
+using backend.Models;
 using backend.Repositories.IRepositories;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace backend.Repositories.Implementors
 {
-    public class FollowUserRepository : IFollowUserRepositoy
+    public class FollowUserRepository : IFollowUserRepository
     {
-        private readonly ServiceProvider _serviceProvider;
+        private readonly IUserRepository _userRepository;
         private readonly FBlogAcademyContext _fblogAcademyContext;
 
-        public FollowUserRepository()
+        public FollowUserRepository(IUserRepository userRepository)
         {
             _fblogAcademyContext = new();
+            _userRepository = userRepository;
         }
-        public bool CreateFollowRelationShip(FollowUser followuser)
+        public bool AddFollowRelationship(FollowUser followuser)
         {
-            _fblogAcademyContext.Add(followuser);
-            if (_fblogAcademyContext.SaveChanges() != 0) return true;
-            else return false;
+            try
+            {
+                _fblogAcademyContext.Add(followuser);
+                if (_fblogAcademyContext.SaveChanges() == 0)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                } 
+            }
+            catch (InvalidOperationException)
+            {
+                return false;
+            }
         }
 
         public bool DisableFollowRelationship(FollowUser followuser)
@@ -28,59 +44,122 @@ namespace backend.Repositories.Implementors
             else
             {
                 followuser.Status = false;
-                if (this.UpdateFollowRelationship(followuser)) return true;
-                else return false;
+                if (!this.UpdateFollowRelationship(followuser))
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
             }
-
         }
 
-        public ICollection<User> GetAllFollowerUsers(User user)
+        public ICollection<User>? GetAllFollowerUsers(User user)
         {
-            var list = _fblogAcademyContext.FollowUsers.Where(u => u.FollowedId.Equals(user.Id)).ToList();
-            List<User> userList = new List<User>();
-            var userRepository = _serviceProvider.GetRequiredService<IUserRepository>();
-            foreach (var userInList in list)
+            try
             {
-                userList.Add(userRepository.GetUserByID(userInList.FollowerId));
+                List<User> userList = new List<User>();
+                var list = _fblogAcademyContext.FollowUsers.Where(u => u.FollowedId.Equals(user.Id)).ToList();
+                if (list.Count == 0)
+                {
+                    return null;
+                }
+                else
+                {
+                    foreach (var userInList in list)
+                    {
+                        var follower = _userRepository.GetUserByID(userInList.FollowerId);
+                        if(follower != null) userList.Add(follower);
+                    }
+                    return userList;
+                }
             }
-            return userList;
-        }
-
-        public ICollection<User> GetAllFollowingUsers(User user)
-        {
-            var list = _fblogAcademyContext.FollowUsers.Where(u => u.FollowerId.Equals(user.Id)).ToList();
-            List<User> userList = new List<User>();
-            var userRepository = _serviceProvider.GetRequiredService<IUserRepository>();
-            foreach (var userInList in list)
+            catch(InvalidOperationException)
             {
-                userList.Add(userRepository.GetUserByID(userInList.FollowedId));
+                return null;
             }
-            return userList;
+            
         }
 
-        public FollowUser GetFollowRelationship(User followUser, User followedUser)
+        public ICollection<User>? GetAllFollowingUsers(User user)
         {
-            var relationship = _fblogAcademyContext.FollowUsers.FirstOrDefault(u => u.FollowedId.Equals(followedUser.Id)
-                                                                                    && u.FollowerId.Equals(followUser.Id));
-            return relationship;
+            try
+            {
+                List<User> userList = new List<User>();
+                var list = _fblogAcademyContext.FollowUsers.Where(u => u.FollowerId.Equals(user.Id)).ToList();
+                if (list.Count == 0)
+                {
+                    return null;
+                }
+                else
+                {
+                    foreach (var userInList in list)
+                    {
+                        var following = _userRepository.GetUserByID(userInList.FollowedId);
+                        if(following != null) userList.Add(following);
+                    }
+                    return userList;
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
+            }
+        }
+
+        public FollowUser? GetFollowRelationship(User followUser, User followedUser)
+        {
+            try
+            {
+                var relationship = _fblogAcademyContext.FollowUsers.FirstOrDefault(u => u.FollowedId.Equals(followedUser.Id)
+                                                                                    && u.FollowerId.Equals(followUser.Id)
+                                                                                    && u.Status == true);
+                return relationship;
+            }
+            catch(InvalidOperationException)
+            {
+                return null;
+            }
         }
 
         public bool isExisted(FollowUser followuser)
         {
-            var checkFollowUser = _fblogAcademyContext.FollowUsers.FirstOrDefault(u => u.FollowedId.Equals(followuser.FollowedId)
+            try
+            {
+                var checkFollowUser = _fblogAcademyContext.FollowUsers.FirstOrDefault(u => u.FollowedId.Equals(followuser.FollowedId)
                                                                                     && u.FollowerId.Equals(followuser.FollowerId));
-            if (checkFollowUser == null)
+                if (checkFollowUser == null)
+                {
+                    return false;
+                }
+                else return true;
+            }
+            catch(InvalidOperationException)
             {
                 return false;
             }
-            else return true;
+            
         }
 
         public bool UpdateFollowRelationship(FollowUser followuser)
         {
-            _fblogAcademyContext.Update(followuser);
-            if (_fblogAcademyContext.SaveChanges() != 0) return true;
-            else return false;
+            try
+            {
+                _fblogAcademyContext.Update(followuser);
+                if (_fblogAcademyContext.SaveChanges() == 0)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                return false;
+            }
         }
     }
 }

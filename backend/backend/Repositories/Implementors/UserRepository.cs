@@ -14,53 +14,134 @@ namespace backend.Repositories.Implementors
         public bool CreateUser(User user)
         {
             _fBlogAcademyContext.Add(user);
-            if (_fBlogAcademyContext.SaveChanges() != 0) return true;
-            else return false;
+            if (_fBlogAcademyContext.SaveChanges() == 0)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
 
         public bool DisableUser(User user)
         {
             user.Status = false;
-            if (this.UpdateUser(user)) return true;
-            return false;
+            if (!this.UpdateUser(user))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
 
-        public ICollection<User> GetAllUsers()
+        public ICollection<User>? GetAllUsers()
         {
-            var list = _fBlogAcademyContext.Users.ToList();
-            return list;
+            try
+            {
+                var list = _fBlogAcademyContext.Users.ToList();
+                if(list == null || list.Count == 0)
+                {
+                    return null;
+                }
+                else
+                {
+                    return list;
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
+            }
         }
 
-        public User GetUserByEmail(string email)
+        public User? GetUserByEmail(string email)
         {
-            var user = _fBlogAcademyContext.Users.FirstOrDefault(u => u.Email.Equals(email));
-            return user;
+            try
+            {
+                var user = _fBlogAcademyContext.Users.FirstOrDefault(u => u.Email.Equals(email) && u.Status == true);
+                return user;
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
+            }
         }
 
-        public User GetUserByID(int id)
+        public User? GetUserByID(int id)
         {
-            var user = _fBlogAcademyContext.Users.FirstOrDefault(u => u.Id.Equals(id));
-            return user;
+            try
+            {
+                var user = _fBlogAcademyContext.Users.FirstOrDefault(u => u.Id.Equals(id) && u.Status == true);
+                return user;
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
+            }
         }
 
-        public ICollection<User> GetUsersByUsername(string username)
+        public ICollection<User>? GetUsersByUsername(string username)
         {
-            var list = _fBlogAcademyContext.Users.Where(u => u.Name.Equals(username)).ToList();
-            return list;
+            try
+            {
+                var list = _fBlogAcademyContext.Users.Where(u => u.Name.Equals(username) && u.Status == true).ToList();
+                if (list == null || list.Count == 0)
+                {
+                    return null;
+                }
+                else
+                {
+                    return list;
+                }
+            }
+            catch(InvalidOperationException)
+            {
+                return null;
+            }
         }
 
         public bool isExisted(User user)
         {
-            var checkUser = _fBlogAcademyContext.Users.FirstOrDefault(u => u.Id.Equals(user.Id));
-            if (checkUser == null) return false;
-            else return true;
+            try
+            {
+                var checkUser = _fBlogAcademyContext.Users.FirstOrDefault(u => u.Id.Equals(user.Id) && u.Status);
+
+                if (checkUser == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                return false;
+            }
         }
 
         public bool UpdateUser(User user)
         {
-            _fBlogAcademyContext.Update(user);
-            if (_fBlogAcademyContext.SaveChanges() != 0) return true;
-            else return false;
+            try
+            {
+                _fBlogAcademyContext.Update(user);
+                if (_fBlogAcademyContext.SaveChanges() == 0)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                return false;
+            }
         }
     }
 }

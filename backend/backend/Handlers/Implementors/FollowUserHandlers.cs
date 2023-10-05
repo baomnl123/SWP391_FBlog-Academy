@@ -1,4 +1,5 @@
-﻿using backend.DTO;
+﻿using AutoMapper;
+using backend.DTO;
 using backend.Handlers.IHandlers;
 using backend.Models;
 using backend.Repositories.IRepositories;
@@ -8,66 +9,132 @@ namespace backend.Handlers.Implementors
 {
     public class FollowUserHandlers : IFollowUserHandlers
     {
-        private readonly ServiceProvider _serviceProvider;
-        private readonly ISession _session;
-        private readonly IFollowUserRepositoy _followUserRepositoy;
+        private readonly IFollowUserRepository _followUserRepositoy;
         private readonly IUserRepository _userRepository;
-        public FollowUserHandlers() {
-            _followUserRepositoy = _serviceProvider.GetRequiredService<IFollowUserRepositoy>();
-            _userRepository = _serviceProvider.GetRequiredService<IUserRepository>();
-        }
-        public bool FollowUser(int userID)
+        private readonly IMapper _mapper;
+        public FollowUserHandlers(IMapper mapper, IFollowUserRepository followUserRepositoy, IUserRepository userRepository)
         {
-            var currentUserID32 = _session.GetInt32("userID");
+            _followUserRepositoy = followUserRepositoy;
+            _userRepository = userRepository;
+            _mapper = mapper;
+        }
+        public bool FollowOtherUser(int currentUserID, int userID)
+        {
+            //Processing
+            var currentUser = _userRepository.GetUserByID(currentUserID);
+            var followedUser = _userRepository.GetUserByID(userID);
 
-            if (currentUserID32 == null)
+            if (currentUser == null || followedUser == null)
             {
                 return false;
             }
             else
             {
-                var currentUserID = currentUserID32 ?? default;
-                var currentUser = _userRepository.GetUserByID(currentUserID);
-                var followedUser = _userRepository.GetUserByID(userID);
+                var followRelationship = _followUserRepositoy.GetFollowRelationship(currentUser, followedUser);
 
-                var followRelationship = _followUserRepositoy.GetFollowRelationship(currentUser,followedUser);
-
-                if(followRelationship != null)
+                if (followRelationship != null)
                 {
                     return false;
                 }
                 else
                 {
-                    
+                    FollowUser newRelationship = new()
+                    {
+                        FollowerId = currentUserID,
+                        FollowedId = userID,
+                        Status = true,
+                        CreatedAt = DateTime.Now,
+                    };
+                    if (!_followUserRepositoy.AddFollowRelationship(newRelationship)) return false;
+                }
+                return true;
+            }
+        }
+
+        public ICollection<UserDTO>? GetAllFollowerUsers(int currentUserID)
+        {
+            List<UserDTO> listResult = new();
+            var currentUser = _userRepository.GetUserByID(currentUserID);
+            if (currentUser == null)
+            {
+                return null;
+            }
+            else
+            {
+                var list = _followUserRepositoy.GetAllFollowerUsers(currentUser);
+                if (list == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    foreach (var user in list)
+                    {
+                        listResult.Add(_mapper.Map<UserDTO>(user));
+                    }
+                    return listResult;
                 }
             }
-            return true;
         }
 
-        public ICollection<UserDTO> GetAllFollowedUsers()
+        public ICollection<UserDTO>? GetAllFollowingUsers(int currentUserID)
         {
-            throw new NotImplementedException();
+            List<UserDTO> listResult = new();
+            //Get currentUserData
+            var currentUser = _userRepository.GetUserByID(currentUserID);
+            //Check null
+            if (currentUser == null)
+            {
+                return null;
+            }
+            else
+            {
+                //Get FollowingRelationship
+                var list = _followUserRepositoy.GetAllFollowingUsers(currentUser);
+
+                if (list == null || list.Count == 0)
+                {
+                    return null;
+                }
+                else
+                {
+                    //Map To UserDTO
+                    foreach (var user in list)
+                    {
+                        listResult.Add(_mapper.Map<UserDTO>(user));
+                    }
+                    return listResult;
+                }
+            }
         }
 
-        public ICollection<UserDTO> GetAllFollowingUsers()
+        public bool UnfollowUser(int currentUserID, int userID)
         {
-            throw new NotImplementedException();
+            //Get Users Data
+            var currentUser = _userRepository.GetUserByID(currentUserID);
+            var followedUser = _userRepository.GetUserByID(userID);
+            //Check null
+            if (currentUser == null || followedUser == null)
+            {
+                return false;
+            }
+            else
+            {
+                //Get Follow Relationship
+                var followRelationship = _followUserRepositoy.GetFollowRelationship(currentUser, followedUser);
+                //Check null
+                if (followRelationship == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    //Disable Follow Relationship
+                    followRelationship.Status = false;
+                    if (!_followUserRepositoy.UpdateFollowRelationship(followRelationship)) return false;
+                }
+                return true;
+            }
         }
-
-        public ICollection<UserDTO> GetFollowedUsersByUsername(string username)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ICollection<UserDTO> GetFollowingUsersByUsername(string username)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool UnFollowUser(int userID)
-        {
-            throw new NotImplementedException();
-        }
-
     }
 }
