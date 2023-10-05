@@ -11,13 +11,11 @@ namespace backend.Controllers
     public class TagController : Controller
     {
         private readonly ITagRepository _tagRepository;
-        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
-        public TagController(ITagRepository tagRepository, IUserRepository userRepository, IMapper mapper)
+        public TagController(ITagRepository tagRepository, IMapper mapper)
         {
             _tagRepository = tagRepository;
-            _userRepository = userRepository;
             _mapper = mapper;
         }
 
@@ -25,7 +23,7 @@ namespace backend.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<Tag>))]
         public IActionResult GetTags()
         {
-            var tags = _mapper.Map<List<TagDTO>>(_tagRepository.GetTags);
+            var tags = _mapper.Map<List<TagDTO>>(_tagRepository.GetTags());
             if(!ModelState.IsValid) return BadRequest(ModelState);
 
             return Ok(tags);
@@ -49,22 +47,21 @@ namespace backend.Controllers
         [ProducesResponseType(400)]
         public IActionResult GetPostByTag(int tagId)
         {
-            var posts = _mapper.Map<List<Post>>(_tagRepository.GetPostByTag(tagId));
+            var posts = _mapper.Map<List<Post>>(_tagRepository.GetPostsByTag(tagId));
 
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             return Ok(posts);
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public IActionResult CreateTag([FromQuery] int adminId, Tag tag)
+        public IActionResult CreateTag([FromBody] TagDTO tag)
         {
             if (tag == null) return BadRequest(ModelState);
 
-            var isTagExists = _tagRepository.TagExists(tag.Id);
-            if (isTagExists != null)
+            if (_tagRepository.TagExists(tag.Id))
             {
                 ModelState.AddModelError("", "Tag already exists!");
                 return StatusCode(422, ModelState);
@@ -73,7 +70,6 @@ namespace backend.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var tagMap = _mapper.Map<Tag>(tag);
-            tagMap.Admin = _userRepository.GetUserByID(adminId);
 
             if (!_tagRepository.CreateTag(tagMap))
             {
@@ -84,7 +80,7 @@ namespace backend.Controllers
             return Ok("Successfully create!");
         }
 
-        [HttpPut("{tagId}")]
+        [HttpPut("{tagId}/update")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]

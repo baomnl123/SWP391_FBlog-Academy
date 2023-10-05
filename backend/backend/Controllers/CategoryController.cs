@@ -11,13 +11,11 @@ namespace backend.Controllers
     public class CategoryController : Controller
     {
         private readonly ICategoryRepository _categoryRepository;
-        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
         public CategoryController(ICategoryRepository categoryRepository, IUserRepository userRepository, IMapper mapper) 
         {
             _categoryRepository = categoryRepository;
-            _userRepository = userRepository;
             _mapper = mapper;
         }
 
@@ -47,24 +45,23 @@ namespace backend.Controllers
         [HttpGet("{categoryId}/post")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
         [ProducesResponseType(400)]
-        public IActionResult GetPostByCategory(int categoryId)
+        public IActionResult GetPostsByCategory(int categoryId)
         {
-            var posts = _mapper.Map<List<Post>>(_categoryRepository.GetPostByCategory(categoryId));
+            var posts = _mapper.Map<List<Post>>(_categoryRepository.GetPostsByCategory(categoryId));
 
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             return Ok(posts);
         }
 
-        [HttpPost]
+        [HttpPost("create/{categoryId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public IActionResult CreateCategory([FromQuery] int adminId, Category category)
+        public IActionResult CreateCategory([FromBody] CategoryDTO category)
         {
             if (category == null) return BadRequest(ModelState);
 
-            var isCategoryExists = _categoryRepository.CategoryExists(category.Id);
-            if(isCategoryExists != null)
+            if(_categoryRepository.CategoryExists(category.Id))
             {
                 ModelState.AddModelError("", "Category already exists!");
                 return StatusCode(422, ModelState);
@@ -73,7 +70,6 @@ namespace backend.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var categoryMap = _mapper.Map<Category>(category);
-            categoryMap.Admin = _userRepository.GetUserByID(adminId);
 
             if(!_categoryRepository.CreateCategory(categoryMap))
             {
@@ -84,20 +80,20 @@ namespace backend.Controllers
             return Ok("Successfully create!");
         }
 
-        [HttpPut("{categoryId}")]
+        [HttpPut("update/{categoryId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateCategory(int categoryId, [FromBody] CategoryDTO updateCategoryName)
+        public IActionResult UpdateCategory(int categoryId, [FromBody] CategoryDTO category)
         {
-            if (updateCategoryName == null) return BadRequest(ModelState);
+            if (category == null) return BadRequest(ModelState);
 
             if(!_categoryRepository.CategoryExists(categoryId))
                 return NotFound();
 
             if (!ModelState.IsValid) return BadRequest();
 
-            var categoryMap = _mapper.Map<Category>(updateCategoryName);
+            var categoryMap = _mapper.Map<Category>(category);
             if(!_categoryRepository.UpdateCategory(categoryMap))
             {
                 ModelState.AddModelError("", "Something went wrong updating review");

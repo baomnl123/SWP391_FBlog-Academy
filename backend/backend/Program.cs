@@ -11,6 +11,10 @@ using System.Security.Claims;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+//
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ITagRepository, TagRepository>();
 //
 builder.Services.AddScoped<IUserRepository,UserRepository>();
 builder.Services.AddScoped<IFollowUserRepositoy, FollowUserRepository>();
