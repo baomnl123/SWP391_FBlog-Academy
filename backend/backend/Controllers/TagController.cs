@@ -49,7 +49,7 @@ namespace backend.Controllers
         [ProducesResponseType(400)]
         public IActionResult GetPostByTag(int tagId)
         {
-            var posts = _mapper.Map<List<Post>>(_tagRepository.GetPostByTag(tagId));
+            var posts = _mapper.Map<List<Post>>(_tagRepository.GetPostsByTag(tagId));
 
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
