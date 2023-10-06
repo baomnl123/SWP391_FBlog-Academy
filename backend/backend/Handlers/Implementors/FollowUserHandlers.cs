@@ -3,7 +3,6 @@ using backend.DTO;
 using backend.Handlers.IHandlers;
 using backend.Models;
 using backend.Repositories.IRepositories;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace backend.Handlers.Implementors
 {
@@ -18,63 +17,89 @@ namespace backend.Handlers.Implementors
             _userRepository = userRepository;
             _mapper = mapper;
         }
-        public bool FollowOtherUser(int currentUserID, int userID)
+        public FollowUserDTO? FollowOtherUser(int currentUserID, int userID)
         {
-            //Processing
+            //Get current User and followUser info
             var currentUser = _userRepository.GetUserByID(currentUserID);
             var followedUser = _userRepository.GetUserByID(userID);
-
+            //Check if null
             if (currentUser == null || followedUser == null)
             {
-                return false;
+                return null;
             }
-            else
+            //Check if self-follow
+            if (currentUser == followedUser)
             {
-                var followRelationship = _followUserRepositoy.GetFollowRelationship(currentUser, followedUser);
-
-                if (followRelationship != null)
-                {
-                    return false;
-                }
-                else
-                {
-                    FollowUser newRelationship = new()
-                    {
-                        FollowerId = currentUserID,
-                        FollowedId = userID,
-                        Status = true,
-                        CreatedAt = DateTime.Now,
-                    };
-                    if (!_followUserRepositoy.AddFollowRelationship(newRelationship)) return false;
-                }
-                return true;
+                return null;
             }
+            //Get follow relationship of 2 users
+            var followRelationship = _followUserRepositoy.GetFollowRelationship(currentUser, followedUser);
+            //If follow relationship is exist
+            if (followRelationship != null)
+            {
+                //If it is available then return nothing
+                if (followRelationship.Status == true)
+                {
+                    return null;
+                }
+                //If it is not available then reactivate
+                followRelationship.Status = true;
+                followRelationship.CreatedAt = DateTime.Now;
+                //Update the relationship
+                if (!_followUserRepositoy.UpdateFollowRelationship(followRelationship))
+                {
+                    return null;
+                }
+                //Return
+                return _mapper.Map<FollowUserDTO>(followRelationship);
+            }
+            //If follow relationship is not exist then create new one
+            FollowUser newRelationship = new()
+            {
+                FollowerId = currentUserID,
+                FollowedId = userID,
+                Status = true,
+                CreatedAt = DateTime.Now,
+            };
+            //Add relationship
+            if (!_followUserRepositoy.AddFollowRelationship(newRelationship))
+            {
+                return null;
+            }
+            //Return
+            return _mapper.Map<FollowUserDTO>(newRelationship);
         }
 
         public ICollection<UserDTO>? GetAllFollowerUsers(int currentUserID)
         {
+            //Init list
             List<UserDTO> listResult = new();
+            //Get current user info
             var currentUser = _userRepository.GetUserByID(currentUserID);
-            if (currentUser == null)
+            //if user is not avaiable
+            if (currentUser == null || currentUser.Status == false)
             {
                 return null;
             }
-            else
+            //get list of its followers
+            var list = _followUserRepositoy.GetAllFollowerUsers(currentUser);
+            //return nothing if it is empty
+            if (list == null || list.Count == 0)
             {
-                var list = _followUserRepositoy.GetAllFollowerUsers(currentUser);
-                if (list == null)
+                return null;
+            }
+            //map to userdto
+            foreach (var user in list)
+            {
+                //check status
+                if (user.Status)
                 {
-                    return null;
-                }
-                else
-                {
-                    foreach (var user in list)
-                    {
-                        listResult.Add(_mapper.Map<UserDTO>(user));
-                    }
-                    return listResult;
+                    //map to dto
+                    listResult.Add(_mapper.Map<UserDTO>(user));
                 }
             }
+            //return list
+            return listResult;
         }
 
         public ICollection<UserDTO>? GetAllFollowingUsers(int currentUserID)
@@ -91,7 +116,7 @@ namespace backend.Handlers.Implementors
             {
                 //Get FollowingRelationship
                 var list = _followUserRepositoy.GetAllFollowingUsers(currentUser);
-
+                //if list is empty return nothing
                 if (list == null || list.Count == 0)
                 {
                     return null;
@@ -103,6 +128,7 @@ namespace backend.Handlers.Implementors
                     {
                         listResult.Add(_mapper.Map<UserDTO>(user));
                     }
+                    //return list
                     return listResult;
                 }
             }
@@ -113,28 +139,37 @@ namespace backend.Handlers.Implementors
             //Get Users Data
             var currentUser = _userRepository.GetUserByID(currentUserID);
             var followedUser = _userRepository.GetUserByID(userID);
-            //Check null
-            if (currentUser == null || followedUser == null)
+
+            //if current user is unavailable then return nothing
+            if (currentUser == null || currentUser.Status == false)
             {
                 return false;
             }
-            else
+            //if followed user is unavailable then return nothing
+            if (followedUser == null || followedUser.Status == false)
             {
-                //Get Follow Relationship
-                var followRelationship = _followUserRepositoy.GetFollowRelationship(currentUser, followedUser);
-                //Check null
-                if (followRelationship == null)
-                {
-                    return false;
-                }
-                else
-                {
-                    //Disable Follow Relationship
-                    followRelationship.Status = false;
-                    if (!_followUserRepositoy.UpdateFollowRelationship(followRelationship)) return false;
-                }
-                return true;
+                return false;
             }
+            //if user self-follow then return nothing
+            if (currentUser == followedUser)
+            {
+                return false;
+            }
+            //Get Follow Relationship
+            var followRelationship = _followUserRepositoy.GetFollowRelationship(currentUser, followedUser);
+            //if null or already disabled then return nothing
+            if (followRelationship == null || followRelationship.Status == false)
+            {
+                return false;
+            }
+            //Disable Follow Relationship
+            followRelationship.Status = false;
+            if (!_followUserRepositoy.UpdateFollowRelationship(followRelationship))
+            {
+                return false;
+            }
+            return true;
         }
     }
 }
+

@@ -67,14 +67,6 @@ D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.
 D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\win\lib\netstandard2.0\System.Runtime.Caching.dll
 D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
 D:\Documents\FPT\Semester 5\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.0\System.Windows.Extensions.dll
-C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.csproj.AssemblyReference.cache
-C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.GeneratedMSBuildEditorConfig.editorconfig
-C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.AssemblyInfoInputs.cache
-C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.AssemblyInfo.cs
-C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.csproj.CoreCompileInputs.cache
-C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.MvcApplicationPartsAssemblyInfo.cs
-C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.MvcApplicationPartsAssemblyInfo.cache
-C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.sourcelink.json
 C:\FPT\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\appsettings.Development.json
 C:\FPT\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\appsettings.json
 C:\FPT\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\global.json
@@ -307,13 +299,15 @@ C:\FPT\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\win\lib\ne
 C:\FPT\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\win\lib\netstandard2.0\System.Runtime.Caching.dll
 C:\FPT\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Security.Cryptography.ProtectedData.dll
 C:\FPT\SWP391_FBlog-Academy\backend\backend\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
+C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.csproj.AssemblyReference.cache
+C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.GeneratedMSBuildEditorConfig.editorconfig
+C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.AssemblyInfoInputs.cache
+C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.AssemblyInfo.cs
+C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.csproj.CoreCompileInputs.cache
+C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.MvcApplicationPartsAssemblyInfo.cs
+C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.MvcApplicationPartsAssemblyInfo.cache
 C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\staticwebassets.build.json
 C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\staticwebassets.development.json
-C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\staticwebassets\msbuild.backend.Microsoft.AspNetCore.StaticWebAssets.props
-C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\staticwebassets\msbuild.build.backend.props
-C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\staticwebassets\msbuild.buildMultiTargeting.backend.props
-C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\staticwebassets\msbuild.buildTransitive.backend.props
-C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\staticwebassets.pack.json
 C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\scopedcss\bundle\backend.styles.css
 C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.csproj.CopyComplete
 C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.dll
@@ -321,3 +315,9 @@ C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\refint\backend.dll
 C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.pdb
 C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.genruntimeconfig.cache
 C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\ref\backend.dll
+C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\backend.sourcelink.json
+C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\staticwebassets\msbuild.backend.Microsoft.AspNetCore.StaticWebAssets.props
+C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\staticwebassets\msbuild.build.backend.props
+C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\staticwebassets\msbuild.buildMultiTargeting.backend.props
+C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\staticwebassets\msbuild.buildTransitive.backend.props
+C:\FPT\SWP391_FBlog-Academy\backend\backend\obj\Debug\net6.0\staticwebassets.pack.json

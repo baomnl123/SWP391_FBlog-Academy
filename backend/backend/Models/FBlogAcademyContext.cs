@@ -481,6 +481,7 @@ namespace backend.Models
                     .HasColumnName("name");
 
                 entity.Property(e => e.Password)
+                    .IsRequired()
                     .HasMaxLength(255)
                     .HasColumnName("password");
 

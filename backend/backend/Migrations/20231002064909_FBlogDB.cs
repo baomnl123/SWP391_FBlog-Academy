@@ -14,7 +14,7 @@ namespace backend.Migrations
                     id = table.Column<int>(type: "int", nullable: false),
                     name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    password = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    password = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     role = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime", nullable: false),
                     updated_at = table.Column<DateTime>(type: "datetime", nullable: true),
@@ -210,7 +210,7 @@ namespace backend.Migrations
                 {
                     reporter_id = table.Column<int>(type: "int", nullable: false),
                     post_id = table.Column<int>(type: "int", nullable: false),
-                    admin_id = table.Column<int>(type: "int", nullable: false),
+                    admin_id = table.Column<int>(type: "int", nullable: true),
                     content = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     status = table.Column<string>(type: "char(10)", unicode: false, fixedLength: true, maxLength: 10, nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime", nullable: false)

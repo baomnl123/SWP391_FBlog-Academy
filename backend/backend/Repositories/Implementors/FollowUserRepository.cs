@@ -113,8 +113,7 @@ namespace backend.Repositories.Implementors
             try
             {
                 var relationship = _fblogAcademyContext.FollowUsers.FirstOrDefault(u => u.FollowedId.Equals(followedUser.Id)
-                                                                                    && u.FollowerId.Equals(followUser.Id)
-                                                                                    && u.Status == true);
+                                                                                    && u.FollowerId.Equals(followUser.Id));
                 return relationship;
             }
             catch(InvalidOperationException)

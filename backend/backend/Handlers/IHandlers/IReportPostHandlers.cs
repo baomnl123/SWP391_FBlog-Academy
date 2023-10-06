@@ -1,14 +1,13 @@
 ﻿using backend.DTO;
-using System.Transactions;
 
 namespace backend.Handlers.IHandlers
 {
     public interface IReportPostHandlers
     {
         public ReportPostDTO? AddReportPost(int reporterID, int postID, string content);
-        public ReportPostDTO? UpdateReportPost(int reportPostID, string content);
-        public ReportPostDTO? UpdateReportPostStatus(int reportPostID, string status);
+        public ReportPostDTO? UpdateReportPost(int reportPostID, int postID, string content);
+        public ReportPostDTO? UpdateReportStatus(int reportPostID, int postID, string status);
         public ICollection<ReportPostDTO>? GetAllPendingReportPost();
-        public bool DenyReportPost(int reportPostID);
+        public bool DenyReportPost(int reportPostID, int postID);
     }
 }

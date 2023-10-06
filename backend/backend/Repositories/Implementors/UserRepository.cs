@@ -1,6 +1,5 @@
 ﻿using backend.Models;
 using backend.Repositories.IRepositories;
-using System.Collections.Generic;
 
 namespace backend.Repositories.Implementors
 {
@@ -61,7 +60,7 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                var user = _fBlogAcademyContext.Users.FirstOrDefault(u => u.Email.Equals(email) && u.Status == true);
+                var user = _fBlogAcademyContext.Users.FirstOrDefault(u => u.Email.Equals(email));
                 return user;
             }
             catch (InvalidOperationException)
@@ -74,7 +73,7 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                var user = _fBlogAcademyContext.Users.FirstOrDefault(u => u.Id.Equals(id) && u.Status == true);
+                var user = _fBlogAcademyContext.Users.FirstOrDefault(u => u.Id.Equals(id));
                 return user;
             }
             catch (InvalidOperationException)
@@ -87,7 +86,7 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                var list = _fBlogAcademyContext.Users.Where(u => u.Name.Equals(username) && u.Status == true).ToList();
+                var list = _fBlogAcademyContext.Users.Where(u => u.Name.Equals(username)).ToList();
                 if (list == null || list.Count == 0)
                 {
                     return null;
@@ -107,7 +106,7 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                var checkUser = _fBlogAcademyContext.Users.FirstOrDefault(u => u.Id.Equals(user.Id) && u.Status);
+                var checkUser = _fBlogAcademyContext.Users.FirstOrDefault(u => u.Id.Equals(user.Id));
 
                 if (checkUser == null)
                 {
