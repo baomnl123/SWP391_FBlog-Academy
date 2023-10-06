@@ -15,12 +15,12 @@ namespace backend.Handlers.IHandlers
         //Update post
         public PostDTO UpdatePost(int userId, string content);
         //Delete post
-        public PostDTO DeletePost(int userId);
+        public bool DeletePost(int userId);
         //View pending post's list
         public ICollection<PostDTO> ViewPendingPostList();
         //Approve post
-        public PostDTO ApprovePost(PostDTO post);
+        public bool ApprovePost(PostDTO post);
         //Deny post
-        public PostDTO DenyPost(PostDTO post);
+        public bool DenyPost(PostDTO post);
     }
 }

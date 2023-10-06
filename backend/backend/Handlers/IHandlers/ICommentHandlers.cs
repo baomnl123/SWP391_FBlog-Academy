@@ -6,13 +6,11 @@ namespace backend.Handlers.IHandlers
     {
         //View Comments
         public ICollection<ICommentHandlers> ViewComments();
-        //Create comments
+        //Create comment
         public CommentDTO CreateComment(int userId, string content);
-        //Update comments
+        //Update comment
         public CommentDTO UpdateComment(int userId, string content);
-        //Delete comments
-        public CommentDTO DeleteComment(int userId);
-        //vote comments
-        public VoteCommentDTO VoteComment(int userId, int postId, bool vote);
+        //Delete comment
+        public bool DeleteComment(int userId);
     }
 }
