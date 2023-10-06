@@ -21,6 +21,8 @@ builder.Services.AddScoped<IFollowUserHandlers, FollowUserHandlers>();
 builder.Services.AddScoped<IReportPostHandlers, ReportPostHandlers>();
 builder.Services.AddScoped<ISaveListHandlers, SaveListHandlers>();
 builder.Services.AddScoped<IUserHandlers, UserHandlers>();
+//
+builder.Services.AddScoped<IPostHandlers, PostHandlers>();
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();

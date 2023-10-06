@@ -35,7 +35,6 @@
 
   <ItemGroup>
     <Folder Include="Enumerables\" />
-    <Folder Include="Handlers\Implementors\" />
   </ItemGroup>
 
 </Project>
