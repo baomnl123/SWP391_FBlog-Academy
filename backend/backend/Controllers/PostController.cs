@@ -24,8 +24,7 @@ namespace backend.Controllers
             //check not null to return
             if(existed != null)
             {
-                List<PostDTO> listResult = existed.ToList();
-                return Ok(listResult);
+                return Ok(existed.ToList());
             }
             return NotFound();
         }
