@@ -11,12 +11,18 @@ namespace backend.Repositories.Implementors
             _fBlogAcademyContext = new();
         }
 
+        public ICollection<Post> GetAllPosts()
+        {
+           return _fBlogAcademyContext.Posts.Where(p => p.Status == true).ToList();
+        }
+
         public ICollection<Post>? SearchPostsByContent(string content)
         {
             try
             {
-                var listPost = _fBlogAcademyContext.Posts.Where(p => p.Content.Contains(content)).OrderByDescending(p => p.CreatedAt).ToList();
-                if (listPost.Any())
+                var listPost = _fBlogAcademyContext.Posts.Where(p => p.Status == true && p.Content.Contains(content))
+                                                            .OrderByDescending(p => p.CreatedAt).ToList();
+                if (listPost != null)
                 {
                     return listPost;
                 }

@@ -4,6 +4,8 @@ namespace backend.Handlers.IHandlers
 {
     public interface IPostHandlers
     {
+        //Search all posts
+        public ICollection<PostDTO> GetAllPosts();
         //Search Posts which contain content.
         public ICollection<PostDTO>? SearchPostsByContent(string content);
         //Search Posts belong to a subject code

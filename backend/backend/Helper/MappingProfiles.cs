@@ -19,6 +19,7 @@ namespace PokemonReviewApp.Helper
             CreateMap<CategoryDTO, Category>();
             CreateMap<TagDTO, Tag>();
 
+            CreateMap<Post, PostDTO>();
         }
     }
 }

@@ -7,12 +7,12 @@ namespace backend.Handlers.Implementors
 {
     public class PostHandlers : IPostHandlers
     {
-        private readonly IPostRepository _repository;
+        private readonly IPostRepository _postRepository;
         private readonly IMapper _mapper;
 
         public PostHandlers(IPostRepository postRepository, IMapper mapper)
         {
-            _repository = postRepository;
+            _postRepository = postRepository;
             _mapper = mapper;
         }
         public bool ApprovePost(int postId)
@@ -35,22 +35,25 @@ namespace backend.Handlers.Implementors
             throw new NotImplementedException();
         }
 
+        public ICollection<PostDTO> GetAllPosts()
+        {
+            var existed = _postRepository.GetAllPosts();
+            return _mapper.Map<List<PostDTO>>(existed);
+        }
+
         public ICollection<PostDTO>? SearchPostsByContent(string content)
         {
             //init listPost to return
             List<PostDTO> listPost = new List<PostDTO>();
             
             //Search all posts which contain content
-            var list = _repository.SearchPostsByContent(content);
+            var list = _postRepository.SearchPostsByContent(content);
 
             //check null
             if (list != null)
             {
                 //Map to PostDTO
-                foreach (var post in list)
-                {
-                    listPost.Add(_mapper.Map<PostDTO>(post));
-                }
+                listPost = _mapper.Map<List<PostDTO>>(list);
                 return listPost;
             }
             return null;
