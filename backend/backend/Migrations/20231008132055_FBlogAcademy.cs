@@ -86,7 +86,7 @@ namespace backend.Migrations
                     created_at = table.Column<DateTime>(type: "datetime", nullable: false),
                     updated_at = table.Column<DateTime>(type: "datetime", nullable: true),
                     is_approved = table.Column<bool>(type: "bit", nullable: true),
-                    is_saved = table.Column<int>(type: "int", nullable: true),
+                    is_saved = table.Column<bool>(type: "bit", nullable: true),
                     status = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -161,7 +161,9 @@ namespace backend.Migrations
                     post_id = table.Column<int>(type: "int", nullable: false),
                     user_id = table.Column<int>(type: "int", nullable: false),
                     content = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    status = table.Column<bool>(type: "bit", nullable: false)
+                    status = table.Column<bool>(type: "bit", nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime", nullable: true),
+                    updated_at = table.Column<DateTime>(type: "datetime", nullable: true)
                 },
                 constraints: table =>
                 {
