@@ -9,7 +9,17 @@ namespace backend.Repositories.Implementors
 
         public PostImageRepository(FBlogAcademyContext context)
         {
-            _context = context;
+            _context = new();
+        }
+
+        public PostImage? GetImagesById(int imageId)
+        {
+            return _context.PostImages.FirstOrDefault(c => c.Id == imageId);
+        }
+
+        public ICollection<PostImage> GetImagesByPost(int postId)
+        {
+            return _context.PostImages.Where(c => c.PostId == postId).ToList();
         }
 
         public bool CreateImage(PostImage image)
@@ -18,26 +28,30 @@ namespace backend.Repositories.Implementors
             return Save();
         }
 
-        public bool DeleteImage(PostImage image)
+        public bool UpdateImage(PostImage image)
         {
+            _context.Update(image);
+            return Save();
+        }
+
+        public bool DisableImage(PostImage image)
+        {
+            image.Status = false;
             _context.Remove(image);
             return Save();
         }
 
-        public ICollection<PostImage> GetImagesByPost(int postId)
+        public bool EnableImage(PostImage image)
         {
-            return _context.PostImages.Where(c => c.PostId == postId).ToList();
+            image.Status = true;
+            _context.Update(image);
+            return Save();
         }
 
         public bool Save()
         {
             var saved = _context.SaveChanges();
             return saved > 0;
-        }
-
-        public bool UpdateImage(PostImage image)
-        {
-            throw new NotImplementedException();
         }
     }
 }

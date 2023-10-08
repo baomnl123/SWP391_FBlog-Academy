@@ -8,11 +8,13 @@ namespace PokemonReviewApp.Helper
     {
         public MappingProfiles()
         {
-            CreateMap<Category, CategoryDTO>();
             CreateMap<Tag, TagDTO>();
+            CreateMap<Category, CategoryDTO>();
+            CreateMap<PostImage, PostImageDTO>();
+            CreateMap<PostVideo, PostVideoDTO>();
 
-            CreateMap<CategoryDTO, Category>();
             CreateMap<TagDTO, Tag>();
+            CreateMap<CategoryDTO, Category>();
 
         }
     }
