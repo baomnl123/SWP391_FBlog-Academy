@@ -14,7 +14,7 @@ namespace backend.Controllers
             _followUserHandlers = followUserHandlers;
         }
 
-        [HttpGet("follower/{currentUserID}")]
+        [HttpGet("/{currentUserID}/follower")]
         public IActionResult GetAllFollower(int currentUserID)
         {
             var listFollowers = (List<UserDTO>)_followUserHandlers.GetAllFollowerUsers(currentUserID);
@@ -24,7 +24,7 @@ namespace backend.Controllers
             }
             return Ok(listFollowers);
         }
-        [HttpGet("followed/{currentUserID}")]
+        [HttpGet("{currentUserID}/following")]
         public IActionResult GetAllFollowing(int currentUserID)
         {
             var listFollowings = (List<UserDTO>)_followUserHandlers.GetAllFollowingUsers(currentUserID);
@@ -47,11 +47,12 @@ namespace backend.Controllers
         [HttpDelete("follow")]
         public IActionResult Unfollow([FromForm] int currentUserID, [FromForm] int userID)
         {
-            if (!_followUserHandlers.UnfollowUser(currentUserID, userID))
+            var user = _followUserHandlers.UnfollowUser(currentUserID, userID);
+            if(user == null)
             {
                 return BadRequest();
             }
-            return Ok();
+            return Ok(user);
         }
     }
 }

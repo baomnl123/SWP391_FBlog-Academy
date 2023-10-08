@@ -461,7 +461,6 @@ namespace backend.Models
                     .IsUnique();
 
                 entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
                     .HasColumnName("id");
 
                 entity.Property(e => e.CreatedAt)

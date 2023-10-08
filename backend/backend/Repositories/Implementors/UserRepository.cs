@@ -23,24 +23,24 @@ namespace backend.Repositories.Implementors
             }
         }
 
-        public bool DisableUser(User user)
-        {
-            user.Status = false;
-            if (!this.UpdateUser(user))
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
+        //public bool DisableUser(User user)
+        //{
+        //    user.Status = false;
+        //    if (!this.UpdateUser(user))
+        //    {
+        //        return false;
+        //    }
+        //    else
+        //    {
+        //        return true;
+        //    }
+        //}
 
         public ICollection<User>? GetAllUsers()
         {
             try
             {
-                var list = _fBlogAcademyContext.Users.ToList();
+                var list = _fBlogAcademyContext.Users.OrderBy(u => u.Name).ToList();
                 if(list == null || list.Count == 0)
                 {
                     return null;
@@ -55,8 +55,24 @@ namespace backend.Repositories.Implementors
                 return null;
             }
         }
+        public ICollection<User>? GetAllDisableUser()
+        {
+            try
+            {
+                var userList = _fBlogAcademyContext.Users.Where(u => !u.Status).OrderBy(u => u.Name).ToList();
+                if (userList == null || userList.Count == 0)
+                {
+                    return null;
+                }
+                return userList;
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
+            }
+        }
 
-        public User? GetUserByEmail(string email)
+        public User? GetUser(string email)
         {
             try
             {
@@ -69,7 +85,7 @@ namespace backend.Repositories.Implementors
             }
         }
 
-        public User? GetUserByID(int id)
+        public User? GetUser(int id)
         {
             try
             {
@@ -86,7 +102,7 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                var list = _fBlogAcademyContext.Users.Where(u => u.Name.Equals(username)).ToList();
+                var list = _fBlogAcademyContext.Users.Where(u => u.Name.Equals(username)).OrderBy(u => u.Name).ToList();
                 if (list == null || list.Count == 0)
                 {
                     return null;
@@ -97,6 +113,22 @@ namespace backend.Repositories.Implementors
                 }
             }
             catch(InvalidOperationException)
+            {
+                return null;
+            }
+        }
+        public ICollection<User>? GetUsersByRole(string role)
+        {
+            try
+            {
+                var list = _fBlogAcademyContext.Users.Where(u => u.Role.Trim().Contains(role)).OrderBy(u => u.Name).ToList();
+                if (list == null || list.Count == 0)
+                {
+                    return null;
+                }
+                return list;
+            }
+            catch (InvalidOperationException)
             {
                 return null;
             }
@@ -122,7 +154,38 @@ namespace backend.Repositories.Implementors
                 return false;
             }
         }
-
+        public bool isExisted(int userID)
+        {
+            try
+            {
+                var user = _fBlogAcademyContext.Users.FirstOrDefault(u => u.Id.Equals(userID));
+                if (user == null)
+                {
+                    return false;
+                }
+                return true;
+            }
+            catch (InvalidOperationException)
+            {
+                return false;
+            }
+        }
+        public bool isExisted(string email)
+        {
+            try
+            {
+                var checkUser = _fBlogAcademyContext.Users.FirstOrDefault(u => u.Email.Trim().Contains(email));
+                if (checkUser == null)
+                {
+                    return false;
+                }
+                return true;
+            }
+            catch (InvalidOperationException)
+            {
+                return false;
+            }
+        }
         public bool UpdateUser(User user)
         {
             try
@@ -142,5 +205,6 @@ namespace backend.Repositories.Implementors
                 return false;
             }
         }
+        
     }
 }

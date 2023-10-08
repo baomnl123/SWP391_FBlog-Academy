@@ -62,7 +62,7 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                var list = _fblogAcademyContext.ReportPosts.ToList();
+                var list = _fblogAcademyContext.ReportPosts.OrderBy(u => u.CreatedAt).ToList();
                 if (list.Count == 0)
                 {
                     return null;
@@ -80,7 +80,7 @@ namespace backend.Repositories.Implementors
 
         public ICollection<ReportPost>? GetReportPostsByContent(string content)
         {
-            var list = _fblogAcademyContext.ReportPosts.Where(u => u.Content.Contains(content)).ToList();
+            var list = _fblogAcademyContext.ReportPosts.Where(u => u.Content.Contains(content)).OrderBy(u => u.CreatedAt).ToList();
             if (list.Count == 0)
             {
                 return null;
@@ -152,5 +152,6 @@ namespace backend.Repositories.Implementors
                 return null;
             }
         }
+
     }
 }

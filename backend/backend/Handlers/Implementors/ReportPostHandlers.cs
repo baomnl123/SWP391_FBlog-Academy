@@ -111,6 +111,15 @@ namespace backend.Handlers.Implementors
                 return reportPostList;
             }
         }
+        public ICollection<ReportPostDTO>? GetAllReportPost()
+        {
+            var list = _reportPostRepository.GetAllReportPost();
+            if(list == null || list.Count == 0)
+            {
+                return null;
+            }
+            return _mapper.Map<List<ReportPostDTO>>(list);
+        }
 
         public ReportPostDTO? UpdateReportPost(int reportPostID, int postID, string content)
         {

@@ -5,20 +5,23 @@ namespace backend.Handlers.IHandlers
 {
     public interface IUserHandlers
     {
-        //User Account
-        public ICollection<User>? GetAllUsers();
-        public ICollection<User>? GetStudentsAndModerator();
-        public UserDTO? CreateUser(int userID, string name, string username,string password);
-        public UserDTO? UpdateUser(int userID);
-        public UserDTO? DisableUser(int userID);
-        //Lecturers' Account
+        //Get User Account
+        public ICollection<UserDTO>? GetAllUsers();
+        public ICollection<UserDTO>? GetStudentsAndModerator();
         public ICollection<UserDTO>? GetLecturers();
-        public UserDTO? CreateLecturer(int userID, string name, string username, string password);
-        public UserDTO? UpdateLecturer(int userID);
-        public UserDTO? DisableLecturer(int userID);
+        public ICollection<UserDTO>? GetAllDisableUsers(); 
+        public UserDTO? GetUser(int userID);
+        //Modify User
+        public UserDTO? CreateUser(string name, string email, string password);
+        public UserDTO? CreateLecturer(string name, string email, string password);
+        public UserDTO? UpdateUser(int userID, string name, string email, string password);
+        public UserDTO? DisableUser(int userID);
+        //public UserDTO? UpdateLecturer(int userID);
+        //public UserDTO? DisableLecturer(int userID);
         //Promote/Demote
         public UserDTO? PromoteStudent(int userID);
         public UserDTO? DemoteStudent(int userID);
+        public UserDTO? GetUserByEmail(string email);
 
     }
 }

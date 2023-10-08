@@ -20,8 +20,8 @@ namespace backend.Handlers.Implementors
         public FollowUserDTO? FollowOtherUser(int currentUserID, int userID)
         {
             //Get current User and followUser info
-            var currentUser = _userRepository.GetUserByID(currentUserID);
-            var followedUser = _userRepository.GetUserByID(userID);
+            var currentUser = _userRepository.GetUser(currentUserID);
+            var followedUser = _userRepository.GetUser(userID);
             //Check if null
             if (currentUser == null || followedUser == null)
             {
@@ -75,7 +75,7 @@ namespace backend.Handlers.Implementors
             //Init list
             List<UserDTO> listResult = new();
             //Get current user info
-            var currentUser = _userRepository.GetUserByID(currentUserID);
+            var currentUser = _userRepository.GetUser(currentUserID);
             //if user is not avaiable
             if (currentUser == null || currentUser.Status == false)
             {
@@ -106,7 +106,7 @@ namespace backend.Handlers.Implementors
         {
             List<UserDTO> listResult = new();
             //Get currentUserData
-            var currentUser = _userRepository.GetUserByID(currentUserID);
+            var currentUser = _userRepository.GetUser(currentUserID);
             //Check null
             if (currentUser == null)
             {
@@ -134,41 +134,41 @@ namespace backend.Handlers.Implementors
             }
         }
 
-        public bool UnfollowUser(int currentUserID, int userID)
+        public FollowUserDTO? UnfollowUser(int currentUserID, int userID)
         {
             //Get Users Data
-            var currentUser = _userRepository.GetUserByID(currentUserID);
-            var followedUser = _userRepository.GetUserByID(userID);
+            var currentUser = _userRepository.GetUser(currentUserID);
+            var followedUser = _userRepository.GetUser(userID);
 
             //if current user is unavailable then return nothing
             if (currentUser == null || currentUser.Status == false)
             {
-                return false;
+                return null;
             }
             //if followed user is unavailable then return nothing
             if (followedUser == null || followedUser.Status == false)
             {
-                return false;
+                return null;
             }
             //if user self-follow then return nothing
             if (currentUser == followedUser)
             {
-                return false;
+                return null;
             }
             //Get Follow Relationship
             var followRelationship = _followUserRepositoy.GetFollowRelationship(currentUser, followedUser);
             //if null or already disabled then return nothing
             if (followRelationship == null || followRelationship.Status == false)
             {
-                return false;
+                return null;
             }
             //Disable Follow Relationship
             followRelationship.Status = false;
             if (!_followUserRepositoy.UpdateFollowRelationship(followRelationship))
             {
-                return false;
+                return null;
             }
-            return true;
+            return _mapper.Map<FollowUserDTO>(followRelationship);
         }
     }
 }

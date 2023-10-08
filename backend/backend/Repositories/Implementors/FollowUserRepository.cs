@@ -59,21 +59,13 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                List<User> userList = new List<User>();
-                var list = _fblogAcademyContext.FollowUsers.Where(u => u.FollowedId.Equals(user.Id)).ToList();
-                if (list.Count == 0)
+                var list = _fblogAcademyContext.FollowUsers.Where(u => u.FollowedId.Equals(user.Id))
+                                                           .Select(u => u.Follower).ToList();
+                if (list == null || list.Count == 0)
                 {
                     return null;
                 }
-                else
-                {
-                    foreach (var userInList in list)
-                    {
-                        var follower = _userRepository.GetUserByID(userInList.FollowerId);
-                        if(follower != null) userList.Add(follower);
-                    }
-                    return userList;
-                }
+                return list;
             }
             catch(InvalidOperationException)
             {
@@ -86,21 +78,13 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                List<User> userList = new List<User>();
-                var list = _fblogAcademyContext.FollowUsers.Where(u => u.FollowerId.Equals(user.Id)).ToList();
-                if (list.Count == 0)
+                var list = _fblogAcademyContext.FollowUsers.Where(u => u.FollowerId.Equals(user.Id))
+                                                           .Select(u => u.Followed).ToList();
+                if(list == null || list.Count == 0)
                 {
                     return null;
                 }
-                else
-                {
-                    foreach (var userInList in list)
-                    {
-                        var following = _userRepository.GetUserByID(userInList.FollowedId);
-                        if(following != null) userList.Add(following);
-                    }
-                    return userList;
-                }
+                return list;
             }
             catch (InvalidOperationException)
             {

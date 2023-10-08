@@ -50,21 +50,23 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<SaveListDTO>(newSaveList);
         }
 
-        public bool DisableSaveList(int saveListID)
+        public SaveListDTO? DisableSaveList(int saveListID)
         {
             //get savelist information
             var saveList = _saveListRepository.GetSaveListBySaveListID(saveListID);
             //if savelist is unavaiable
             if(saveList == null || saveList.Status == false)
             {
-                return false;
+                return null;
             }
+            saveList.Status = false;
+            saveList.UpdateAt = DateTime.Now;
             //disable save list
-            if (!_saveListRepository.DisableSaveList(saveListID))
+            if (!_saveListRepository.UpdateSaveList(saveList))
             {
-                return false;
+                return null;
             }
-            return true;
+            return _mapper.Map<SaveListDTO>(saveList);
         }
 
         public ICollection<SaveListDTO>? GetAllActiveSaveList(int userID)
@@ -80,12 +82,23 @@ namespace backend.Handlers.Implementors
             }
             foreach (var saveList in saveLists)
             {
+                //Map to DTO
                 if(saveList.Status)
                 {
                     saveListsDTO.Add(_mapper.Map<SaveListDTO>(saveList));
                 }
             }
             return saveListsDTO;
+        }
+
+        public ICollection<SaveListDTO>? GetAllDisableSaveList(int userID)
+        {
+            var list = _saveListRepository.GetAllDisableSaveLists(userID);
+            if(list == null || list.Count == 0)
+            {
+                return null;
+            }
+            return _mapper.Map<List<SaveListDTO>>(list);
         }
 
         public SaveListDTO? UpdateSaveListName(int saveListID,string listName)
@@ -104,6 +117,7 @@ namespace backend.Handlers.Implementors
             var saveList = _saveListRepository.GetSaveListBySaveListID(saveListID);
             //Update savelist
             saveList.Name = listName;
+            saveList.UpdateAt = DateTime.Now;
             //Update DB
             if (!_saveListRepository.UpdateSaveList(saveList))
             {

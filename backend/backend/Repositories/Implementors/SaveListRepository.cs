@@ -27,32 +27,32 @@ namespace backend.Repositories.Implementors
             }
         }
 
-        public bool DisableSaveList(int saveListID)
-        {
-            try
-            {
-                if (!this.isExisted(saveListID))
-                {
-                    return false;
-                }
-                var savelist = GetSaveListBySaveListID(saveListID);
+        //public bool DisableSaveList(int saveListID)
+        //{
+        //    try
+        //    {
+        //        if (!this.isExisted(saveListID))
+        //        {
+        //            return false;
+        //        }
+        //        var savelist = GetSaveListBySaveListID(saveListID);
 
-                if (savelist == null)
-                {
-                    return false;
-                }
-                savelist.Status = false;
-                if (!this.UpdateSaveList(savelist))
-                {
-                    return false;
-                }
-                return true;
-            }
-            catch (InvalidOperationException)
-            {
-                return false;
-            }
-        }
+        //        if (savelist == null)
+        //        {
+        //            return false;
+        //        }
+        //        savelist.Status = false;
+        //        if (!this.UpdateSaveList(savelist))
+        //        {
+        //            return false;
+        //        }
+        //        return true;
+        //    }
+        //    catch (InvalidOperationException)
+        //    {
+        //        return false;
+        //    }
+        //}
 
         public SaveList? GetSaveListBySaveListID(int saveListID)
         {
@@ -71,8 +71,25 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                var list = _fblogacademycontext.SaveLists.Where(u => u.UserId.Equals(userID)).ToList();
-                if (list.Count == 0)
+                var list = _fblogacademycontext.SaveLists.Where(u => u.UserId.Equals(userID)).OrderBy(u => u.Id).ToList();
+                if (list == null || list.Count == 0)
+                {
+                    return null;
+                }
+                return list;
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
+            }
+        }
+        public ICollection<SaveList>? GetAllDisableSaveLists(int userID)
+        {
+            try
+            {
+                var list = _fblogacademycontext.SaveLists.Where(u => u.UserId.Equals(userID) 
+                                                                  && u.Status == false).OrderBy(u => u.Id).ToList();
+                if (list == null || list.Count == 0)
                 {
                     return null;
                 }

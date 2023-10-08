@@ -14,6 +14,16 @@ namespace backend.Controllers
             _reportPostHandlers = reportPostHandlers;
         }
         [HttpGet]
+        public IActionResult GetAllReportPost()
+        {
+            List<ReportPostDTO> reportPostList = (List<ReportPostDTO>)_reportPostHandlers.GetAllReportPost();
+            if (reportPostList == null || reportPostList.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(reportPostList);
+        }
+        [HttpGet("pending")]
         public IActionResult GetAllPendingReportPost()
         {
             List<ReportPostDTO> reportPostList = (List<ReportPostDTO>)_reportPostHandlers.GetAllPendingReportPost();

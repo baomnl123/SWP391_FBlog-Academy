@@ -11,7 +11,8 @@ namespace backend.Migrations
                 name: "User",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false),
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     password = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
@@ -19,7 +20,7 @@ namespace backend.Migrations
                     created_at = table.Column<DateTime>(type: "datetime", nullable: false),
                     updated_at = table.Column<DateTime>(type: "datetime", nullable: true),
                     status = table.Column<bool>(type: "bit", nullable: false),
-                    is_awarded = table.Column<bool>(type: "bit", nullable: true)
+                    is_awarded = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {

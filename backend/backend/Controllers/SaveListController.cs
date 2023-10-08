@@ -1,5 +1,6 @@
 ﻿using backend.DTO;
 using backend.Handlers.IHandlers;
+using backend.Handlers.Implementors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
@@ -23,7 +24,16 @@ namespace backend.Controllers
             }
             return Ok(saveList);
         }
-
+        [HttpGet("{userID}/disable")]
+        public IActionResult getDisableUsers(int userID)
+        {
+            var list = _saveListHandlers.GetAllDisableSaveList(userID);
+            if (list == null || list.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(list);
+        }
         [HttpPost]
         public IActionResult AddSaveList([FromForm] int userID, [FromForm] string name)
         {
@@ -35,7 +45,7 @@ namespace backend.Controllers
             return Ok(saveList);
         }
 
-        [HttpPut()]
+        [HttpPut]
         public IActionResult UpdateSaveList([FromForm]int saveListID, [FromForm]string name)
         {
             var saveList = _saveListHandlers.UpdateSaveListName(saveListID, name);
@@ -49,11 +59,12 @@ namespace backend.Controllers
         [HttpDelete("{saveListID}")]
         public IActionResult DisableSaveList(int saveListID)
         {
-            if (!_saveListHandlers.DisableSaveList(saveListID))
+            var saveList = _saveListHandlers.DisableSaveList(saveListID);
+            if(saveList == null)
             {
                 return BadRequest();
             }
-            return Ok();
+            return Ok(saveList);
         }
     }
 }

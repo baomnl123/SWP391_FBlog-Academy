@@ -10,6 +10,6 @@ namespace backend.Handlers.IHandlers
         public ICollection<UserDTO>? GetAllFollowingUsers(int currentUserID);
         //Follow Other Student
         public FollowUserDTO? FollowOtherUser(int currentUserID, int userID);
-        public bool UnfollowUser(int currentUserID, int userID);
+        public FollowUserDTO? UnfollowUser(int currentUserID, int userID);
     }
 }
