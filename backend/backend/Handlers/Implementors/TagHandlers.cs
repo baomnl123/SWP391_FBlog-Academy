@@ -32,7 +32,7 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<List<TagDTO>>(tags);
         }
 
-        public TagDTO GetTagById(int tagId)
+        public TagDTO? GetTagById(int tagId)
         {
             var tag = _tagRepository.GetTagById(tagId);
             if (tag == null || tag.Status == false) return null;
@@ -40,7 +40,7 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<TagDTO>(tag);
         }
 
-        public TagDTO GetTagByName(string tagName)
+        public TagDTO? GetTagByName(string tagName)
         {
             var tag = _tagRepository.GetTagByName(tagName);
             if (tag == null || tag.Status == false) return null;
@@ -48,7 +48,7 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<TagDTO>(tag);
         }
 
-        public ICollection<PostDTO> GetPostsByTag(int tagId)
+        public ICollection<PostDTO>? GetPostsByTag(int tagId)
         {
             var tag = _tagRepository.GetTagById(tagId);
             if (tag == null || tag.Status == false) return null;
@@ -57,7 +57,7 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<List<PostDTO>>(posts);
         }
 
-        public ICollection<CategoryDTO> GetCategoriesByTag(int tagId)
+        public ICollection<CategoryDTO>? GetCategoriesByTag(int tagId)
         {
             var tag = _tagRepository.GetTagById(tagId);
             if (tag == null || tag.Status == false) return null;
@@ -70,7 +70,7 @@ namespace backend.Handlers.Implementors
         public bool CreateTag(int adminId, string tagName)
         {
             // Find admin
-            var admin = _userRepository.GetUserByID(adminId);
+            var admin = _userRepository.GetUser(adminId);
             if (admin == null || admin.Role != "Admin") return false;
 
             // Find tag by name

@@ -31,7 +31,7 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<List<CategoryDTO>>(categories);
         }
 
-        public CategoryDTO GetCategoryById(int categoryId)
+        public CategoryDTO? GetCategoryById(int categoryId)
         {
             var category = _categoryRepository.GetCategoryById(categoryId);
             if (category == null || category.Status == false) return null;
@@ -39,7 +39,7 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<CategoryDTO>(category);
         }
 
-        public CategoryDTO GetCategoryByName(string categoryName)
+        public CategoryDTO? GetCategoryByName(string categoryName)
         {
             var category = _categoryRepository.GetCategoryByName(categoryName);
             if (category == null || category.Status == false) return null;
@@ -47,7 +47,7 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<CategoryDTO>(category);
         }
 
-        public ICollection<PostDTO> GetPostsByCategory(int categoryId)
+        public ICollection<PostDTO>? GetPostsByCategory(int categoryId)
         {
 
             var category = _categoryRepository.GetCategoryById(categoryId);
@@ -57,7 +57,7 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<List<PostDTO>>(posts);
         }
 
-        public ICollection<TagDTO> GetTagsByCategory(int categoryId)
+        public ICollection<TagDTO>? GetTagsByCategory(int categoryId)
         {
             var category = _categoryRepository.GetCategoryById(categoryId);
             if (category == null || category.Status == false) return null;
@@ -69,7 +69,7 @@ namespace backend.Handlers.Implementors
         public bool CreateCategory(int adminId, string categoryName)
         {
             // Cannot find admin, return false
-            var admin = _userRepository.GetUserByID(adminId);
+            var admin = _userRepository.GetUser(adminId);
             if (admin == null || admin.Role != "Admin") return false;
 
             var categoryExists = _categoryRepository.GetCategoryByName(categoryName);
