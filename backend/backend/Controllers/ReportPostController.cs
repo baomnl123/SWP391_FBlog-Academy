@@ -1,6 +1,5 @@
 ﻿using backend.DTO;
 using backend.Handlers.IHandlers;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
@@ -10,74 +9,70 @@ namespace backend.Controllers
     public class ReportPostController : ControllerBase
     {
         private IReportPostHandlers _reportPostHandlers;
-        public ReportPostController(IReportPostHandlers reportPostHandlers) { 
+        public ReportPostController(IReportPostHandlers reportPostHandlers)
+        {
             _reportPostHandlers = reportPostHandlers;
         }
         [HttpGet]
         public IActionResult GetAllReportPost()
         {
-            List<ReportPostDTO> reportPostList = (List<ReportPostDTO>)_reportPostHandlers.GetAllPendingReportPost();
-
-            if(reportPostList == null || reportPostList.Count == 0)
+            List<ReportPostDTO> reportPostList = (List<ReportPostDTO>)_reportPostHandlers.GetAllReportPost();
+            if (reportPostList == null || reportPostList.Count == 0)
             {
                 return NotFound();
             }
-            else
+            return Ok(reportPostList);
+        }
+        [HttpGet("pending")]
+        public IActionResult GetAllPendingReportPost()
+        {
+            List<ReportPostDTO> reportPostList = (List<ReportPostDTO>)_reportPostHandlers.GetAllPendingReportPost();
+
+            if (reportPostList == null || reportPostList.Count == 0)
             {
-                return Ok(reportPostList);
+                return NotFound();
             }
+            return Ok(reportPostList);
         }
         [HttpPost]
-        public IActionResult AddReportPost([FromBody]int reporterID, int postID, string content)
+        public IActionResult AddReportPost([FromForm] int reporterID, [FromForm] int postID, [FromForm] string? content)
         {
-            var reportPost = AddReportPost(reporterID,postID,content);
+            var reportPost = _reportPostHandlers.AddReportPost(reporterID, postID, content);
 
-            if(reportPost == null)
+            if (reportPost == null)
             {
                 return BadRequest();
             }
-            else
-            {
-                return Ok(reportPost);
-            }
+            return Ok(reportPost);
         }
         [HttpPut("content")]
-        public IActionResult UpdateReportContent([FromBody]int reportPostID,string content)
+        public IActionResult UpdateReportContent([FromForm] int reportPostID, [FromForm] int postID, [FromForm] string? content)
         {
-            ReportPostDTO reportPostDTO = _reportPostHandlers.UpdateReportPost(reportPostID, content);
-            if(reportPostDTO == null)
-            {
-                return BadRequest();
-            }
-            else
-            {
-                return Ok(reportPostDTO);
-            }
-        }
-        [HttpPut("status")]
-        public IActionResult UpdateReportStatus([FromBody] int reportPostID, string status)
-        {
-            ReportPostDTO reportPostDTO = _reportPostHandlers.UpdateReportPostStatus(reportPostID, status);
+            var reportPostDTO = _reportPostHandlers.UpdateReportPost(reportPostID, postID, content);
             if (reportPostDTO == null)
             {
                 return BadRequest();
             }
-            else
-            {
-                return Ok(reportPostDTO);
-            }
+            return Ok(reportPostDTO);
         }
-        [HttpDelete]
-        public IActionResult DisableReportPost(int reportPostID)
+        [HttpPut("status")]
+        public IActionResult UpdateReportStatus([FromForm] int reportPostID, [FromForm] int postID, [FromForm] string status)
         {
-            if (!_reportPostHandlers.DenyReportPost(reportPostID))
+            var reportPostDTO = _reportPostHandlers.UpdateReportStatus(reportPostID, postID, status);
+            if (reportPostDTO == null)
             {
                 return BadRequest();
             }
-            else
+            return Ok(reportPostDTO);
+        }
+        [HttpDelete]
+        public IActionResult DisableReportPost([FromForm] int reportPostID, [FromForm] int postID)
+        {
+            if (!_reportPostHandlers.DenyReportPost(reportPostID, postID))
             {
-                return Ok();
+                return BadRequest();
             }
+                return Ok();
         }
     }
 }

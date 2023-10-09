@@ -21,58 +21,66 @@ namespace backend.Handlers.Implementors
         public ReportPostDTO? AddReportPost(int reporterID, int postID, string content)
         {
             ReportStatusConstrant reportStatusConstrant = new ReportStatusConstrant();
-            //Get Status
+            //Get Pending Status
             var pending = reportStatusConstrant.GetPendingStatus();
+            //Check Exist
+            if (_reportPostRepository.isReported(reporterID, postID))
+            {
+                var reportPost = _reportPostRepository.GetReportPostByIDs(reporterID, postID);
+                var disableStatus = _reportStatusConstrant.GetDisableStatus();
+                var pendingStatus = _reportStatusConstrant.GetPendingStatus();
+                //If it is available then return null
+                if (!reportPost.Status.Contains(disableStatus))
+                {
+                    return null;
+                }
+                reportPost.AdminId = null;
+                reportPost.Status = pendingStatus;
+                if (!_reportPostRepository.UpdateReportPost(reportPost))
+                {
+                    return null;
+                }
+                return _mapper.Map<ReportPostDTO>(reportPost);
+            }
+            //Ensure that content is not null
+            if(content == null)
+            {
+                content = string.Empty;
+            }
             //Init ReportPost
-            ReportPost reportPost = new()
+            ReportPost newReportPost = new()
             {
                 ReporterId = reporterID,
                 PostId = postID,
-                AdminId = 0,
                 Content = content,
                 Status = pending,
                 CreatedAt = DateTime.Now
             };
-            //Check Exist
-            if (_reportPostRepository.isExisted(reportPost))
+            //Add ReportPost To DB
+            if (!_reportPostRepository.AddReportPost(newReportPost))
             {
                 return null;
             }
-            else
-            {
-                //Add ReportPost To DB
-                if (!_reportPostRepository.AddReportPost(reportPost))
-                {
-                    return null;
-                }
-                else
-                {
-                    //Map To DB
-                    var result = _mapper.Map<ReportPostDTO>(reportPost);
-                    return result;
-                }
-            }
-
+            //Map To DB
+            return _mapper.Map<ReportPostDTO>(newReportPost);
         }
 
-        public bool DenyReportPost(int reportPostID)
+        public bool DenyReportPost(int reportPostID,int postID)
         {
             //Get Report
-            var reportPost = _reportPostRepository.GetReportPostByID(reportPostID);
+            var reportPost = _reportPostRepository.GetReportPostByIDs(reportPostID,postID);
+            var disableStatus = _reportStatusConstrant.GetDisableStatus();
             //Check Null
-            if (reportPost == null)
+            if (reportPost == null || reportPost.Status.Contains(disableStatus) )
             {
                 return false;
             }
             //Disable Report
-            else if (!_reportPostRepository.DisableReportPost(reportPost))
+            if (!_reportPostRepository.DisableReportPost(reportPost))
             {
                 return false;
             }
-            else
-            {
                 return true;
-            }
         }
 
         public ICollection<ReportPostDTO>? GetAllPendingReportPost()
@@ -89,11 +97,11 @@ namespace backend.Handlers.Implementors
             else
             {
                 //Get Status
-                var pending = _reportStatusConstrant.GetPendingStatus();
+                var pendingStatus = _reportStatusConstrant.GetPendingStatus();
                 foreach (var reportPost in list)
                 {
-                    //Update Status
-                    if (reportPost.Status.Contains(pending))
+                    //Check status Status
+                    if (reportPost.Status.Contains(pendingStatus))
                     {
                         //Map to ReportPostDTO
                         reportPostList.Add(_mapper.Map<ReportPostDTO>(reportPost));
@@ -103,57 +111,63 @@ namespace backend.Handlers.Implementors
                 return reportPostList;
             }
         }
-
-        public ReportPostDTO? UpdateReportPost(int reportPostID, string content)
+        public ICollection<ReportPostDTO>? GetAllReportPost()
         {
-            //Get Report
-            var reportPost = _reportPostRepository.GetReportPostByID(reportPostID);
-            //Check Null
-            if (reportPost == null)
+            var list = _reportPostRepository.GetAllReportPost();
+            if(list == null || list.Count == 0)
             {
                 return null;
-            } 
-            else
+            }
+            return _mapper.Map<List<ReportPostDTO>>(list);
+        }
+
+        public ReportPostDTO? UpdateReportPost(int reportPostID, int postID, string content)
+        {
+            //Get Report
+            var reportPost = _reportPostRepository.GetReportPostByIDs(reportPostID, postID);
+            //Get Status
+            var disableStatus = _reportStatusConstrant.GetDisableStatus();
+            //Check Null Or Disable Status
+            if (reportPost == null || reportPost.Status.Contains(disableStatus))
             {
-                //Update Content
-                reportPost.Content = content;
-                //Update To DB
+                return null;
+            }
+            //Ensure that content is not null
+            if (content == null)
+            {
+                content = string.Empty;
+            }
+            //Update Content
+            reportPost.Content = content;
+            //Update To DB
+            if (!_reportPostRepository.UpdateReportPost(reportPost))
+            {
+                return null;
+            }
+                //Map To ReportPostDTO
+                return _mapper.Map<ReportPostDTO>(reportPost);
+        }
+
+        public ReportPostDTO? UpdateReportStatus(int reportPostID, int postID, string status)
+        {
+            //Get Report
+            var reportPost = _reportPostRepository.GetReportPostByIDs(reportPostID, postID);
+            //Get Status
+            var disableStatus = _reportStatusConstrant.GetDisableStatus();
+            //Check Null
+            if (reportPost == null || reportPost.Status.Contains(disableStatus))
+            {
+                return null;
+            }
+                //Update Status
+                reportPost.Status = status;
                 if (!_reportPostRepository.UpdateReportPost(reportPost))
                 {
                     return null;
                 }
-                else
-                {
                     //Map To ReportPostDTO
                     var result = _mapper.Map<ReportPostDTO>(reportPost);
                     return result;
-                }
-            }
-        }
-
-        public ReportPostDTO? UpdateReportPostStatus(int reportPostID, string status)
-        {
-            //Get Report
-            var reportPost = _reportPostRepository.GetReportPostByID(reportPostID);
-            //Check Null
-            if (reportPost == null)
-            {
-                return null;
-            }
-            else
-            {
-                //Update Status
-                reportPost.Status = status;
-                if (!_reportPostRepository.UpdateReportPost(reportPost)) {
-                    return null;
-                }
-                else
-                {
-                    //Map To ReportPostDTO
-                    var result = _mapper.Map<ReportPostDTO>(reportPost);
-                    return result;
-                }
-            }
         }
     }
 }
