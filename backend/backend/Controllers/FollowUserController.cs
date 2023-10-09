@@ -18,20 +18,24 @@ namespace backend.Controllers
         public IActionResult GetAllFollower(int currentUserID)
         {
             var listFollowers = (List<UserDTO>)_followUserHandlers.GetAllFollowerUsers(currentUserID);
+
             if (listFollowers == null || listFollowers.Count == 0)
             {
                 return NotFound();
             }
+
             return Ok(listFollowers);
         }
         [HttpGet("{currentUserID}/following")]
         public IActionResult GetAllFollowing(int currentUserID)
         {
             var listFollowings = (List<UserDTO>)_followUserHandlers.GetAllFollowingUsers(currentUserID);
+
             if (listFollowings == null || listFollowings.Count == 0)
             {
                 return NotFound();
             }
+
             return Ok(listFollowings);
         }
         [HttpPost("follow")]

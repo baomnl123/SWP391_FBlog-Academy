@@ -83,6 +83,7 @@ namespace backend.Repositories.Implementors
                 return null;
             }
         }
+
         public ICollection<SaveList>? GetAllDisableSaveLists(int userID)
         {
             try
@@ -116,6 +117,7 @@ namespace backend.Repositories.Implementors
 
         public bool isExisted(int saveListID)
         {
+
             try
             {
                 var checkSaveList = _fblogacademycontext.SaveLists.FirstOrDefault(u => u.Id.Equals(saveListID));
@@ -166,5 +168,4 @@ namespace backend.Repositories.Implementors
             }
         }
     }
-
 }

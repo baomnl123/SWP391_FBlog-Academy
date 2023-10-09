@@ -168,7 +168,6 @@ namespace backend.Handlers.Implementors
             }
             //return
             return _mapper.Map<UserDTO>(user);
-
         }
 
         public ICollection<UserDTO>? GetAllUsers()
@@ -274,6 +273,7 @@ namespace backend.Handlers.Implementors
             }
             return _mapper.Map<UserDTO>(user);
         }
+
         public ICollection<UserDTO>? GetAllDisableUsers()
         {
             var userList = _userRepository.GetAllDisableUser();

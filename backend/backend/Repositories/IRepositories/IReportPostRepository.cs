@@ -15,6 +15,5 @@ namespace backend.Repositories.IRepositories
         public bool DisableReportPost(ReportPost reportpost);
         //Check Existed
         public bool isReported(int reporterID, int postID);
-
     }
 }

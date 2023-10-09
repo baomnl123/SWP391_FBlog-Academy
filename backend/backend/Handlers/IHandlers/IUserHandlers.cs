@@ -22,6 +22,5 @@ namespace backend.Handlers.IHandlers
         public UserDTO? PromoteStudent(int userID);
         public UserDTO? DemoteStudent(int userID);
         public UserDTO? GetUserByEmail(string email);
-
     }
 }

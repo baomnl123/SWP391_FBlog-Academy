@@ -17,6 +17,7 @@ namespace backend.Handlers.Implementors
             _userRepository = userRepository;
             _mapper = mapper;
         }
+        
         public FollowUserDTO? FollowOtherUser(int currentUserID, int userID)
         {
             //Get current User and followUser info
@@ -39,6 +40,7 @@ namespace backend.Handlers.Implementors
             {
                 //If it is available then return nothing
                 if (followRelationship.Status == true)
+
                 {
                     return null;
                 }
@@ -116,6 +118,7 @@ namespace backend.Handlers.Implementors
             {
                 //Get FollowingRelationship
                 var list = _followUserRepositoy.GetAllFollowingUsers(currentUser);
+
                 //if list is empty return nothing
                 if (list == null || list.Count == 0)
                 {
