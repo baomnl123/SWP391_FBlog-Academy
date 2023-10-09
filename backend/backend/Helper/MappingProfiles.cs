@@ -8,12 +8,18 @@ namespace PokemonReviewApp.Helper
     {
         public MappingProfiles()
         {
+            CreateMap<User, UserDTO>();
+            CreateMap<ReportPost, ReportPostDTO>();
+            CreateMap<SaveList, SaveListDTO>();
+            CreateMap<FollowUser, FollowUserDTO>();
+
             CreateMap<Category, CategoryDTO>();
             CreateMap<Tag, TagDTO>();
 
             CreateMap<CategoryDTO, Category>();
             CreateMap<TagDTO, Tag>();
 
+            CreateMap<Post, PostDTO>();
         }
     }
 }
