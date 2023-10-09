@@ -1,4 +1,4 @@
-﻿using backend.Models;
+using backend.Models;
 using backend.Repositories.IRepositories;
 
 namespace backend.Repositories.Implementors
