@@ -8,6 +8,7 @@ namespace backend.Utils
     {
         public MappingProfile() {
             CreateMap<User, UserDTO>();
+            CreateMap<Post, PostDTO>();
             CreateMap<ReportPost, ReportPostDTO>();
             CreateMap<SaveList,SaveListDTO>();
             CreateMap<FollowUser, FollowUserDTO>();

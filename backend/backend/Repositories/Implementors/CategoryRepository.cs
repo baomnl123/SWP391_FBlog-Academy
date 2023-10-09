@@ -1,7 +1,5 @@
-﻿using AutoMapper;
-using backend.Models;
+﻿using backend.Models;
 using backend.Repositories.IRepositories;
-using Microsoft.EntityFrameworkCore;
 
 namespace backend.Repositories.Implementors
 {
@@ -9,14 +7,9 @@ namespace backend.Repositories.Implementors
     {
         private readonly FBlogAcademyContext _context;
 
-        public CategoryRepository(FBlogAcademyContext context)
+        public CategoryRepository()
         {
-            _context = context;
-        }
-
-        public bool CategoryExists(int id)
-        {
-            return _context.Categories.Any(c => c.Id == id && c.Status.Equals(true));
+            _context = new();
         }
 
         public bool CreateCategory(Category category)
@@ -25,32 +18,58 @@ namespace backend.Repositories.Implementors
             return Save();
         }
 
-        public bool DeleteCategory(Category category)
+        public bool DisableCategory(Category category)
         {
-            _context.Remove(category);
+            category.Status = false;
+            _context.Update(category);
             return Save();
         }
 
-        public ICollection<Category> GetCategories()
+        public bool EnableCategory(Category category)
         {
-            return _context.Categories.Where(c => c.Status.Equals(true)).ToList();
+            category.Status = true;
+            _context.Update(category);
+            return Save();
         }
 
-        public Category GetCategory(int id)
+        public ICollection<Category> GetAllCategories()
         {
-            return _context.Categories.Where(e => e.Id == id && e.Status.Equals(true)).FirstOrDefault();
+            return _context.Categories.Where(c => c.Status == true).ToList();
+        }
+
+        public ICollection<Category> GetDisableCategories()
+        {
+            return _context.Categories.Where(c => c.Status == false).ToList();
+        }
+
+        public Category? GetCategoryById(int categoryId)
+        {
+            return _context.Categories.FirstOrDefault(e => e.Id == categoryId);
+        }
+
+        public Category? GetCategoryByName(string categoryName)
+        {
+            return _context.Categories.FirstOrDefault(c => c.CategoryName == categoryName);
         }
 
         public ICollection<Post> GetPostsByCategory(int categoryId)
         {
             return _context.PostCategories.Where(e => e.CategoryId == categoryId)
                                           .Select(c => c.Post)
-                                          .Where(c => c.Status.Equals(true)).ToList();
+                                          .Where(c => c.Status == true).ToList();
+        }
+
+        public ICollection<Tag> GetTagsByCategory(int categoryId)
+        {
+            return _context.CategoryTags.Where(e => e.CategoryId == categoryId)
+                                        .Select(c => c.Tag)
+                                        .Where(c => c.Status == true).ToList();
         }
 
         public bool Save()
         {
             var saved = _context.SaveChanges();
+            // if saved > 0 then return true, else return false
             return saved > 0;
         }
 

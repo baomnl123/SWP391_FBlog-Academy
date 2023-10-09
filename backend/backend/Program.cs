@@ -15,11 +15,15 @@ builder.Services.AddScoped<IUserRepository,UserRepository>();
 builder.Services.AddScoped<IFollowUserRepository, FollowUserRepository>();
 builder.Services.AddScoped<IReportPostRepository, ReportPostRepository>();
 builder.Services.AddScoped<ISaveListRepository, SaveListRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ITagRepository, TagRepository>();
 //
 builder.Services.AddScoped<IFollowUserHandlers, FollowUserHandlers>();
 builder.Services.AddScoped<IReportPostHandlers, ReportPostHandlers>();
 builder.Services.AddScoped<ISaveListHandlers, SaveListHandlers>();
 builder.Services.AddScoped<IUserHandlers, UserHandlers>();
+builder.Services.AddScoped<ICategoryHandlers, CategoryHandlers>();
+builder.Services.AddScoped<ITagHandlers, TagHandlers>();
 builder.Services.AddScoped<IPostHandlers, PostHandlers>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddControllers();
