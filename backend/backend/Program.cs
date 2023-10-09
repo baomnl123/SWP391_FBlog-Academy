@@ -1,4 +1,3 @@
-
 using Microsoft.Extensions.DependencyInjection;
 using backend.Handlers.IHandlers;
 using backend.Handlers.Implementors;
@@ -25,6 +24,8 @@ builder.Services.AddScoped<ISaveListHandlers, SaveListHandlers>();
 builder.Services.AddScoped<IUserHandlers, UserHandlers>();
 builder.Services.AddScoped<ICategoryHandlers, CategoryHandlers>();
 builder.Services.AddScoped<ITagHandlers, TagHandlers>();
+builder.Services.AddScoped<IPostHandlers, PostHandlers>();
+builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();

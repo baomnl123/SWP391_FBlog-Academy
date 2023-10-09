@@ -15,44 +15,116 @@ namespace backend.Handlers.Implementors
             _saveListRepository = saveListRepository;
             _mapper = mapper;
         }
-        public SaveListDTO? AddSaveList(int userID,string name)
+        public SaveListDTO? AddSaveList(int userID, string listName)
         {
-            throw new NotImplementedException();
-        }
-
-        public bool DisableSaveList(int saveListID)
-        {
-            if (!_saveListRepository.DisableSaveList(saveListID))
+            //Check If Existed
+            if (_saveListRepository.isExisted(userID, listName))
             {
-                return false;
+                //Check Status
+                var checkSaveList = _saveListRepository.GetSaveListByUserIDAndName(userID, listName);
+                if (checkSaveList.Status == true)
+                {
+                    return null;
+                }
+                //Reactivate the savelist
+                checkSaveList.Status = true;
+                checkSaveList.CreatedAt = DateTime.Now;
+                if (!_saveListRepository.UpdateSaveList(checkSaveList))
+                {
+                    return null;
+                }
+                return _mapper.Map<SaveListDTO>(checkSaveList);
             }
-            else
+            //Init new Savelist
+            SaveList newSaveList = new()
             {
-                return true;
-            }
-        }
-
-        public ICollection<SaveListDTO>? GetAllSaveList(int userID)
-        {
-            List<SaveListDTO> saveListsDTO = new();
-            var saveLists = _saveListRepository.GetAllSaveLists(userID);
-            if(saveLists == null || saveLists.Count == 0)
+                UserId = userID,
+                Name = listName,
+                CreatedAt = DateTime.Now,
+                Status = true,
+            };
+            if (!_saveListRepository.CreateSaveList(newSaveList))
             {
                 return null;
             }
-            else
-            {
-                foreach (var saveList in saveLists)
-                {
-                        saveListsDTO.Add(_mapper.Map<SaveListDTO>(saveList));
-                }
-                return saveListsDTO;
-            }
+            return _mapper.Map<SaveListDTO>(newSaveList);
         }
 
-        public SaveListDTO? UpdateSaveList(int saveListID)
+        public SaveListDTO? DisableSaveList(int saveListID)
         {
-            throw new NotImplementedException();
+            //get savelist information
+            var saveList = _saveListRepository.GetSaveListBySaveListID(saveListID);
+            //if savelist is unavaiable
+            if(saveList == null || saveList.Status == false)
+            {
+                return null;
+            }
+            saveList.Status = false;
+            saveList.UpdateAt = DateTime.Now;
+            //disable save list
+            if (!_saveListRepository.UpdateSaveList(saveList))
+            {
+                return null;
+            }
+            return _mapper.Map<SaveListDTO>(saveList);
+        }
+
+        public ICollection<SaveListDTO>? GetAllActiveSaveList(int userID)
+        {
+            //init list
+            List<SaveListDTO> saveListsDTO = new();
+            //get savelist information
+            var saveLists = _saveListRepository.GetAllSaveLists(userID);
+            //if savelist is unavailable then return nothing
+            if (saveLists == null || saveLists.Count == 0)
+            {
+                return null;
+            }
+            foreach (var saveList in saveLists)
+            {
+                //Map to DTO
+                if(saveList.Status)
+                {
+                    saveListsDTO.Add(_mapper.Map<SaveListDTO>(saveList));
+                }
+            }
+            return saveListsDTO;
+        }
+
+        public ICollection<SaveListDTO>? GetAllDisableSaveList(int userID)
+        {
+            var list = _saveListRepository.GetAllDisableSaveLists(userID);
+            if(list == null || list.Count == 0)
+            {
+                return null;
+            }
+            return _mapper.Map<List<SaveListDTO>>(list);
+        }
+
+        public SaveListDTO? UpdateSaveListName(int saveListID,string listName)
+        {
+            //Check if list name is null
+            if(listName == null)
+            {
+                return null;
+            }
+            //Check if savelist is not exist
+            if (!_saveListRepository.isExisted(saveListID))
+            {
+                return null;
+            }
+            //Get savelist
+            var saveList = _saveListRepository.GetSaveListBySaveListID(saveListID);
+            //Update savelist
+            saveList.Name = listName;
+            saveList.UpdateAt = DateTime.Now;
+            //Update DB
+            if (!_saveListRepository.UpdateSaveList(saveList))
+            {
+                return null;
+            }
+            //Return result
+            return _mapper.Map<SaveListDTO>(saveList);
         }
     }
 }

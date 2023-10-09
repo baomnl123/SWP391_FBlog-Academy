@@ -461,7 +461,6 @@ namespace backend.Models
                     .IsUnique();
 
                 entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
                     .HasColumnName("id");
 
                 entity.Property(e => e.CreatedAt)
@@ -481,6 +480,7 @@ namespace backend.Models
                     .HasColumnName("name");
 
                 entity.Property(e => e.Password)
+                    .IsRequired()
                     .HasMaxLength(255)
                     .HasColumnName("password");
 

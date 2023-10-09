@@ -2,7 +2,7 @@
 using backend.Models;
 using backend.Repositories.IRepositories;
 using backend.Utils;
-using System.Net.NetworkInformation;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Repositories.Implementors
 {
@@ -24,12 +24,13 @@ namespace backend.Repositories.Implementors
                 {
                     return false;
                 }
-                else
-                {
-                    return true;
-                }
+                return true;
             }
             catch (InvalidOperationException)
+            {
+                return false;
+            }
+            catch (DbUpdateException)
             {
                 return false;
             }
@@ -40,7 +41,7 @@ namespace backend.Repositories.Implementors
             //Get Report Status
             var disableStatus = _reportStatusConstrant.GetDisableStatus();
             //
-            if (!this.isExisted(reportpost))
+            if (!this.isReported(reportpost.ReporterId, reportpost.PostId))
             {
                 return false;
             }
@@ -62,8 +63,7 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                var status = _reportStatusConstrant.GetDisableStatus;
-                var list = _fblogAcademyContext.ReportPosts.Where(u => !u.Status.Trim().Equals(status)).ToList();
+                var list = _fblogAcademyContext.ReportPosts.OrderBy(u => u.CreatedAt).ToList();
                 if (list.Count == 0)
                 {
                     return null;
@@ -81,8 +81,7 @@ namespace backend.Repositories.Implementors
 
         public ICollection<ReportPost>? GetReportPostsByContent(string content)
         {
-            var status = _reportStatusConstrant.GetDisableStatus;
-            var list = _fblogAcademyContext.ReportPosts.Where(u => u.Content.Contains(content) && !u.Status.Trim().Equals(status)).ToList();
+            var list = _fblogAcademyContext.ReportPosts.Where(u => u.Content.Contains(content)).OrderBy(u => u.CreatedAt).ToList();
             if (list.Count == 0)
             {
                 return null;
@@ -94,36 +93,12 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                var status = _reportStatusConstrant.GetDisableStatus;
-                var reportPost = _fblogAcademyContext.ReportPosts.FirstOrDefault(u => u.PostId.Equals(postID) && !u.Status.Trim().Equals(status));
+                var reportPost = _fblogAcademyContext.ReportPosts.FirstOrDefault(u => u.PostId.Equals(postID));
                 return reportPost;
             }
             catch (InvalidOperationException)
             {
                 return null;
-            }
-        }
-
-        public bool isExisted(ReportPost reportpost)
-        {
-            try
-            {
-                var status = _reportStatusConstrant.GetDisableStatus;
-                var checkPost = _fblogAcademyContext.ReportPosts.FirstOrDefault(u => u.PostId.Equals(reportpost.PostId)
-                                                                              && u.ReporterId.Equals(reportpost.ReporterId)
-                                                                              && !u.Status.Trim().Equals(status));
-                if (checkPost == null)
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-            catch (InvalidOperationException)
-            {
-                return false;
             }
         }
 
@@ -144,6 +119,38 @@ namespace backend.Repositories.Implementors
             catch (InvalidOperationException)
             {
                 return false;
+            }
+        }
+
+        public bool isReported(int reporterID, int postID)
+        {
+            try
+            {
+                var reportPost = _fblogAcademyContext.ReportPosts.FirstOrDefault(u => u.ReporterId.Equals(reporterID)
+                                                                                   && u.PostId.Equals(postID));
+                if (reportPost == null)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            catch (InvalidOperationException)
+            {
+                return false;
+            }
+        }
+        public ReportPost? GetReportPostByIDs(int reporterID, int postID)
+        {
+            try
+            {
+                var reportPost = _fblogAcademyContext.ReportPosts.FirstOrDefault(u => u.ReporterId.Equals(reporterID)
+                                                                               && u.PostId.Equals(postID));
+                return reportPost;
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
             }
         }
     }
