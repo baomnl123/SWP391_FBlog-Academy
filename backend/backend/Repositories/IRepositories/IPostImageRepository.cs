@@ -4,12 +4,12 @@ namespace backend.Repositories.IRepositories
 {
     public interface IPostImageRepository
     {
-        public PostImage? GetImagesById(int imageId);
+        public Image? GetImagesById(int imageId);
         public ICollection<PostImage> GetImagesByPost(int postId);
-        public bool CreateImage(PostImage image);
-        public bool UpdateImage(PostImage image);
-        public bool EnableImage(PostImage image);
-        public bool DisableImage(PostImage image);
+        public bool CreateImage(Image image);
+        public bool UpdateImage(Image image);
+        public bool EnableImage(Image image);
+        public bool DisableImage(Image image);
         public bool Save();
     }
 }

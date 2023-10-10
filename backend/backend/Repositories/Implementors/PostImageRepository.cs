@@ -12,9 +12,9 @@ namespace backend.Repositories.Implementors
             _context = new();
         }
 
-        public PostImage? GetImagesById(int imageId)
+        public Image? GetImagesById(int imageId)
         {
-            return _context.PostImages.FirstOrDefault(c => c.Id == imageId);
+            return _context.Images.FirstOrDefault(c => c.Id == imageId);
         }
 
         public ICollection<PostImage> GetImagesByPost(int postId)
@@ -22,26 +22,26 @@ namespace backend.Repositories.Implementors
             return _context.PostImages.Where(c => c.PostId == postId).ToList();
         }
 
-        public bool CreateImage(PostImage image)
+        public bool CreateImage(Image image)
         {
             _context.Add(image);
             return Save();
         }
 
-        public bool UpdateImage(PostImage image)
+        public bool UpdateImage(Image image)
         {
             _context.Update(image);
             return Save();
         }
 
-        public bool DisableImage(PostImage image)
+        public bool DisableImage(Image image)
         {
             image.Status = false;
             _context.Remove(image);
             return Save();
         }
 
-        public bool EnableImage(PostImage image)
+        public bool EnableImage(Image image)
         {
             image.Status = true;
             _context.Update(image);

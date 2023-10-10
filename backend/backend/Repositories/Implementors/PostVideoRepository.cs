@@ -12,9 +12,9 @@ namespace backend.Repositories.Implementors
             _context = new();
         }
 
-        public PostVideo? GetVideoById(int videoId)
+        public Video? GetVideoById(int videoId)
         {
-            return _context.PostVideos.FirstOrDefault(c => c.Id == videoId);
+            return _context.Videos.FirstOrDefault(c => c.Id == videoId);
         }
 
         public ICollection<PostVideo> GetVideoByPost(int postId)
