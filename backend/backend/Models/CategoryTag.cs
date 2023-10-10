@@ -9,6 +9,7 @@ namespace backend.Models
     {
         public int TagId { get; set; }
         public int CategoryId { get; set; }
+        public bool Status { get; set; }
 
         public virtual Category Category { get; set; }
         public virtual Tag Tag { get; set; }

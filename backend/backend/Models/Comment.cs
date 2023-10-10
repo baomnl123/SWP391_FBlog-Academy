@@ -16,9 +16,9 @@ namespace backend.Models
         public int PostId { get; set; }
         public int UserId { get; set; }
         public string Content { get; set; }
-        public bool Status { get; set; }
-        public DateTime? CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+        public bool Status { get; set; }
 
         public virtual Post Post { get; set; }
         public virtual User User { get; set; }

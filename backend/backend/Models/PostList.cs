@@ -9,6 +9,8 @@ namespace backend.Models
     {
         public int SaveListId { get; set; }
         public int SavePostId { get; set; }
+        public bool CreatedAt { get; set; }
+        public bool Status { get; set; }
 
         public virtual SaveList SaveList { get; set; }
         public virtual Post SavePost { get; set; }

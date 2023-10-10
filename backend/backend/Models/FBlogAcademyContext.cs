@@ -21,6 +21,7 @@ namespace backend.Models
         public virtual DbSet<CategoryTag> CategoryTags { get; set; }
         public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<FollowUser> FollowUsers { get; set; }
+        public virtual DbSet<Image> Images { get; set; }
         public virtual DbSet<Post> Posts { get; set; }
         public virtual DbSet<PostCategory> PostCategories { get; set; }
         public virtual DbSet<PostImage> PostImages { get; set; }
@@ -31,25 +32,15 @@ namespace backend.Models
         public virtual DbSet<SaveList> SaveLists { get; set; }
         public virtual DbSet<Tag> Tags { get; set; }
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Video> Videos { get; set; }
         public virtual DbSet<VoteComment> VoteComments { get; set; }
         public virtual DbSet<VotePost> VotePosts { get; set; }
-
-        private string GetConnectionString()
-        {
-            IConfiguration config = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", true, true)
-                .Build();
-            var strConn = config["ConnectionStrings:FBlogDB"];
-            return strConn;
-        }
-
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(GetConnectionString());
+                optionsBuilder.UseSqlServer("Server= (local);uid=sa;pwd=12345;database=FBlogAcademy;TrustServerCertificate=True");
             }
         }
 
@@ -67,7 +58,7 @@ namespace backend.Models
 
                 entity.Property(e => e.CategoryName)
                     .IsRequired()
-                    .HasMaxLength(255)
+                    .HasMaxLength(25)
                     .HasColumnName("category_name");
 
                 entity.Property(e => e.CreatedAt)
@@ -90,13 +81,15 @@ namespace backend.Models
             modelBuilder.Entity<CategoryTag>(entity =>
             {
                 entity.HasKey(e => new { e.TagId, e.CategoryId })
-                    .HasName("PK__Category__1FC24C2DF9CCDA7D");
+                    .HasName("PK__Category__1FC24C2D619EB0CA");
 
                 entity.ToTable("CategoryTag");
 
                 entity.Property(e => e.TagId).HasColumnName("tag_id");
 
                 entity.Property(e => e.CategoryId).HasColumnName("category_id");
+
+                entity.Property(e => e.Status).HasColumnName("status");
 
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.CategoryTags)
@@ -119,7 +112,6 @@ namespace backend.Models
 
                 entity.Property(e => e.Content)
                     .IsRequired()
-                    .HasMaxLength(255)
                     .HasColumnName("content");
 
                 entity.Property(e => e.CreatedAt)
@@ -152,7 +144,7 @@ namespace backend.Models
             modelBuilder.Entity<FollowUser>(entity =>
             {
                 entity.HasKey(e => new { e.FollowerId, e.FollowedId })
-                    .HasName("PK__FollowUs__838707A3A1740FC4");
+                    .HasName("PK__FollowUs__838707A38FAF7E83");
 
                 entity.ToTable("FollowUser");
 
@@ -179,6 +171,24 @@ namespace backend.Models
                     .HasConstraintName("FKFollowUser200833");
             });
 
+            modelBuilder.Entity<Image>(entity =>
+            {
+                entity.ToTable("Image");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("created_at");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.Property(e => e.Url)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .HasColumnName("url");
+            });
+
             modelBuilder.Entity<Post>(entity =>
             {
                 entity.ToTable("Post");
@@ -189,7 +199,6 @@ namespace backend.Models
 
                 entity.Property(e => e.Content)
                     .IsRequired()
-                    .HasMaxLength(255)
                     .HasColumnName("content");
 
                 entity.Property(e => e.CreatedAt)
@@ -198,11 +207,14 @@ namespace backend.Models
 
                 entity.Property(e => e.IsApproved).HasColumnName("is_approved");
 
-                entity.Property(e => e.IsSaved).HasColumnName("is_saved");
-
                 entity.Property(e => e.ReviewerId).HasColumnName("reviewer_id");
 
                 entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.Property(e => e.Title)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnName("title");
 
                 entity.Property(e => e.UpdatedAt)
                     .HasColumnType("datetime")
@@ -213,7 +225,6 @@ namespace backend.Models
                 entity.HasOne(d => d.Reviewer)
                     .WithMany(p => p.PostReviewers)
                     .HasForeignKey(d => d.ReviewerId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FKPost548405");
 
                 entity.HasOne(d => d.User)
@@ -226,13 +237,15 @@ namespace backend.Models
             modelBuilder.Entity<PostCategory>(entity =>
             {
                 entity.HasKey(e => new { e.PostId, e.CategoryId })
-                    .HasName("PK__PostCate__638369FD53652869");
+                    .HasName("PK__PostCate__638369FD4FBDCD1A");
 
                 entity.ToTable("PostCategory");
 
                 entity.Property(e => e.PostId).HasColumnName("post_id");
 
                 entity.Property(e => e.CategoryId).HasColumnName("category_id");
+
+                entity.Property(e => e.Status).HasColumnName("status");
 
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.PostCategories)
@@ -249,21 +262,22 @@ namespace backend.Models
 
             modelBuilder.Entity<PostImage>(entity =>
             {
+                entity.HasKey(e => new { e.ImageId, e.PostId })
+                    .HasName("PK__PostImag__AF77B12358D784CB");
+
                 entity.ToTable("PostImage");
 
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.Content)
-                    .HasMaxLength(255)
-                    .HasColumnName("content");
-
-                entity.Property(e => e.CreatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("created_at");
+                entity.Property(e => e.ImageId).HasColumnName("image_id");
 
                 entity.Property(e => e.PostId).HasColumnName("post_id");
 
                 entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.HasOne(d => d.Image)
+                    .WithMany(p => p.PostImages)
+                    .HasForeignKey(d => d.ImageId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FKPostImage405177");
 
                 entity.HasOne(d => d.Post)
                     .WithMany(p => p.PostImages)
@@ -275,13 +289,17 @@ namespace backend.Models
             modelBuilder.Entity<PostList>(entity =>
             {
                 entity.HasKey(e => new { e.SaveListId, e.SavePostId })
-                    .HasName("PK__PostList__859A5D1B2A301E66");
+                    .HasName("PK__PostList__859A5D1BB3774C7B");
 
                 entity.ToTable("PostList");
 
                 entity.Property(e => e.SaveListId).HasColumnName("save_list_id");
 
                 entity.Property(e => e.SavePostId).HasColumnName("save_post_id");
+
+                entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+
+                entity.Property(e => e.Status).HasColumnName("status");
 
                 entity.HasOne(d => d.SaveList)
                     .WithMany(p => p.PostLists)
@@ -299,13 +317,15 @@ namespace backend.Models
             modelBuilder.Entity<PostTag>(entity =>
             {
                 entity.HasKey(e => new { e.PostId, e.TagId })
-                    .HasName("PK__PostTag__4AFEED4DAD483322");
+                    .HasName("PK__PostTag__4AFEED4D0915C090");
 
                 entity.ToTable("PostTag");
 
                 entity.Property(e => e.PostId).HasColumnName("post_id");
 
                 entity.Property(e => e.TagId).HasColumnName("tag_id");
+
+                entity.Property(e => e.Status).HasColumnName("status");
 
                 entity.HasOne(d => d.Post)
                     .WithMany(p => p.PostTags)
@@ -322,17 +342,12 @@ namespace backend.Models
 
             modelBuilder.Entity<PostVideo>(entity =>
             {
+                entity.HasKey(e => new { e.VideoId, e.PostId })
+                    .HasName("PK__PostVide__9B1C66660B056056");
+
                 entity.ToTable("PostVideo");
 
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.Content)
-                    .HasMaxLength(255)
-                    .HasColumnName("content");
-
-                entity.Property(e => e.CreatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("created_at");
+                entity.Property(e => e.VideoId).HasColumnName("video_id");
 
                 entity.Property(e => e.PostId).HasColumnName("post_id");
 
@@ -343,12 +358,18 @@ namespace backend.Models
                     .HasForeignKey(d => d.PostId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FKPostVideo392925");
+
+                entity.HasOne(d => d.Video)
+                    .WithMany(p => p.PostVideos)
+                    .HasForeignKey(d => d.VideoId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FKPostVideo364505");
             });
 
             modelBuilder.Entity<ReportPost>(entity =>
             {
                 entity.HasKey(e => new { e.ReporterId, e.PostId })
-                    .HasName("PK__ReportPo__39154D75FBC281C9");
+                    .HasName("PK__ReportPo__39154D75DD3D3CC7");
 
                 entity.ToTable("ReportPost");
 
@@ -359,7 +380,6 @@ namespace backend.Models
                 entity.Property(e => e.AdminId).HasColumnName("admin_id");
 
                 entity.Property(e => e.Content)
-                    .IsRequired()
                     .HasMaxLength(255)
                     .HasColumnName("content");
 
@@ -377,7 +397,6 @@ namespace backend.Models
                 entity.HasOne(d => d.Admin)
                     .WithMany(p => p.ReportPostAdmins)
                     .HasForeignKey(d => d.AdminId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FKReportPost712211");
 
                 entity.HasOne(d => d.Post)
@@ -405,7 +424,7 @@ namespace backend.Models
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(255)
+                    .HasMaxLength(50)
                     .HasColumnName("name");
 
                 entity.Property(e => e.Status).HasColumnName("status");
@@ -439,7 +458,7 @@ namespace backend.Models
 
                 entity.Property(e => e.TagName)
                     .IsRequired()
-                    .HasMaxLength(255)
+                    .HasMaxLength(20)
                     .HasColumnName("tag_name");
 
                 entity.Property(e => e.UpdatedAt)
@@ -457,10 +476,11 @@ namespace backend.Models
             {
                 entity.ToTable("User");
 
-                entity.HasIndex(e => e.Email, "UQ__User__AB6E61641EB2184B")
+                entity.HasIndex(e => e.Email, "UQ__User__AB6E6164D120EBFA")
                     .IsUnique();
 
                 entity.Property(e => e.Id)
+                    .ValueGeneratedNever()
                     .HasColumnName("id");
 
                 entity.Property(e => e.CreatedAt)
@@ -469,19 +489,20 @@ namespace backend.Models
 
                 entity.Property(e => e.Email)
                     .IsRequired()
-                    .HasMaxLength(255)
+                    .HasMaxLength(20)
                     .HasColumnName("email");
 
                 entity.Property(e => e.IsAwarded).HasColumnName("is_awarded");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(255)
+                    .HasMaxLength(50)
                     .HasColumnName("name");
 
                 entity.Property(e => e.Password)
                     .IsRequired()
-                    .HasMaxLength(255)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
                     .HasColumnName("password");
 
                 entity.Property(e => e.Role)
@@ -498,10 +519,28 @@ namespace backend.Models
                     .HasColumnName("updated_at");
             });
 
+            modelBuilder.Entity<Video>(entity =>
+            {
+                entity.ToTable("Video");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("created_at");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.Property(e => e.Url)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .HasColumnName("url");
+            });
+
             modelBuilder.Entity<VoteComment>(entity =>
             {
                 entity.HasKey(e => new { e.UserId, e.CommentId })
-                    .HasName("PK__VoteComm__D7C76067CAA69F76");
+                    .HasName("PK__VoteComm__D7C76067C06255A7");
 
                 entity.ToTable("VoteComment");
 
@@ -533,7 +572,7 @@ namespace backend.Models
             modelBuilder.Entity<VotePost>(entity =>
             {
                 entity.HasKey(e => new { e.UserId, e.PostId })
-                    .HasName("PK__VotePost__CA534F7969D23565");
+                    .HasName("PK__VotePost__CA534F79E6329B08");
 
                 entity.ToTable("VotePost");
 

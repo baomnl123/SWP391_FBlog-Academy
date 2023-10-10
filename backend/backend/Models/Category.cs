@@ -18,7 +18,7 @@ namespace backend.Models
         public string CategoryName { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
-        public bool? Status { get; set; }
+        public bool Status { get; set; }
 
         public virtual User Admin { get; set; }
         public virtual ICollection<CategoryTag> CategoryTags { get; set; }

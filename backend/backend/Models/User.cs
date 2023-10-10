@@ -31,7 +31,7 @@ namespace backend.Models
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public bool Status { get; set; }
-        public bool? IsAwarded { get; set; }
+        public bool IsAwarded { get; set; }
 
         public virtual ICollection<Category> Categories { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
