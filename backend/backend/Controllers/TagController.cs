@@ -93,9 +93,9 @@ namespace backend.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateCategory([FromBody] string newTagName, string tagName)
+        public IActionResult UpdateCategory([FromBody] string newTagName, string currentTagName)
         {
-            if (!_tagHandlers.UpdateTag(tagName, newTagName))
+            if (!_tagHandlers.UpdateTag(currentTagName, newTagName))
                 return NotFound();
 
             return Ok("Update successfully!");

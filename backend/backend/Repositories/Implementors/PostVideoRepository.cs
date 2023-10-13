@@ -7,45 +7,33 @@ namespace backend.Repositories.Implementors
     {
         private readonly FBlogAcademyContext _context;
 
-        public PostVideoRepository(FBlogAcademyContext context)
+        public PostVideoRepository()
         {
             _context = new();
         }
 
-        public Video? GetVideoById(int videoId)
+        public bool DisableVideo(PostVideo postVideo)
         {
-            return _context.Videos.FirstOrDefault(c => c.Id == videoId);
+            postVideo.Status = false;
+            _context.Update(postVideo);
+            return Save();
         }
 
-        public ICollection<PostVideo> GetVideoByPost(int postId)
+        public bool EnableVideo(PostVideo postVideo)
+        {
+            postVideo.Status = true;
+            _context.Update(postVideo);
+            return Save();
+        }
+
+        public ICollection<PostVideo> GetPostVideoByPostId(int postId)
         {
             return _context.PostVideos.Where(c => c.PostId == postId).ToList();
         }
 
-        public bool CreateVideo(PostVideo video)
+        public ICollection<PostVideo> GetPostVideoByVideoId(int videoId)
         {
-            _context.Add(video);
-            return Save();
-        }
-
-        public bool UpdateVideo(PostVideo video)
-        {
-            _context.Update(video);
-            return Save();
-        }
-
-        public bool EnableVideo(PostVideo video)
-        {
-            video.Status = true;
-            _context.Update(video);
-            return Save();
-        }
-
-        public bool DisableVideo(PostVideo video)
-        {
-            video.Status = false;
-            _context.Remove(video);
-            return Save();
+            return _context.PostVideos.Where(c => c.VideoId == videoId).ToList();
         }
 
         public bool Save()

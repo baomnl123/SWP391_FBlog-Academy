@@ -16,8 +16,8 @@ namespace PokemonReviewApp.Helper
             CreateMap<Category, CategoryDTO>();
             CreateMap<Tag, TagDTO>();
             CreateMap<Category, CategoryDTO>();
-            CreateMap<PostImage, ImageDTO>();
-            CreateMap<PostVideo, VideoDTO>();
+            CreateMap<Image, ImageDTO>();
+            CreateMap<Video, VideoDTO>();
 
             CreateMap<TagDTO, Tag>();
             CreateMap<CategoryDTO, Category>();

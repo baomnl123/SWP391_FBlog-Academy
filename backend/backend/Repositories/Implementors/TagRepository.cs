@@ -42,13 +42,6 @@ namespace backend.Repositories.Implementors
             return _context.Tags.Where(c => c.Status == false).ToList();
         }
 
-        public ICollection<Post> GetPostsByTag(int tagId)
-        {
-            return _context.PostTags.Where(e => e.TagId == tagId)
-                                    .Select(c => c.Post)
-                                    .Where(c => c.Status == true).ToList();
-        }
-
         public Tag? GetTagById(int tagId)
         {
             return _context.Tags.FirstOrDefault(c => c.Id == tagId);
@@ -59,11 +52,18 @@ namespace backend.Repositories.Implementors
             return _context.Tags.FirstOrDefault(c => c.TagName == tagName);
         }
 
-        public bool Save()
+        public ICollection<Post> GetPostsByTag(int tagId)
         {
-            var saved = _context.SaveChanges();
-            // if saved > 0 then return true, else return false
-            return saved > 0;
+            return _context.PostTags.Where(e => e.TagId == tagId && e.Status == true)
+                                    .Select(e => e.Post)
+                                    .Where(c => c.Status == true).ToList();
+        }
+
+        public ICollection<Category> GetCategoriesByTag(int tagId)
+        {
+            return _context.CategoryTags.Where(e => e.TagId == tagId && e.Status == true)
+                                        .Select(e => e.Category)
+                                        .Where(c => c.Status == true).ToList();
         }
 
         public bool UpdateTag(Tag tag)
@@ -72,11 +72,11 @@ namespace backend.Repositories.Implementors
             return Save();
         }
 
-        public ICollection<Category> GetCategoriesByTag(int tagId)
+        public bool Save()
         {
-            return _context.CategoryTags.Where(e => e.TagId == tagId)
-                                        .Select(c => c.Category)
-                                        .Where(c => c.Status == true).ToList();
+            var saved = _context.SaveChanges();
+            // if saved > 0 then return true, else return false
+            return saved > 0;
         }
     }
 }
