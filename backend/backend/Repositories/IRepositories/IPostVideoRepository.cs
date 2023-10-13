@@ -4,13 +4,10 @@ namespace backend.Repositories.IRepositories
 {
     public interface IPostVideoRepository
     {
-        //public ICollection<User> GetVideoByUser(int userId);
-        public Video? GetVideoById(int videoId);
-        public ICollection<PostVideo> GetVideoByPost(int postId);
-        public bool CreateVideo(PostVideo video);
-        public bool UpdateVideo(PostVideo video);
-        public bool EnableVideo(PostVideo video);
-        public bool DisableVideo(PostVideo video);
+        public ICollection<PostVideo> GetPostVideoByPostId(int postId);
+        public ICollection<PostVideo> GetPostVideoByVideoId(int videoId);
+        public bool EnableVideo(PostVideo postVideo);
+        public bool DisableVideo(PostVideo postVideo);
         public bool Save();
     }
 }

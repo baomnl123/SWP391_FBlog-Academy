@@ -51,7 +51,7 @@ namespace backend.Controllers
             return Ok(category);
         }
 
-        [HttpGet("{categoryId}/post")]
+        [HttpGet("{categoryId}/posts")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
         [ProducesResponseType(400)]
         public IActionResult GetPostsByCategory(int categoryId)
@@ -94,7 +94,7 @@ namespace backend.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateCategory([FromBody] string newCategoryName, string categoryName)
+        public IActionResult UpdateCategory([FromBody] string newCategoryName, string currentCategoryName)
         {
             if (_categoryHandlers.GetCategoryByName(newCategoryName) != null)
             {
@@ -102,7 +102,7 @@ namespace backend.Controllers
                 return StatusCode(422, "Category aldready exists!");
             }
 
-            if (!_categoryHandlers.UpdateCategory(categoryName, newCategoryName))
+            if (!_categoryHandlers.UpdateCategory(currentCategoryName, newCategoryName))
                 return NotFound();
 
             return Ok("Update successfully!");

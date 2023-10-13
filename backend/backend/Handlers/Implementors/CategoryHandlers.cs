@@ -9,12 +9,19 @@ namespace backend.Handlers.Implementors
     public class CategoryHandlers : ICategoryHandlers
     {
         private readonly ICategoryRepository _categoryRepository;
+        private readonly ICategoryTagRepository _categoryTagRepository;
+        private readonly IPostCategoryRepository _postCategoryRepository;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
-        public CategoryHandlers(ICategoryRepository categoryRepository, IUserRepository userRepository, IMapper mapper)
+        public CategoryHandlers(ICategoryRepository categoryRepository,
+                                ICategoryTagRepository categoryTagRepository,
+                                IPostCategoryRepository postCategoryRepository,
+                                IUserRepository userRepository, IMapper mapper)
         {
             _categoryRepository = categoryRepository;
+            _categoryTagRepository = categoryTagRepository;
+            _postCategoryRepository = postCategoryRepository;
             _userRepository = userRepository;
             _mapper = mapper;
         }
@@ -49,7 +56,6 @@ namespace backend.Handlers.Implementors
 
         public ICollection<PostDTO>? GetPostsByCategory(int categoryId)
         {
-
             var category = _categoryRepository.GetCategoryById(categoryId);
             if (category == null || category.Status == false) return null;
 
@@ -75,7 +81,7 @@ namespace backend.Handlers.Implementors
             var categoryExists = _categoryRepository.GetCategoryByName(categoryName);
 
             // If category does not have in DB
-            if(categoryExists == null)
+            if (categoryExists == null)
             {
                 Category category = new()
                 {
@@ -84,10 +90,8 @@ namespace backend.Handlers.Implementors
                     CreatedAt = DateTime.Now,
                     Status = true
                 };
-                var newCategory = _categoryRepository.CreateCategory(category);
-
                 // If create succeed then return true, else return false
-                return newCategory;
+                return _categoryRepository.CreateCategory(category); 
             }
 
             // If category was disabled, set status to true
@@ -119,6 +123,26 @@ namespace backend.Handlers.Implementors
             var category = _categoryRepository.GetCategoryById(categoryId);
             if (category.Status == true) return true;
 
+            // Enable CategoryTag
+            var categoryTagList = _categoryTagRepository.GetCategoryTagByCategoryId(categoryId);
+            if (categoryTagList != null)
+            {
+                foreach (var categoryTag in categoryTagList)
+                {
+                    _categoryTagRepository.EnableCategoryTag(categoryTag);
+                }
+            }
+
+            // Enable PostCategory
+            var postCategoryList = _postCategoryRepository.GetPostCategoryByCategoryId(categoryId);
+            if (postCategoryList != null)
+            {
+                foreach (var postCategory in postCategoryList)
+                {
+                    _postCategoryRepository.EnablePostCategory(postCategory);
+                }
+            }
+
             // Return true if enable, false if cannot enable
             return _categoryRepository.EnableCategory(category);
         }
@@ -129,6 +153,25 @@ namespace backend.Handlers.Implementors
             var category = _categoryRepository.GetCategoryById(categoryId);
             if (category.Status == false) return false;
 
+            // Disable CategoryTag
+            var categoryTagList = _categoryTagRepository.GetCategoryTagByCategoryId(categoryId);
+            if (categoryTagList != null)
+            {
+                foreach (var categoryTag in categoryTagList)
+                {
+                    _categoryTagRepository.DisableCategoryTag(categoryTag);
+                }
+            }
+
+            // Disable PostCategory
+            var postCategoryList = _postCategoryRepository.GetPostCategoryByCategoryId(categoryId);
+            if (postCategoryList != null)
+            {
+                foreach (var postCategory in postCategoryList)
+                {
+                    _postCategoryRepository.DisablePostCategory(postCategory);
+                }
+            }
 
             // Return true if disable, false if cannot disable
             return _categoryRepository.DisableCategory(category);

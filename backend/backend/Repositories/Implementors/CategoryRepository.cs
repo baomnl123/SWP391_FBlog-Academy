@@ -54,16 +54,22 @@ namespace backend.Repositories.Implementors
 
         public ICollection<Post> GetPostsByCategory(int categoryId)
         {
-            return _context.PostCategories.Where(e => e.CategoryId == categoryId)
-                                          .Select(c => c.Post)
+            return _context.PostCategories.Where(e => e.CategoryId == categoryId && e.Status == true)
+                                          .Select(e => e.Post)
                                           .Where(c => c.Status == true).ToList();
         }
 
         public ICollection<Tag> GetTagsByCategory(int categoryId)
         {
-            return _context.CategoryTags.Where(e => e.CategoryId == categoryId)
-                                        .Select(c => c.Tag)
+            return _context.CategoryTags.Where(e => e.CategoryId == categoryId && e.Status == true)
+                                        .Select(e => e.Tag)
                                         .Where(c => c.Status == true).ToList();
+        }
+
+        public bool UpdateCategory(Category category)
+        {
+            _context.Update(category);
+            return Save();
         }
 
         public bool Save()
@@ -71,12 +77,6 @@ namespace backend.Repositories.Implementors
             var saved = _context.SaveChanges();
             // if saved > 0 then return true, else return false
             return saved > 0;
-        }
-
-        public bool UpdateCategory(Category category)
-        {
-            _context.Update(category);
-            return Save();
         }
     }
 }
