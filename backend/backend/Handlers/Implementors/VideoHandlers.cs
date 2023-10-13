@@ -40,7 +40,7 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<VideoDTO>(video);
         }
 
-        public ICollection<VideoDTO> GetVideoByPost(int postId)
+        public ICollection<VideoDTO> GetVideosByPost(int postId)
         {
             //var post = _postRepository.GetPostById(postId);
             //if (post == null || post.Status == false) return null;
