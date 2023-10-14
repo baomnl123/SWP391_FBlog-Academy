@@ -1,11 +1,35 @@
 {
-  "name": "twitter-gui-clon",
-  "version": "1.0.0",
-  "description": " simple Twitter GUI clone project using html and css",
-  "author": "sajith dilshan",
-  "license": "MIT",
+  "homepage": "https://robin-dc.github.io/Facebook-UI-Clone-React/",
+  "name": "facebook-ui-clone-react",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
   "dependencies": {
-    "boostrap": "^2.0.0",
-    "reset.css": "^2.0.2"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.16.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.6",
+    "@types/react": "^18.0.37",
+    "@types/react-dom": "^18.0.11",
+    "@vitejs/plugin-react": "^4.0.0",
+    "autoprefixer": "^10.4.16",
+    "eslint": "^8.38.0",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.3.4",
+    "gh-pages": "^5.0.0",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.3.3",
+    "vite": "^4.3.9"
   }
 }
