@@ -1,5 +1,7 @@
 ﻿using backend.Models;
 using backend.Repositories.IRepositories;
+using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace backend.Repositories.Implementors
 {
@@ -74,9 +76,20 @@ namespace backend.Repositories.Implementors
 
         public bool Save()
         {
-            var saved = _context.SaveChanges();
-            // if saved > 0 then return true, else return false
-            return saved > 0;
+            try
+            {
+                var saved = _context.SaveChanges();
+                // if saved > 0 then return true, else return false
+                return saved > 0;
+            }
+            catch (DbUpdateException)
+            {
+                return false;
+            }
+            catch (DBConcurrencyException)
+            {
+                return false;
+            }
         }
     }
 }

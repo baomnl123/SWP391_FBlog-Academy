@@ -12,6 +12,10 @@ namespace backend.Utils
             CreateMap<ReportPost, ReportPostDTO>();
             CreateMap<SaveList,SaveListDTO>();
             CreateMap<FollowUser, FollowUserDTO>();
+            CreateMap<Category, CategoryDTO>();
+            CreateMap<Tag, TagDTO>();
+            CreateMap<Image, ImageDTO>();
+            CreateMap<Video, VideoDTO>();
         }
     }
 }

@@ -32,7 +32,7 @@ namespace backend.Controllers
         [HttpPost("create")]
         [ProducesResponseType(204)]
         [ProducesResponseType(422)]
-        public IActionResult CreateImage([FromBody] int postId, string[] imageURLs)
+        public IActionResult CreateImage([FromRoute] int postId, [FromBody] string[] imageURLs)
         {
             // For each imageURL in imageURLs, if imageURL already exists then return
             if (imageURLs.Any(imageURL => _imageHandlers.GetImageByURL(imageURL) != null))
