@@ -35,6 +35,8 @@ builder.Services.AddScoped<IImageHandlers, ImageHandlers>();
 builder.Services.AddScoped<IVideoHandlers, VideoHandlers>();
 builder.Services.AddScoped<IPostHandlers, PostHandlers>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
+builder.Services.AddScoped<ICommentHandlers, CommentHandlers>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();

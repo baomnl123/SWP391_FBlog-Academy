@@ -194,7 +194,6 @@ namespace backend.Models
                 entity.ToTable("Post");
 
                 entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
                     .HasColumnName("id");
 
                 entity.Property(e => e.Content)
