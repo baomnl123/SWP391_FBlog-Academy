@@ -4,25 +4,23 @@ namespace backend.Handlers.IHandlers
 {
     public interface IPostHandlers
     {
+        //Get all posts of user
+        public ICollection<PostDTO>? SearchPostByUserId(int userId);
         //Search all posts
-        public ICollection<PostDTO> GetAllPosts();
+        public ICollection<PostDTO>? GetAllPosts();
         //Search Posts which contain content.
-        public ICollection<PostDTO>? SearchPostsByContent(string content);
-        //Search Posts belong to a subject code
-        public ICollection<PostDTO>? SearchPostsBySubjectCode(string tagName);
-        //Search Posts belong to a major
-        public ICollection<PostDTO>? SearchPostsByMajor(string categoryName);
+        public ICollection<PostDTO>? SearchPostsByTitle(string title);
         //Create post
-        public PostDTO CreatePost(int userId, string content);
+        public PostDTO? CreatePost(int userId, string title, string content);
         //Update post
-        public PostDTO UpdatePost(int userId, int postId, string content);
+        public PostDTO? UpdatePost(int postId, string title,string content);
         //Delete post
-        public bool DeletePost(int userId, int postId);
+        public PostDTO? DeletePost(int postId);
         //View pending post's list
-        public ICollection<PostDTO> ViewPendingPostList();
+        public ICollection<PostDTO>? ViewPendingPostList(int viewerId);
         //Approve post
-        public bool ApprovePost(int postId);
+        public PostDTO? ApprovePost(int reviewerId, int postId);
         //Deny post
-        public bool DenyPost(int postId);
+        public PostDTO? DenyPost(int reviewerId, int postId);
     }
 }
