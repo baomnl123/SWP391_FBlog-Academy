@@ -27,6 +27,11 @@ namespace backend.Repositories.Implementors
             }
         }
 
+        public Comment? GetComment(int commentId)
+        {
+           return _fBlogAcademyContext.Comments.Where(c => c.Id.Equals(commentId)).FirstOrDefault();
+        }
+
         public bool Save()
         {
             try
