@@ -26,6 +26,8 @@ builder.Services.AddScoped<ICategoryHandlers, CategoryHandlers>();
 builder.Services.AddScoped<ITagHandlers, TagHandlers>();
 builder.Services.AddScoped<IPostHandlers, PostHandlers>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
+builder.Services.AddScoped<ICommentHandlers, CommentHandlers>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
