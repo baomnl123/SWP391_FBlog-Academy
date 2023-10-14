@@ -58,9 +58,9 @@ namespace backend.Controllers
         }
 
         [HttpPost("CreateNewPost")]
-        public IActionResult CreatePost(int userId, string title, string content)
+        public IActionResult CreatePost(int userId, string title, string content, int tagId, int categoryId)
         {
-            var newPost = _postHandlers.CreatePost(userId, title, content);
+            var newPost = _postHandlers.CreatePost(userId, title, content, tagId, categoryId);
             if (newPost != null)
             {
                 return Ok(newPost);
@@ -69,9 +69,9 @@ namespace backend.Controllers
         }
 
         [HttpPut("UpdatePost")]
-        public IActionResult UpdatePost(int postId, string title,string content)
+        public IActionResult UpdatePost(int postId, string title,string content, int tagId, int categoryId)
         {
-            var updatedPost = _postHandlers.UpdatePost(postId, title, content);
+            var updatedPost = _postHandlers.UpdatePost(postId, title, content, tagId, categoryId);
             if (updatedPost != null)
             {
                 return Ok(updatedPost);
@@ -80,9 +80,9 @@ namespace backend.Controllers
         }
 
         [HttpDelete("DeletePost")]
-        public IActionResult DeletePost(int postId)
+        public IActionResult DeletePost(int postId, int tagId, int categoryId)
         {
-            var deletedPost = _postHandlers.DeletePost(postId);
+            var deletedPost = _postHandlers.DeletePost(postId, tagId, categoryId);
             if(deletedPost != null)
             {
                 return Ok(deletedPost);
@@ -102,9 +102,9 @@ namespace backend.Controllers
         }
 
         [HttpPut("DenyPost")]
-        public IActionResult DenyPost(int reviewerId, int postId)
+        public IActionResult DenyPost(int reviewerId, int postId, int tagId, int categoryId)
         {
-            var deniedPost = _postHandlers.DenyPost(reviewerId, postId);
+            var deniedPost = _postHandlers.DenyPost(reviewerId, postId, tagId, categoryId);
             if(deniedPost != null)
             {
                 return Ok(deniedPost);

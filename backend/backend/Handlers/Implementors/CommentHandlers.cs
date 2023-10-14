@@ -21,7 +21,7 @@ namespace backend.Handlers.Implementors
             _postRepository = postRepository;
         }
 
-        CommentDTO? ICommentHandlers.CreateComment(int userId, int postId, string content)
+        public CommentDTO? CreateComment(int userId, int postId, string content)
         {
             //return null if info needed to create is null
             if (content == null) return null;
@@ -57,17 +57,17 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<CommentDTO>(newComment);
         }
 
-        CommentDTO? ICommentHandlers.DeleteComment(int commentId)
+        public CommentDTO? DeleteComment(int commentId)
         {
             throw new NotImplementedException();
         }
 
-        CommentDTO? ICommentHandlers.UpdateComment(int commentId, string content)
+        public CommentDTO? UpdateComment(int commentId, string content)
         {
-            throw new NotImplementedException();
+            if (content == null) return null;
         }
 
-        ICollection<CommentDTO>? ICommentHandlers.ViewAllComments(int postId)
+        public ICollection<CommentDTO>? ViewAllComments(int postId)
         {
             // return null if post does not exist
             //                      or is removed
