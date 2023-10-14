@@ -65,6 +65,10 @@ namespace backend.Handlers.Implementors
         public CommentDTO? UpdateComment(int commentId, string content)
         {
             if (content == null) return null;
+
+            var existedComment = _commentRepository.GetComment(commentId);
+            if (existedComment == null) return null;
+            return _mapper.Map<CommentDTO>(existedComment);
         }
 
         public ICollection<CommentDTO>? ViewAllComments(int postId)
