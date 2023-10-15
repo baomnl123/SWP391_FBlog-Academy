@@ -51,7 +51,7 @@ namespace backend.Repositories.Implementors
 
         public Tag? GetTagByName(string tagName)
         {
-            return _context.Tags.FirstOrDefault(c => c.TagName == tagName);
+            return _context.Tags.FirstOrDefault(c => c.TagName.Trim().ToUpper() == tagName.Trim().ToUpper());
         }
 
         public ICollection<Post> GetPostsByTag(int tagId)
