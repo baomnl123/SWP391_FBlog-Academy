@@ -17,13 +17,8 @@ builder.Services.AddScoped<IReportPostRepository, ReportPostRepository>();
 builder.Services.AddScoped<ISaveListRepository, SaveListRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ITagRepository, TagRepository>();
-builder.Services.AddScoped<ICategoryTagRepository, CategoryTagRepository>();
-builder.Services.AddScoped<IPostCategoryRepository, PostCategoryRepository>();
-builder.Services.AddScoped<IPostTagRepository, PostTagRepository>();
 builder.Services.AddScoped<IImageRepository, ImageRepository>();
 builder.Services.AddScoped<IVideoRepository, VideoRepository>();
-builder.Services.AddScoped<IPostImageRepository, PostImageRepository>();
-builder.Services.AddScoped<IPostVideoRepository, PostVideoRepository>();
 //
 builder.Services.AddScoped<IFollowUserHandlers, FollowUserHandlers>();
 builder.Services.AddScoped<IReportPostHandlers, ReportPostHandlers>();
