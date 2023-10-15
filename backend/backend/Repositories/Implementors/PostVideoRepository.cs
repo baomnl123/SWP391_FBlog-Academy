@@ -14,6 +14,12 @@ namespace backend.Repositories.Implementors
             _context = new();
         }
 
+        public bool CreateVideo(PostVideo postVideo)
+        {
+            _context.Add(postVideo);
+            return Save();
+        }
+
         public bool DisableVideo(PostVideo postVideo)
         {
             postVideo.Status = false;

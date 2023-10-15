@@ -14,6 +14,12 @@ namespace backend.Repositories.Implementors
             _context = new();
         }
 
+        public bool CreateCategoryTag(CategoryTag categoryTag)
+        {
+            _context.Add(categoryTag);
+            return Save();
+        }
+
         public bool DisableCategoryTag(CategoryTag categoryTag)
         {
             categoryTag.Status = false;

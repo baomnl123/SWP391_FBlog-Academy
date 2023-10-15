@@ -6,6 +6,7 @@ namespace backend.Repositories.IRepositories
     {
         public ICollection<PostImage> GetPostImageByPostId(int postId);
         public ICollection<PostImage> GetPostImageByImageId(int imageId);
+        public bool CreateImage(PostImage postImage);
         public bool EnableImage(PostImage postImage);
         public bool DisableImage(PostImage postImage);
         public bool Save();

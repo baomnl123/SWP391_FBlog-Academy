@@ -91,11 +91,12 @@ namespace backend.Handlers.Implementors
                     CreatedAt = DateTime.Now,
                     Status = true
                 };
+
                 foreach (var tagId in tagIds)
                 {
-                    _categoryRepository.CreateCategory(tagId, postId, category);
+                    _categoryRepository.CreateCategory(tagId, category);
                 }
-                // If create succeed then return true, else return false
+                return true;
             }
 
             // If category was disabled, set status to true

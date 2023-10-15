@@ -14,6 +14,12 @@ namespace backend.Repositories.Implementors
             _context = new();
         }
 
+        public bool CreateImage(PostImage postImage)
+        {
+            _context.Add(postImage);
+            return Save();
+        }
+
         public bool DisableImage(PostImage postImage)
         {
             postImage.Status = false;

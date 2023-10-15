@@ -14,6 +14,12 @@ namespace backend.Repositories.Implementors
             _context = new();
         }
 
+        public bool CreatePostCategory(PostCategory postCategory)
+        {
+            _context.Add(postCategory);
+            return Save();
+        }
+
         public bool DisablePostCategory(PostCategory postCategory)
         {
             postCategory.Status = false;

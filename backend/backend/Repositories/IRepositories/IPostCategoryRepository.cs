@@ -6,6 +6,7 @@ namespace backend.Repositories.IRepositories
     {
         public ICollection<PostCategory> GetPostCategoryByPostId(int postId);
         public ICollection<PostCategory> GetPostCategoryByCategoryId(int categoryId);
+        public bool CreatePostCategory(PostCategory postCategory);
         public bool DisablePostCategory(PostCategory postCategory);
         public bool EnablePostCategory(PostCategory postCategory);
         public bool Save();

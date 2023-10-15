@@ -14,6 +14,12 @@ namespace backend.Repositories.Implementors
             _context = new();
         }
 
+        public bool CreatePostTag(PostTag postTag)
+        {
+            _context.Add(postTag);
+            return Save();
+        }
+
         public bool DisablePostTag(PostTag postTag)
         {
             postTag.Status = false;

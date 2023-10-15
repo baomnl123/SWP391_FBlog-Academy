@@ -14,11 +14,9 @@ namespace backend.Repositories.Implementors
             _context = new();
         }
 
-        public bool CreateCategory(int tagId, int postId, Category category)
+        public bool CreateCategory(int tagId, Category category)
         {
             var tag = _context.Tags.FirstOrDefault(c => c.Id == tagId && c.Status == true);
-            var post = _context.Posts.FirstOrDefault(c => c.Id == postId && c.Status == true);
-
             // Add CategoryTag
             var categoryTag = new CategoryTag()
             {
@@ -28,15 +26,6 @@ namespace backend.Repositories.Implementors
             };
             _context.Add(categoryTag);
 
-            // Add PostCategory
-            var postCategory = new PostCategory()
-            {
-                Post = post,
-                Category = category,
-                Status = true
-            };
-            _context.Add(postCategory);
-
             // Add Category
             _context.Add(category);
             return Save();
@@ -44,6 +33,21 @@ namespace backend.Repositories.Implementors
 
         public bool DisableCategory(Category category)
         {
+            var categoryTags = _context.CategoryTags.Where(c => c.CategoryId == category.Id).ToList();
+            var postCategories = _context.PostCategories.Where(c => c.CategoryId == category.Id).ToList();
+
+            foreach (var categoryTag in categoryTags)
+            {
+                categoryTag.Status = false;
+                _context.Update(categoryTag);
+            }
+
+            foreach (var postCategory in postCategories)
+            {
+                postCategory.Status = true;
+                _context.Update(postCategory);
+            }
+
             category.Status = false;
             _context.Update(category);
             return Save();
@@ -51,6 +55,21 @@ namespace backend.Repositories.Implementors
 
         public bool EnableCategory(Category category)
         {
+            var categoryTags = _context.CategoryTags.Where(c => c.CategoryId ==  category.Id).ToList();
+            var postCategories = _context.PostCategories.Where(c => c.CategoryId == category.Id).ToList();
+
+            foreach (var categoryTag in categoryTags)
+            {
+                categoryTag.Status = true;
+                _context.Update(categoryTag);
+            }
+
+            foreach (var postCategory in postCategories)
+            {
+                postCategory.Status = true;
+                _context.Update(postCategory);
+            }
+
             category.Status = true;
             _context.Update(category);
             return Save();
@@ -90,7 +109,7 @@ namespace backend.Repositories.Implementors
                                         .Where(c => c.Status == true).ToList();
         }
 
-        public bool UpdateCategory(int tagId, int postId, Category category)
+        public bool UpdateCategory(int tagId, Category category)
         {
             _context.Update(category);
             return Save();
