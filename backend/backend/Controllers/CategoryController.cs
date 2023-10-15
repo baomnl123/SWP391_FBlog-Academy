@@ -76,7 +76,7 @@ namespace backend.Controllers
         [HttpPost("create/{categoryName}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(422)]
-        public IActionResult CreateCategory([FromBody] int adminId, string categoryName)
+        public IActionResult CreateCategory([FromQuery] int adminId, [FromBody] string categoryName)
         {
             if(_categoryHandlers.GetCategoryByName(categoryName) != null)
             {
@@ -103,7 +103,7 @@ namespace backend.Controllers
             }
 
             if (!_categoryHandlers.UpdateCategory(currentCategoryName, newCategoryName))
-                return NotFound();
+                return BadRequest();
 
             return Ok("Update successfully!");
         }

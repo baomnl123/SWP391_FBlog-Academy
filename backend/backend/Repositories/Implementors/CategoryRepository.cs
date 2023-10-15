@@ -14,18 +14,8 @@ namespace backend.Repositories.Implementors
             _context = new();
         }
 
-        public bool CreateCategory(int tagId, Category category)
+        public bool CreateCategory(Category category)
         {
-            var tag = _context.Tags.FirstOrDefault(c => c.Id == tagId && c.Status == true);
-            // Add CategoryTag
-            var categoryTag = new CategoryTag()
-            {
-                Category = category,
-                Tag = tag,
-                Status = true
-            };
-            _context.Add(categoryTag);
-
             // Add Category
             _context.Add(category);
             return Save();
@@ -44,7 +34,7 @@ namespace backend.Repositories.Implementors
 
             foreach (var postCategory in postCategories)
             {
-                postCategory.Status = true;
+                postCategory.Status = false;
                 _context.Update(postCategory);
             }
 
@@ -109,7 +99,7 @@ namespace backend.Repositories.Implementors
                                         .Where(c => c.Status == true).ToList();
         }
 
-        public bool UpdateCategory(int tagId, Category category)
+        public bool UpdateCategory(Category category)
         {
             _context.Update(category);
             return Save();

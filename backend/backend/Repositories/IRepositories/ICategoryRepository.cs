@@ -13,8 +13,8 @@ namespace backend.Repositories.IRepositories
         public ICollection<Post> GetPostsByCategory(int categoryId);
         public ICollection<Tag> GetTagsByCategory(int categoryId);
         // CRUD
-        public bool CreateCategory(int tagId,Category category);
-        public bool UpdateCategory(int tagId, Category category);
+        public bool CreateCategory(Category category);
+        public bool UpdateCategory(Category category);
         public bool EnableCategory(Category category);
         public bool DisableCategory(Category category);
         public bool Save();

@@ -31,13 +31,25 @@ namespace backend.Repositories.Implementors
                                       .Where(c => c.Status == true).ToList();
         }
 
-        public bool CreateVideo(Video video)
+        public bool CreateVideo(int postId, Video video)
         {
+            // Find post is exists
+            var post = _context.Posts.FirstOrDefault(c => c.Id == postId && c.Status == true);
+            if (post == null) return false;
+
+            // Add PostVideo
+            var postVideo = new PostVideo()
+            {
+                Video = video,
+                Post = post
+            };
+            _context.Add(postVideo);
+
             _context.Add(video);
             return Save();
         }
 
-        public bool UpdateVideo(Video video)
+        public bool UpdateVideo(int postId, Video video)
         {
             _context.Update(video);
             return Save();

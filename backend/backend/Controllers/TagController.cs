@@ -77,14 +77,16 @@ namespace backend.Controllers
         [HttpPost("create/{tagName}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(422)]
-        public IActionResult CreateTag([FromBody] int adminId, string tagName)
+        public IActionResult CreateTag([FromQuery] int adminId, [FromQuery] int categoryId, [FromBody] string tagName)
         {
-            if (!_tagHandlers.CreateTag(adminId, tagName))
+            if (_tagHandlers.GetTagByName(tagName) != null)
             {
-                ModelState.AddModelError("", "Tag aldready exists!");
-                return StatusCode(422, ModelState);
+                //ModelState.AddModelError("", "Tag aldready exists!");
+                return StatusCode(422, "Tag aldready exists!");
             }
 
+            if (!_tagHandlers.CreateTag(adminId, categoryId, tagName))
+                return BadRequest(ModelState);
 
             return Ok("Successfully create!");
         }
@@ -93,10 +95,16 @@ namespace backend.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateCategory([FromBody] string newTagName, string currentTagName)
+        public IActionResult UpdateTag([FromBody] string newTagName, string currentTagName)
         {
+            if (_tagHandlers.GetTagByName(newTagName) != null)
+            {
+                //ModelState.AddModelError("", "Tag aldready exists!");
+                return StatusCode(422, "Tag aldready exists!");
+            }
+
             if (!_tagHandlers.UpdateTag(currentTagName, newTagName))
-                return NotFound();
+                return BadRequest();
 
             return Ok("Update successfully!");
         }

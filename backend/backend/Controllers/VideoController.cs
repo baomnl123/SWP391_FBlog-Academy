@@ -34,9 +34,7 @@ namespace backend.Controllers
         {
             // For each videoURL in videoURLs, if videoURL already exists then return
             if (videoURLs.Any(videoURL => _videoHandlers.GetVideoByURL(videoURL) != null))
-            {
                 return StatusCode(422, "Video aldready exists!");
-            }
 
             if (!_videoHandlers.CreateVideo(postId, videoURLs))
                 return BadRequest(ModelState);
@@ -48,15 +46,12 @@ namespace backend.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateVideo([FromBody] string newVideoURL, int currentVideoId)
+        public IActionResult UpdateVideo([FromQuery] int postId, [FromBody] string newVideoURL, int currentVideoId)
         {
             if (_videoHandlers.GetVideoByURL(newVideoURL) != null)
-            {
-                //ModelState.AddModelError("", "Video aldready exists!");
                 return StatusCode(422, "Video aldready exists!");
-            }
 
-            if (!_videoHandlers.UpdateVideo(currentVideoId, newVideoURL))
+            if (!_videoHandlers.UpdateVideo(postId, currentVideoId, newVideoURL))
                 return NotFound();
 
             return Ok("Update successfully!");
@@ -67,8 +62,11 @@ namespace backend.Controllers
         [ProducesResponseType(404)]
         public IActionResult DeleteVideo(int videoId)
         {
+            if (_videoHandlers.GetVideoByID(videoId) == null)
+                return StatusCode(422, "Image aldready exists!");
+
             if (!_videoHandlers.DisableVideo(videoId))
-                ModelState.AddModelError("", "Something went wrong deleting category");
+                return BadRequest();
 
             return Ok("Delete successfully!");
         }

@@ -14,7 +14,7 @@ namespace backend.Repositories.IRepositories
         public ICollection<Category> GetCategoriesByTag(int tagId);
         // CRUD
         public bool CreateTag(int categoryId, Tag tag);
-        public bool UpdateTag(int categoryId, Tag tag);
+        public bool UpdateTag(Tag tag);
         public bool EnableTag(Tag tag);
         public bool DisableTag(Tag tag);
         public bool Save();

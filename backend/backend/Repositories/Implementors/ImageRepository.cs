@@ -33,9 +33,10 @@ namespace backend.Repositories.Implementors
 
         public bool CreateImage(int postId, Image image)
         {
+            // Find post is exists
             var post = _context.Posts.FirstOrDefault(c => c.Id == postId && c.Status == true);
-
             if (post == null) return false;
+
             // Add PostImage
             var postImage = new PostImage()
             {
