@@ -3,6 +3,7 @@ using backend.DTO;
 using backend.Handlers.IHandlers;
 using backend.Models;
 using backend.Repositories.IRepositories;
+using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Handlers.Implementors
 {
@@ -72,7 +73,7 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<List<TagDTO>>(tags);
         }
 
-        public bool CreateCategory(int adminId, string categoryName)
+        public bool CreateCategory(int adminId, string categoryName, int[] tagIds)
         {
             // Cannot find admin, return false
             var admin = _userRepository.GetUser(adminId);
@@ -90,8 +91,11 @@ namespace backend.Handlers.Implementors
                     CreatedAt = DateTime.Now,
                     Status = true
                 };
+                foreach (var tagId in tagIds)
+                {
+                    _categoryRepository.CreateCategory(tagId, postId, category);
+                }
                 // If create succeed then return true, else return false
-                return _categoryRepository.CreateCategory(category); 
             }
 
             // If category was disabled, set status to true

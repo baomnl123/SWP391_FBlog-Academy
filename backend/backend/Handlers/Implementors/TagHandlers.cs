@@ -74,7 +74,7 @@ namespace backend.Handlers.Implementors
         }
 
 
-        public bool CreateTag(int adminId, string tagName)
+        public bool CreateTag(int adminId, string tagName, int[] categoryId)
         {
             // Find admin
             var admin = _userRepository.GetUser(adminId);
@@ -105,6 +105,8 @@ namespace backend.Handlers.Implementors
                 _tagRepository.EnableTag(tagExists);
                 return true;
             }
+
+            // Set relationship between Category-Tag
 
             return false;
         }
