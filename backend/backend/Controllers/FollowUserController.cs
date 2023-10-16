@@ -14,7 +14,7 @@ namespace backend.Controllers
             _followUserHandlers = followUserHandlers;
         }
 
-        [HttpGet("/{currentUserID}/follower")]
+        [HttpGet("{currentUserID}/follower")]
         public IActionResult GetAllFollower(int currentUserID)
         {
             var listFollowers = (List<UserDTO>)_followUserHandlers.GetAllFollowerUsers(currentUserID);
