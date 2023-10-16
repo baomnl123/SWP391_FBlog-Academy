@@ -35,7 +35,7 @@ namespace backend.Controllers
             return NotFound();
         }
 
-        [HttpGet("ViewPendingPostList")]
+        [HttpGet("ViewPendingPostList/{viewerId}")]
         public IActionResult ViewPendingPostList(int viewerId)
         {
             var existed = _postHandlers.ViewPendingPostList(viewerId);
