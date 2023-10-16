@@ -11,13 +11,19 @@ namespace backend.Handlers.Implementors
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         private readonly ICommentRepository _commentRepository;
+        private readonly IVoteCommentRepository _voteCommentRepository;
         private readonly IPostRepository _postRepository;
 
-        public CommentHandlers(IUserRepository userRepository, IPostRepository postRepository,ICommentRepository commentRepository,IMapper mapper) 
+        public CommentHandlers(IUserRepository userRepository, 
+                                IPostRepository postRepository,
+                                ICommentRepository commentRepository,
+                                IVoteCommentRepository voteCommentRepository,
+                                IMapper mapper) 
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _commentRepository = commentRepository;
+            _voteCommentRepository = voteCommentRepository;
             _postRepository = postRepository;
         }
 
@@ -59,15 +65,45 @@ namespace backend.Handlers.Implementors
 
         public CommentDTO? DeleteComment(int commentId)
         {
-            throw new NotImplementedException();
+            //return null if comment does not exist
+            //                          or is deleted
+            var existedComment = _commentRepository.GetComment(commentId);
+            if (existedComment == null 
+                || existedComment.Status == false) return null;
+
+
+            //return null and enable that comment again if disabling all vote of it is false
+            if (!_voteCommentRepository.DisableAllVoteCommentOf(existedComment)) return null;
+
+            //set status is false
+            existedComment.Status = false;
+            existedComment.UpdatedAt = DateTime.Now;
+
+            //return null if updating to database is false
+            if (!_commentRepository.Update(existedComment)) return null;
+
+
+            //return deletedComment if deleting successful
+            //                          and disable all vote of that comment
+            return _mapper.Map<CommentDTO>(existedComment);
         }
 
         public CommentDTO? UpdateComment(int commentId, string content)
         {
+            //return null if content is null
             if (content == null) return null;
 
+            //return null if that comment does not exist
+            //                              or is removed
             var existedComment = _commentRepository.GetComment(commentId);
-            if (existedComment == null) return null;
+            if (existedComment == null || existedComment.Status == false) return null;
+
+            //update info of existedComment
+            existedComment.Content = content;
+            existedComment.UpdatedAt = DateTime.Now;
+
+            //update to database
+            if (!_commentRepository.Update(existedComment)) return null;
             return _mapper.Map<CommentDTO>(existedComment);
         }
 
