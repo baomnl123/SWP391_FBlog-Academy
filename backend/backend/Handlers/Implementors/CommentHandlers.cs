@@ -36,8 +36,7 @@ namespace backend.Handlers.Implementors
             //                      or is removed
             //                      or does not have role SU(Student) or MOD(Moderator)
             var existedUser = _userRepository.GetUser(userId);
-            if (existedUser == null 
-                || existedUser.Status == false
+            if (existedUser == null || existedUser.Status == false
                 || !( existedUser.Role.Contains("SU") || existedUser.Role.Contains("MOD") )) return null;
 
             //return null if post does not exist
@@ -68,8 +67,7 @@ namespace backend.Handlers.Implementors
             //return null if comment does not exist
             //                          or is deleted
             var existedComment = _commentRepository.GetComment(commentId);
-            if (existedComment == null 
-                || existedComment.Status == false) return null;
+            if (existedComment == null || existedComment.Status == false) return null;
 
 
             //return null and enable that comment again if disabling all vote of it is false
@@ -113,8 +111,7 @@ namespace backend.Handlers.Implementors
             //                      or is removed
             //                      or is not approved
             var existedPost = _postRepository.GetPost(postId);
-            if (existedPost == null 
-                || existedPost.Status == false 
+            if (existedPost == null || existedPost.Status == false 
                 || !existedPost.IsApproved == true) return null;
 
             //Get All Comments of that post
