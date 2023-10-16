@@ -53,6 +53,19 @@ namespace backend.Repositories.Implementors
             }
         }
 
+        public bool Update(Comment comment)
+        {
+            try
+            {
+                _fBlogAcademyContext.Update(comment);
+                return Save();
+            }
+            catch(InvalidOperationException)
+            {
+                return false;
+            }
+        }
+
         public ICollection<Comment>? ViewAllComments(int postId)
         {
            return _fBlogAcademyContext.Comments.Where(c => c.PostId.Equals(postId) && c.Status == true)

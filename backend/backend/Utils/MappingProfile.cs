@@ -16,6 +16,8 @@ namespace backend.Utils
             CreateMap<Tag, TagDTO>();
             CreateMap<Image, ImageDTO>();
             CreateMap<Video, VideoDTO>();
+            CreateMap<Comment, CommentDTO>();
+            CreateMap<VoteComment, VoteCommentDTO>();
         }
     }
 }
