@@ -29,32 +29,32 @@ namespace backend.Controllers
             return Ok(images);
         }
 
-        [HttpPost("create")]
+        [HttpPost("create/{postId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(422)]
-        public IActionResult CreateImage([FromQuery] int postId, [FromBody] string[] imageURLs)
+        public IActionResult CreateImage(int postId, [FromForm] string[] imageURLs)
         {
             // For each imageURL in imageURLs, if imageURL already exists then return
             if (imageURLs.Any(imageURL => _imageHandlers.GetImageByURL(imageURL) != null))
                 return StatusCode(422, "Image aldready exists!");
 
-            if (!_imageHandlers.CreateImage(postId, imageURLs))
-                return BadRequest(ModelState);
+            var createImage = _imageHandlers.CreateImage(postId, imageURLs);
+            if (createImage == null) return BadRequest(ModelState);
 
             return Ok("Successfully create!");
         }
 
-        [HttpPut("update")]
+        [HttpPut("update/{postId}/{currentImageId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateImage([FromQuery] int postId, [FromBody] string newImageURL, int currentImageId)
+        public IActionResult UpdateImage(int postId, [FromForm] string newImageURL, int currentImageId)
         {
             if (_imageHandlers.GetImageByURL(newImageURL) != null)
                 return StatusCode(422, "Image aldready exists!");
-
-            if (!_imageHandlers.UpdateImage(postId, currentImageId, newImageURL))
-                return BadRequest();
+            
+            var updateImage = _imageHandlers.UpdateImage(postId, currentImageId, newImageURL);
+            if (updateImage == null) return BadRequest();
 
             return Ok("Update successfully!");
         }
@@ -67,8 +67,8 @@ namespace backend.Controllers
             if (_imageHandlers.GetImageByID(imageId) == null)
                 return StatusCode(422, "Image aldready exists!");
 
-            if (!_imageHandlers.DisableImage(imageId))
-                return BadRequest();
+            var deleteImage = _imageHandlers.DisableImage(imageId);
+            if (deleteImage == null) return BadRequest();
 
             return Ok("Delete successfully!");
         }

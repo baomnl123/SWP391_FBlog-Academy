@@ -45,11 +45,13 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<List<VideoDTO>>(videos);
         }
 
-        public bool CreateVideo(int postId, string[] videoURLs)
+        public ICollection<VideoDTO>? CreateVideo(int postId, string[] videoURLs)
         {
             // Find post
             var post = _postRepository.GetPost(postId);
-            if (post == null || post.Status == false) return false;
+            if (post == null || post.Status == false) return null;
+
+            List<Video> videos = new();
 
             foreach (var url in videoURLs)
             {
@@ -59,38 +61,52 @@ namespace backend.Handlers.Implementors
                     CreatedAt = DateTime.Now,
                     Status = true
                 };
-                // If create succeed then return true, else return false
-                return _videoRepository.CreateVideo(postId, video);
+                // If create succeed then Add to list, else return null
+                if (!_videoRepository.CreateVideo(postId, video)) return null;
+
+                videos.Add(video);
             }
 
-            return false;
+            return _mapper.Map<List<VideoDTO>>(videos);
         }
 
-        public bool DisableVideo(int videoId)
+        public VideoDTO? DisableVideo(int videoId)
         {
             var video = _videoRepository.GetVideoById(videoId);
-            if (video == null || video.Status == true) return false;
+            if (video == null || video.Status == true) return null;
 
-            return _videoRepository.DisableVideo(video);
+            // If disable succeed then return video, else return null
+            if (_videoRepository.DisableVideo(video))
+                return _mapper.Map<VideoDTO>(video);
+
+            return null;
         }
 
-        public bool EnableVideo(int videoId)
+        public VideoDTO? EnableVideo(int videoId)
         {
             var video = _videoRepository.GetVideoById(videoId);
-            if (video == null || video.Status == true) return false;
+            if (video == null || video.Status == true) return null;
 
-            return _videoRepository.EnableVideo(video);
+            // If enable succeed then return video, else return null
+            if (_videoRepository.EnableVideo(video))
+                return _mapper.Map<VideoDTO>(video);
+
+            return null;
         }
 
-        public bool UpdateVideo(int postId, int currentVideoId, string newVideoURL)
+        public VideoDTO? UpdateVideo(int postId, int currentVideoId, string newVideoURL)
         {
             // If video was disabled or not found, return false
             var video = _videoRepository.GetVideoById(currentVideoId);
-            if (video == null || video.Status == false) return false;
+            if (video == null || video.Status == false) return null;
 
-            // If update succeed then return true, else return false
             video.Url = newVideoURL;
-            return _videoRepository.UpdateVideo(postId, video);
+
+            // If update succeed then return video, else return null
+            if (_videoRepository.DisableVideo(video))
+                return _mapper.Map<VideoDTO>(video);
+
+            return null;
         }
     }
 }

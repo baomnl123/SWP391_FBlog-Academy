@@ -8,9 +8,9 @@ namespace backend.Handlers.IHandlers
         public VideoDTO? GetVideoByID(int videoId);
         public VideoDTO? GetVideoByURL(string videoURL);
         public ICollection<VideoDTO>? GetVideosByPost(int postId);
-        public bool CreateVideo(int postId, string[] videoURLs);
-        public bool UpdateVideo(int postId, int currentVideoId, string newVideoURL);
-        public bool EnableVideo(int videoId);
-        public bool DisableVideo(int videoId);
+        public ICollection<VideoDTO>? CreateVideo(int postId, string[] videoURLs);
+        public VideoDTO? UpdateVideo(int postId, int currentVideoId, string newVideoURL);
+        public VideoDTO? EnableVideo(int videoId);
+        public VideoDTO? DisableVideo(int videoId);
     }
 }

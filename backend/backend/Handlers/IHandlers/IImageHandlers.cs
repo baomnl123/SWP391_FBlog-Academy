@@ -8,9 +8,9 @@ namespace backend.Handlers.IHandlers
         public ImageDTO? GetImageByID(int imageId);
         public ImageDTO? GetImageByURL(string imageURL);
         public ICollection<ImageDTO>? GetImagesByPost(int postId);
-        public bool CreateImage(int postId, string[] imageURLs);
-        public bool UpdateImage(int postId, int currentImageId, string newImageURL);
-        public bool EnableImage(int imageId);
-        public bool DisableImage(int imageId);
+        public ICollection<ImageDTO>? CreateImage(int postId, string[] imageURLs);
+        public ImageDTO? UpdateImage(int postId, int currentImageId, string newImageURL);
+        public ImageDTO? EnableImage(int imageId);
+        public ImageDTO? DisableImage(int imageId);
     }
 }

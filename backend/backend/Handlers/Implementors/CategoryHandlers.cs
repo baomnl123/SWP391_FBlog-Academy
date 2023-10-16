@@ -142,7 +142,7 @@ namespace backend.Handlers.Implementors
             if (category == null || category.Status == false) return null;
 
             // If disable succeed then return category, else return null
-            if (_categoryRepository.EnableCategory(category))
+            if (_categoryRepository.DisableCategory(category))
                 return _mapper.Map<CategoryDTO>(category);
 
             return null;

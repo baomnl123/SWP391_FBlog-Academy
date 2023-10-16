@@ -4,6 +4,7 @@ using backend.Handlers.IHandlers;
 using backend.Models;
 using backend.Repositories.Implementors;
 using backend.Repositories.IRepositories;
+using backend.Utils;
 
 namespace backend.Handlers.Implementors
 {
@@ -12,12 +13,14 @@ namespace backend.Handlers.Implementors
         private readonly ITagRepository _tagRepository;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly UserRoleConstrant _userRoleConstrant;
 
         public TagHandlers(ITagRepository tagRepository, IUserRepository userRepository, IMapper mapper)
         {
             _tagRepository = tagRepository;
             _userRepository = userRepository;
             _mapper = mapper;
+            _userRoleConstrant = new();
         }
 
         public ICollection<TagDTO> GetTags()
@@ -67,11 +70,12 @@ namespace backend.Handlers.Implementors
         }
 
 
-        public bool CreateTag(int adminId, int categoryId, string tagName)
+        public TagDTO? CreateTag(int adminId, int tagId, string tagName)
         {
             // Find admin
             var admin = _userRepository.GetUser(adminId);
-            if (admin == null || admin.Role != "Admin") return false;
+            var adminRole = _userRoleConstrant.GetAdminRole();
+            if (admin == null || !admin.Role.Equals(adminRole)) return null;
 
             // Find tag by name
             var tagExists = _tagRepository.GetTagByName(tagName);
@@ -84,47 +88,61 @@ namespace backend.Handlers.Implementors
                     CreatedAt = DateTime.Now,
                     Status = true
                 };
-                // If create succeed then return true, else return false
-                return _tagRepository.CreateTag(categoryId, tag); 
+                // If create succeed then return tag, else return null
+                if (_tagRepository.CreateTag(tagId, tag))
+                    return _mapper.Map<TagDTO>(tag);
             }
 
             // If tag was disabled, set status to true
             if (tagExists.Status == false)
             {
                 tagExists.Status = true;
-                return _tagRepository.EnableTag(tagExists);
+                // If enable succeed then return tag, else return null
+                if (_tagRepository.EnableTag(tagExists))
+                    return _mapper.Map<TagDTO>(tagExists);
             }
 
-            return false;
+            return null;
         }
 
-        public bool UpdateTag(string currentTagName, string newTagName)
+        public TagDTO? UpdateTag(string currentTagName, string newTagName)
         {
             var tag = _tagRepository.GetTagByName(currentTagName);
-            if (tag == null || tag.Status == false) return false;
+            if (tag == null || tag.Status == false) return null;
 
             // If update succeed then return true, else return false
             tag.TagName = newTagName;
             tag.UpdatedAt = DateTime.Now;
-            return _tagRepository.UpdateTag(tag);
+
+            // If update succeed then return tag, else return null
+            if (_tagRepository.UpdateTag(tag))
+                return _mapper.Map<TagDTO>(tag);
+
+            return null;
         }
 
-        public bool EnableTag(int tagId)
+        public TagDTO? EnableTag(int tagId)
         {
             var tag = _tagRepository.GetTagById(tagId);
-            if (tag == null || tag.Status == true) return true;
+            if (tag == null || tag.Status == true) return null;
 
-            // If enable succeed then return true, else return false
-            return _tagRepository.EnableTag(tag);
+            // If enable succeed then return tag, else return null
+            if (_tagRepository.EnableTag(tag))
+                return _mapper.Map<TagDTO>(tag);
+
+            return null;
         }
 
-        public bool DisableTag(int tagId)
+        public TagDTO? DisableTag(int tagId)
         {
             var tag = _tagRepository.GetTagById(tagId);
-            if (tag == null || tag.Status == false) return false;
+            if (tag == null || tag.Status == false) return null;
 
-            // If disable succeed then return true, else return false
-            return _tagRepository.DisableTag(tag);
+            // If disable succeed then return tag, else return null
+            if (_tagRepository.DisableTag(tag))
+                return _mapper.Map<TagDTO>(tag);
+
+            return null;
         }
     }
 }

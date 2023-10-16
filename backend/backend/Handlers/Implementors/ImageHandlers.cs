@@ -46,11 +46,13 @@ namespace backend.Handlers.Implementors
 
         }
 
-        public bool CreateImage(int postId, string[] imageURLs)
+        public ICollection<ImageDTO>? CreateImage(int postId, string[] imageURLs)
         {
             // Find post
             var post = _postRepository.GetPost(postId);
-            if (post == null || post.Status == false) return false;
+            if (post == null || post.Status == false) return null;
+
+            List<Image> images = new();
 
             foreach (var url in imageURLs)
             {
@@ -60,38 +62,52 @@ namespace backend.Handlers.Implementors
                     CreatedAt = DateTime.Now,
                     Status = true
                 };
-                // If create succeed then return true, else return false
-                return _imageRepository.CreateImage(postId, image);
+                // If create succeed then Add to list, else return null
+                if (!_imageRepository.CreateImage(postId, image)) return null;
+
+                images.Add(image);
             }
 
-            return false;
+            return _mapper.Map<List<ImageDTO>>(images);
         }
 
-        public bool DisableImage(int imageId)
+        public ImageDTO? DisableImage(int imageId)
         {
             var image = _imageRepository.GetImageById(imageId);
-            if (image == null || image.Status == false) return true;
+            if (image == null || image.Status == false) return null;
 
-            return _imageRepository.DisableImage(image);
+            // If disable succeed then return image, else return null
+            if (_imageRepository.DisableImage(image))
+                return _mapper.Map<ImageDTO>(image);
+
+            return null;
         }
 
-        public bool EnableImage(int imageId)
+        public ImageDTO? EnableImage(int imageId)
         {
             var image = _imageRepository.GetImageById(imageId);
-            if (image == null || image.Status == true) return true;
+            if (image == null || image.Status == true) return null;
 
-            return _imageRepository.EnableImage(image);
+            // If enable succeed then return image, else return null
+            if (_imageRepository.EnableImage(image))
+                return _mapper.Map<ImageDTO>(image);
+
+            return null;
         }
 
-        public bool UpdateImage(int postId, int currentImageId, string newImageURL)
+        public ImageDTO? UpdateImage(int postId, int currentImageId, string newImageURL)
         {
             // If image was disabled or not found, return false
             var image = _imageRepository.GetImageById(currentImageId);
-            if (image == null || image.Status == false) return false;
+            if (image == null || image.Status == false) return null;
 
-            // If update succeed then return true, else return false
             image.Url = newImageURL;
-            return _imageRepository.UpdateImage(postId, image);
+
+            // If update succeed then return image, else return null
+            if (_imageRepository.UpdateImage(postId, image))
+                return _mapper.Map<ImageDTO>(image);
+
+            return null;
         }
     }
 }
