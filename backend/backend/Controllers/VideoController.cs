@@ -52,8 +52,7 @@ namespace backend.Controllers
                 return StatusCode(422, "Video aldready exists!");
 
             var updateVideo = _videoHandlers.UpdateVideo(postId, currentVideoId, newVideoURL);
-            if (!)
-                return NotFound();
+            if (updateVideo == null) return NotFound();
 
             return Ok("Update successfully!");
         }
