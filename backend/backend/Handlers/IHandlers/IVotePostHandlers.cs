@@ -1,14 +1,16 @@
-﻿namespace backend.Handlers.IHandlers
+﻿using backend.DTO;
+
+namespace backend.Handlers.IHandlers
 {
     public interface IVotePostHandlers
     {
-        //Vote another post
-        public bool UpVoteOtherPost(int currentUserId, int postId);
-        //Dísable upvote post
-        public bool DisableUpVoteOtherPost(int currentUserId, int postId);
-        //Downvote another post
-        public bool DownVoteOtherPost(int currentUserId, int postId);
-        //Dísable downvote post
-        public bool DisableDownVoteOtherPost(int currentUserId, int postId);
+        //Create new vote post
+        public VotePostDTO? CreateNewVotePost(int currentUserId, int postId, bool vote);
+        //Update vote post
+        public VotePostDTO? UpdateVotePost(int currentUserId, int postId, bool vote);
+        //Get all users voted by postId
+        public ICollection<UserDTO>? GetAllUsersVotedBy(int postId);
+        //Dísable vote post
+        public VotePostDTO? DisableVotePost(int currentUserId, int postId);
     }
 }
