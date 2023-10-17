@@ -4,8 +4,8 @@ namespace backend.Handlers.IHandlers
 {
     public interface IVoteCommentHandlers
     {
-        //Get all users by comment
-        public ICollection<UserDTO>? GetAllUsersBy(int commentId);
+        //Get all users voted by comment
+        public ICollection<UserDTO>? GetAllUsersVotedBy(int commentId);
         //Create new Vote
         public VoteCommentDTO? CreateVote(int currentUserId, int commentId, bool vote);
         //Update vote 

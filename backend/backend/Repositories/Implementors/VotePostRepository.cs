@@ -5,20 +5,19 @@ using System.Data;
 
 namespace backend.Repositories.Implementors
 {
-    public class VoteCommentRepository : IVoteCommentRepository
+    public class VotePostRepository : IVotePostRepository
     {
         private readonly FBlogAcademyContext _fBlogAcademyContext;
 
-        public VoteCommentRepository()
+        public VotePostRepository()
         {
             _fBlogAcademyContext = new();
         }
-
-        public bool Add(VoteComment comment)
+        public bool Add(VotePost newVotePost)
         {
             try
             {
-                _fBlogAcademyContext.Add(comment);
+                _fBlogAcademyContext.Add(newVotePost);
                 return Save();
             }
             catch (InvalidOperationException)
@@ -27,38 +26,35 @@ namespace backend.Repositories.Implementors
             }
         }
 
-        public bool DisableAllVoteCommentOf(Comment comment)
+        public bool DisableAllVotePostOf(Post post)
         {
             try
             {
-                var listVote = _fBlogAcademyContext.VoteComments.Where(v => v.CommentId == comment.Id).ToList();
-                foreach (var vote in listVote)
+                var voteList = _fBlogAcademyContext.VotePosts.Where(v => v.PostId == post.Id).ToList();
+                foreach (var vote in voteList)
                 {
                     if (vote.UpVote || vote.DownVote)
                     {
                         vote.UpVote = false;
                         vote.DownVote = false;
-                        Update(vote);
                     }
                 }
                 return true;
             }
-            catch (InvalidOperationException)
+            catch(InvalidOperationException)
             {
                 return false;
             }
         }
 
-        public ICollection<User>? GetAllUserBy(int commentId)
+        public ICollection<User>? GetAllUsersVotedBy(int postId)
         {
-            return _fBlogAcademyContext.VoteComments.Where(v => v.CommentId == commentId)
-                                                    .Select(v => v.User).ToList();
+            return _fBlogAcademyContext.VotePosts.Where(v => v.PostId == postId).Select(v => v.User).ToList();
         }
 
-        public VoteComment? GetVoteComment(int userId, int commentId)
+        public VotePost? GetVotePost(int currentUserId, int postId)
         {
-            return _fBlogAcademyContext.VoteComments.Where(v => v.UserId == userId
-                                                            && v.CommentId == commentId).FirstOrDefault();
+            return _fBlogAcademyContext.VotePosts.Where(v => v.UserId == currentUserId && v.PostId == postId).FirstOrDefault();
         }
 
         public bool Save()
@@ -70,23 +66,19 @@ namespace backend.Repositories.Implementors
             }
             catch (DbUpdateException)
             {
-                //return false if there is an error when updating data
-                //                  or data which is being stored is invalid
                 return false;
             }
             catch (DBConcurrencyException)
             {
-                //return false if stored data is changed by another user.
-                //                  or there is more than one change to one object at the same time
                 return false;
             }
         }
 
-        public bool Update(VoteComment comment)
+        public bool Update(VotePost votePost)
         {
             try
             {
-                _fBlogAcademyContext.Update(comment);
+                _fBlogAcademyContext.Update(votePost);
                 return Save();
             }
             catch (InvalidOperationException)

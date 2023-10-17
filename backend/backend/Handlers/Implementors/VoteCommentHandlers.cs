@@ -81,7 +81,7 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<VoteCommentDTO>(newVote);
         }
 
-        public ICollection<UserDTO>? GetAllUsersBy(int commentId)
+        public ICollection<UserDTO>? GetAllUsersVotedBy(int commentId)
         {
             //return null if that comment does not exist
             var existedComment = _commentRepository.GetComment(commentId);
@@ -132,9 +132,9 @@ namespace backend.Handlers.Implementors
             if (existedUser == null || !existedUser.Status
                 || existedComment == null || !existedComment.Status) return null;
 
-            //check the existence of vote
+            //return null if vote does not exist or is disabled
             var existedVote = _voteCommentRepository.GetVoteComment(currentUserId, commentId);
-            if (existedVote == null) return null;
+            if (existedVote == null || (!existedVote.UpVote && !existedVote.DownVote)) return null;
 
             //update vote
             existedVote.UpVote = false;
