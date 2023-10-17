@@ -31,9 +31,9 @@ namespace backend.Controllers
         }
 
         [HttpGet("GetAllUsersVoteComment")]
-        public IActionResult GetAllUsersBy(int commentId)
+        public IActionResult GetAllUsersVotedBy(int commentId)
         {
-            var userList = _voteCommentHandlers.GetAllUsersBy(commentId);
+            var userList = _voteCommentHandlers.GetAllUsersVotedBy(commentId);
             if (userList == null) return NotFound(); 
             return Ok(userList);
         }

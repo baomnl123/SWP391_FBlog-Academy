@@ -81,7 +81,7 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<VoteCommentDTO>(newVote);
         }
 
-        public ICollection<UserDTO>? GetAllUsersBy(int commentId)
+        public ICollection<UserDTO>? GetAllUsersVotedBy(int commentId)
         {
             //return null if that comment does not exist
             var existedComment = _commentRepository.GetComment(commentId);
