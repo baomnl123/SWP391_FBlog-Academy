@@ -34,9 +34,12 @@ namespace backend.Repositories.Implementors
                 var listVote = _fBlogAcademyContext.VoteComments.Where(v => v.CommentId == comment.Id).ToList();
                 foreach (var vote in listVote)
                 {
-                    vote.UpVote = false;
-                    vote.DownVote = false;
-                    Update(vote);
+                    if (vote.UpVote || vote.DownVote)
+                    {
+                        vote.UpVote = false;
+                        vote.DownVote = false;
+                        Update(vote);
+                    }
                 }
                 return true;
             }
