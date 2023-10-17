@@ -6,9 +6,9 @@ namespace backend.Repositories.IRepositories
     {
         public VotePost? GetVotePost(int currentUserId, int postId);
         public ICollection<User>? GetAllUsersVotedBy(int postId);
-        public VotePost? Add(VotePost newVotePost);
-        public VotePost? Update(VotePost votePost);
-        public VotePost? DisableAllVotePostOf(Post post);
+        public bool Add(VotePost newVotePost);
+        public bool Update(VotePost votePost);
+        public bool DisableAllVotePostOf(Post post);
         public bool Save();
     }
 }
