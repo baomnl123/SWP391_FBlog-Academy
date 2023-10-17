@@ -27,6 +27,7 @@ builder.Services.AddScoped<IPostVideoRepository, PostVideoRepository>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<IVoteCommentRepository, VoteCommentRepository>();
+builder.Services.AddScoped<IVotePostRepository, VotePostRepository>();
 //
 builder.Services.AddScoped<IFollowUserHandlers, FollowUserHandlers>();
 builder.Services.AddScoped<IReportPostHandlers, ReportPostHandlers>();
@@ -42,6 +43,7 @@ builder.Services.AddScoped<ICommentHandlers, CommentHandlers>();
 
 builder.Services.AddScoped<IVoteCommentHandlers, VoteCommentHandlers>();
 
+builder.Services.AddScoped<IVotePostHandlers, VotePostHandlers>();
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
