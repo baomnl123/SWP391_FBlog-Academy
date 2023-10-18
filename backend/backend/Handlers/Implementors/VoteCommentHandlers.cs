@@ -85,7 +85,7 @@ namespace backend.Handlers.Implementors
         {
             //return null if that comment does not exist
             var existedComment = _commentRepository.GetComment(commentId);
-            if (existedComment == null) return null;
+            if (existedComment == null || !existedComment.Status) return null;
 
             //Get all users voting that comment
             var userList = _voteCommentRepository.GetAllUserBy(commentId);
