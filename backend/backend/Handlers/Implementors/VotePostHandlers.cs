@@ -14,7 +14,7 @@ namespace backend.Handlers.Implementors
         private readonly IVotePostRepository _votePostRepository;
         private readonly IMapper _mapper;
 
-        public VotePostHandlers(IUserRepository userRepository, IPostRepository postRepository, IVotePostRepository votePostRepository,IMapper mapper)
+        public VotePostHandlers(IUserRepository userRepository, IPostRepository postRepository, IVotePostRepository votePostRepository, IMapper mapper)
         {
             _userRepository = userRepository;
             _postRepository = postRepository;
@@ -30,9 +30,11 @@ namespace backend.Handlers.Implementors
             if (existedUser == null || !existedUser.Status
                 || existedPost == null || !existedPost.Status) return null;
 
+            //update info of vote if that vote existed
             var existedVote = _votePostRepository.GetVotePost(currentUserId, postId);
             if (existedVote != null)
             {
+                //return null if Upvote or Downvote is set
                 if (existedVote.UpVote || existedVote.DownVote) return null;
 
                 if (vote)
@@ -98,12 +100,48 @@ namespace backend.Handlers.Implementors
 
         public ICollection<UserDTO>? GetAllUsersVotedBy(int postId)
         {
-            throw new NotImplementedException();
+            //return null if post does not exist or is removed
+            var existedPost = _postRepository.GetPost(postId);
+            if (existedPost == null || !existedPost.Status) return null;
+
+            //return null if user's list is empty
+            var existedUsers = _votePostRepository.GetAllUsersVotedBy(postId);
+            if (existedUsers == null) return null;
+
+            //return user's list
+            return _mapper.Map<List<UserDTO>>(existedUsers);
         }
 
         public VotePostDTO? UpdateVotePost(int currentUserId, int postId, bool vote)
         {
-            throw new NotImplementedException();
+            //return null if currentUser and comment do not exist
+            //                                          or are removed
+            var existedUser = _userRepository.GetUser(currentUserId);
+            var existedPost = _postRepository.GetPost(postId);
+            if (existedUser == null || !existedUser.Status
+                || existedPost == null || !existedPost.Status) return null;
+
+            //return null if that vote does not exist
+            var existedVote = _votePostRepository.GetVotePost(currentUserId, postId);
+            if (existedVote == null) return null;
+
+            //Update info of existed vote
+            if (vote)
+            {
+                existedVote.UpVote = true;
+                existedVote.DownVote = false;
+            }
+            else
+            {
+                existedVote.UpVote = false;
+                existedVote.DownVote = true;
+            };
+
+            //return null if updating info to database is false
+            if (!_votePostRepository.Update(existedVote)) return null;
+
+            //return VotePost object if updating is successful
+            return _mapper.Map<VotePostDTO>(existedVote);
         }
     }
 }
