@@ -23,14 +23,7 @@ namespace backend.Repositories.Implementors
 
         public bool DisableCategory(Category category)
         {
-            var categoryTags = _context.CategoryTags.Where(c => c.CategoryId == category.Id).ToList();
             var postCategories = _context.PostCategories.Where(c => c.CategoryId == category.Id).ToList();
-
-            foreach (var categoryTag in categoryTags)
-            {
-                categoryTag.Status = false;
-                _context.Update(categoryTag);
-            }
 
             foreach (var postCategory in postCategories)
             {

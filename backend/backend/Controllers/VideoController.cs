@@ -30,7 +30,7 @@ namespace backend.Controllers
         [HttpPost("create/{postId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(422)]
-        public IActionResult CreateVideo(int postId, [FromForm] string[] videoURLs)
+        public IActionResult CreateVideo([FromForm] int postId, [FromForm] string[] videoURLs)
         {
             // For each videoURL in videoURLs, if videoURL already exists then return
             if (videoURLs.Any(videoURL => _videoHandlers.GetVideoByURL(videoURL) != null))

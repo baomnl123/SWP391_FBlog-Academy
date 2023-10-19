@@ -14,34 +14,15 @@ namespace backend.Repositories.Implementors
             _context = new();
         }
 
-        public bool CreateTag(int categoryId, Tag tag)
+        public bool CreateTag(Tag tag)
         {
-            var category = _context.Categories.FirstOrDefault(c => c.Id == categoryId && c.Status == true);
-            if(category == null) return false;
-
-            // Add CategoryTag
-            var categoryTag = new CategoryTag()
-            {
-                Category = category,
-                Tag = tag,
-                Status = true
-            };
-            _context.Add(categoryTag);
-
             _context.Add(tag);
             return Save();
         }
 
         public bool DisableTag(Tag tag)
         {
-            var categoryTags = _context.CategoryTags.Where(c => c.TagId == tag.Id).ToList();
             var postTags = _context.PostTags.Where(c => c.TagId == tag.Id).ToList();
-
-            foreach (var categoryTag in categoryTags)
-            {
-                categoryTag.Status = false;
-                _context.Update(categoryTag);
-            }
 
             foreach (var postTag in postTags)
             {
@@ -56,14 +37,7 @@ namespace backend.Repositories.Implementors
 
         public bool EnableTag(Tag tag)
         {
-            var categoryTags = _context.CategoryTags.Where(c => c.TagId == tag.Id).ToList();
             var postTags = _context.PostTags.Where(c => c.TagId == tag.Id).ToList();
-
-            foreach (var categoryTag in categoryTags)
-            {
-                categoryTag.Status = true;
-                _context.Update(categoryTag);
-            }
 
             foreach (var postTag in postTags)
             {
