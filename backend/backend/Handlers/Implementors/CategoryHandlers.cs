@@ -3,36 +3,33 @@ using backend.DTO;
 using backend.Handlers.IHandlers;
 using backend.Models;
 using backend.Repositories.IRepositories;
+using backend.Utils;
+using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Handlers.Implementors
 {
     public class CategoryHandlers : ICategoryHandlers
     {
         private readonly ICategoryRepository _categoryRepository;
-        private readonly ICategoryTagRepository _categoryTagRepository;
-        private readonly IPostCategoryRepository _postCategoryRepository;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly UserRoleConstrant _userRoleConstrant;
 
-        public CategoryHandlers(ICategoryRepository categoryRepository,
-                                ICategoryTagRepository categoryTagRepository,
-                                IPostCategoryRepository postCategoryRepository,
-                                IUserRepository userRepository, IMapper mapper)
+        public CategoryHandlers(ICategoryRepository categoryRepository, IUserRepository userRepository, IMapper mapper)
         {
             _categoryRepository = categoryRepository;
-            _categoryTagRepository = categoryTagRepository;
-            _postCategoryRepository = postCategoryRepository;
             _userRepository = userRepository;
             _mapper = mapper;
+            _userRoleConstrant = new();
         }
 
-        public ICollection<CategoryDTO> GetCategories()
+        public ICollection<CategoryDTO>? GetCategories()
         {
             var categories = _categoryRepository.GetAllCategories();
             return _mapper.Map<List<CategoryDTO>>(categories);
         }
 
-        public ICollection<CategoryDTO> GetDisableCategories()
+        public ICollection<CategoryDTO>? GetDisableCategories()
         {
             var categories = _categoryRepository.GetDisableCategories();
             return _mapper.Map<List<CategoryDTO>>(categories);
@@ -72,11 +69,12 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<List<TagDTO>>(tags);
         }
 
-        public bool CreateCategory(int adminId, string categoryName)
+        public CategoryDTO? CreateCategory(int adminId, string categoryName)
         {
             // Cannot find admin, return false
             var admin = _userRepository.GetUser(adminId);
-            if (admin == null || admin.Role != "Admin") return false;
+            var adminRole = _userRoleConstrant.GetAdminRole();
+            if (admin == null || !admin.Role.Equals(adminRole)) return null;
 
             var categoryExists = _categoryRepository.GetCategoryByName(categoryName);
 
@@ -90,91 +88,64 @@ namespace backend.Handlers.Implementors
                     CreatedAt = DateTime.Now,
                     Status = true
                 };
-                // If create succeed then return true, else return false
-                return _categoryRepository.CreateCategory(category); 
+                // If create succeed then return category, else return null
+                if (_categoryRepository.CreateCategory(category)) 
+                    return _mapper.Map<CategoryDTO>(category);
             }
 
             // If category was disabled, set status to true
             if (categoryExists.Status == false)
             {
                 categoryExists.Status = true;
-                _categoryRepository.EnableCategory(categoryExists);
-                return true;
+                // If enable succeed then return category, else return null
+                if (_categoryRepository.EnableCategory(categoryExists)) 
+                    return _mapper.Map<CategoryDTO>(categoryExists);
             }
 
-            return false;
+            return null;
         }
 
-        public bool UpdateCategory(string currentCategoryName, string newCategoryName)
+        public CategoryDTO? UpdateCategory(string currentCategoryName, string newCategoryName)
         {
             // If category was disabled or not found, return false
             var category = _categoryRepository.GetCategoryByName(currentCategoryName);
-            if (category == null || category.Status == false) return false;
+            if (category == null || category.Status == false) return null;
 
             // If update succeed then return true, else return false
             category.CategoryName = newCategoryName;
             category.UpdatedAt = DateTime.Now;
-            return _categoryRepository.UpdateCategory(category);
+
+            // If update succeed then return category, else return null
+            if (_categoryRepository.UpdateCategory(category)) 
+                return _mapper.Map<CategoryDTO>(category);
+
+            return null;
         }
 
-        public bool EnableCategory(int categoryId)
+        public CategoryDTO? EnableCategory(int categoryId)
         {
             // If category was enabled, return false
             var category = _categoryRepository.GetCategoryById(categoryId);
-            if (category.Status == true) return true;
+            if (category == null || category.Status == true) return null;
 
-            // Enable CategoryTag
-            var categoryTagList = _categoryTagRepository.GetCategoryTagByCategoryId(categoryId);
-            if (categoryTagList != null)
-            {
-                foreach (var categoryTag in categoryTagList)
-                {
-                    _categoryTagRepository.EnableCategoryTag(categoryTag);
-                }
-            }
+            // If enable succeed then return category, else return null
+            if (_categoryRepository.EnableCategory(category))
+                return _mapper.Map<CategoryDTO>(category);
 
-            // Enable PostCategory
-            var postCategoryList = _postCategoryRepository.GetPostCategoryByCategoryId(categoryId);
-            if (postCategoryList != null)
-            {
-                foreach (var postCategory in postCategoryList)
-                {
-                    _postCategoryRepository.EnablePostCategory(postCategory);
-                }
-            }
-
-            // Return true if enable, false if cannot enable
-            return _categoryRepository.EnableCategory(category);
+            return null;
         }
 
-        public bool DisableCategory(int categoryId)
+        public CategoryDTO? DisableCategory(int categoryId)
         {
             // If category was disabled, return false
             var category = _categoryRepository.GetCategoryById(categoryId);
-            if (category.Status == false) return false;
+            if (category == null || category.Status == false) return null;
 
-            // Disable CategoryTag
-            var categoryTagList = _categoryTagRepository.GetCategoryTagByCategoryId(categoryId);
-            if (categoryTagList != null)
-            {
-                foreach (var categoryTag in categoryTagList)
-                {
-                    _categoryTagRepository.DisableCategoryTag(categoryTag);
-                }
-            }
+            // If disable succeed then return category, else return null
+            if (_categoryRepository.DisableCategory(category))
+                return _mapper.Map<CategoryDTO>(category);
 
-            // Disable PostCategory
-            var postCategoryList = _postCategoryRepository.GetPostCategoryByCategoryId(categoryId);
-            if (postCategoryList != null)
-            {
-                foreach (var postCategory in postCategoryList)
-                {
-                    _postCategoryRepository.DisablePostCategory(postCategory);
-                }
-            }
-
-            // Return true if disable, false if cannot disable
-            return _categoryRepository.DisableCategory(category);
+            return null;
         }
     }
 }

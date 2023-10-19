@@ -21,45 +21,40 @@ namespace backend.Controllers
         [HttpGet("{postId}/images")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<PostImage>))]
         [ProducesResponseType(400)]
-        public IActionResult GetImageByPost(int postId )
+        public IActionResult GetImageByPost(int postId)
         {
             var images = _imageHandlers.GetImagesByPost(postId);
-            if(images == null) return NotFound();
+            if (images == null) return NotFound();
 
             return Ok(images);
         }
 
-        [HttpPost("create")]
+        [HttpPost("create/{postId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(422)]
-        public IActionResult CreateImage([FromQuery] int postId, [FromBody] string[] imageURLs)
+        public IActionResult CreateImage([FromForm] int postId, [FromForm] string[] imageURLs)
         {
             // For each imageURL in imageURLs, if imageURL already exists then return
             if (imageURLs.Any(imageURL => _imageHandlers.GetImageByURL(imageURL) != null))
-            {
                 return StatusCode(422, "Image aldready exists!");
-            }
 
-            if (!_imageHandlers.CreateImage(postId, imageURLs))
-                return BadRequest(ModelState);
+            var createImage = _imageHandlers.CreateImage(postId, imageURLs);
+            if (createImage == null) return BadRequest(ModelState);
 
             return Ok("Successfully create!");
         }
 
-        [HttpPut("update")]
+        [HttpPut("update/{postId}/{currentImageId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateImage([FromBody] string newImageURL, int currentImageId)
+        public IActionResult UpdateImage(int postId, [FromForm] string newImageURL, int currentImageId)
         {
             if (_imageHandlers.GetImageByURL(newImageURL) != null)
-            {
-                //ModelState.AddModelError("", "Image aldready exists!");
                 return StatusCode(422, "Image aldready exists!");
-            }
-
-            if (!_imageHandlers.UpdateImage(currentImageId, newImageURL))
-                return NotFound();
+            
+            var updateImage = _imageHandlers.UpdateImage(postId, currentImageId, newImageURL);
+            if (updateImage == null) return BadRequest();
 
             return Ok("Update successfully!");
         }
@@ -69,8 +64,11 @@ namespace backend.Controllers
         [ProducesResponseType(404)]
         public IActionResult DeleteImage(int imageId)
         {
-            if (!_imageHandlers.DisableImage(imageId))
-                ModelState.AddModelError("", "Something went wrong deleting category");
+            if (_imageHandlers.GetImageByID(imageId) == null)
+                return StatusCode(422, "Image aldready exists!");
+
+            var deleteImage = _imageHandlers.DisableImage(imageId);
+            if (deleteImage == null) return BadRequest();
 
             return Ok("Delete successfully!");
         }

@@ -73,59 +73,55 @@ namespace backend.Controllers
             return Ok(tags);
         }
 
-        [HttpPost("create/{categoryName}")]
+        [HttpPost("create/{adminId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(422)]
-        public IActionResult CreateCategory([FromBody] int adminId, string categoryName)
+        public IActionResult CreateCategory(int adminId, [FromForm] string categoryName)
         {
             if(_categoryHandlers.GetCategoryByName(categoryName) != null)
-            {
-                //ModelState.AddModelError("", "Category aldready exists!");
                 return StatusCode(422, "Category aldready exists!");
-            }
 
-            if (!_categoryHandlers.CreateCategory(adminId, categoryName))
-                return BadRequest(ModelState);
+            var createCategory = _categoryHandlers.CreateCategory(adminId, categoryName);
+            if (createCategory == null) return BadRequest(ModelState);
 
             return Ok("Successfully create!");
         }
 
-        [HttpPut("update/{categoryName}")]
+        [HttpPut("update/{currentCategoryName}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateCategory([FromBody] string newCategoryName, string currentCategoryName)
+        public IActionResult UpdateCategory([FromForm] string newCategoryName, string currentCategoryName)
         {
             if (_categoryHandlers.GetCategoryByName(newCategoryName) != null)
-            {
-                //ModelState.AddModelError("", "Category aldready exists!");
                 return StatusCode(422, "Category aldready exists!");
-            }
 
-            if (!_categoryHandlers.UpdateCategory(currentCategoryName, newCategoryName))
-                return NotFound();
+            var updateCategory = _categoryHandlers.UpdateCategory(currentCategoryName, newCategoryName);
+            if (updateCategory == null) return BadRequest();
 
             return Ok("Update successfully!");
         }
 
-        [HttpPut("enable")]
+        [HttpPut("enable/{categoryId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         public IActionResult EnableCategory(int categoryId)
         {
-            if (!_categoryHandlers.EnableCategory(categoryId))
+            var enableCategory = _categoryHandlers.EnableCategory(categoryId);
+            if (enableCategory == null)
                 ModelState.AddModelError("", "Something went wrong enable category");
 
             return Ok("Enable successfully!");
         }
 
-        [HttpDelete("delete")]
+        [HttpDelete("delete/{categoryId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         public IActionResult DeleteCategory(int categoryId)
         {
-            if (!_categoryHandlers.DisableCategory(categoryId))
+            var deleteCategory = _categoryHandlers.DisableCategory(categoryId);
+            if (deleteCategory == null)
                 ModelState.AddModelError("", "Something went wrong deleting category");
 
             return Ok("Delete successfully!");

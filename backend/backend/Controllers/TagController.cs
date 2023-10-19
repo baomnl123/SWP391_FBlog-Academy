@@ -77,49 +77,51 @@ namespace backend.Controllers
         [HttpPost("create/{tagName}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(422)]
-        public IActionResult CreateTag([FromBody] int adminId, string tagName)
+        public IActionResult CreateTag([FromQuery] int adminId, [FromQuery] int categoryId, [FromForm] string tagName)
         {
-            if (!_tagHandlers.CreateTag(adminId, tagName))
-            {
-                ModelState.AddModelError("", "Tag aldready exists!");
-                return StatusCode(422, ModelState);
-            }
+            if (_tagHandlers.GetTagByName(tagName) != null)
+                return StatusCode(422, "Tag aldready exists!");
 
+            var createTag = _tagHandlers.CreateTag(adminId, categoryId, tagName);
+            if (createTag == null) return BadRequest(ModelState);
 
             return Ok("Successfully create!");
         }
 
-        [HttpPut("update/{tagName}")]
+        [HttpPut("update/{currentTagName}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateCategory([FromBody] string newTagName, string currentTagName)
+        public IActionResult UpdateTag([FromForm] string newTagName, string currentTagName)
         {
-            if (!_tagHandlers.UpdateTag(currentTagName, newTagName))
-                return NotFound();
+            if (_tagHandlers.GetTagByName(newTagName) != null)
+                return StatusCode(422, "Tag aldready exists!");
+
+            var updateTage = _tagHandlers.UpdateTag(currentTagName, newTagName);
+            if (updateTage == null) return BadRequest();
 
             return Ok("Update successfully!");
         }
 
-        [HttpPut("enable")]
+        [HttpPut("enable/{tagId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         public IActionResult EnableTag(int tagId)
         {
-            if (!_tagHandlers.EnableTag(tagId))
-                ModelState.AddModelError("", "Something went wrong enable tag");
+            var enableTag = _tagHandlers.EnableTag(tagId);
+            if (enableTag == null) ModelState.AddModelError("", "Something went wrong enable tag");
 
             return Ok("Enable successfully!");
         }
 
-        [HttpDelete("delete")]
+        [HttpDelete("delete/{tagId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         public IActionResult DeleteTag(int tagId)
         {
-            if (!_tagHandlers.DisableTag(tagId))
-                ModelState.AddModelError("", "Something went wrong deleting tag");
+            var deleteTag = _tagHandlers.DisableTag(tagId);
+            if (deleteTag == null) ModelState.AddModelError("", "Something went wrong disable tag");
 
             return Ok("Delete successfully!");
         }

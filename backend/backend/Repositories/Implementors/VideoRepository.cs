@@ -1,5 +1,7 @@
 ﻿using backend.Models;
 using backend.Repositories.IRepositories;
+using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace backend.Repositories.Implementors
 {
@@ -29,13 +31,25 @@ namespace backend.Repositories.Implementors
                                       .Where(c => c.Status == true).ToList();
         }
 
-        public bool CreateVideo(Video video)
+        public bool CreateVideo(int postId, Video video)
         {
+            // Find post is exists
+            var post = _context.Posts.FirstOrDefault(c => c.Id == postId && c.Status == true);
+            if (post == null) return false;
+
+            // Add PostVideo
+            var postVideo = new PostVideo()
+            {
+                Video = video,
+                Post = post
+            };
+            _context.Add(postVideo);
+
             _context.Add(video);
             return Save();
         }
 
-        public bool UpdateVideo(Video video)
+        public bool UpdateVideo(int postId, Video video)
         {
             _context.Update(video);
             return Save();
@@ -57,8 +71,20 @@ namespace backend.Repositories.Implementors
 
         public bool Save()
         {
-            var saved = _context.SaveChanges();
-            return saved > 0;
+            try
+            {
+                var saved = _context.SaveChanges();
+                // if saved > 0 then return true, else return false
+                return saved > 0;
+            }
+            catch (DbUpdateException)
+            {
+                return false;
+            }
+            catch (DBConcurrencyException)
+            {
+                return false;
+            }
         }
     }
 }

@@ -14,9 +14,9 @@ namespace backend.Handlers.IHandlers
         public ICollection<PostDTO>? GetPostsByTag(int tagId);
         public ICollection<CategoryDTO>? GetCategoriesByTag(int tagId);
         // CRUD
-        public bool CreateTag(int adminId, string tagName);
-        public bool UpdateTag(string currentTagName, string newTagName);
-        public bool EnableTag(int tagId);
-        public bool DisableTag(int tagId);
+        public TagDTO? CreateTag(int adminId, int categoryId, string tagName);
+        public TagDTO? UpdateTag(string currentTagName, string newTagName);
+        public TagDTO? EnableTag(int tagId);
+        public TagDTO? DisableTag(int tagId);
     }
 }

@@ -27,6 +27,11 @@ namespace backend.Repositories.Implementors
             }
         }
 
+        public Comment? GetComment(int commentId)
+        {
+           return _fBlogAcademyContext.Comments.Where(c => c.Id.Equals(commentId)).FirstOrDefault();
+        }
+
         public bool Save()
         {
             try
@@ -44,6 +49,19 @@ namespace backend.Repositories.Implementors
             {
                 //return false if stored data is changed by another user.
                 //                  or there is more than one change to one object at the same time
+                return false;
+            }
+        }
+
+        public bool Update(Comment comment)
+        {
+            try
+            {
+                _fBlogAcademyContext.Update(comment);
+                return Save();
+            }
+            catch(InvalidOperationException)
+            {
                 return false;
             }
         }

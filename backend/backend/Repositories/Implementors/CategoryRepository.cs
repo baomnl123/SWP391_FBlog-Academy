@@ -1,5 +1,7 @@
 ﻿using backend.Models;
 using backend.Repositories.IRepositories;
+using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace backend.Repositories.Implementors
 {
@@ -14,12 +16,28 @@ namespace backend.Repositories.Implementors
 
         public bool CreateCategory(Category category)
         {
+            // Add Category
             _context.Add(category);
             return Save();
         }
 
         public bool DisableCategory(Category category)
         {
+            var categoryTags = _context.CategoryTags.Where(c => c.CategoryId == category.Id).ToList();
+            var postCategories = _context.PostCategories.Where(c => c.CategoryId == category.Id).ToList();
+
+            foreach (var categoryTag in categoryTags)
+            {
+                categoryTag.Status = false;
+                _context.Update(categoryTag);
+            }
+
+            foreach (var postCategory in postCategories)
+            {
+                postCategory.Status = false;
+                _context.Update(postCategory);
+            }
+
             category.Status = false;
             _context.Update(category);
             return Save();
@@ -27,6 +45,21 @@ namespace backend.Repositories.Implementors
 
         public bool EnableCategory(Category category)
         {
+            var categoryTags = _context.CategoryTags.Where(c => c.CategoryId ==  category.Id).ToList();
+            var postCategories = _context.PostCategories.Where(c => c.CategoryId == category.Id).ToList();
+
+            foreach (var categoryTag in categoryTags)
+            {
+                categoryTag.Status = true;
+                _context.Update(categoryTag);
+            }
+
+            foreach (var postCategory in postCategories)
+            {
+                postCategory.Status = true;
+                _context.Update(postCategory);
+            }
+
             category.Status = true;
             _context.Update(category);
             return Save();
@@ -49,7 +82,7 @@ namespace backend.Repositories.Implementors
 
         public Category? GetCategoryByName(string categoryName)
         {
-            return _context.Categories.FirstOrDefault(c => c.CategoryName == categoryName);
+            return _context.Categories.FirstOrDefault(c => c.CategoryName.Trim().ToUpper() == categoryName.Trim().ToUpper());
         }
 
         public ICollection<Post> GetPostsByCategory(int categoryId)
@@ -74,9 +107,20 @@ namespace backend.Repositories.Implementors
 
         public bool Save()
         {
-            var saved = _context.SaveChanges();
-            // if saved > 0 then return true, else return false
-            return saved > 0;
+            try
+            {
+                var saved = _context.SaveChanges();
+                // if saved > 0 then return true, else return false
+                return saved > 0;
+            }
+            catch (DbUpdateException)
+            {
+                return false;
+            }
+            catch (DBConcurrencyException)
+            {
+                return false;
+            }
         }
     }
 }

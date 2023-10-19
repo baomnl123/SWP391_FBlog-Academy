@@ -1,5 +1,7 @@
 ﻿using backend.Models;
 using backend.Repositories.IRepositories;
+using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace backend.Repositories.Implementors
 {
@@ -12,14 +14,41 @@ namespace backend.Repositories.Implementors
             _context = new();
         }
 
-        public bool CreateTag(Tag tag)
+        public bool CreateTag(int categoryId, Tag tag)
         {
+            var category = _context.Categories.FirstOrDefault(c => c.Id == categoryId && c.Status == true);
+            if(category == null) return false;
+
+            // Add CategoryTag
+            var categoryTag = new CategoryTag()
+            {
+                Category = category,
+                Tag = tag,
+                Status = true
+            };
+            _context.Add(categoryTag);
+
             _context.Add(tag);
             return Save();
         }
 
         public bool DisableTag(Tag tag)
         {
+            var categoryTags = _context.CategoryTags.Where(c => c.TagId == tag.Id).ToList();
+            var postTags = _context.PostTags.Where(c => c.TagId == tag.Id).ToList();
+
+            foreach (var categoryTag in categoryTags)
+            {
+                categoryTag.Status = false;
+                _context.Update(categoryTag);
+            }
+
+            foreach (var postTag in postTags)
+            {
+                postTag.Status = false;
+                _context.Update(postTag);
+            }
+
             tag.Status = false;
             _context.Update(tag);
             return Save();
@@ -27,6 +56,21 @@ namespace backend.Repositories.Implementors
 
         public bool EnableTag(Tag tag)
         {
+            var categoryTags = _context.CategoryTags.Where(c => c.TagId == tag.Id).ToList();
+            var postTags = _context.PostTags.Where(c => c.TagId == tag.Id).ToList();
+
+            foreach (var categoryTag in categoryTags)
+            {
+                categoryTag.Status = true;
+                _context.Update(categoryTag);
+            }
+
+            foreach (var postTag in postTags)
+            {
+                postTag.Status = true;
+                _context.Update(postTag);
+            }
+
             tag.Status = true;
             _context.Update(tag);
             return Save();
@@ -49,7 +93,7 @@ namespace backend.Repositories.Implementors
 
         public Tag? GetTagByName(string tagName)
         {
-            return _context.Tags.FirstOrDefault(c => c.TagName == tagName);
+            return _context.Tags.FirstOrDefault(c => c.TagName.Trim().ToUpper() == tagName.Trim().ToUpper());
         }
 
         public ICollection<Post> GetPostsByTag(int tagId)
@@ -74,9 +118,20 @@ namespace backend.Repositories.Implementors
 
         public bool Save()
         {
-            var saved = _context.SaveChanges();
-            // if saved > 0 then return true, else return false
-            return saved > 0;
+            try
+            {
+                var saved = _context.SaveChanges();
+                // if saved > 0 then return true, else return false
+                return saved > 0;
+            }
+            catch (DbUpdateException)
+            {
+                return false;
+            }
+            catch (DBConcurrencyException)
+            {
+                return false;
+            }
         }
     }
 }

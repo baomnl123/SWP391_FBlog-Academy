@@ -1,5 +1,7 @@
 ﻿using backend.Models;
 using backend.Repositories.IRepositories;
+using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace backend.Repositories.Implementors
 {
@@ -29,13 +31,25 @@ namespace backend.Repositories.Implementors
                                       .Where(c => c.Status == true).ToList();
         }
 
-        public bool CreateImage(Image image)
+        public bool CreateImage(int postId, Image image)
         {
+            // Find post is exists
+            var post = _context.Posts.FirstOrDefault(c => c.Id == postId && c.Status == true);
+            if (post == null) return false;
+
+            // Add PostImage
+            var postImage = new PostImage()
+            {
+                Image = image,
+                Post = post
+            };
+            _context.Add(postImage);
+
             _context.Add(image);
             return Save();
         }
 
-        public bool UpdateImage(Image image)
+        public bool UpdateImage(int postId, Image image)
         {
             _context.Update(image);
             return Save();
@@ -57,8 +71,20 @@ namespace backend.Repositories.Implementors
 
         public bool Save()
         {
-            var saved = _context.SaveChanges();
-            return saved > 0;
+            try
+            {
+                var saved = _context.SaveChanges();
+                // if saved > 0 then return true, else return false
+                return saved > 0;
+            }
+            catch (DbUpdateException)
+            {
+                return false;
+            }
+            catch (DBConcurrencyException)
+            {
+                return false;
+            }
         }
     }
 }
