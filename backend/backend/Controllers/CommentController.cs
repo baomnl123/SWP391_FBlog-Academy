@@ -15,7 +15,7 @@ namespace backend.Controllers
             _commentHandlers = commentHandlers;
         }
 
-        [HttpGet("ViewAllComments")]
+        [HttpGet("ViewAllComments/{postId}")]
         public IActionResult GetAllComments(int postId)
         {
             var commentList = _commentHandlers.ViewAllComments(postId);
@@ -24,7 +24,7 @@ namespace backend.Controllers
         }
 
         [HttpPost("CreatNewComment")]
-        public IActionResult CreateNewComment(int userId, int postId, string content) 
+        public IActionResult CreateNewComment([FromForm] int userId, [FromForm] int postId, [FromForm] string content) 
         {
             var newComment = _commentHandlers.CreateComment(userId, postId, content);
             if (newComment != null) return Ok(newComment);
@@ -32,7 +32,7 @@ namespace backend.Controllers
         }
 
         [HttpPut("UpdateComment")]
-        public IActionResult UpdateComment(int commentId, string content)
+        public IActionResult UpdateComment([FromForm] int commentId, [FromForm] string content)
         {
             var updatedComment = _commentHandlers.UpdateComment(commentId , content);
             if (updatedComment != null) return Ok(updatedComment);
@@ -40,7 +40,7 @@ namespace backend.Controllers
         }
 
         [HttpDelete("DeleteComment")]
-        public IActionResult DeleteComment(int commentId)
+        public IActionResult DeleteComment([FromForm] int commentId)
         {
             var deletedComment = _commentHandlers.DeleteComment(commentId);
             if (deletedComment != null) return Ok(deletedComment);
