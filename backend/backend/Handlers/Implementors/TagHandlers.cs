@@ -70,7 +70,7 @@ namespace backend.Handlers.Implementors
         }
 
 
-        public TagDTO? CreateTag(int adminId, int tagId, string tagName)
+        public TagDTO? CreateTag(int adminId, int categoryId, string tagName)
         {
             // Find admin
             var admin = _userRepository.GetUser(adminId);
@@ -89,7 +89,7 @@ namespace backend.Handlers.Implementors
                     Status = true
                 };
                 // If create succeed then return tag, else return null
-                if (_tagRepository.CreateTag(tagId, tag))
+                if (_tagRepository.CreateTag(categoryId, tag))
                     return _mapper.Map<TagDTO>(tag);
             }
 
