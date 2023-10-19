@@ -15,7 +15,7 @@ namespace backend.Controllers
         }
 
         [HttpPost("VoteComment")]
-        public IActionResult VoteComment(int currentUserId, int commentId, bool vote)
+        public IActionResult VoteComment([FromForm] int currentUserId, [FromForm] int commentId, [FromForm] bool vote)
         {
             var successVote = _voteCommentHandlers.CreateVote(currentUserId, commentId, vote);
             if (successVote == null) return BadRequest();
@@ -23,14 +23,14 @@ namespace backend.Controllers
         }
 
         [HttpPut("UpdateVoteComment")]
-        public IActionResult DisableUpVoteComment(int currentUserId, int commentId, bool vote) 
+        public IActionResult DisableUpVoteComment([FromForm] int currentUserId, [FromForm] int commentId, [FromForm] bool vote) 
         {
             var UpdatedVote = _voteCommentHandlers.UpdateVote(currentUserId, commentId, vote);
             if (UpdatedVote == null) return BadRequest();
             return Ok(UpdatedVote);
         }
 
-        [HttpGet("GetAllUsersVoteComment")]
+        [HttpGet("GetAllUsersVoteComment/{commentId}")]
         public IActionResult GetAllUsersVotedBy(int commentId)
         {
             var userList = _voteCommentHandlers.GetAllUsersVotedBy(commentId);
@@ -39,7 +39,7 @@ namespace backend.Controllers
         }
 
         [HttpDelete("DisableVoteComment")]
-        public IActionResult DisableVoteComment(int currentUserId, int commentId)
+        public IActionResult DisableVoteComment([FromForm] int currentUserId, [FromForm] int commentId)
         {
             var successDisableVote = _voteCommentHandlers.DisableVote(currentUserId, commentId);
             if (successDisableVote == null) return BadRequest();
