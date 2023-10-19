@@ -126,11 +126,8 @@ namespace backend.Handlers.Implementors
             tag.TagName = newTagName;
             tag.UpdatedAt = DateTime.Now;
 
-            // Check if all updates succeeded.
-            var check = categoryTags.All(categoryTag => _categoryTagRepository.UpdateCategoryTag(categoryTag));
-
             // Return the mapped tag DTO if all updates succeeded, otherwise return null.
-            return _tagRepository.UpdateTag(tag) && check ? _mapper.Map<TagDTO>(tag) : null;
+            return _tagRepository.UpdateTag(tag) ? _mapper.Map<TagDTO>(tag) : null;
         }
 
         public TagDTO? EnableTag(int tagId)
