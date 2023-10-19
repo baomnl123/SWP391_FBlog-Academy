@@ -117,42 +117,48 @@ namespace backend.Handlers.Implementors
 
         public TagDTO? UpdateTag(string currentTagName, string newTagName)
         {
+            // Find tag and categoryTag
             var tag = _tagRepository.GetTagByName(currentTagName);
-            if (tag == null || tag.Status == false) return null;
+            var categoryTags = _categoryTagRepository.GetCategoryTagsByTagId(tag.Id);
+            if (tag == null || tag.Status == false || categoryTags == null) return null;
 
-            // If update succeed then return true, else return false
+            // Set new TagName and UpdatedAt
             tag.TagName = newTagName;
             tag.UpdatedAt = DateTime.Now;
 
-            // If update succeed then return tag, else return null
-            if (_tagRepository.UpdateTag(tag))
-                return _mapper.Map<TagDTO>(tag);
+            // Check if all updates succeeded.
+            var check = categoryTags.All(categoryTag => _categoryTagRepository.UpdateCategoryTag(categoryTag));
 
-            return null;
+            // Return the mapped tag DTO if all updates succeeded, otherwise return null.
+            return _tagRepository.UpdateTag(tag) && check ? _mapper.Map<TagDTO>(tag) : null;
         }
 
         public TagDTO? EnableTag(int tagId)
         {
+            // Find tag and categoryTag
             var tag = _tagRepository.GetTagById(tagId);
-            if (tag == null || tag.Status == true) return null;
+            var categoryTags = _categoryTagRepository.GetCategoryTagsByTagId(tag.Id);
+            if (tag == null || tag.Status == true || categoryTags == null) return null;
 
-            // If enable succeed then return tag, else return null
-            if (_tagRepository.EnableTag(tag))
-                return _mapper.Map<TagDTO>(tag);
+            // Check if all enables succeeded.
+            var check = categoryTags.All(categoryTag => _categoryTagRepository.EnableCategoryTag(categoryTag));
 
-            return null;
+            // Return the mapped tag DTO if all enables succeeded, otherwise return null.
+            return _tagRepository.EnableTag(tag) && check ? _mapper.Map<TagDTO>(tag) : null;
         }
 
         public TagDTO? DisableTag(int tagId)
         {
+            // Find tag and categoryTag
             var tag = _tagRepository.GetTagById(tagId);
-            if (tag == null || tag.Status == false) return null;
+            var categoryTags = _categoryTagRepository.GetCategoryTagsByTagId(tag.Id);
+            if (tag == null || tag.Status == false || categoryTags == null) return null;
 
-            // If disable succeed then return tag, else return null
-            if (_tagRepository.DisableTag(tag))
-                return _mapper.Map<TagDTO>(tag);
+            // Check if all disables succeeded.
+            var check = categoryTags.All(categoryTag => _categoryTagRepository.DisableCategoryTag(categoryTag));
 
-            return null;
+            // Return the mapped tag DTO if all disables succeeded, otherwise return null.
+            return _tagRepository.DisableTag(tag) && check ? _mapper.Map<TagDTO>(tag) : null;
         }
     }
 }

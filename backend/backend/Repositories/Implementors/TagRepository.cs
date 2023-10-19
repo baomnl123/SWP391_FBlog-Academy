@@ -22,14 +22,7 @@ namespace backend.Repositories.Implementors
 
         public bool DisableTag(Tag tag)
         {
-            var categoryTags = _context.CategoryTags.Where(c => c.TagId == tag.Id).ToList();
             var postTags = _context.PostTags.Where(c => c.TagId == tag.Id).ToList();
-
-            foreach (var categoryTag in categoryTags)
-            {
-                categoryTag.Status = false;
-                _context.Update(categoryTag);
-            }
 
             foreach (var postTag in postTags)
             {
@@ -44,14 +37,7 @@ namespace backend.Repositories.Implementors
 
         public bool EnableTag(Tag tag)
         {
-            var categoryTags = _context.CategoryTags.Where(c => c.TagId == tag.Id).ToList();
             var postTags = _context.PostTags.Where(c => c.TagId == tag.Id).ToList();
-
-            foreach (var categoryTag in categoryTags)
-            {
-                categoryTag.Status = true;
-                _context.Update(categoryTag);
-            }
 
             foreach (var postTag in postTags)
             {

@@ -34,6 +34,22 @@ namespace backend.Repositories.Implementors
             return Save();
         }
 
+        public bool UpdateCategoryTag(CategoryTag categoryTag)
+        {
+            _context.Update(categoryTag);
+            return Save();
+        }
+
+        public ICollection<CategoryTag> GetCategoryTagsByCategoryId(int categoryId)
+        {
+            return _context.CategoryTags.Where(c => c.CategoryId == categoryId).ToList();
+        }
+
+        public ICollection<CategoryTag> GetCategoryTagsByTagId(int tagId)
+        {
+            return _context.CategoryTags.Where(c => c.TagId == tagId).ToList();
+        }
+
         public bool Save()
         {
             try
