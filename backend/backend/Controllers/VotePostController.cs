@@ -40,7 +40,7 @@ namespace backend.Controllers
         }
 
         [HttpDelete("DeleteVotePost")]
-        public IActionResult DeleteVote(int currentUserId, int postId) 
+        public IActionResult DeleteVote([FromForm] int currentUserId, [FromForm] int postId) 
         {
             var deletedVote = _votePostHandlers.DisableVotePost(currentUserId, postId);
             if (deletedVote == null) return BadRequest();
