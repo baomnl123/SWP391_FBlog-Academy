@@ -46,7 +46,7 @@ namespace backend.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateVideo(int postId, [FromBody] string newVideoURL, int currentVideoId)
+        public IActionResult UpdateVideo(int postId, [FromForm] string newVideoURL, int currentVideoId)
         {
             if (_videoHandlers.GetVideoByURL(newVideoURL) != null)
                 return StatusCode(422, "Video aldready exists!");
