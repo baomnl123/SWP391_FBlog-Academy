@@ -19,6 +19,10 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ITagRepository, TagRepository>();
 builder.Services.AddScoped<IImageRepository, ImageRepository>();
 builder.Services.AddScoped<IVideoRepository, VideoRepository>();
+builder.Services.AddScoped<IPostRepository, PostRepository>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+builder.Services.AddScoped<IVoteCommentRepository, VoteCommentRepository>();
+builder.Services.AddScoped<IVotePostRepository, VotePostRepository>();
 //
 builder.Services.AddScoped<IFollowUserHandlers, FollowUserHandlers>();
 builder.Services.AddScoped<IReportPostHandlers, ReportPostHandlers>();
@@ -29,9 +33,10 @@ builder.Services.AddScoped<ITagHandlers, TagHandlers>();
 builder.Services.AddScoped<IImageHandlers, ImageHandlers>();
 builder.Services.AddScoped<IVideoHandlers, VideoHandlers>();
 builder.Services.AddScoped<IPostHandlers, PostHandlers>();
-builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<ICommentHandlers, CommentHandlers>();
-builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+builder.Services.AddScoped<IVoteCommentHandlers, VoteCommentHandlers>();
+builder.Services.AddScoped<IVotePostHandlers, VotePostHandlers>();
+
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();

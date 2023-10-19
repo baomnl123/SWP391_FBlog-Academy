@@ -10,14 +10,22 @@ namespace backend.Handlers.Implementors
     {
         private readonly IPostRepository _postRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IPostTagRepository _postTagRepository;
+        private readonly IPostCategoryRepository _postCategoryRepository;
         private readonly IMapper _mapper;
 
-        public PostHandlers(IPostRepository postRepository, IMapper mapper, IUserRepository userRepository)
+        public PostHandlers(IPostRepository postRepository, 
+                            IMapper mapper, IUserRepository userRepository, 
+                            IPostCategoryRepository postCategoryRepository, 
+                            IPostTagRepository postTagRepository)
         {
             _postRepository = postRepository;
             _mapper = mapper;
             _userRepository = userRepository;
+            _postTagRepository = postTagRepository;
+            _postCategoryRepository = postCategoryRepository;
         }
+
         public PostDTO? ApprovePost(int reviewerId, int postId)
         {
             //check reviewer is not null
@@ -50,7 +58,7 @@ namespace backend.Handlers.Implementors
             return null;
         }
 
-        public PostDTO? CreatePost(int userId, string title, string content)
+        public PostDTO? CreatePost(int userId, string title, string content, int tagId, int categoryId)
         {
             //check info is not null
             if(title is null || content is null)
@@ -66,7 +74,7 @@ namespace backend.Handlers.Implementors
                 || existedUser.Status == false 
                 || !( existedUser.Role.Contains("SU") || existedUser.Role.Contains("MOD") ) ) return null;
 
-            //create new user
+            //create new post
             Post newPost = new()
             {
                 UserId = userId,
@@ -77,17 +85,31 @@ namespace backend.Handlers.Implementors
                 Status = true,
             };
 
-            //add new user to database
+            //add new post to database
             if(!_postRepository.CreateNewPost(newPost)) return null;
+
+            //create new relationship Post has tag(subject code)
+            PostTag newPostTag = new()
+            {
+                PostId = newPost.Id,
+                TagId = tagId,
+                Status = true,
+            };
+
+            //add newPostTag ralationship to database
             return _mapper.Map<PostDTO>(newPost);
         }
 
-        public PostDTO? DeletePost(int postId)
+        public PostDTO? DeletePost(int postId, int tagId, int categoryId)
         {
-            throw new NotImplementedException();
+            var deletedPost = _postRepository.GetPost(postId);
+            if (deletedPost == null 
+                || deletedPost.Status == false 
+                || deletedPost.IsApproved == false) return null;
+            return _mapper.Map<PostDTO>(deletedPost);
         }
 
-        public PostDTO? DenyPost(int reviewerId, int postId)
+        public PostDTO? DenyPost(int reviewerId, int postId, int tagId, int categoryId)
         {
             //return null if validReviewer is null
             //                              or removed
@@ -160,7 +182,7 @@ namespace backend.Handlers.Implementors
             return null;
         }
 
-        public PostDTO? UpdatePost(int postId, string title, string content)
+        public PostDTO? UpdatePost(int postId, string title, string content, int tagId, int categoryId)
         {
             //check post is existed
             var existedPost = _postRepository.GetPost(postId);

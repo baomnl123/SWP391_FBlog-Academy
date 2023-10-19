@@ -1,14 +1,16 @@
-﻿namespace backend.Handlers.IHandlers
+﻿using backend.DTO;
+
+namespace backend.Handlers.IHandlers
 {
     public interface IVoteCommentHandlers
     {
-        //Vote another comment
-        public bool UpVoteOtherCommnet(int currentUserId, int commentId);
-        //Dísable upvote comment
-        public bool DisableUpVoteOtherCommnet(int currentUserId, int commentId);
-        //Downvote another post
-        public bool DownVoteOtherComment(int currentUserId, int commentId);
-        //Disable downvote comment
-        public bool DisableDownVoteOtherComment(int currentUserId, int commentId);
+        //Get all users voted by comment
+        public ICollection<UserDTO>? GetAllUsersVotedBy(int commentId);
+        //Create new Vote
+        public VoteCommentDTO? CreateVote(int currentUserId, int commentId, bool vote);
+        //Update vote 
+        public VoteCommentDTO? UpdateVote(int currentUserId, int commentId, bool vote);
+        //Disable vote 
+        public VoteCommentDTO? DisableVote(int currentUserId, int commentId);
     }
 }
