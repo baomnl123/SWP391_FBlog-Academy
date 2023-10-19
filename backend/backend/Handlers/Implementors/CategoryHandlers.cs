@@ -14,6 +14,7 @@ namespace backend.Handlers.Implementors
         private readonly ITagRepository _tagRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly ICategoryTagRepository _categoryTagRepository;
+        private readonly IPostCategoryRepository _postCategoryRepository;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         private readonly UserRoleConstrant _userRoleConstrant;
@@ -21,11 +22,13 @@ namespace backend.Handlers.Implementors
         public CategoryHandlers(ITagRepository tagRepository,
                            ICategoryRepository categoryRepository,
                            ICategoryTagRepository categoryTagRepository,
+                           IPostCategoryRepository postCategoryRepository,
                            IUserRepository userRepository, IMapper mapper)
         {
             _tagRepository = tagRepository;
             _categoryRepository = categoryRepository;
             _categoryTagRepository = categoryTagRepository;
+            _postCategoryRepository = postCategoryRepository;
             _userRepository = userRepository;
             _mapper = mapper;
             _userRoleConstrant = new();
@@ -127,13 +130,15 @@ namespace backend.Handlers.Implementors
             // Find category and categoryTag
             var category = _categoryRepository.GetCategoryById(categoryId);
             var categoryTags = _categoryTagRepository.GetCategoryTagsByCategoryId(category.Id);
+            var postCategories= _postCategoryRepository.GetPostCategoriesByCategoryId(category.Id);
             if (category == null || category.Status == true || categoryTags == null) return null;
 
             // Check if all enables succeeded.
             var check = categoryTags.All(categoryTag => _categoryTagRepository.EnableCategoryTag(categoryTag));
+            postCategories.All(postCategory => _postCategoryRepository.EnablePostCategory(postCategory));
 
             // Return the mapped tag DTO if all enables succeeded, otherwise return null.
-            return _categoryRepository.EnableCategory(category) ? _mapper.Map<CategoryDTO>(category) : null;
+            return _categoryRepository.EnableCategory(category) && check ? _mapper.Map<CategoryDTO>(category) : null;
         }
 
         public CategoryDTO? DisableCategory(int categoryId)
@@ -141,13 +146,15 @@ namespace backend.Handlers.Implementors
             // Find category and categoryTag
             var category = _categoryRepository.GetCategoryById(categoryId);
             var categoryTags = _categoryTagRepository.GetCategoryTagsByCategoryId(category.Id);
+            var postCategories = _postCategoryRepository.GetPostCategoriesByCategoryId(category.Id);
             if (category == null || category.Status == false || categoryTags == null) return null;
 
             // Check if all disable succeeded.
-            var check = categoryTags.All(categoryTag => _categoryTagRepository.EnableCategoryTag(categoryTag));
+            var check = categoryTags.All(categoryTag => _categoryTagRepository.DisableCategoryTag(categoryTag));
+            postCategories.All(postCategory => _postCategoryRepository.DisablePostCategory(postCategory));
 
             // Return the mapped tag DTO if all disable succeeded, otherwise return null.
-            return _categoryRepository.DisableCategory(category) ? _mapper.Map<CategoryDTO>(category) : null;
+            return _categoryRepository.DisableCategory(category) && check ? _mapper.Map<CategoryDTO>(category) : null;
         }
     }
 }
