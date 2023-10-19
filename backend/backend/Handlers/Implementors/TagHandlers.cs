@@ -98,6 +98,10 @@ namespace backend.Handlers.Implementors
                 Status = true,
             };
 
+            // If tag exists and is disabled, enable it and return it.
+            if (tagExists?.Status == false && EnableTag(tagExists.Id) != null)
+                return _mapper.Map<TagDTO>(tagExists);
+
             // Create a new category tag object.
             var categoryTag = new CategoryTag()
             {
@@ -107,9 +111,7 @@ namespace backend.Handlers.Implementors
 
             // Create the tag and category tag objects, and return the mapped tag DTO if both operations succeed.
             if (_tagRepository.CreateTag(tag) && _categoryTagRepository.CreateCategoryTag(categoryTag))
-            {
                 return _mapper.Map<TagDTO>(tag);
-            }
 
             // Otherwise, return null.
             return null;
