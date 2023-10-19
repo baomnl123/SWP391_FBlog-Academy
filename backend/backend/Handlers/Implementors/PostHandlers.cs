@@ -10,20 +10,14 @@ namespace backend.Handlers.Implementors
     {
         private readonly IPostRepository _postRepository;
         private readonly IUserRepository _userRepository;
-        private readonly IPostTagRepository _postTagRepository;
-        private readonly IPostCategoryRepository _postCategoryRepository;
         private readonly IMapper _mapper;
 
         public PostHandlers(IPostRepository postRepository, 
-                            IMapper mapper, IUserRepository userRepository, 
-                            IPostCategoryRepository postCategoryRepository, 
-                            IPostTagRepository postTagRepository)
+                            IMapper mapper, IUserRepository userRepository)
         {
             _postRepository = postRepository;
             _mapper = mapper;
             _userRepository = userRepository;
-            _postTagRepository = postTagRepository;
-            _postCategoryRepository = postCategoryRepository;
         }
 
         public PostDTO? ApprovePost(int reviewerId, int postId)
