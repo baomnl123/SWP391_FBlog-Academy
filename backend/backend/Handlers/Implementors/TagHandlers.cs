@@ -4,27 +4,23 @@ using backend.Handlers.IHandlers;
 using backend.Models;
 using backend.Repositories.Implementors;
 using backend.Repositories.IRepositories;
+using backend.Utils;
 
 namespace backend.Handlers.Implementors
 {
     public class TagHandlers : ITagHandlers
     {
         private readonly ITagRepository _tagRepository;
-        private readonly ICategoryTagRepository _categoryTagRepository;
-        private readonly IPostTagRepository _postTagRepository;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly UserRoleConstrant _userRoleConstrant;
 
-        public TagHandlers(ITagRepository tagRepository, 
-                           ICategoryTagRepository categoryTagRepository, 
-                           IPostTagRepository postTagRepository, 
-                           IUserRepository userRepository, IMapper mapper)
+        public TagHandlers(ITagRepository tagRepository, IUserRepository userRepository, IMapper mapper)
         {
             _tagRepository = tagRepository;
-            _categoryTagRepository = categoryTagRepository;
-            _postTagRepository = postTagRepository;
             _userRepository = userRepository;
             _mapper = mapper;
+            _userRoleConstrant = new();
         }
 
         public ICollection<TagDTO> GetTags()
@@ -74,15 +70,15 @@ namespace backend.Handlers.Implementors
         }
 
 
-        public bool CreateTag(int adminId, string tagName)
+        public TagDTO? CreateTag(int adminId, int tagId, string tagName)
         {
             // Find admin
             var admin = _userRepository.GetUser(adminId);
-            if (admin == null || admin.Role != "Admin") return false;
+            var adminRole = _userRoleConstrant.GetAdminRole();
+            if (admin == null || !admin.Role.Equals(adminRole)) return null;
 
             // Find tag by name
             var tagExists = _tagRepository.GetTagByName(tagName);
-
             if (tagExists == null)
             {
                 Tag tag = new()
@@ -92,90 +88,61 @@ namespace backend.Handlers.Implementors
                     CreatedAt = DateTime.Now,
                     Status = true
                 };
-                var newTag = _tagRepository.CreateTag(tag);
-
-                // If create succeed then return true, else return false
-                return newTag;
+                // If create succeed then return tag, else return null
+                if (_tagRepository.CreateTag(tagId, tag))
+                    return _mapper.Map<TagDTO>(tag);
             }
 
             // If tag was disabled, set status to true
             if (tagExists.Status == false)
             {
                 tagExists.Status = true;
-                _tagRepository.EnableTag(tagExists);
-                return true;
+                // If enable succeed then return tag, else return null
+                if (_tagRepository.EnableTag(tagExists))
+                    return _mapper.Map<TagDTO>(tagExists);
             }
 
-            return false;
+            return null;
         }
 
-        public bool UpdateTag(string currentTagName, string newTagName)
+        public TagDTO? UpdateTag(string currentTagName, string newTagName)
         {
             var tag = _tagRepository.GetTagByName(currentTagName);
-            if (tag == null || tag.Status == false) return false;
+            if (tag == null || tag.Status == false) return null;
 
             // If update succeed then return true, else return false
             tag.TagName = newTagName;
             tag.UpdatedAt = DateTime.Now;
-            return _tagRepository.UpdateTag(tag);
+
+            // If update succeed then return tag, else return null
+            if (_tagRepository.UpdateTag(tag))
+                return _mapper.Map<TagDTO>(tag);
+
+            return null;
         }
 
-        public bool EnableTag(int tagId)
+        public TagDTO? EnableTag(int tagId)
         {
             var tag = _tagRepository.GetTagById(tagId);
-            if (tag == null || tag.Status == true) return true;
+            if (tag == null || tag.Status == true) return null;
 
-            // Enable CategoryTag
-            var categoryTagList = _categoryTagRepository.GetCategoryTagByTagId(tagId);
-            if (categoryTagList != null)
-            {
-                foreach (var categoryTag in categoryTagList)
-                {
-                    _categoryTagRepository.EnableCategoryTag(categoryTag);
-                }
-            }
+            // If enable succeed then return tag, else return null
+            if (_tagRepository.EnableTag(tag))
+                return _mapper.Map<TagDTO>(tag);
 
-            // Enable PostTag
-            var postCategoryList = _postTagRepository.GetPostTagByTagId(tagId);
-            if (postCategoryList != null)
-            {
-                foreach (var postCategory in postCategoryList)
-                {
-                    _postTagRepository.EnablePostTag(postCategory);
-                }
-            }
-
-            // If enable succeed then return true, else return false
-            return _tagRepository.EnableTag(tag);
+            return null;
         }
 
-        public bool DisableTag(int tagId)
+        public TagDTO? DisableTag(int tagId)
         {
             var tag = _tagRepository.GetTagById(tagId);
-            if (tag == null || tag.Status == false) return false;
+            if (tag == null || tag.Status == false) return null;
 
-            // Disable CategoryTag
-            var categoryTagList = _categoryTagRepository.GetCategoryTagByTagId(tagId);
-            if (categoryTagList != null)
-            {
-                foreach (var categoryTag in categoryTagList)
-                {
-                    _categoryTagRepository.DisableCategoryTag(categoryTag);
-                }
-            }
+            // If disable succeed then return tag, else return null
+            if (_tagRepository.DisableTag(tag))
+                return _mapper.Map<TagDTO>(tag);
 
-            // Disable PostTag
-            var postCategoryList = _postTagRepository.GetPostTagByTagId(tagId);
-            if (postCategoryList != null)
-            {
-                foreach (var postCategory in postCategoryList)
-                {
-                    _postTagRepository.DisablePostTag(postCategory);
-                }
-            }
-
-            // If disable succeed then return true, else return false
-            return _tagRepository.DisableTag(tag);
+            return null;
         }
     }
 }

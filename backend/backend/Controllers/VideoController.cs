@@ -27,37 +27,32 @@ namespace backend.Controllers
             return Ok(videos);
         }
 
-        [HttpPost("create")]
+        [HttpPost("create/{postId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(422)]
-        public IActionResult CreateVideo([FromRoute] int postId, [FromBody] string[] videoURLs)
+        public IActionResult CreateVideo(int postId, [FromForm] string[] videoURLs)
         {
             // For each videoURL in videoURLs, if videoURL already exists then return
             if (videoURLs.Any(videoURL => _videoHandlers.GetVideoByURL(videoURL) != null))
-            {
                 return StatusCode(422, "Video aldready exists!");
-            }
 
-            if (!_videoHandlers.CreateVideo(postId, videoURLs))
-                return BadRequest(ModelState);
+            var createVideo = _videoHandlers.CreateVideo(postId, videoURLs);
+            if (createVideo == null) return BadRequest(ModelState);
 
             return Ok("Successfully create!");
         }
 
-        [HttpPut("update")]
+        [HttpPut("update/{postId}/{currentVideoId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateVideo([FromBody] string newVideoURL, int currentVideoId)
+        public IActionResult UpdateVideo(int postId, [FromForm] string newVideoURL, int currentVideoId)
         {
             if (_videoHandlers.GetVideoByURL(newVideoURL) != null)
-            {
-                //ModelState.AddModelError("", "Video aldready exists!");
                 return StatusCode(422, "Video aldready exists!");
-            }
 
-            if (!_videoHandlers.UpdateVideo(currentVideoId, newVideoURL))
-                return NotFound();
+            var updateVideo = _videoHandlers.UpdateVideo(postId, currentVideoId, newVideoURL);
+            if (updateVideo == null) return NotFound();
 
             return Ok("Update successfully!");
         }
@@ -67,8 +62,11 @@ namespace backend.Controllers
         [ProducesResponseType(404)]
         public IActionResult DeleteVideo(int videoId)
         {
-            if (!_videoHandlers.DisableVideo(videoId))
-                ModelState.AddModelError("", "Something went wrong deleting category");
+            if (_videoHandlers.GetVideoByID(videoId) == null)
+                return StatusCode(422, "Image aldready exists!");
+
+            var deleteVideo = _videoHandlers.DisableVideo(videoId);
+            if (deleteVideo == null) return BadRequest();
 
             return Ok("Delete successfully!");
         }
