@@ -14,20 +14,8 @@ namespace backend.Repositories.Implementors
             _context = new();
         }
 
-        public bool CreateTag(int categoryId, Tag tag)
+        public bool CreateTag(Tag tag)
         {
-            var category = _context.Categories.FirstOrDefault(c => c.Id == categoryId && c.Status == true);
-            if(category == null) return false;
-
-            // Add CategoryTag
-            var categoryTag = new CategoryTag()
-            {
-                Category = category,
-                Tag = tag,
-                Status = true
-            };
-            _context.Add(categoryTag);
-
             _context.Add(tag);
             return Save();
         }
