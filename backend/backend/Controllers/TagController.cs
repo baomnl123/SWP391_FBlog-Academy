@@ -135,7 +135,7 @@ namespace backend.Controllers
             return Ok("Delete successfully!");
         }
 
-        [HttpDelete("delete/{tagId}")]
+        [HttpDelete("delete-relationship/{tagId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         public IActionResult DeleteRelationship([FromForm] int categoryId, [FromForm] int tagId)
