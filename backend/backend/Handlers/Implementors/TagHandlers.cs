@@ -105,15 +105,21 @@ namespace backend.Handlers.Implementors
             if (tagExists?.Status == false && EnableTag(tagExists.Id) != null)
                 return _mapper.Map<TagDTO>(tagExists);
 
-            // Create a new category tag object.
+            // Add to DB
+            var checkCreate = _tagRepository.CreateTag(tag);
+            // Get it back to get ID
+            var createdTag = _tagRepository.GetTagByName(tagName);
+
+            // Create a new categoryTag object.
             var categoryTag = new CategoryTag()
             {
-                Category = category,
-                Tag = tag
+                CategoryId = category.Id,
+                TagId = createdTag.Id,
+                Status = true
             };
 
-            // Create the tag and category tag objects, and return the mapped tag DTO if both operations succeed.
-            if (_tagRepository.CreateTag(tag) && _categoryTagRepository.CreateCategoryTag(categoryTag))
+            // Create the relationship CategoryTag, and return the mapped tag DTO if both operations succeed.
+            if (checkCreate && _categoryTagRepository.CreateCategoryTag(categoryTag))
                 return _mapper.Map<TagDTO>(tag);
 
             // Otherwise, return null.

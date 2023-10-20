@@ -74,10 +74,10 @@ namespace backend.Controllers
             return Ok(categories);
         }
 
-        [HttpPost("create/{tagName}")]
+        [HttpPost("create")]
         [ProducesResponseType(204)]
         [ProducesResponseType(422)]
-        public IActionResult CreateTag([FromQuery] int adminId, [FromQuery] int categoryId, [FromForm] string tagName)
+        public IActionResult CreateTag([FromForm] int adminId, [FromForm] int categoryId, [FromForm] string tagName)
         {
             if (_tagHandlers.GetTagByName(tagName) != null)
                 return StatusCode(422, "Tag aldready exists!");
