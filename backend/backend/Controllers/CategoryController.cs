@@ -73,7 +73,7 @@ namespace backend.Controllers
             return Ok(tags);
         }
 
-        [HttpPost("create/{adminId}")]
+        [HttpPost("create-category/{adminId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(422)]
         public IActionResult CreateCategory(int adminId, [FromForm] string categoryName)

@@ -130,7 +130,7 @@ namespace backend.Handlers.Implementors
             // Find category and categoryTag
             var category = _categoryRepository.GetCategoryById(categoryId);
             var categoryTags = _categoryTagRepository.GetCategoryTagsByCategoryId(category.Id);
-            var postCategories= _postCategoryRepository.GetPostCategoriesByCategoryId(category.Id);
+            var postCategories = _postCategoryRepository.GetPostCategoriesByCategoryId(category.Id);
             if (category == null || category.Status == true || categoryTags == null) return null;
 
             // Check if all enables succeeded.
