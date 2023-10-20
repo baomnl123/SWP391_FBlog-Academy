@@ -78,8 +78,16 @@ namespace backend.Controllers
         [ProducesResponseType(422)]
         public IActionResult CreateCategory(int adminId, [FromForm] string categoryName)
         {
-            if(_categoryHandlers.GetCategoryByName(categoryName) != null)
-                return StatusCode(422, "Category aldready exists!");
+            // If category already exists, return
+            var category = _categoryHandlers.GetCategoryByName(categoryName);
+            if (category.Status == true) return StatusCode(422, "Category aldready exists!");
+
+            // If category already exists, but was disabled, then enable it
+            if (category.Status == false)
+            {
+                _categoryHandlers.EnableCategory(category.Id);
+                return Ok("Successfully create!");
+            }
 
             var createCategory = _categoryHandlers.CreateCategory(adminId, categoryName);
             if (createCategory == null) return BadRequest(ModelState);
