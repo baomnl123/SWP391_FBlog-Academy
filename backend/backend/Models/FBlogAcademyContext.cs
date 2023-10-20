@@ -52,6 +52,9 @@ namespace backend.Models
             {
                 entity.ToTable("Category");
 
+                entity.HasIndex(e => e.CategoryName)
+                    .IsUnique();
+
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.AdminId).HasColumnName("admin_id");
@@ -445,6 +448,9 @@ namespace backend.Models
             {
                 entity.ToTable("Tag");
 
+                entity.HasIndex(e => e.TagName)
+                    .IsUnique();
+
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.AdminId).HasColumnName("admin_id");
@@ -499,14 +505,13 @@ namespace backend.Models
                     .HasColumnName("name");
 
                 entity.Property(e => e.Password)
-                    .IsRequired()
-                    .HasMaxLength(20)
+                    .HasMaxLength(65)
                     .IsUnicode(false)
                     .HasColumnName("password");
 
                 entity.Property(e => e.Role)
                     .IsRequired()
-                    .HasMaxLength(5)
+                    .HasMaxLength(2)
                     .IsUnicode(false)
                     .HasColumnName("role")
                     .IsFixedLength(true);
