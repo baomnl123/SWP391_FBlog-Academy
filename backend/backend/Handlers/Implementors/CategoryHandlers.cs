@@ -87,20 +87,14 @@ namespace backend.Handlers.Implementors
             var adminRole = _userRoleConstrant.GetAdminRole();
             if (admin == null || !admin.Role.Equals(adminRole)) return null;
 
-            // Find category by name
-            var categoryExists = _categoryRepository.GetCategoryByName(categoryName);
-            // Create a new tag object if tagExists is null, or return tagExists otherwise.
-            var category = categoryExists ?? new Category()
+            // Create a new tacategory object 
+            var category = new Category()
             {
                 AdminId = adminId,
                 CategoryName = categoryName,
                 CreatedAt = DateTime.Now,
                 Status = true,
             };
-
-            // If tag exists and is disabled, enable it and return it.
-            if (categoryExists?.Status == false && EnableCategory(categoryExists.Id) != null)
-                return _mapper.Map<CategoryDTO>(categoryExists);
 
             // Create the category, and return the mapped tag DTO if succeed.
             if (_categoryRepository.CreateCategory(category))
@@ -127,34 +121,36 @@ namespace backend.Handlers.Implementors
 
         public CategoryDTO? EnableCategory(int categoryId)
         {
-            // Find category and categoryTag
+            // Find category and categoryTags and postCategories
             var category = _categoryRepository.GetCategoryById(categoryId);
             var categoryTags = _categoryTagRepository.GetCategoryTagsByCategoryId(category.Id);
-            var postCategories= _postCategoryRepository.GetPostCategoriesByCategoryId(category.Id);
+            var postCategories = _postCategoryRepository.GetPostCategoriesByCategoryId(category.Id);
             if (category == null || category.Status == true || categoryTags == null) return null;
 
             // Check if all enables succeeded.
-            var check = categoryTags.All(categoryTag => _categoryTagRepository.EnableCategoryTag(categoryTag));
-            postCategories.All(postCategory => _postCategoryRepository.EnablePostCategory(postCategory));
+            var checkCategory = _categoryRepository.EnableCategory(category);
+            var checkCategoryTag = categoryTags.All(categoryTag => _categoryTagRepository.EnableCategoryTag(categoryTag));
+            var checkPostCategory = postCategories.All(postCategory => _postCategoryRepository.EnablePostCategory(postCategory));
 
             // Return the mapped tag DTO if all enables succeeded, otherwise return null.
-            return _categoryRepository.EnableCategory(category) && check ? _mapper.Map<CategoryDTO>(category) : null;
+            return (checkCategory && checkCategoryTag && checkPostCategory) ? _mapper.Map<CategoryDTO>(category) : null;
         }
 
         public CategoryDTO? DisableCategory(int categoryId)
         {
-            // Find category and categoryTag
+            // Find category and categoryTags and postCategories
             var category = _categoryRepository.GetCategoryById(categoryId);
             var categoryTags = _categoryTagRepository.GetCategoryTagsByCategoryId(category.Id);
             var postCategories = _postCategoryRepository.GetPostCategoriesByCategoryId(category.Id);
             if (category == null || category.Status == false || categoryTags == null) return null;
 
             // Check if all disable succeeded.
-            var check = categoryTags.All(categoryTag => _categoryTagRepository.DisableCategoryTag(categoryTag));
-            postCategories.All(postCategory => _postCategoryRepository.DisablePostCategory(postCategory));
+            var checkCategory = _categoryRepository.DisableCategory(category);
+            var checkCategoryTag = categoryTags.All(categoryTag => _categoryTagRepository.DisableCategoryTag(categoryTag));
+            var checkPostCategory = postCategories.All(postCategory => _postCategoryRepository.DisablePostCategory(postCategory));
 
             // Return the mapped tag DTO if all disable succeeded, otherwise return null.
-            return _categoryRepository.DisableCategory(category) && check ? _mapper.Map<CategoryDTO>(category) : null;
+            return (checkCategory && checkCategoryTag && checkPostCategory) ? _mapper.Map<CategoryDTO>(category) : null;
         }
     }
 }

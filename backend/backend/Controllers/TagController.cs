@@ -74,14 +74,23 @@ namespace backend.Controllers
             return Ok(categories);
         }
 
-        [HttpPost("create/{tagName}")]
+        [HttpPost("create")]
         [ProducesResponseType(204)]
         [ProducesResponseType(422)]
-        public IActionResult CreateTag([FromQuery] int adminId, [FromQuery] int categoryId, [FromForm] string tagName)
+        public IActionResult CreateTag([FromForm] int adminId, [FromForm] int categoryId, [FromForm] string tagName)
         {
-            if (_tagHandlers.GetTagByName(tagName) != null)
-                return StatusCode(422, "Tag aldready exists!");
+            // If tag already exists but was disabled, then enable it
+            var tag = _tagHandlers.GetTagByName(tagName);
+            if (tag.Status == false) _tagHandlers.EnableTag(tag.Id);
 
+            // If tag already exists, create relationship with category
+            if (tag != null)
+            {
+                _tagHandlers.CreateRelationship(tag.Id, categoryId);
+                return Ok("Successfully create!");
+            }
+
+            // if tag is null, then create new tag
             var createTag = _tagHandlers.CreateTag(adminId, categoryId, tagName);
             if (createTag == null) return BadRequest(ModelState);
 
@@ -121,7 +130,18 @@ namespace backend.Controllers
         public IActionResult DeleteTag(int tagId)
         {
             var deleteTag = _tagHandlers.DisableTag(tagId);
-            if (deleteTag == null) ModelState.AddModelError("", "Something went wrong disable tag");
+            if (deleteTag == null) ModelState.AddModelError("", "Something went wrong delete tag");
+
+            return Ok("Delete successfully!");
+        }
+
+        [HttpDelete("delete/{tagId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult DeleteRelationship([FromForm] int categoryId, [FromForm] int tagId)
+        {
+            var deleteRelationship = _tagHandlers.DisableRelationship(tagId, categoryId);
+            if (deleteRelationship == null) ModelState.AddModelError("", "Something went wrong delete relationship");
 
             return Ok("Delete successfully!");
         }

@@ -40,6 +40,11 @@ namespace backend.Repositories.Implementors
             return Save();
         }
 
+        public CategoryTag? GetCategoryTag(int tagId, int categoryId)
+        {
+            return _context.CategoryTags.FirstOrDefault(c => c.TagId == tagId && c.CategoryId == categoryId);
+        }
+
         public ICollection<CategoryTag> GetCategoryTagsByCategoryId(int categoryId)
         {
             return _context.CategoryTags.Where(c => c.CategoryId == categoryId).ToList();

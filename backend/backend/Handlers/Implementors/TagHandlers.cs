@@ -90,10 +90,8 @@ namespace backend.Handlers.Implementors
             // Check if admin and category exist, and if admin has the correct role.
             if (admin == null || !admin.Role.Equals(adminRole) || category == null) return null;
 
-            // Find tag by name
-            var tagExists = _tagRepository.GetTagByName(tagName);
-            // Create a new tag object if tagExists is null, or return tagExists otherwise.
-            var tag = tagExists ?? new Tag()
+            // Create a new tag object
+            var tag = new Tag()
             {
                 AdminId = adminId,
                 TagName = tagName,
@@ -101,20 +99,8 @@ namespace backend.Handlers.Implementors
                 Status = true,
             };
 
-            // If tag exists and is disabled, enable it and return it.
-            if (tagExists?.Status == false && EnableTag(tagExists.Id) != null)
-                return _mapper.Map<TagDTO>(tagExists);
-
-            // Create a new category tag object.
-            var categoryTag = new CategoryTag()
-            {
-                Category = category,
-                Tag = tag
-            };
-
-            // Create the tag and category tag objects, and return the mapped tag DTO if both operations succeed.
-            if (_tagRepository.CreateTag(tag) && _categoryTagRepository.CreateCategoryTag(categoryTag))
-                return _mapper.Map<TagDTO>(tag);
+            // Create tag, and return the mapped tag DTO if succeed.
+            if (_tagRepository.CreateTag(tag)) return _mapper.Map<TagDTO>(tag);
 
             // Otherwise, return null.
             return null;
@@ -144,11 +130,12 @@ namespace backend.Handlers.Implementors
             if (tag == null || tag.Status == true || categoryTags == null) return null;
 
             // Check if all enables succeeded.
-            var check = categoryTags.All(categoryTag => _categoryTagRepository.EnableCategoryTag(categoryTag));
-            postTags.All(postTag => _postTagRepository.EnablePostTag(postTag));
+            var checkTag = _tagRepository.EnableTag(tag);
+            var checkCategoryTag = categoryTags.All(categoryTag => _categoryTagRepository.EnableCategoryTag(categoryTag));
+            var checkPostTag = postTags.All(postTag => _postTagRepository.EnablePostTag(postTag));
 
             // Return the mapped tag DTO if all enables succeeded, otherwise return null.
-            return _tagRepository.EnableTag(tag) && check ? _mapper.Map<TagDTO>(tag) : null;
+            return (checkTag && checkCategoryTag && checkPostTag) ? _mapper.Map<TagDTO>(tag) : null;
         }
 
         public TagDTO? DisableTag(int tagId)
@@ -160,11 +147,52 @@ namespace backend.Handlers.Implementors
             if (tag == null || tag.Status == false || categoryTags == null) return null;
 
             // Check if all disables succeeded.
-            var check = categoryTags.All(categoryTag => _categoryTagRepository.DisableCategoryTag(categoryTag));
-            postTags.All(postTag => _postTagRepository.EnablePostTag(postTag));
+            var checkTag = _tagRepository.DisableTag(tag);
+            var checkCategoryTag = categoryTags.All(categoryTag => _categoryTagRepository.DisableCategoryTag(categoryTag));
+            var checkPostTag = postTags.All(postTag => _postTagRepository.DisablePostTag(postTag));
 
             // Return the mapped tag DTO if all disables succeeded, otherwise return null.
-            return _tagRepository.DisableTag(tag) && check ? _mapper.Map<TagDTO>(tag) : null;
+            return (checkTag && checkCategoryTag && checkPostTag) ? _mapper.Map<TagDTO>(tag) : null;
+        }
+
+        public TagDTO? CreateRelationship(int tagId, int categoryId)
+        {
+            // Check if category and tag is null
+            var category = _categoryRepository.GetCategoryById(categoryId);
+            var tag = _tagRepository.GetTagById(tagId);
+            if (category == null && tag == null) return null;
+
+            // Is there already a relationship
+            var isExists = _categoryTagRepository.GetCategoryTag(tagId, categoryId);
+
+            // If relationship exists and is disabled, enable it and return it.
+            if (isExists.Status == false && _categoryTagRepository.EnableCategoryTag(isExists))
+                return _mapper.Map<TagDTO>(category);
+
+            // Create a new categoryTag object if isExists is null, or return isExists otherwise.
+            var categoryTag = isExists ?? new CategoryTag()
+            {
+                CategoryId = category.Id,
+                TagId = tag.Id,
+                Status = true
+            };
+
+            // Add relationship
+            if (_categoryTagRepository.CreateCategoryTag(categoryTag))
+                return _mapper.Map<TagDTO>(category);
+
+            return null;
+        }
+        public TagDTO? DisableRelationship(int tagId, int categoryId)
+        {
+            var categoryTag = _categoryTagRepository.GetCategoryTag(tagId, categoryId);
+
+            if (categoryTag.Status == false) return null;
+
+            if (_categoryTagRepository.DisableCategoryTag(categoryTag))
+                return _mapper.Map<TagDTO>(categoryTag);
+
+            return null;
         }
     }
 }
