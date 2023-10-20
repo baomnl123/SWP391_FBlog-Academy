@@ -130,7 +130,7 @@ namespace backend.Controllers
         public IActionResult DeleteTag(int tagId)
         {
             var deleteTag = _tagHandlers.DisableTag(tagId);
-            if (deleteTag == null) ModelState.AddModelError("", "Something went wrong disable tag");
+            if (deleteTag == null) ModelState.AddModelError("", "Something went wrong delete tag");
 
             return Ok("Delete successfully!");
         }
@@ -141,7 +141,7 @@ namespace backend.Controllers
         public IActionResult DeleteRelationship([FromForm] int categoryId, [FromForm] int tagId)
         {
             var deleteRelationship = _tagHandlers.DisableRelationship(tagId, categoryId);
-            if (deleteRelationship == null) ModelState.AddModelError("", "Something went wrong disable tag");
+            if (deleteRelationship == null) ModelState.AddModelError("", "Something went wrong delete relationship");
 
             return Ok("Delete successfully!");
         }
