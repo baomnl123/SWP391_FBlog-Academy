@@ -24,10 +24,8 @@ namespace backend.Models
         public virtual DbSet<Image> Images { get; set; }
         public virtual DbSet<Post> Posts { get; set; }
         public virtual DbSet<PostCategory> PostCategories { get; set; }
-        public virtual DbSet<PostImage> PostImages { get; set; }
         public virtual DbSet<PostList> PostLists { get; set; }
         public virtual DbSet<PostTag> PostTags { get; set; }
-        public virtual DbSet<PostVideo> PostVideos { get; set; }
         public virtual DbSet<ReportPost> ReportPosts { get; set; }
         public virtual DbSet<SaveList> SaveLists { get; set; }
         public virtual DbSet<Tag> Tags { get; set; }
@@ -180,6 +178,10 @@ namespace backend.Models
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
+                entity.Property(e => e.PostId)
+                     .IsRequired()
+                     .HasColumnName("post_id");
+
                 entity.Property(e => e.CreatedAt)
                     .HasColumnType("datetime")
                     .HasColumnName("created_at");
@@ -190,6 +192,12 @@ namespace backend.Models
                     .IsRequired()
                     .HasMaxLength(255)
                     .HasColumnName("url");
+
+                entity.HasOne(d => d.Post)
+                    .WithMany(p => p.ImagePosts)
+                    .HasForeignKey(d => d.PostId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FKImage400844");
             });
 
             modelBuilder.Entity<Post>(entity =>
@@ -262,32 +270,6 @@ namespace backend.Models
                     .HasConstraintName("FKPostCatego519402");
             });
 
-            modelBuilder.Entity<PostImage>(entity =>
-            {
-                entity.HasKey(e => new { e.ImageId, e.PostId })
-                    .HasName("PK__PostImag__AF77B12358D784CB");
-
-                entity.ToTable("PostImage");
-
-                entity.Property(e => e.ImageId).HasColumnName("image_id");
-
-                entity.Property(e => e.PostId).HasColumnName("post_id");
-
-                entity.Property(e => e.Status).HasColumnName("status");
-
-                entity.HasOne(d => d.Image)
-                    .WithMany(p => p.PostImages)
-                    .HasForeignKey(d => d.ImageId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FKPostImage405177");
-
-                entity.HasOne(d => d.Post)
-                    .WithMany(p => p.PostImages)
-                    .HasForeignKey(d => d.PostId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FKPostImage282377");
-            });
-
             modelBuilder.Entity<PostList>(entity =>
             {
                 entity.HasKey(e => new { e.SaveListId, e.SavePostId })
@@ -340,32 +322,6 @@ namespace backend.Models
                     .HasForeignKey(d => d.TagId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FKPostTag277175");
-            });
-
-            modelBuilder.Entity<PostVideo>(entity =>
-            {
-                entity.HasKey(e => new { e.VideoId, e.PostId })
-                    .HasName("PK__PostVide__9B1C66660B056056");
-
-                entity.ToTable("PostVideo");
-
-                entity.Property(e => e.VideoId).HasColumnName("video_id");
-
-                entity.Property(e => e.PostId).HasColumnName("post_id");
-
-                entity.Property(e => e.Status).HasColumnName("status");
-
-                entity.HasOne(d => d.Post)
-                    .WithMany(p => p.PostVideos)
-                    .HasForeignKey(d => d.PostId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FKPostVideo392925");
-
-                entity.HasOne(d => d.Video)
-                    .WithMany(p => p.PostVideos)
-                    .HasForeignKey(d => d.VideoId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FKPostVideo364505");
             });
 
             modelBuilder.Entity<ReportPost>(entity =>
@@ -485,7 +441,6 @@ namespace backend.Models
                     .IsUnique();
 
                 entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
                     .HasColumnName("id");
 
                 entity.Property(e => e.CreatedAt)
@@ -529,6 +484,10 @@ namespace backend.Models
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
+                entity.Property(e => e.PostId)
+                    .IsRequired()
+                    .HasColumnName("post_id");
+
                 entity.Property(e => e.CreatedAt)
                     .HasColumnType("datetime")
                     .HasColumnName("created_at");
@@ -539,6 +498,12 @@ namespace backend.Models
                     .IsRequired()
                     .HasMaxLength(255)
                     .HasColumnName("url");
+
+                entity.HasOne(d => d.Post)
+                    .WithMany(p => p.VideoPosts)
+                    .HasForeignKey(d => d.PostId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FKVideo280203");
             });
 
             modelBuilder.Entity<VoteComment>(entity =>

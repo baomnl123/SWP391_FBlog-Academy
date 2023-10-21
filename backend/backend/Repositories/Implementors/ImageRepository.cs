@@ -26,9 +26,7 @@ namespace backend.Repositories.Implementors
 
         public ICollection<Image> GetImagesByPost(int postId)
         {
-            return _context.PostImages.Where(e => e.PostId == postId && e.Status == true)
-                                      .Select(e => e.Image)
-                                      .Where(c => c.Status == true).ToList();
+            return _context.Images.Where(e => e.PostId == postId && e.Status == true).ToList();
         }
 
         public bool CreateImage(int postId, Image image)
@@ -38,11 +36,7 @@ namespace backend.Repositories.Implementors
             if (post == null) return false;
 
             // Add PostImage
-            var postImage = new PostImage()
-            {
-                Image = image,
-                Post = post
-            };
+            var postImage = new Image();
             _context.Add(postImage);
 
             _context.Add(image);

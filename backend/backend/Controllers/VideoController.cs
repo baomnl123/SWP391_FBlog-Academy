@@ -17,7 +17,6 @@ namespace backend.Controllers
         }
 
         [HttpGet("{postId}/videos")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<PostVideo>))]
         [ProducesResponseType(400)]
         public IActionResult GetVideoByPost(int postId)
         {

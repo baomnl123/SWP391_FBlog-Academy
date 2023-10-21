@@ -26,9 +26,7 @@ namespace backend.Repositories.Implementors
 
         public ICollection<Video> GetVideosByPost(int postId)
         {
-            return _context.PostVideos.Where(e => e.PostId == postId && e.Status == true)
-                                      .Select(e => e.Video)
-                                      .Where(c => c.Status == true).ToList();
+            return _context.Videos.Where(c => c.PostId == postId && c.Status == true).ToList();
         }
 
         public bool CreateVideo(int postId, Video video)
@@ -38,11 +36,7 @@ namespace backend.Repositories.Implementors
             if (post == null) return false;
 
             // Add PostVideo
-            var postVideo = new PostVideo()
-            {
-                Video = video,
-                Post = post
-            };
+            var postVideo = new Video();
             _context.Add(postVideo);
 
             _context.Add(video);
