@@ -86,13 +86,13 @@ namespace backend.Controllers
             if (category.Status == false)
             {
                 _categoryHandlers.EnableCategory(category.Id);
-                return Ok("Successfully create!");
+                return Ok(category);
             }
 
             var createCategory = _categoryHandlers.CreateCategory(adminId, categoryName);
             if (createCategory == null) return BadRequest(ModelState);
 
-            return Ok("Successfully create!");
+            return Ok(createCategory);
         }
 
         [HttpPut("update/{currentCategoryName}")]
@@ -107,7 +107,7 @@ namespace backend.Controllers
             var updateCategory = _categoryHandlers.UpdateCategory(currentCategoryName, newCategoryName);
             if (updateCategory == null) return BadRequest();
 
-            return Ok("Update successfully!");
+            return Ok(updateCategory);
         }
 
         [HttpPut("enable/{categoryId}")]
@@ -120,7 +120,7 @@ namespace backend.Controllers
             if (enableCategory == null)
                 ModelState.AddModelError("", "Something went wrong enable category");
 
-            return Ok("Enable successfully!");
+            return Ok(enableCategory);
         }
 
         [HttpDelete("delete/{categoryId}")]
@@ -132,7 +132,7 @@ namespace backend.Controllers
             if (deleteCategory == null)
                 ModelState.AddModelError("", "Something went wrong deleting category");
 
-            return Ok("Delete successfully!");
+            return Ok(deleteCategory);
         }
     }
 }
