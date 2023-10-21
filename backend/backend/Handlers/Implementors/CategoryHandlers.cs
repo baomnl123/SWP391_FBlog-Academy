@@ -49,7 +49,7 @@ namespace backend.Handlers.Implementors
         public CategoryDTO? GetCategoryById(int categoryId)
         {
             var category = _categoryRepository.GetCategoryById(categoryId);
-            if (category == null || category.Status == false) return null;
+            if (category == null) return null;
 
             return _mapper.Map<CategoryDTO>(category);
         }
@@ -57,7 +57,7 @@ namespace backend.Handlers.Implementors
         public CategoryDTO? GetCategoryByName(string categoryName)
         {
             var category = _categoryRepository.GetCategoryByName(categoryName);
-            if (category == null || category.Status == false) return null;
+            if (category == null) return null;
 
             return _mapper.Map<CategoryDTO>(category);
         }

@@ -80,11 +80,12 @@ namespace backend.Controllers
         {
             // If category already exists, return
             var category = _categoryHandlers.GetCategoryByName(categoryName);
-            if (category.Status == true) return StatusCode(422, "Category aldready exists!");
-
-            // If category already exists, but was disabled, then enable it
-            if (category.Status == false)
+            if (category != null)
             {
+                // If category already exists, and status is true, then return 
+                if (category.Status) return StatusCode(422, "Category aldready exists!");
+
+                // If category already exists, but was disabled, then enable it
                 _categoryHandlers.EnableCategory(category.Id);
                 return Ok(category);
             }
@@ -101,7 +102,8 @@ namespace backend.Controllers
         [ProducesResponseType(404)]
         public IActionResult UpdateCategory([FromForm] string newCategoryName, string currentCategoryName)
         {
-            if (_categoryHandlers.GetCategoryByName(newCategoryName) != null)
+            var category = _categoryHandlers.GetCategoryByName(newCategoryName);
+            if (category != null || category.Status)
                 return StatusCode(422, "Category aldready exists!");
 
             var updateCategory = _categoryHandlers.UpdateCategory(currentCategoryName, newCategoryName);
@@ -116,6 +118,9 @@ namespace backend.Controllers
         [ProducesResponseType(404)]
         public IActionResult EnableCategory(int categoryId)
         {
+            var category = _categoryHandlers.GetCategoryById(categoryId);
+            if (category == null)  return StatusCode(422, "Category does not exists!");
+
             var enableCategory = _categoryHandlers.EnableCategory(categoryId);
             if (enableCategory == null)
                 ModelState.AddModelError("", "Something went wrong enable category");
@@ -128,6 +133,9 @@ namespace backend.Controllers
         [ProducesResponseType(404)]
         public IActionResult DeleteCategory(int categoryId)
         {
+            var category = _categoryHandlers.GetCategoryById(categoryId);
+            if (category == null) return StatusCode(422, "Category does not exists!");
+
             var deleteCategory = _categoryHandlers.DisableCategory(categoryId);
             if (deleteCategory == null)
                 ModelState.AddModelError("", "Something went wrong deleting category");
