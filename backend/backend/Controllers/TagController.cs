@@ -87,14 +87,14 @@ namespace backend.Controllers
             if (tag != null)
             {
                 _tagHandlers.CreateRelationship(tag.Id, categoryId);
-                return Ok("Successfully create!");
+                return Ok(tag);
             }
 
             // if tag is null, then create new tag
             var createTag = _tagHandlers.CreateTag(adminId, categoryId, tagName);
             if (createTag == null) return BadRequest(ModelState);
 
-            return Ok("Successfully create!");
+            return Ok(createTag);
         }
 
         [HttpPut("update/{currentTagName}")]
@@ -109,7 +109,7 @@ namespace backend.Controllers
             var updateTage = _tagHandlers.UpdateTag(currentTagName, newTagName);
             if (updateTage == null) return BadRequest();
 
-            return Ok("Update successfully!");
+            return Ok(updateTage);
         }
 
         [HttpPut("enable/{tagId}")]
@@ -121,7 +121,7 @@ namespace backend.Controllers
             var enableTag = _tagHandlers.EnableTag(tagId);
             if (enableTag == null) ModelState.AddModelError("", "Something went wrong enable tag");
 
-            return Ok("Enable successfully!");
+            return Ok(enableTag);
         }
 
         [HttpDelete("delete/{tagId}")]
@@ -132,7 +132,7 @@ namespace backend.Controllers
             var deleteTag = _tagHandlers.DisableTag(tagId);
             if (deleteTag == null) ModelState.AddModelError("", "Something went wrong delete tag");
 
-            return Ok("Delete successfully!");
+            return Ok(deleteTag);
         }
 
         [HttpDelete("delete-relationship/{tagId}")]
@@ -143,7 +143,7 @@ namespace backend.Controllers
             var deleteRelationship = _tagHandlers.DisableRelationship(tagId, categoryId);
             if (deleteRelationship == null) ModelState.AddModelError("", "Something went wrong delete relationship");
 
-            return Ok("Delete successfully!");
+            return Ok(deleteRelationship);
         }
     }
 }
