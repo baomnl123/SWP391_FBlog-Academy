@@ -19,7 +19,6 @@ namespace backend.Controllers
         }
 
         [HttpGet("{postId}/images")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<PostImage>))]
         [ProducesResponseType(400)]
         public IActionResult GetImageByPost(int postId)
         {

@@ -9,14 +9,14 @@ namespace backend.Models
     {
         public Image()
         {
-            PostImages = new HashSet<PostImage>();
         }
 
         public int Id { get; set; }
+        public int PostId { get; set; }
         public string Url { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool Status { get; set; }
 
-        public virtual ICollection<PostImage> PostImages { get; set; }
+        public virtual Post Post { get; set; }
     }
 }

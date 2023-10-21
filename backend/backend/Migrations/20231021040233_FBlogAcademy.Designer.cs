@@ -10,7 +10,7 @@ using backend.Models;
 namespace backend.Migrations
 {
     [DbContext(typeof(FBlogAcademyContext))]
-    [Migration("20231010065019_FBlogAcademy")]
+    [Migration("20231021040233_FBlogAcademy")]
     partial class FBlogAcademy
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -55,6 +55,9 @@ namespace backend.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AdminId");
+
+                    b.HasIndex("CategoryName")
+                        .IsUnique();
 
                     b.ToTable("Category");
                 });
@@ -161,6 +164,10 @@ namespace backend.Migrations
                         .HasColumnType("datetime")
                         .HasColumnName("created_at");
 
+                    b.Property<int>("PostId")
+                        .HasColumnType("int")
+                        .HasColumnName("post_id");
+
                     b.Property<bool>("Status")
                         .HasColumnType("bit")
                         .HasColumnName("status");
@@ -173,14 +180,18 @@ namespace backend.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PostId");
+
                     b.ToTable("Image");
                 });
 
             modelBuilder.Entity("backend.Models.Post", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -248,28 +259,6 @@ namespace backend.Migrations
                     b.ToTable("PostCategory");
                 });
 
-            modelBuilder.Entity("backend.Models.PostImage", b =>
-                {
-                    b.Property<int>("ImageId")
-                        .HasColumnType("int")
-                        .HasColumnName("image_id");
-
-                    b.Property<int>("PostId")
-                        .HasColumnType("int")
-                        .HasColumnName("post_id");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit")
-                        .HasColumnName("status");
-
-                    b.HasKey("ImageId", "PostId")
-                        .HasName("PK__PostImag__AF77B12358D784CB");
-
-                    b.HasIndex("PostId");
-
-                    b.ToTable("PostImage");
-                });
-
             modelBuilder.Entity("backend.Models.PostList", b =>
                 {
                     b.Property<int>("SaveListId")
@@ -316,28 +305,6 @@ namespace backend.Migrations
                     b.HasIndex("TagId");
 
                     b.ToTable("PostTag");
-                });
-
-            modelBuilder.Entity("backend.Models.PostVideo", b =>
-                {
-                    b.Property<int>("VideoId")
-                        .HasColumnType("int")
-                        .HasColumnName("video_id");
-
-                    b.Property<int>("PostId")
-                        .HasColumnType("int")
-                        .HasColumnName("post_id");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit")
-                        .HasColumnName("status");
-
-                    b.HasKey("VideoId", "PostId")
-                        .HasName("PK__PostVide__9B1C66660B056056");
-
-                    b.HasIndex("PostId");
-
-                    b.ToTable("PostVideo");
                 });
 
             modelBuilder.Entity("backend.Models.ReportPost", b =>
@@ -452,14 +419,19 @@ namespace backend.Migrations
 
                     b.HasIndex("AdminId");
 
+                    b.HasIndex("TagName")
+                        .IsUnique();
+
                     b.ToTable("Tag");
                 });
 
             modelBuilder.Entity("backend.Models.User", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime")
@@ -482,17 +454,16 @@ namespace backend.Migrations
                         .HasColumnName("name");
 
                     b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(20)
+                        .HasMaxLength(65)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(20)")
+                        .HasColumnType("varchar(65)")
                         .HasColumnName("password");
 
                     b.Property<string>("Role")
                         .IsRequired()
-                        .HasMaxLength(5)
+                        .HasMaxLength(2)
                         .IsUnicode(false)
-                        .HasColumnType("char(5)")
+                        .HasColumnType("char(2)")
                         .HasColumnName("role")
                         .IsFixedLength(true);
 
@@ -524,6 +495,10 @@ namespace backend.Migrations
                         .HasColumnType("datetime")
                         .HasColumnName("created_at");
 
+                    b.Property<int>("PostId")
+                        .HasColumnType("int")
+                        .HasColumnName("post_id");
+
                     b.Property<bool>("Status")
                         .HasColumnType("bit")
                         .HasColumnName("status");
@@ -535,6 +510,8 @@ namespace backend.Migrations
                         .HasColumnName("url");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PostId");
 
                     b.ToTable("Video");
                 });
@@ -667,6 +644,17 @@ namespace backend.Migrations
                     b.Navigation("Follower");
                 });
 
+            modelBuilder.Entity("backend.Models.Image", b =>
+                {
+                    b.HasOne("backend.Models.Post", "Post")
+                        .WithMany("ImagePosts")
+                        .HasForeignKey("PostId")
+                        .HasConstraintName("FKImage400844")
+                        .IsRequired();
+
+                    b.Navigation("Post");
+                });
+
             modelBuilder.Entity("backend.Models.Post", b =>
                 {
                     b.HasOne("backend.Models.User", "Reviewer")
@@ -700,25 +688,6 @@ namespace backend.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
-
-                    b.Navigation("Post");
-                });
-
-            modelBuilder.Entity("backend.Models.PostImage", b =>
-                {
-                    b.HasOne("backend.Models.Image", "Image")
-                        .WithMany("PostImages")
-                        .HasForeignKey("ImageId")
-                        .HasConstraintName("FKPostImage405177")
-                        .IsRequired();
-
-                    b.HasOne("backend.Models.Post", "Post")
-                        .WithMany("PostImages")
-                        .HasForeignKey("PostId")
-                        .HasConstraintName("FKPostImage282377")
-                        .IsRequired();
-
-                    b.Navigation("Image");
 
                     b.Navigation("Post");
                 });
@@ -759,25 +728,6 @@ namespace backend.Migrations
                     b.Navigation("Post");
 
                     b.Navigation("Tag");
-                });
-
-            modelBuilder.Entity("backend.Models.PostVideo", b =>
-                {
-                    b.HasOne("backend.Models.Post", "Post")
-                        .WithMany("PostVideos")
-                        .HasForeignKey("PostId")
-                        .HasConstraintName("FKPostVideo392925")
-                        .IsRequired();
-
-                    b.HasOne("backend.Models.Video", "Video")
-                        .WithMany("PostVideos")
-                        .HasForeignKey("VideoId")
-                        .HasConstraintName("FKPostVideo364505")
-                        .IsRequired();
-
-                    b.Navigation("Post");
-
-                    b.Navigation("Video");
                 });
 
             modelBuilder.Entity("backend.Models.ReportPost", b =>
@@ -826,6 +776,17 @@ namespace backend.Migrations
                         .IsRequired();
 
                     b.Navigation("Admin");
+                });
+
+            modelBuilder.Entity("backend.Models.Video", b =>
+                {
+                    b.HasOne("backend.Models.Post", "Post")
+                        .WithMany("VideoPosts")
+                        .HasForeignKey("PostId")
+                        .HasConstraintName("FKVideo280203")
+                        .IsRequired();
+
+                    b.Navigation("Post");
                 });
 
             modelBuilder.Entity("backend.Models.VoteComment", b =>
@@ -878,26 +839,21 @@ namespace backend.Migrations
                     b.Navigation("VoteComments");
                 });
 
-            modelBuilder.Entity("backend.Models.Image", b =>
-                {
-                    b.Navigation("PostImages");
-                });
-
             modelBuilder.Entity("backend.Models.Post", b =>
                 {
                     b.Navigation("Comments");
 
-                    b.Navigation("PostCategories");
+                    b.Navigation("ImagePosts");
 
-                    b.Navigation("PostImages");
+                    b.Navigation("PostCategories");
 
                     b.Navigation("PostLists");
 
                     b.Navigation("PostTags");
 
-                    b.Navigation("PostVideos");
-
                     b.Navigation("ReportPosts");
+
+                    b.Navigation("VideoPosts");
 
                     b.Navigation("VotePosts");
                 });
@@ -939,11 +895,6 @@ namespace backend.Migrations
                     b.Navigation("VoteComments");
 
                     b.Navigation("VotePosts");
-                });
-
-            modelBuilder.Entity("backend.Models.Video", b =>
-                {
-                    b.Navigation("PostVideos");
                 });
 #pragma warning restore 612, 618
         }
