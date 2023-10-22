@@ -89,7 +89,6 @@ namespace backend.Controllers
             if (admin == null || admin.Role != adminRole)
                 return NotFound("Admin does not exists!");
 
-            // If category already exists, return
             var category = _categoryHandlers.GetCategoryByName(categoryName);
             if (category != null)
             {

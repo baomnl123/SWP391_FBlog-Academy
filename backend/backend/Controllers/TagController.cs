@@ -4,6 +4,7 @@ using backend.Handlers.IHandlers;
 using backend.Handlers.Implementors;
 using backend.Models;
 using backend.Repositories.IRepositories;
+using backend.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
@@ -13,10 +14,14 @@ namespace backend.Controllers
     public class TagController : Controller
     {
         private readonly ITagHandlers _tagHandlers;
+        private readonly IUserHandlers _userHandlers;
+        private readonly UserRoleConstrant _userRoleConstrant;
 
-        public TagController(ITagHandlers tagHandlers)
+        public TagController(ITagHandlers tagHandlers, IUserHandlers userHandlers)
         {
             _tagHandlers = tagHandlers;
+            _userHandlers = userHandlers;
+            _userRoleConstrant = new();
         }
 
         [HttpGet]
@@ -79,9 +84,14 @@ namespace backend.Controllers
         [ProducesResponseType(422)]
         public IActionResult CreateTag([FromForm] int adminId, [FromForm] int categoryId, [FromForm] string tagName)
         {
+            var admin = _userHandlers.GetUser(adminId);
+            var adminRole = _userRoleConstrant.GetAdminRole();
+            if (admin == null || admin.Role != adminRole)
+                return NotFound("Admin does not exists!");
+
             // If tag already exists but was disabled, then enable it
             var tag = _tagHandlers.GetTagByName(tagName);
-            if (tag != null && tag.Status == false)
+            if (tag != null)
             {
                 if(tag.Status) return StatusCode(422, $"\"{tag.TagName}\" aldready exists!");
 
@@ -89,7 +99,7 @@ namespace backend.Controllers
                 return Ok(tag);
             }
 
-            // if tag is null, then create new tag
+            // If tag is null, then create new tag
             var createTag = _tagHandlers.CreateTag(adminId, categoryId, tagName);
             if (createTag == null) return BadRequest(ModelState);
 
