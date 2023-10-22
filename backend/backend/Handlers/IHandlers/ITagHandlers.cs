@@ -18,7 +18,7 @@ namespace backend.Handlers.IHandlers
         public TagDTO? UpdateTag(int currentTagId, string newTagName);
         public TagDTO? EnableTag(int tagId);
         public TagDTO? DisableTag(int tagId);
-        public TagDTO? CreateRelationship(int tagId, int categoryId);
+        public TagDTO? CreateRelationship(TagDTO tag, CategoryDTO category);
         public TagDTO? DisableRelationship(int tagId, int categoryId);
     }
 }

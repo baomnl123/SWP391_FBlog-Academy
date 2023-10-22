@@ -14,12 +14,14 @@ namespace backend.Controllers
     public class TagController : Controller
     {
         private readonly ITagHandlers _tagHandlers;
+        private readonly ICategoryHandlers _categoryHandlers;
         private readonly IUserHandlers _userHandlers;
         private readonly UserRoleConstrant _userRoleConstrant;
 
-        public TagController(ITagHandlers tagHandlers, IUserHandlers userHandlers)
+        public TagController(ITagHandlers tagHandlers, ICategoryHandlers categoryHandlers, IUserHandlers userHandlers)
         {
             _tagHandlers = tagHandlers;
+            _categoryHandlers = categoryHandlers;
             _userHandlers = userHandlers;
             _userRoleConstrant = new();
         }
@@ -84,19 +86,29 @@ namespace backend.Controllers
         [ProducesResponseType(422)]
         public IActionResult CreateTag([FromForm] int adminId, [FromForm] int categoryId, [FromForm] string tagName)
         {
+            // Check if admin exists
             var admin = _userHandlers.GetUser(adminId);
             var adminRole = _userRoleConstrant.GetAdminRole();
             if (admin == null || admin.Role != adminRole)
                 return NotFound("Admin does not exists!");
 
-            // If tag already exists but was disabled, then enable it
-            var tag = _tagHandlers.GetTagByName(tagName);
-            if (tag != null)
-            {
-                if(tag.Status) return StatusCode(422, $"\"{tag.TagName}\" aldready exists!");
+            // Check if category does not exists
+            var category = _categoryHandlers.GetCategoryById(categoryId);
+            if (category == null || !category.Status) return NotFound("Category does not exists!");
 
-                _tagHandlers.EnableTag(tag.Id);
-                return Ok(tag);
+            var isTagExists = _tagHandlers.GetTagByName(tagName);
+            if (isTagExists != null && isTagExists.Status)
+            {
+                if (_tagHandlers.CreateRelationship(isTagExists, category) != null)
+                    return Ok(isTagExists);
+
+                return StatusCode(422, $"\"{isTagExists.TagName}\" already exists!");
+            }
+
+            if (isTagExists != null && !isTagExists.Status)
+            {
+                _tagHandlers.EnableTag(isTagExists.Id);
+                return StatusCode(422, $"\"{isTagExists.TagName}\" already exists!");
             }
 
             // If tag is null, then create new tag
@@ -104,7 +116,7 @@ namespace backend.Controllers
             if (createTag == null) return BadRequest(ModelState);
 
             // If create succeed, then create relationship
-            _tagHandlers.CreateRelationship(createTag.Id, categoryId);
+            _tagHandlers.CreateRelationship(createTag, category);
 
             return Ok(createTag);
         }
@@ -117,11 +129,11 @@ namespace backend.Controllers
         {
             // If tag does not exists for updating, return Not found
             var currentTag = _tagHandlers.GetTagById(currentTagId);
-            if(currentTag == null || !currentTag.Status) return NotFound("Tag does not exists!");
+            if (currentTag == null || !currentTag.Status) return NotFound("Tag does not exists!");
 
             // Check the new tag name already exists in DB
             var isTagExists = _tagHandlers.GetTagByName(newTagName);
-            if(isTagExists != null && isTagExists.Status)
+            if (isTagExists != null && isTagExists.Status)
                 return StatusCode(422, $"\"{isTagExists.TagName}\" aldready exists!");
 
             // If tag already exists, but was disabled, then enable it
