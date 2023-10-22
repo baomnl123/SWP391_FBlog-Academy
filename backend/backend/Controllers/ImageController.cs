@@ -28,7 +28,7 @@ namespace backend.Controllers
             return Ok(images);
         }
 
-        [HttpPost("create/{postId}")]
+        [HttpPost("create-image")]
         [ProducesResponseType(204)]
         [ProducesResponseType(422)]
         public IActionResult CreateImage([FromForm] int postId, [FromForm] string[] imageURLs)

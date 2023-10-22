@@ -26,7 +26,7 @@ namespace backend.Controllers
             return Ok(videos);
         }
 
-        [HttpPost("create/{postId}")]
+        [HttpPost("create-video")]
         [ProducesResponseType(204)]
         [ProducesResponseType(422)]
         public IActionResult CreateVideo([FromForm] int postId, [FromForm] string[] videoURLs)
