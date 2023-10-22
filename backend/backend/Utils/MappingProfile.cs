@@ -19,6 +19,7 @@ namespace backend.Utils
             CreateMap<Comment, CommentDTO>();
             CreateMap<VoteComment, VoteCommentDTO>();
             CreateMap<VotePost, VotePostDTO>();
+            CreateMap<PostList,PostListDTO>();
         }
     }
 }

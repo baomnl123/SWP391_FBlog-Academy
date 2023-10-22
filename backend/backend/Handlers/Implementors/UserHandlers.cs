@@ -23,7 +23,7 @@ namespace backend.Handlers.Implementors
         public UserDTO? CreateLecturer(string name, string email, string password)
         {
             //make sure that info is not null
-            if (name == null || email == null || password == null)
+            if (name == null || email == null)
             {
                 return null;
             }
@@ -41,7 +41,10 @@ namespace backend.Handlers.Implementors
                 }
                 //if user is disable then update the user into enable status
                 existedUser.Name = name;
-                existedUser.Password = password;
+                if (password != null)
+                {
+                    existedUser.Password = _hashingString.HashString(password);
+                }
                 existedUser.Status = true;
                 existedUser.UpdatedAt = DateTime.Now;
                 if (!_userRepository.UpdateUser(existedUser))
@@ -56,12 +59,15 @@ namespace backend.Handlers.Implementors
             {
                 Name = name,
                 Email = email,
-                Password = _hashingString.HashString(password),
                 Role = lectureRole,
                 CreatedAt = DateTime.Now,
                 Status = true,
                 IsAwarded = false,
             };
+            if (password != null)
+            {
+                newUser.Password = _hashingString.HashString(password);
+            }
             //add to db
             if (!_userRepository.CreateUser(newUser))
             {
@@ -74,7 +80,7 @@ namespace backend.Handlers.Implementors
         public UserDTO? CreateUser(string name, string email, string password)
         {
             //make sure that info is not null
-            if (name == null || email == null || password == null)
+            if (name == null || email == null)
             {
                 return null;
             }
@@ -92,7 +98,10 @@ namespace backend.Handlers.Implementors
                 }
                 //if user is disable then update the user into enable status
                 existedUser.Name = name;
-                existedUser.Password = password;
+                if (password != null)
+                {
+                    existedUser.Password = _hashingString.HashString(password);
+                }
                 existedUser.Status = true;
                 existedUser.UpdatedAt = DateTime.Now;
                 if (!_userRepository.UpdateUser(existedUser))
@@ -107,12 +116,15 @@ namespace backend.Handlers.Implementors
             {
                 Name = name,
                 Email = email,
-                Password = _hashingString.HashString(password),
                 Role = studentRole,
                 CreatedAt = DateTime.Now,
                 Status = true,
                 IsAwarded = false,
             };
+            if (password != null)
+            {
+                newUser.Password = _hashingString.HashString(password);
+            }
             //add to db
             if (!_userRepository.CreateUser(newUser))
             {
@@ -256,7 +268,7 @@ namespace backend.Handlers.Implementors
                     }
                 }
             }
-            if(listDTO.Count == 0)
+            if (listDTO.Count == 0)
             {
                 return null;
             }
@@ -277,7 +289,7 @@ namespace backend.Handlers.Implementors
         public ICollection<UserDTO>? GetAllDisableUsers()
         {
             var userList = _userRepository.GetAllDisableUser();
-            if(userList == null || userList.Count == 0)
+            if (userList == null || userList.Count == 0)
             {
                 return null;
             }
@@ -322,12 +334,13 @@ namespace backend.Handlers.Implementors
                 return null;
             }
             //update
+            user.Name = name;
+            user.Email = email;
+            if (password != null)
             {
-                user.Name = name;
-                user.Email = email;
                 user.Password = _hashingString.HashString(password);
-                user.UpdatedAt = DateTime.Now;
             }
+            user.UpdatedAt = DateTime.Now;
             //update to db
             if (!_userRepository.UpdateUser(user))
             {
