@@ -107,7 +107,11 @@ namespace backend.Controllers
 
             if (isTagExists != null && !isTagExists.Status)
             {
+                // If the tag was disabled, enable it then create relationship with Category
                 _tagHandlers.EnableTag(isTagExists.Id);
+                if (_tagHandlers.CreateRelationship(isTagExists, category) != null)
+                    return Ok(isTagExists);
+
                 return StatusCode(422, $"\"{isTagExists.TagName}\" already exists!");
             }
 
