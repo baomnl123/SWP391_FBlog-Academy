@@ -12,10 +12,14 @@ namespace backend.Controllers
     public class CategoryController : Controller
     {
         private readonly ICategoryHandlers _categoryHandlers;
+        private readonly IUserHandlers _userHandlers;
+        private readonly UserRoleConstrant _userRoleConstrant;
 
-        public CategoryController(ICategoryHandlers categoryHandlers)
+        public CategoryController(ICategoryHandlers categoryHandlers, IUserHandlers userHandlers)
         {
             _categoryHandlers = categoryHandlers;
+            _userHandlers = userHandlers;
+            _userRoleConstrant = new();
         }
 
         [HttpGet]
