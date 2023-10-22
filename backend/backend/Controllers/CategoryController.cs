@@ -124,7 +124,7 @@ namespace backend.Controllers
 
             // If category already exists, but was disabled, then enable it
             if (isCategoryExists != null && !isCategoryExists.Status)
-        {
+            {
                 _categoryHandlers.EnableCategory(isCategoryExists.Id);
                 return StatusCode(422, "Category aldready exists!");
             }
