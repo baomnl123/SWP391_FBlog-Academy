@@ -123,7 +123,7 @@ namespace backend.Controllers
         public IActionResult EnableCategory(int categoryId)
         {
             var category = _categoryHandlers.GetCategoryById(categoryId);
-            if (category == null)  return StatusCode(422, "Category does not exists!");
+            if (category == null) return NotFound("Category does not exists!");
 
             var enableCategory = _categoryHandlers.EnableCategory(categoryId);
             if (enableCategory == null)
@@ -138,7 +138,7 @@ namespace backend.Controllers
         public IActionResult DeleteCategory(int categoryId)
         {
             var category = _categoryHandlers.GetCategoryById(categoryId);
-            if (category == null) return StatusCode(422, "Category does not exists!");
+            if (category == null) return NotFound("Category does not exists!");
 
             var deleteCategory = _categoryHandlers.DisableCategory(categoryId);
             if (deleteCategory == null)
