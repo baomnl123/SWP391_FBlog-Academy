@@ -83,7 +83,7 @@ namespace backend.Controllers
             var tag = _tagHandlers.GetTagByName(tagName);
             if (tag != null && tag.Status == false)
             {
-                if(tag.Status) return StatusCode(422, "Tag aldready exists!");
+                if(tag.Status) return StatusCode(422, $"{tag.TagName} aldready exists!");
 
                 _tagHandlers.EnableTag(tag.Id);
                 return Ok(tag);
