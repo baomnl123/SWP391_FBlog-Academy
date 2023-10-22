@@ -94,7 +94,7 @@ namespace backend.Controllers
             if (category != null)
             {
                 // If category already exists, and status is true, then return 
-                if (category.Status) return StatusCode(422, $"{category.CategoryName} aldready exists!");
+                if (category.Status) return StatusCode(422, $"\"{category.CategoryName}\" aldready exists!");
 
                 // If category already exists, but was disabled, then enable it
                 _categoryHandlers.EnableCategory(category.Id);
@@ -120,13 +120,13 @@ namespace backend.Controllers
             // Check the new category name already exists in DB
             var isCategoryExists = _categoryHandlers.GetCategoryByName(newCategoryName);
             if (isCategoryExists != null && isCategoryExists.Status)
-                return StatusCode(422, $"{isCategoryExists.CategoryName} aldready exists!");
+                return StatusCode(422, $"\"{isCategoryExists.CategoryName}\" aldready exists!");
 
             // If category already exists, but was disabled, then enable it
             if (isCategoryExists != null && !isCategoryExists.Status)
             {
                 _categoryHandlers.EnableCategory(isCategoryExists.Id);
-                return StatusCode(422, $"{isCategoryExists.CategoryName} aldready exists!");
+                return StatusCode(422, $"\"{isCategoryExists.CategoryName}\" aldready exists!");
             }
 
             // If the new name does not exists, then update to the current category    

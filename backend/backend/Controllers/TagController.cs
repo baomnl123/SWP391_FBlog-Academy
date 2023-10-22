@@ -83,7 +83,7 @@ namespace backend.Controllers
             var tag = _tagHandlers.GetTagByName(tagName);
             if (tag != null && tag.Status == false)
             {
-                if(tag.Status) return StatusCode(422, $"{tag.TagName} aldready exists!");
+                if(tag.Status) return StatusCode(422, $"\"{tag.TagName}\" aldready exists!");
 
                 _tagHandlers.EnableTag(tag.Id);
                 return Ok(tag);
@@ -112,13 +112,13 @@ namespace backend.Controllers
             // Check the new tag name already exists in DB
             var isTagExists = _tagHandlers.GetTagByName(newTagName);
             if(isTagExists != null && isTagExists.Status)
-                return StatusCode(422, $"{isTagExists.TagName} aldready exists!");
+                return StatusCode(422, $"\"{isTagExists.TagName}\" aldready exists!");
 
             // If tag already exists, but was disabled, then enable it
             if (isTagExists != null && !isTagExists.Status)
             {
                 _tagHandlers.EnableTag(isTagExists.Id);
-                return StatusCode(422, $"{isTagExists.TagName} aldready exists!");
+                return StatusCode(422, $"\"{isTagExists.TagName}\" aldready exists!");
             }
 
             // If the new name does not exists, then update to the current tag
