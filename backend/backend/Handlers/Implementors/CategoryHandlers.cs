@@ -123,7 +123,7 @@ namespace backend.Handlers.Implementors
             var category = _categoryRepository.GetCategoryById(categoryId);
             var categoryTags = _categoryTagRepository.GetCategoryTagsByCategoryId(category.Id);
             var postCategories = _postCategoryRepository.GetPostCategoriesByCategoryId(category.Id);
-            if (category == null || category.Status == true || categoryTags == null) return null;
+            if (category == null || category.Status == true) return null;
 
             // Check if all enables succeeded.
             var checkCategory = _categoryRepository.EnableCategory(category);
@@ -131,7 +131,7 @@ namespace backend.Handlers.Implementors
             var checkPostCategory = postCategories.All(postCategory => _postCategoryRepository.EnablePostCategory(postCategory));
 
             // Return the mapped tag DTO if all enables succeeded, otherwise return null.
-            return (checkCategory && checkCategoryTag && checkPostCategory) ? _mapper.Map<CategoryDTO>(category) : null;
+            return (checkCategory) ? _mapper.Map<CategoryDTO>(category) : null;
         }
 
         public CategoryDTO? DisableCategory(int categoryId)
@@ -140,7 +140,7 @@ namespace backend.Handlers.Implementors
             var category = _categoryRepository.GetCategoryById(categoryId);
             var categoryTags = _categoryTagRepository.GetCategoryTagsByCategoryId(category.Id);
             var postCategories = _postCategoryRepository.GetPostCategoriesByCategoryId(category.Id);
-            if (category == null || category.Status == false || categoryTags == null) return null;
+            if (category == null || category.Status == false) return null;
 
             // Check if all disable succeeded.
             var checkCategory = _categoryRepository.DisableCategory(category);
@@ -148,7 +148,7 @@ namespace backend.Handlers.Implementors
             var checkPostCategory = postCategories.All(postCategory => _postCategoryRepository.DisablePostCategory(postCategory));
 
             // Return the mapped tag DTO if all disable succeeded, otherwise return null.
-            return (checkCategory && checkCategoryTag && checkPostCategory) ? _mapper.Map<CategoryDTO>(category) : null;
+            return (checkCategory) ? _mapper.Map<CategoryDTO>(category) : null;
         }
     }
 }
