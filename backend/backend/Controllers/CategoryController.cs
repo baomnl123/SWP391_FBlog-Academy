@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using backend.DTO;
 using backend.Handlers.IHandlers;
+using backend.Handlers.Implementors;
 using backend.Models;
 using backend.Repositories.IRepositories;
 using Microsoft.AspNetCore.Mvc;
@@ -77,11 +78,16 @@ namespace backend.Controllers
             return Ok(tags);
         }
 
-        [HttpPost("create-category/{adminId}")]
+        [HttpPost("create-category")]
         [ProducesResponseType(204)]
         [ProducesResponseType(422)]
         public IActionResult CreateCategory(int adminId, [FromForm] string categoryName)
         {
+            var admin = _userHandlers.GetUser(adminId);
+            var adminRole = _userRoleConstrant.GetAdminRole();
+            if (admin == null || admin.Role != adminRole)
+                return NotFound("Admin does not exists!");
+
             // If category already exists, return
             var category = _categoryHandlers.GetCategoryByName(categoryName);
             if (category != null)
