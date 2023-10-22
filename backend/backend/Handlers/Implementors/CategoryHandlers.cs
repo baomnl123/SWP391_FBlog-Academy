@@ -19,11 +19,10 @@ namespace backend.Handlers.Implementors
         private readonly IMapper _mapper;
         private readonly UserRoleConstrant _userRoleConstrant;
 
-        public CategoryHandlers(ITagRepository tagRepository,
-                           ICategoryRepository categoryRepository,
+        public CategoryHandlers(ICategoryRepository categoryRepository,
                            ICategoryTagRepository categoryTagRepository,
                            IPostCategoryRepository postCategoryRepository,
-                           IUserRepository userRepository, IMapper mapper)
+                           IMapper mapper)
         {
             _tagRepository = tagRepository;
             _categoryRepository = categoryRepository;
@@ -104,12 +103,11 @@ namespace backend.Handlers.Implementors
             return null;
         }
 
-        public CategoryDTO? UpdateCategory(string currentCategoryName, string newCategoryName)
+        public CategoryDTO? UpdateCategory(int currentCategoryId, string newCategoryName)
         {
             // Find category and categoryTag
-            var category = _categoryRepository.GetCategoryByName(currentCategoryName);
-            var categoryTags = _categoryTagRepository.GetCategoryTagsByCategoryId(category.Id);
-            if (category == null || category.Status == false || categoryTags == null) return null;
+            var category = _categoryRepository.GetCategoryById(currentCategoryId);
+            if (category == null || category.Status == false) return null;
 
             // Set new CategoryName and UpdatedAt
             category.CategoryName = newCategoryName;

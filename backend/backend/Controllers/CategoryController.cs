@@ -106,17 +106,30 @@ namespace backend.Controllers
             return Ok(createCategory);
         }
 
-        [HttpPut("update/{currentCategoryName}")]
+        [HttpPut("update/{currentCategoryId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateCategory([FromForm] string newCategoryName, string currentCategoryName)
+        public IActionResult UpdateCategory([FromForm] string newCategoryName, int currentCategoryId)
         {
-            var category = _categoryHandlers.GetCategoryByName(newCategoryName);
-            if (category != null || category.Status)
+            // If category does not exists for updating, return Not found
+            var currentCategory = _categoryHandlers.GetCategoryById(currentCategoryId);
+            if (currentCategory == null) return NotFound("Category does not exists!");
+
+            // Check the new category name already exists in DB
+            var isCategoryExists = _categoryHandlers.GetCategoryByName(newCategoryName);
+            if (isCategoryExists != null && isCategoryExists.Status)
                 return StatusCode(422, "Category aldready exists!");
 
-            var updateCategory = _categoryHandlers.UpdateCategory(currentCategoryName, newCategoryName);
+            // If category already exists, but was disabled, then enable it
+            if (isCategoryExists != null && !isCategoryExists.Status)
+        {
+                _categoryHandlers.EnableCategory(isCategoryExists.Id);
+                return StatusCode(422, "Category aldready exists!");
+            }
+
+            // If the new name does not exists, then update to the current category    
+            var updateCategory = _categoryHandlers.UpdateCategory(currentCategoryId, newCategoryName);
             if (updateCategory == null) return BadRequest();
 
             return Ok(updateCategory);
