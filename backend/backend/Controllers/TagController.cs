@@ -29,7 +29,7 @@ namespace backend.Controllers
 
             return Ok(tags);
         }
-        
+
         [HttpGet("disable")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Tag>))]
         public IActionResult GetDisableTags()
@@ -81,12 +81,11 @@ namespace backend.Controllers
         {
             // If tag already exists but was disabled, then enable it
             var tag = _tagHandlers.GetTagByName(tagName);
-            if (tag.Status == false) _tagHandlers.EnableTag(tag.Id);
-
-            // If tag already exists, create relationship with category
-            if (tag != null)
+            if (tag != null && tag.Status == false)
             {
-                _tagHandlers.CreateRelationship(tag.Id, categoryId);
+                if(tag.Status) return StatusCode(422, "Tag aldready exists!");
+
+                _tagHandlers.EnableTag(tag.Id);
                 return Ok(tag);
             }
 
@@ -94,19 +93,36 @@ namespace backend.Controllers
             var createTag = _tagHandlers.CreateTag(adminId, categoryId, tagName);
             if (createTag == null) return BadRequest(ModelState);
 
+            // If create succeed, then create relationship
+            _tagHandlers.CreateRelationship(createTag.Id, categoryId);
+
             return Ok(createTag);
         }
 
-        [HttpPut("update/{currentTagName}")]
+        [HttpPut("update/{currentTagId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateTag([FromForm] string newTagName, string currentTagName)
+        public IActionResult UpdateTag([FromForm] string newTagName, int currentTagId)
         {
-            if (_tagHandlers.GetTagByName(newTagName) != null)
-                return StatusCode(422, "Tag aldready exists!");
+            // If tag does not exists for updating, return Not found
+            var currentTag = _tagHandlers.GetTagById(currentTagId);
+            if(currentTag == null || !currentTag.Status) return NotFound("Tag does not exists!");
 
-            var updateTage = _tagHandlers.UpdateTag(currentTagName, newTagName);
+            // Check the new tag name already exists in DB
+            var isTagExists = _tagHandlers.GetTagByName(newTagName);
+            if(isTagExists != null && isTagExists.Status)
+                return StatusCode(422, $"{isTagExists.TagName} aldready exists!");
+
+            // If tag already exists, but was disabled, then enable it
+            if (isTagExists != null && !isTagExists.Status)
+            {
+                _tagHandlers.EnableTag(isTagExists.Id);
+                return StatusCode(422, $"{isTagExists.TagName} aldready exists!");
+            }
+
+            // If the new name does not exists, then update to the current tag
+            var updateTage = _tagHandlers.UpdateTag(currentTagId, newTagName);
             if (updateTage == null) return BadRequest();
 
             return Ok(updateTage);

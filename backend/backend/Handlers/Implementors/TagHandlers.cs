@@ -49,7 +49,7 @@ namespace backend.Handlers.Implementors
         public TagDTO? GetTagById(int tagId)
         {
             var tag = _tagRepository.GetTagById(tagId);
-            if (tag == null || tag.Status == false) return null;
+            if (tag == null) return null;
 
             return _mapper.Map<TagDTO>(tag);
         }
@@ -57,7 +57,7 @@ namespace backend.Handlers.Implementors
         public TagDTO? GetTagByName(string tagName)
         {
             var tag = _tagRepository.GetTagByName(tagName);
-            if (tag == null || tag.Status == false) return null;
+            if (tag == null) return null;
 
             return _mapper.Map<TagDTO>(tag);
         }
@@ -106,12 +106,11 @@ namespace backend.Handlers.Implementors
             return null;
         }
 
-        public TagDTO? UpdateTag(string currentTagName, string newTagName)
+        public TagDTO? UpdateTag(int currentTagId, string newTagName)
         {
             // Find tag and categoryTag
-            var tag = _tagRepository.GetTagByName(currentTagName);
-            var categoryTags = _categoryTagRepository.GetCategoryTagsByTagId(tag.Id);
-            if (tag == null || tag.Status == false || categoryTags == null) return null;
+            var tag = _tagRepository.GetTagById(currentTagId);
+            if (tag == null || tag.Status == false) return null;
 
             // Set new TagName and UpdatedAt
             tag.TagName = newTagName;
