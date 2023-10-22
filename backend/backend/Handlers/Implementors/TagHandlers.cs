@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure;
 using backend.DTO;
 using backend.Handlers.IHandlers;
 using backend.Models;
@@ -15,23 +16,19 @@ namespace backend.Handlers.Implementors
         private readonly ICategoryRepository _categoryRepository;
         private readonly ICategoryTagRepository _categoryTagRepository;
         private readonly IPostTagRepository _postTagRepository;
-        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-        private readonly UserRoleConstrant _userRoleConstrant;
 
         public TagHandlers(ITagRepository tagRepository,
                            ICategoryRepository categoryRepository,
                            ICategoryTagRepository categoryTagRepository,
                            IPostTagRepository postTagRepository,
-                           IUserRepository userRepository, IMapper mapper)
+                           IMapper mapper)
         {
             _tagRepository = tagRepository;
             _categoryRepository = categoryRepository;
             _categoryTagRepository = categoryTagRepository;
             _postTagRepository = postTagRepository;
-            _userRepository = userRepository;
             _mapper = mapper;
-            _userRoleConstrant = new();
         }
 
         public ICollection<TagDTO> GetTags()
@@ -49,7 +46,7 @@ namespace backend.Handlers.Implementors
         public TagDTO? GetTagById(int tagId)
         {
             var tag = _tagRepository.GetTagById(tagId);
-            if (tag == null || tag.Status == false) return null;
+            if (tag == null) return null;
 
             return _mapper.Map<TagDTO>(tag);
         }
@@ -57,7 +54,7 @@ namespace backend.Handlers.Implementors
         public TagDTO? GetTagByName(string tagName)
         {
             var tag = _tagRepository.GetTagByName(tagName);
-            if (tag == null || tag.Status == false) return null;
+            if (tag == null) return null;
 
             return _mapper.Map<TagDTO>(tag);
         }
@@ -83,13 +80,6 @@ namespace backend.Handlers.Implementors
 
         public TagDTO? CreateTag(int adminId, int categoryId, string tagName)
         {
-            // Find admin and category
-            var admin = _userRepository.GetUser(adminId);
-            var adminRole = _userRoleConstrant.GetAdminRole();
-            var category = _categoryRepository.GetCategoryById(categoryId);
-            // Check if admin and category exist, and if admin has the correct role.
-            if (admin == null || !admin.Role.Equals(adminRole) || category == null) return null;
-
             // Create a new tag object
             var tag = new Tag()
             {
@@ -106,12 +96,11 @@ namespace backend.Handlers.Implementors
             return null;
         }
 
-        public TagDTO? UpdateTag(string currentTagName, string newTagName)
+        public TagDTO? UpdateTag(int currentTagId, string newTagName)
         {
             // Find tag and categoryTag
-            var tag = _tagRepository.GetTagByName(currentTagName);
-            var categoryTags = _categoryTagRepository.GetCategoryTagsByTagId(tag.Id);
-            if (tag == null || tag.Status == false || categoryTags == null) return null;
+            var tag = _tagRepository.GetTagById(currentTagId);
+            if (tag == null || tag.Status == false) return null;
 
             // Set new TagName and UpdatedAt
             tag.TagName = newTagName;
@@ -155,22 +144,21 @@ namespace backend.Handlers.Implementors
             return (checkTag && checkCategoryTag && checkPostTag) ? _mapper.Map<TagDTO>(tag) : null;
         }
 
-        public TagDTO? CreateRelationship(int tagId, int categoryId)
+        public TagDTO? CreateRelationship(TagDTO tag, CategoryDTO category)
         {
-            // Check if category and tag is null
-            var category = _categoryRepository.GetCategoryById(categoryId);
-            var tag = _tagRepository.GetTagById(tagId);
-            if (category == null && tag == null) return null;
+            // If relationship exists, then return null.
+            var isExists = _categoryTagRepository.GetCategoryTag(tag.Id, category.Id);
+            if (isExists != null && isExists.Status) return null;
 
-            // Is there already a relationship
-            var isExists = _categoryTagRepository.GetCategoryTag(tagId, categoryId);
-
-            // If relationship exists and is disabled, enable it and return it.
-            if (isExists.Status == false && _categoryTagRepository.EnableCategoryTag(isExists))
-                return _mapper.Map<TagDTO>(category);
+            // If relationship is disabled, enable it and return it.
+            if (isExists != null && !isExists.Status)
+            {
+                _categoryTagRepository.EnableCategoryTag(isExists);
+                return _mapper.Map<TagDTO>(tag);
+            }
 
             // Create a new categoryTag object if isExists is null, or return isExists otherwise.
-            var categoryTag = isExists ?? new CategoryTag()
+            var categoryTag = new CategoryTag()
             {
                 CategoryId = category.Id,
                 TagId = tag.Id,
@@ -179,10 +167,11 @@ namespace backend.Handlers.Implementors
 
             // Add relationship
             if (_categoryTagRepository.CreateCategoryTag(categoryTag))
-                return _mapper.Map<TagDTO>(category);
+                return _mapper.Map<TagDTO>(tag);
 
             return null;
         }
+
         public TagDTO? DisableRelationship(int tagId, int categoryId)
         {
             var categoryTag = _categoryTagRepository.GetCategoryTag(tagId, categoryId);

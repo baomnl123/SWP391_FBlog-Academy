@@ -4,6 +4,7 @@ using backend.Handlers.IHandlers;
 using backend.Handlers.Implementors;
 using backend.Models;
 using backend.Repositories.IRepositories;
+using backend.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
@@ -13,10 +14,16 @@ namespace backend.Controllers
     public class TagController : Controller
     {
         private readonly ITagHandlers _tagHandlers;
+        private readonly ICategoryHandlers _categoryHandlers;
+        private readonly IUserHandlers _userHandlers;
+        private readonly UserRoleConstrant _userRoleConstrant;
 
-        public TagController(ITagHandlers tagHandlers)
+        public TagController(ITagHandlers tagHandlers, ICategoryHandlers categoryHandlers, IUserHandlers userHandlers)
         {
             _tagHandlers = tagHandlers;
+            _categoryHandlers = categoryHandlers;
+            _userHandlers = userHandlers;
+            _userRoleConstrant = new();
         }
 
         [HttpGet]
@@ -29,7 +36,7 @@ namespace backend.Controllers
 
             return Ok(tags);
         }
-        
+
         [HttpGet("disable")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Tag>))]
         public IActionResult GetDisableTags()
@@ -79,37 +86,68 @@ namespace backend.Controllers
         [ProducesResponseType(422)]
         public IActionResult CreateTag([FromForm] int adminId, [FromForm] int categoryId, [FromForm] string tagName)
         {
-            // If tag already exists but was disabled, then enable it
-            var tag = _tagHandlers.GetTagByName(tagName);
-            if (tag.Status == false) _tagHandlers.EnableTag(tag.Id);
+            // Check if admin exists
+            var admin = _userHandlers.GetUser(adminId);
+            var adminRole = _userRoleConstrant.GetAdminRole();
+            if (admin == null || admin.Role != adminRole)
+                return NotFound("Admin does not exists!");
 
-            // If tag already exists, create relationship with category
-            if (tag != null)
+            // Check if category does not exists
+            var category = _categoryHandlers.GetCategoryById(categoryId);
+            if (category == null || !category.Status) return NotFound("Category does not exists!");
+
+            var isTagExists = _tagHandlers.GetTagByName(tagName);
+            if (isTagExists != null && isTagExists.Status)
             {
-                _tagHandlers.CreateRelationship(tag.Id, categoryId);
-                return Ok("Successfully create!");
+                if (_tagHandlers.CreateRelationship(isTagExists, category) != null)
+                    return Ok(isTagExists);
+
+                return StatusCode(422, $"\"{isTagExists.TagName}\" already exists!");
             }
 
-            // if tag is null, then create new tag
+            if (isTagExists != null && !isTagExists.Status)
+            {
+                _tagHandlers.EnableTag(isTagExists.Id);
+                return StatusCode(422, $"\"{isTagExists.TagName}\" already exists!");
+            }
+
+            // If tag is null, then create new tag
             var createTag = _tagHandlers.CreateTag(adminId, categoryId, tagName);
             if (createTag == null) return BadRequest(ModelState);
 
-            return Ok("Successfully create!");
+            // If create succeed, then create relationship
+            _tagHandlers.CreateRelationship(createTag, category);
+
+            return Ok(createTag);
         }
 
-        [HttpPut("update/{currentTagName}")]
+        [HttpPut("update/{currentTagId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateTag([FromForm] string newTagName, string currentTagName)
+        public IActionResult UpdateTag([FromForm] string newTagName, int currentTagId)
         {
-            if (_tagHandlers.GetTagByName(newTagName) != null)
-                return StatusCode(422, "Tag aldready exists!");
+            // If tag does not exists for updating, return Not found
+            var currentTag = _tagHandlers.GetTagById(currentTagId);
+            if (currentTag == null || !currentTag.Status) return NotFound("Tag does not exists!");
 
-            var updateTage = _tagHandlers.UpdateTag(currentTagName, newTagName);
+            // Check the new tag name already exists in DB
+            var isTagExists = _tagHandlers.GetTagByName(newTagName);
+            if (isTagExists != null && isTagExists.Status)
+                return StatusCode(422, $"\"{isTagExists.TagName}\" aldready exists!");
+
+            // If tag already exists, but was disabled, then enable it
+            if (isTagExists != null && !isTagExists.Status)
+            {
+                _tagHandlers.EnableTag(isTagExists.Id);
+                return StatusCode(422, $"\"{isTagExists.TagName}\" aldready exists!");
+            }
+
+            // If the new name does not exists, then update to the current tag
+            var updateTage = _tagHandlers.UpdateTag(currentTagId, newTagName);
             if (updateTage == null) return BadRequest();
 
-            return Ok("Update successfully!");
+            return Ok(updateTage);
         }
 
         [HttpPut("enable/{tagId}")]
@@ -121,7 +159,7 @@ namespace backend.Controllers
             var enableTag = _tagHandlers.EnableTag(tagId);
             if (enableTag == null) ModelState.AddModelError("", "Something went wrong enable tag");
 
-            return Ok("Enable successfully!");
+            return Ok(enableTag);
         }
 
         [HttpDelete("delete/{tagId}")]
@@ -132,7 +170,7 @@ namespace backend.Controllers
             var deleteTag = _tagHandlers.DisableTag(tagId);
             if (deleteTag == null) ModelState.AddModelError("", "Something went wrong delete tag");
 
-            return Ok("Delete successfully!");
+            return Ok(deleteTag);
         }
 
         [HttpDelete("delete-relationship/{tagId}")]
@@ -143,7 +181,7 @@ namespace backend.Controllers
             var deleteRelationship = _tagHandlers.DisableRelationship(tagId, categoryId);
             if (deleteRelationship == null) ModelState.AddModelError("", "Something went wrong delete relationship");
 
-            return Ok("Delete successfully!");
+            return Ok(deleteRelationship);
         }
     }
 }

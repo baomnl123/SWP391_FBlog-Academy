@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using backend.DTO;
 using backend.Handlers.IHandlers;
+using backend.Handlers.Implementors;
 using backend.Models;
 using backend.Repositories.IRepositories;
+using backend.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
@@ -12,10 +14,14 @@ namespace backend.Controllers
     public class CategoryController : Controller
     {
         private readonly ICategoryHandlers _categoryHandlers;
+        private readonly IUserHandlers _userHandlers;
+        private readonly UserRoleConstrant _userRoleConstrant;
 
-        public CategoryController(ICategoryHandlers categoryHandlers)
+        public CategoryController(ICategoryHandlers categoryHandlers, IUserHandlers userHandlers)
         {
             _categoryHandlers = categoryHandlers;
+            _userHandlers = userHandlers;
+            _userRoleConstrant = new();
         }
 
         [HttpGet]
@@ -73,41 +79,60 @@ namespace backend.Controllers
             return Ok(tags);
         }
 
-        [HttpPost("create-category/{adminId}")]
+        [HttpPost("create-category")]
         [ProducesResponseType(204)]
         [ProducesResponseType(422)]
         public IActionResult CreateCategory(int adminId, [FromForm] string categoryName)
         {
-            // If category already exists, return
-            var category = _categoryHandlers.GetCategoryByName(categoryName);
-            if (category.Status == true) return StatusCode(422, "Category aldready exists!");
+            var admin = _userHandlers.GetUser(adminId);
+            var adminRole = _userRoleConstrant.GetAdminRole();
+            if (admin == null || admin.Role != adminRole)
+                return NotFound("Admin does not exists!");
 
-            // If category already exists, but was disabled, then enable it
-            if (category.Status == false)
+            var category = _categoryHandlers.GetCategoryByName(categoryName);
+            if (category != null)
             {
+                // If category already exists, and status is true, then return 
+                if (category.Status) return StatusCode(422, $"\"{category.CategoryName}\" aldready exists!");
+
+                // If category already exists, but was disabled, then enable it
                 _categoryHandlers.EnableCategory(category.Id);
-                return Ok("Successfully create!");
+                return Ok(category);
             }
 
             var createCategory = _categoryHandlers.CreateCategory(adminId, categoryName);
             if (createCategory == null) return BadRequest(ModelState);
 
-            return Ok("Successfully create!");
+            return Ok(createCategory);
         }
 
-        [HttpPut("update/{currentCategoryName}")]
+        [HttpPut("update/{currentCategoryId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateCategory([FromForm] string newCategoryName, string currentCategoryName)
+        public IActionResult UpdateCategory([FromForm] string newCategoryName, int currentCategoryId)
         {
-            if (_categoryHandlers.GetCategoryByName(newCategoryName) != null)
-                return StatusCode(422, "Category aldready exists!");
+            // If category does not exists for updating, return Not found
+            var currentCategory = _categoryHandlers.GetCategoryById(currentCategoryId);
+            if (currentCategory == null) return NotFound("Category does not exists!");
 
-            var updateCategory = _categoryHandlers.UpdateCategory(currentCategoryName, newCategoryName);
+            // Check the new category name already exists in DB
+            var isCategoryExists = _categoryHandlers.GetCategoryByName(newCategoryName);
+            if (isCategoryExists != null && isCategoryExists.Status)
+                return StatusCode(422, $"\"{isCategoryExists.CategoryName}\" aldready exists!");
+
+            // If category already exists, but was disabled, then enable it
+            if (isCategoryExists != null && !isCategoryExists.Status)
+            {
+                _categoryHandlers.EnableCategory(isCategoryExists.Id);
+                return StatusCode(422, $"\"{isCategoryExists.CategoryName}\" aldready exists!");
+            }
+
+            // If the new name does not exists, then update to the current category    
+            var updateCategory = _categoryHandlers.UpdateCategory(currentCategoryId, newCategoryName);
             if (updateCategory == null) return BadRequest();
 
-            return Ok("Update successfully!");
+            return Ok(updateCategory);
         }
 
         [HttpPut("enable/{categoryId}")]
@@ -116,11 +141,14 @@ namespace backend.Controllers
         [ProducesResponseType(404)]
         public IActionResult EnableCategory(int categoryId)
         {
+            var category = _categoryHandlers.GetCategoryById(categoryId);
+            if (category == null) return NotFound("Category does not exists!");
+
             var enableCategory = _categoryHandlers.EnableCategory(categoryId);
             if (enableCategory == null)
                 ModelState.AddModelError("", "Something went wrong enable category");
 
-            return Ok("Enable successfully!");
+            return Ok(enableCategory);
         }
 
         [HttpDelete("delete/{categoryId}")]
@@ -128,11 +156,14 @@ namespace backend.Controllers
         [ProducesResponseType(404)]
         public IActionResult DeleteCategory(int categoryId)
         {
+            var category = _categoryHandlers.GetCategoryById(categoryId);
+            if (category == null) return NotFound("Category does not exists!");
+
             var deleteCategory = _categoryHandlers.DisableCategory(categoryId);
             if (deleteCategory == null)
                 ModelState.AddModelError("", "Something went wrong deleting category");
 
-            return Ok("Delete successfully!");
+            return Ok(deleteCategory);
         }
     }
 }

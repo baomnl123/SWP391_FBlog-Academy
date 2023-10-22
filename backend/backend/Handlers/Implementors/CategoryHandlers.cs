@@ -11,27 +11,20 @@ namespace backend.Handlers.Implementors
 {
     public class CategoryHandlers : ICategoryHandlers
     {
-        private readonly ITagRepository _tagRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly ICategoryTagRepository _categoryTagRepository;
         private readonly IPostCategoryRepository _postCategoryRepository;
-        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-        private readonly UserRoleConstrant _userRoleConstrant;
 
-        public CategoryHandlers(ITagRepository tagRepository,
-                           ICategoryRepository categoryRepository,
+        public CategoryHandlers(ICategoryRepository categoryRepository,
                            ICategoryTagRepository categoryTagRepository,
                            IPostCategoryRepository postCategoryRepository,
-                           IUserRepository userRepository, IMapper mapper)
+                           IMapper mapper)
         {
-            _tagRepository = tagRepository;
             _categoryRepository = categoryRepository;
             _categoryTagRepository = categoryTagRepository;
             _postCategoryRepository = postCategoryRepository;
-            _userRepository = userRepository;
             _mapper = mapper;
-            _userRoleConstrant = new();
         }
 
         public ICollection<CategoryDTO>? GetCategories()
@@ -49,7 +42,7 @@ namespace backend.Handlers.Implementors
         public CategoryDTO? GetCategoryById(int categoryId)
         {
             var category = _categoryRepository.GetCategoryById(categoryId);
-            if (category == null || category.Status == false) return null;
+            if (category == null) return null;
 
             return _mapper.Map<CategoryDTO>(category);
         }
@@ -57,7 +50,7 @@ namespace backend.Handlers.Implementors
         public CategoryDTO? GetCategoryByName(string categoryName)
         {
             var category = _categoryRepository.GetCategoryByName(categoryName);
-            if (category == null || category.Status == false) return null;
+            if (category == null) return null;
 
             return _mapper.Map<CategoryDTO>(category);
         }
@@ -82,11 +75,6 @@ namespace backend.Handlers.Implementors
 
         public CategoryDTO? CreateCategory(int adminId, string categoryName)
         {
-            // Cannot find admin, return false
-            var admin = _userRepository.GetUser(adminId);
-            var adminRole = _userRoleConstrant.GetAdminRole();
-            if (admin == null || !admin.Role.Equals(adminRole)) return null;
-
             // Create a new tacategory object 
             var category = new Category()
             {
@@ -104,12 +92,11 @@ namespace backend.Handlers.Implementors
             return null;
         }
 
-        public CategoryDTO? UpdateCategory(string currentCategoryName, string newCategoryName)
+        public CategoryDTO? UpdateCategory(int currentCategoryId, string newCategoryName)
         {
             // Find category and categoryTag
-            var category = _categoryRepository.GetCategoryByName(currentCategoryName);
-            var categoryTags = _categoryTagRepository.GetCategoryTagsByCategoryId(category.Id);
-            if (category == null || category.Status == false || categoryTags == null) return null;
+            var category = _categoryRepository.GetCategoryById(currentCategoryId);
+            if (category == null || category.Status == false) return null;
 
             // Set new CategoryName and UpdatedAt
             category.CategoryName = newCategoryName;
@@ -125,7 +112,7 @@ namespace backend.Handlers.Implementors
             var category = _categoryRepository.GetCategoryById(categoryId);
             var categoryTags = _categoryTagRepository.GetCategoryTagsByCategoryId(category.Id);
             var postCategories = _postCategoryRepository.GetPostCategoriesByCategoryId(category.Id);
-            if (category == null || category.Status == true || categoryTags == null) return null;
+            if (category == null || category.Status == true) return null;
 
             // Check if all enables succeeded.
             var checkCategory = _categoryRepository.EnableCategory(category);
@@ -133,7 +120,7 @@ namespace backend.Handlers.Implementors
             var checkPostCategory = postCategories.All(postCategory => _postCategoryRepository.EnablePostCategory(postCategory));
 
             // Return the mapped tag DTO if all enables succeeded, otherwise return null.
-            return (checkCategory && checkCategoryTag && checkPostCategory) ? _mapper.Map<CategoryDTO>(category) : null;
+            return (checkCategory) ? _mapper.Map<CategoryDTO>(category) : null;
         }
 
         public CategoryDTO? DisableCategory(int categoryId)
@@ -142,7 +129,7 @@ namespace backend.Handlers.Implementors
             var category = _categoryRepository.GetCategoryById(categoryId);
             var categoryTags = _categoryTagRepository.GetCategoryTagsByCategoryId(category.Id);
             var postCategories = _postCategoryRepository.GetPostCategoriesByCategoryId(category.Id);
-            if (category == null || category.Status == false || categoryTags == null) return null;
+            if (category == null || category.Status == false) return null;
 
             // Check if all disable succeeded.
             var checkCategory = _categoryRepository.DisableCategory(category);
@@ -150,7 +137,7 @@ namespace backend.Handlers.Implementors
             var checkPostCategory = postCategories.All(postCategory => _postCategoryRepository.DisablePostCategory(postCategory));
 
             // Return the mapped tag DTO if all disable succeeded, otherwise return null.
-            return (checkCategory && checkCategoryTag && checkPostCategory) ? _mapper.Map<CategoryDTO>(category) : null;
+            return (checkCategory) ? _mapper.Map<CategoryDTO>(category) : null;
         }
     }
 }

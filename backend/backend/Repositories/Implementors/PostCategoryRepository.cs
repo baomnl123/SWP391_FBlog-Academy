@@ -40,6 +40,11 @@ namespace backend.Repositories.Implementors
             return Save();
         }
 
+        public PostCategory? GetPostCategory(int postId, int categoryId)
+        {
+            return _context.PostCategories.FirstOrDefault(c => c.PostId == postId && c.CategoryId == categoryId);
+        }
+
         public ICollection<PostCategory> GetPostCategoriesByCategoryId(int categoryId)
         {
             return _context.PostCategories.Where(c => c.CategoryId == categoryId).ToList();

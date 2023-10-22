@@ -40,6 +40,11 @@ namespace backend.Repositories.Implementors
             return Save();
         }
 
+        public PostTag? GetPostTag(int postId, int tagId)
+        {
+            return _context.PostTags.FirstOrDefault(c => c.PostId == postId && c.TagId == tagId);
+        }
+
         public ICollection<PostTag> GetPostTagsByPostId(int postId)
         {
             return _context.PostTags.Where(c => c.PostId == postId).ToList();

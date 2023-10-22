@@ -15,7 +15,7 @@ namespace backend.Handlers.IHandlers
         public ICollection<TagDTO>? GetTagsByCategory(int categoryId);
         // CRUD
         public CategoryDTO? CreateCategory(int adminId, string categoryName);
-        public CategoryDTO? UpdateCategory(string currentCategoryName, string newCategoryName);
+        public CategoryDTO? UpdateCategory(int currentCategoryId, string newCategoryName);
         public CategoryDTO? EnableCategory(int categoryId);
         public CategoryDTO? DisableCategory(int categoryId);
     }
