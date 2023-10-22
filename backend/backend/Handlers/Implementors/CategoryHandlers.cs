@@ -11,26 +11,20 @@ namespace backend.Handlers.Implementors
 {
     public class CategoryHandlers : ICategoryHandlers
     {
-        private readonly ITagRepository _tagRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly ICategoryTagRepository _categoryTagRepository;
         private readonly IPostCategoryRepository _postCategoryRepository;
-        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-        private readonly UserRoleConstrant _userRoleConstrant;
 
         public CategoryHandlers(ICategoryRepository categoryRepository,
                            ICategoryTagRepository categoryTagRepository,
                            IPostCategoryRepository postCategoryRepository,
                            IMapper mapper)
         {
-            _tagRepository = tagRepository;
             _categoryRepository = categoryRepository;
             _categoryTagRepository = categoryTagRepository;
             _postCategoryRepository = postCategoryRepository;
-            _userRepository = userRepository;
             _mapper = mapper;
-            _userRoleConstrant = new();
         }
 
         public ICollection<CategoryDTO>? GetCategories()
