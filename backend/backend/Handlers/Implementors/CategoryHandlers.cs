@@ -75,11 +75,6 @@ namespace backend.Handlers.Implementors
 
         public CategoryDTO? CreateCategory(int adminId, string categoryName)
         {
-            // Cannot find admin, return false
-            var admin = _userRepository.GetUser(adminId);
-            var adminRole = _userRoleConstrant.GetAdminRole();
-            if (admin == null || !admin.Role.Equals(adminRole)) return null;
-
             // Create a new tacategory object 
             var category = new Category()
             {
