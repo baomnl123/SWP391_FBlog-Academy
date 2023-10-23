@@ -29,16 +29,8 @@ namespace backend.Repositories.Implementors
             return _context.Images.Where(e => e.PostId == postId && e.Status == true).ToList();
         }
 
-        public bool CreateImage(int postId, Image image)
+        public bool CreateImage(Image image)
         {
-            // Find post is exists
-            var post = _context.Posts.FirstOrDefault(c => c.Id == postId && c.Status == true);
-            if (post == null) return false;
-
-            // Add PostImage
-            var postImage = new Image();
-            _context.Add(postImage);
-
             _context.Add(image);
             return Save();
         }

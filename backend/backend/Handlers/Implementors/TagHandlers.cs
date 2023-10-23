@@ -174,12 +174,13 @@ namespace backend.Handlers.Implementors
 
         public TagDTO? DisableRelationship(int tagId, int categoryId)
         {
+            var tag = _tagRepository.GetTagById(tagId);
             var categoryTag = _categoryTagRepository.GetCategoryTag(tagId, categoryId);
 
             if (categoryTag.Status == false) return null;
 
             if (_categoryTagRepository.DisableCategoryTag(categoryTag))
-                return _mapper.Map<TagDTO>(categoryTag);
+                return _mapper.Map<TagDTO>(tag);
 
             return null;
         }
