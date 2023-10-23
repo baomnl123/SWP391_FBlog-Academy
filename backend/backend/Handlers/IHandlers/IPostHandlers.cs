@@ -11,7 +11,9 @@ namespace backend.Handlers.IHandlers
         //Search Posts which contain content.
         public ICollection<PostDTO>? SearchPostsByTitle(string title);
         //Create post
-        public PostDTO? CreatePost(int userId, string title, string content, int tagId, int categoryId);
+        public PostDTO? CreatePost(int userId, string title, string content, 
+                                                    int[] tagIds, int[] categoryIds, 
+                                                    string[] videoURLs, string[] imageURLs);
         //Update post
         public PostDTO? UpdatePost(int postId, string title, string content, int tagId, int categoryId);
         //Delete post
