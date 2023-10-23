@@ -15,7 +15,7 @@ namespace backend.Controllers
             _votePostHandlers = votePostHandlers;
         }
 
-        [HttpGet("SearchUsersVotedBy/{postId}")]
+        [HttpGet("{postId}")]
         public IActionResult GetAllUsersVotedBy(int postId)
         {
             var userList = _votePostHandlers.GetAllUsersVotedBy(postId);
@@ -23,7 +23,7 @@ namespace backend.Controllers
             return Ok(userList);
         }
 
-        [HttpPost("AddNewVotePost")]
+        [HttpPost]
         public IActionResult CreateNewVote([FromForm] int currentUserId, [FromForm] int postId, [FromForm] bool vote) 
         {
             var createdVote = _votePostHandlers.CreateNewVotePost(currentUserId, postId, vote);
@@ -31,7 +31,7 @@ namespace backend.Controllers
             return Ok(createdVote);
         }
 
-        [HttpPut("UpdateVotePost")]
+        [HttpPut]
         public IActionResult UpdateVote([FromForm] int currentUserId, [FromForm] int postId, [FromForm] bool vote)
         {
             var updatedVote = _votePostHandlers.UpdateVotePost(currentUserId, postId, vote);
@@ -39,7 +39,7 @@ namespace backend.Controllers
             return Ok(updatedVote);
         }
 
-        [HttpDelete("DeleteVotePost")]
+        [HttpDelete]
         public IActionResult DeleteVote([FromForm] int currentUserId, [FromForm] int postId) 
         {
             var deletedVote = _votePostHandlers.DisableVotePost(currentUserId, postId);
