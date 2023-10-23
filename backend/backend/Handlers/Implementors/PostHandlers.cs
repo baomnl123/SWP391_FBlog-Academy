@@ -192,15 +192,8 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<PostDTO>(existedPost);
         }
 
-        public ICollection<PostDTO>? ViewPendingPostList(int viewerId)
+        public ICollection<PostDTO>? ViewPendingPostList()
         {
-            //return null if viewer does not exist
-            //                      or is removed
-            //                      or does not have role LT(Lecturer) or MOD(Moderator)
-            var validViewer = _userRepository.GetUser(viewerId);
-            if (validViewer == null 
-                || validViewer.Status == false 
-                || !( validViewer.Role.Contains("LT") || validViewer.Role.Contains("MOD") )) return null;
             //Get pending posts list
             var existedList = _postRepository.ViewPendingPostList();
 
