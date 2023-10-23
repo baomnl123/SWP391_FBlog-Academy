@@ -94,7 +94,7 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<PostDTO>(newPost);
         }
 
-        public PostDTO? DeletePost(int postId, int tagId, int categoryId)
+        public PostDTO? DeletePost(int postId)
         {
             var deletedPost = _postRepository.GetPost(postId);
             if (deletedPost == null 

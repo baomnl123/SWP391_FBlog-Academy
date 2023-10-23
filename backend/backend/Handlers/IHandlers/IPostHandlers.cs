@@ -15,7 +15,7 @@ namespace backend.Handlers.IHandlers
         //Update post
         public PostDTO? UpdatePost(int postId, string title, string content, int tagId, int categoryId);
         //Delete post
-        public PostDTO? DeletePost(int postId, int tagId, int categoryId);
+        public PostDTO? DeletePost(int postId);
         //View pending post's list
         public ICollection<PostDTO>? ViewPendingPostList();
         //Approve post
