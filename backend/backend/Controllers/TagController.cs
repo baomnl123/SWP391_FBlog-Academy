@@ -99,7 +99,7 @@ namespace backend.Controllers
             var isTagExists = _tagHandlers.GetTagByName(tagName);
             if (isTagExists != null && isTagExists.Status)
             {
-                if (_tagHandlers.CreateRelationship(isTagExists, category) != null)
+                if (_tagHandlers.CreateCategoryTag(isTagExists, category) != null)
                     return Ok(isTagExists);
 
                 return StatusCode(422, $"\"{isTagExists.TagName}\" already exists!");
@@ -107,7 +107,11 @@ namespace backend.Controllers
 
             if (isTagExists != null && !isTagExists.Status)
             {
+                // If the tag was disabled, enable it then create relationship with Category
                 _tagHandlers.EnableTag(isTagExists.Id);
+                if (_tagHandlers.CreateCategoryTag(isTagExists, category) != null)
+                    return Ok(isTagExists);
+
                 return StatusCode(422, $"\"{isTagExists.TagName}\" already exists!");
             }
 
@@ -116,7 +120,7 @@ namespace backend.Controllers
             if (createTag == null) return BadRequest(ModelState);
 
             // If create succeed, then create relationship
-            _tagHandlers.CreateRelationship(createTag, category);
+            _tagHandlers.CreateCategoryTag(createTag, category);
 
             return Ok(createTag);
         }
@@ -178,7 +182,7 @@ namespace backend.Controllers
         [ProducesResponseType(404)]
         public IActionResult DeleteRelationship([FromForm] int categoryId, [FromForm] int tagId)
         {
-            var deleteRelationship = _tagHandlers.DisableRelationship(tagId, categoryId);
+            var deleteRelationship = _tagHandlers.DisableCategoryTag(tagId, categoryId);
             if (deleteRelationship == null) ModelState.AddModelError("", "Something went wrong delete relationship");
 
             return Ok(deleteRelationship);

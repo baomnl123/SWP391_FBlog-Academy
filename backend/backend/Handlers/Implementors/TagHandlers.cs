@@ -13,19 +13,16 @@ namespace backend.Handlers.Implementors
     public class TagHandlers : ITagHandlers
     {
         private readonly ITagRepository _tagRepository;
-        private readonly ICategoryRepository _categoryRepository;
         private readonly ICategoryTagRepository _categoryTagRepository;
         private readonly IPostTagRepository _postTagRepository;
         private readonly IMapper _mapper;
 
         public TagHandlers(ITagRepository tagRepository,
-                           ICategoryRepository categoryRepository,
                            ICategoryTagRepository categoryTagRepository,
                            IPostTagRepository postTagRepository,
                            IMapper mapper)
         {
             _tagRepository = tagRepository;
-            _categoryRepository = categoryRepository;
             _categoryTagRepository = categoryTagRepository;
             _postTagRepository = postTagRepository;
             _mapper = mapper;
@@ -144,7 +141,7 @@ namespace backend.Handlers.Implementors
             return (checkTag && checkCategoryTag && checkPostTag) ? _mapper.Map<TagDTO>(tag) : null;
         }
 
-        public TagDTO? CreateRelationship(TagDTO tag, CategoryDTO category)
+        public CategoryTagDTO? CreateCategoryTag(TagDTO tag, CategoryDTO category)
         {
             // If relationship exists, then return null.
             var isExists = _categoryTagRepository.GetCategoryTag(tag.Id, category.Id);
@@ -154,7 +151,7 @@ namespace backend.Handlers.Implementors
             if (isExists != null && !isExists.Status)
             {
                 _categoryTagRepository.EnableCategoryTag(isExists);
-                return _mapper.Map<TagDTO>(tag);
+                return _mapper.Map<CategoryTagDTO>(isExists);
             }
 
             // Create a new categoryTag object if isExists is null, or return isExists otherwise.
@@ -167,19 +164,57 @@ namespace backend.Handlers.Implementors
 
             // Add relationship
             if (_categoryTagRepository.CreateCategoryTag(categoryTag))
-                return _mapper.Map<TagDTO>(tag);
+                return _mapper.Map<CategoryTagDTO>(categoryTag);
 
             return null;
         }
 
-        public TagDTO? DisableRelationship(int tagId, int categoryId)
+        public CategoryTagDTO? DisableCategoryTag(int tagId, int categoryId)
         {
             var categoryTag = _categoryTagRepository.GetCategoryTag(tagId, categoryId);
-
-            if (categoryTag.Status == false) return null;
+            if (categoryTag == null || categoryTag.Status == false) return null;
 
             if (_categoryTagRepository.DisableCategoryTag(categoryTag))
-                return _mapper.Map<TagDTO>(categoryTag);
+                return _mapper.Map<CategoryTagDTO>(categoryTag);
+
+            return null;
+        }
+
+        public PostTagDTO? CreatePostTag(PostDTO post, TagDTO tag)
+        {
+            // If relationship exists, then return null.
+            var isExists = _postTagRepository.GetPostTag(post.Id, tag.Id);
+            if (isExists != null && isExists.Status) return null;
+
+            // If relationship is disabled, enable it and return it.
+            if (isExists != null && !isExists.Status)
+            {
+                _postTagRepository.EnablePostTag(isExists);
+                return _mapper.Map<PostTagDTO>(isExists);
+            }
+
+            // Create a new postTag object if isExists is null, or return isExists otherwise.
+            var postTag = new PostTag()
+            {
+                PostId = post.Id,
+                TagId = tag.Id,
+                Status = true
+            };
+
+            // Add relationship
+            if (_postTagRepository.CreatePostTag(postTag))
+                return _mapper.Map<PostTagDTO>(postTag);
+
+            return null;
+        }
+
+        public PostTagDTO? DisablePostTag(int postId, int tagId)
+        {
+            var postTag = _postTagRepository.GetPostTag(postId, tagId);
+            if (postTag == null || postTag.Status == false) return null;
+
+            if (_postTagRepository.DisablePostTag(postTag))
+                return _mapper.Map<PostTagDTO>(postTag);
 
             return null;
         }

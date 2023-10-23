@@ -29,16 +29,8 @@ namespace backend.Repositories.Implementors
             return _context.Videos.Where(c => c.PostId == postId && c.Status == true).ToList();
         }
 
-        public bool CreateVideo(int postId, Video video)
+        public bool CreateVideo(Video video)
         {
-            // Find post is exists
-            var post = _context.Posts.FirstOrDefault(c => c.Id == postId && c.Status == true);
-            if (post == null) return false;
-
-            // Add PostVideo
-            var postVideo = new Video();
-            _context.Add(postVideo);
-
             _context.Add(video);
             return Save();
         }

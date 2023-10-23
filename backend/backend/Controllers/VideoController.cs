@@ -38,7 +38,7 @@ namespace backend.Controllers
             var createVideo = _videoHandlers.CreateVideo(postId, videoURLs);
             if (createVideo == null) return BadRequest(ModelState);
 
-            return Ok("Successfully create!");
+            return Ok(createVideo);
         }
 
         [HttpPut("update/{postId}/{currentVideoId}")]
@@ -53,7 +53,7 @@ namespace backend.Controllers
             var updateVideo = _videoHandlers.UpdateVideo(postId, currentVideoId, newVideoURL);
             if (updateVideo == null) return NotFound();
 
-            return Ok("Update successfully!");
+            return Ok(updateVideo);
         }
 
         [HttpDelete("delete")]

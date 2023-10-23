@@ -57,12 +57,13 @@ namespace backend.Handlers.Implementors
             {
                 Video video = new()
                 {
+                    PostId = postId,
                     Url = url,
                     CreatedAt = DateTime.Now,
                     Status = true
                 };
                 // If create succeed then Add to list, else return null
-                if (!_videoRepository.CreateVideo(postId, video)) return null;
+                if (!_videoRepository.CreateVideo(video)) return null;
 
                 videos.Add(video);
             }

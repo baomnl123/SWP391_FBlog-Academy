@@ -40,7 +40,7 @@ namespace backend.Controllers
             var createImage = _imageHandlers.CreateImage(postId, imageURLs);
             if (createImage == null) return BadRequest(ModelState);
 
-            return Ok("Successfully create!");
+            return Ok(createImage);
         }
 
         [HttpPut("update/{postId}/{currentImageId}")]
@@ -55,7 +55,7 @@ namespace backend.Controllers
             var updateImage = _imageHandlers.UpdateImage(postId, currentImageId, newImageURL);
             if (updateImage == null) return BadRequest();
 
-            return Ok("Update successfully!");
+            return Ok(updateImage);
         }
 
         [HttpDelete("delete")]

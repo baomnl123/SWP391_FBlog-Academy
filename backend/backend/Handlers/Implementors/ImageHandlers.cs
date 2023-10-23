@@ -58,12 +58,13 @@ namespace backend.Handlers.Implementors
             {
                 Image image = new()
                 {
+                    PostId = postId,
                     Url = url,
                     CreatedAt = DateTime.Now,
                     Status = true
                 };
                 // If create succeed then Add to list, else return null
-                if (!_imageRepository.CreateImage(postId, image)) return null;
+                if (!_imageRepository.CreateImage(image)) return null;
 
                 images.Add(image);
             }
