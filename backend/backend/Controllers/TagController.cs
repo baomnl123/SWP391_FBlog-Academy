@@ -182,7 +182,7 @@ namespace backend.Controllers
         [ProducesResponseType(404)]
         public IActionResult DeleteRelationship([FromForm] int categoryId, [FromForm] int tagId)
         {
-            var deleteRelationship = _tagHandlers.DisableRelationship(tagId, categoryId);
+            var deleteRelationship = _tagHandlers.DisableCategoryTag(tagId, categoryId);
             if (deleteRelationship == null) ModelState.AddModelError("", "Something went wrong delete relationship");
 
             return Ok(deleteRelationship);
