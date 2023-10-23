@@ -3,6 +3,7 @@ using Azure;
 using backend.DTO;
 using backend.Handlers.IHandlers;
 using backend.Models;
+using backend.Repositories.Implementors;
 using backend.Repositories.IRepositories;
 using backend.Utils;
 using Microsoft.AspNetCore.Mvc;
@@ -138,6 +139,45 @@ namespace backend.Handlers.Implementors
 
             // Return the mapped tag DTO if all disable succeeded, otherwise return null.
             return (checkCategory) ? _mapper.Map<CategoryDTO>(category) : null;
+        }
+
+        public PostCategoryDTO? CreatePostCategory(PostDTO post, CategoryDTO category)
+        {
+            // If relationship exists, then return null.
+            var isExists = _postCategoryRepository.GetPostCategory(post.Id, category.Id);
+            if (isExists != null && isExists.Status) return null;
+
+            // If relationship is disabled, enable it and return it.
+            if (isExists != null && !isExists.Status)
+            {
+                _postCategoryRepository.EnablePostCategory(isExists);
+                return _mapper.Map<PostCategoryDTO>(isExists);
+            }
+
+            // Create a new postTag object if isExists is null, or return isExists otherwise.
+            var postCategory = new PostCategory()
+            {
+                PostId = post.Id,
+                CategoryId = category.Id,
+                Status = true
+            };
+
+            // Add relationship
+            if (_postCategoryRepository.CreatePostCategory(postCategory))
+                return _mapper.Map<PostCategoryDTO>(postCategory);
+
+            return null;
+        }
+
+        public PostCategoryDTO? DisablePostCategory(int postId, int categoryId)
+        {
+            var postCategory = _postCategoryRepository.GetPostCategory(postId, categoryId);
+            if (postCategory == null || postCategory.Status == false) return null;
+
+            if (_postCategoryRepository.DisablePostCategory(postCategory))
+                return _mapper.Map<PostCategoryDTO>(postCategory);
+
+            return null;
         }
     }
 }

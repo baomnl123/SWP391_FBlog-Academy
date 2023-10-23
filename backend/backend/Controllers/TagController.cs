@@ -99,7 +99,7 @@ namespace backend.Controllers
             var isTagExists = _tagHandlers.GetTagByName(tagName);
             if (isTagExists != null && isTagExists.Status)
             {
-                if (_tagHandlers.CreateRelationship(isTagExists, category) != null)
+                if (_tagHandlers.CreateCategoryTag(isTagExists, category) != null)
                     return Ok(isTagExists);
 
                 return StatusCode(422, $"\"{isTagExists.TagName}\" already exists!");
@@ -109,7 +109,7 @@ namespace backend.Controllers
             {
                 // If the tag was disabled, enable it then create relationship with Category
                 _tagHandlers.EnableTag(isTagExists.Id);
-                if (_tagHandlers.CreateRelationship(isTagExists, category) != null)
+                if (_tagHandlers.CreateCategoryTag(isTagExists, category) != null)
                     return Ok(isTagExists);
 
                 return StatusCode(422, $"\"{isTagExists.TagName}\" already exists!");
@@ -120,7 +120,7 @@ namespace backend.Controllers
             if (createTag == null) return BadRequest(ModelState);
 
             // If create succeed, then create relationship
-            _tagHandlers.CreateRelationship(createTag, category);
+            _tagHandlers.CreateCategoryTag(createTag, category);
 
             return Ok(createTag);
         }
