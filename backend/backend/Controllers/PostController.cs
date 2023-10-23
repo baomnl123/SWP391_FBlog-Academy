@@ -15,7 +15,7 @@ namespace backend.Controllers
         {
             _postHandlers = postHandlers;
         }
-        [HttpGet("SearchAllPosts")]
+        [HttpGet("all")]
         public IActionResult GetAllPosts()
         {
             var existed = _postHandlers.GetAllPosts();
@@ -23,7 +23,7 @@ namespace backend.Controllers
             return NotFound();
         }
 
-        [HttpGet("SearchPostsByTitle")]
+        [HttpGet("{title}")]
         public IActionResult SearchPostsByTitle(string title)
         {
             var existed = _postHandlers.SearchPostsByTitle(title);
@@ -35,10 +35,10 @@ namespace backend.Controllers
             return NotFound();
         }
 
-        [HttpGet("ViewPendingPostList/{viewerId}")]
-        public IActionResult ViewPendingPostList(int viewerId)
+        [HttpGet("pending")]
+        public IActionResult ViewPendingPostList()
         {
-            var existed = _postHandlers.ViewPendingPostList(viewerId);
+            var existed = _postHandlers.ViewPendingPostList();
             if (existed != null)
             {
                 return Ok(existed.ToList());
@@ -46,7 +46,7 @@ namespace backend.Controllers
             return NotFound();
         }
 
-        [HttpGet("SearchPostByUserId")]
+        [HttpGet("{userId}")]
         public IActionResult SearchPostByUserId(int userId)
         {
             var existedPostList = _postHandlers.SearchPostByUserId(userId);
@@ -57,8 +57,12 @@ namespace backend.Controllers
             return NotFound();
         }
 
-        [HttpPost("CreateNewPost")]
-        public IActionResult CreatePost(int userId, string title, string content, int tagId, int categoryId)
+        [HttpPost]
+        public IActionResult CreatePost([FromForm] int userId, 
+                                        [FromForm] string title, 
+                                        [FromForm] string content, 
+                                        [FromForm] int tagId, 
+                                        [FromForm] int categoryId)
         {
             var newPost = _postHandlers.CreatePost(userId, title, content, tagId, categoryId);
             if (newPost != null)
@@ -68,8 +72,12 @@ namespace backend.Controllers
             return BadRequest();
         }
 
-        [HttpPut("UpdatePost")]
-        public IActionResult UpdatePost(int postId, string title,string content, int tagId, int categoryId)
+        [HttpPut]
+        public IActionResult UpdatePost([FromForm] int postId, 
+                                        [FromForm] string title, 
+                                        [FromForm] string content, 
+                                        [FromForm] int tagId, 
+                                        [FromForm] int categoryId)
         {
             var updatedPost = _postHandlers.UpdatePost(postId, title, content, tagId, categoryId);
             if (updatedPost != null)
@@ -79,8 +87,10 @@ namespace backend.Controllers
             return BadRequest();
         }
 
-        [HttpDelete("DeletePost")]
-        public IActionResult DeletePost(int postId, int tagId, int categoryId)
+        [HttpDelete]
+        public IActionResult DeletePost([FromForm] int postId, 
+                                        [FromForm] int tagId, 
+                                        [FromForm] int categoryId)
         {
             var deletedPost = _postHandlers.DeletePost(postId, tagId, categoryId);
             if(deletedPost != null)
@@ -90,8 +100,8 @@ namespace backend.Controllers
             return BadRequest();
         }
 
-        [HttpPut("ApprovePost")]
-        public IActionResult ApprovePost(int reviewerId, int postId)
+        [HttpPut("approve")]
+        public IActionResult ApprovePost([FromForm] int reviewerId, [FromForm] int postId)
         {
             var approvedPost = _postHandlers.ApprovePost(reviewerId, postId);
             if(approvedPost != null)
@@ -101,8 +111,11 @@ namespace backend.Controllers
             return BadRequest();
         }
 
-        [HttpPut("DenyPost")]
-        public IActionResult DenyPost(int reviewerId, int postId, int tagId, int categoryId)
+        [HttpPut("deny")]
+        public IActionResult DenyPost([FromForm] int reviewerId, 
+                                      [FromForm] int postId, 
+                                      [FromForm] int tagId, 
+                                      [FromForm] int categoryId)
         {
             var deniedPost = _postHandlers.DenyPost(reviewerId, postId, tagId, categoryId);
             if(deniedPost != null)
