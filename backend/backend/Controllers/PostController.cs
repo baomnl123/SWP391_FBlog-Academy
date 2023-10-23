@@ -61,10 +61,12 @@ namespace backend.Controllers
         public IActionResult CreatePost([FromForm] int userId, 
                                         [FromForm] string title, 
                                         [FromForm] string content, 
-                                        [FromForm] int tagId, 
-                                        [FromForm] int categoryId)
+                                        [FromForm] int[] tagIds, 
+                                        [FromForm] int[] categoryIds,
+                                        [FromForm] string[] videoURLs,
+                                        [FromForm] string[] imageURLs)
         {
-            var newPost = _postHandlers.CreatePost(userId, title, content, tagId, categoryId);
+            var newPost = _postHandlers.CreatePost(userId, title, content, tagIds, categoryIds, videoURLs, imageURLs);
             if (newPost != null)
             {
                 return Ok(newPost);
@@ -92,7 +94,7 @@ namespace backend.Controllers
                                         [FromForm] int tagId, 
                                         [FromForm] int categoryId)
         {
-            var deletedPost = _postHandlers.DeletePost(postId, tagId, categoryId);
+            var deletedPost = _postHandlers.DeletePost(postId);
             if(deletedPost != null)
             {
                 return Ok(deletedPost);
