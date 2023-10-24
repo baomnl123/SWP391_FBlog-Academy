@@ -324,7 +324,7 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<UserDTO>(user);
         }
 
-        public UserDTO? UpdateUser(int userID, string name, string email, string password)
+        public UserDTO? UpdateUser(int userID, string name, string password)
         {
             //get user info
             var user = _userRepository.GetUser(userID);
@@ -335,7 +335,6 @@ namespace backend.Handlers.Implementors
             }
             //update
             user.Name = name;
-            user.Email = email;
             if (password != null)
             {
                 user.Password = _hashingString.HashString(password);
