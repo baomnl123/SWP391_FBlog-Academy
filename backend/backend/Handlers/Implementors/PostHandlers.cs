@@ -12,12 +12,16 @@ namespace backend.Handlers.Implementors
         private readonly IUserRepository _userRepository;
         private readonly IVideoHandlers _videoHandlers;
         private readonly IImageHandlers _imageHandlers;
+        private readonly ITagHandlers _tagHandlers;
+        private readonly ICategoryHandlers _categoryHandlers;
         private readonly IMapper _mapper;
 
         public PostHandlers(IPostRepository postRepository,
                             IUserRepository userRepository,
                             IVideoHandlers videoHandlers,
                             IImageHandlers imageHandlers,
+                            ITagHandlers tagHandlers,
+                            ICategoryHandlers categoryHandlers,
                             IMapper mapper)
         {
             _postRepository = postRepository;
@@ -25,6 +29,8 @@ namespace backend.Handlers.Implementors
             _userRepository = userRepository;
             _videoHandlers = videoHandlers;
             _imageHandlers = imageHandlers;
+            _tagHandlers = tagHandlers;
+            _categoryHandlers = categoryHandlers;
         }
 
         public PostDTO? ApprovePost(int reviewerId, int postId)
@@ -33,17 +39,17 @@ namespace backend.Handlers.Implementors
             //                  and not yet removed
             //                  and has role MOD(Moderator) or LT(Lecturer)
             var reviewer = _userRepository.GetUser(reviewerId);
-            if (reviewer != null 
-                && reviewer.Status == true 
-                && ( reviewer.Role.Contains("MOD") || reviewer.Role.Contains("LT") ))
+            if (reviewer != null
+                && reviewer.Status == true
+                && (reviewer.Role.Contains("MOD") || reviewer.Role.Contains("LT")))
             {
                 //check post needed approved exists
                 var existedPost = _postRepository.GetPost(postId);
 
                 //check post is null or removed or approved
-                if (existedPost == null 
+                if (existedPost == null
                     || existedPost.Status == false
-                    || ( existedPost.Status == true && existedPost.IsApproved == true ) ) return null;
+                    || (existedPost.Status == true && existedPost.IsApproved == true)) return null;
 
                 //update info of existedPost
                 existedPost.ReviewerId = reviewerId;
@@ -51,7 +57,7 @@ namespace backend.Handlers.Implementors
                 existedPost.UpdatedAt = DateTime.Now;
 
                 //Update info to database
-                if(!_postRepository.UpdatePost(existedPost)) return null;
+                if (!_postRepository.UpdatePost(existedPost)) return null;
                 return _mapper.Map<PostDTO>(existedPost);
             }
 
@@ -69,19 +75,88 @@ namespace backend.Handlers.Implementors
 
             //create videos for post
             var videos = _videoHandlers.CreateVideo(createdPost.Id, videoURLs);
-            if (videos is not null)
+            if (videos is null)
             {
-                createdPost.Videos = videos;
+                UndoCreate(createdPost.Id);
+                return null;
             };
+            createdPost.Videos = videos;
 
             //create images for post
             var images = _imageHandlers.CreateImage(createdPost.Id, imageURLs);
-            if (images is not null)
+            if (images is null)
             {
-                createdPost.Images = images;
+                UndoCreate(createdPost.Id);
+                return null;
             };
+            createdPost.Images = images;
+
+            //add tags for post if it is successful, return null otherwise
+            var tags = AttachTagsForPost(createdPost, tagIds);
+            if (tags is null) return null;
+            createdPost.Tags = tags;
+
+
+            //add categories for post
+            var categories = AttachCategoriesForPost(createdPost, categoryIds);
+            if (categories is null) return null;
+            createdPost.Categories = categories;
 
             return createdPost;
+        }
+
+        public ICollection<TagDTO>? AttachTagsForPost(PostDTO createdPost, int[] tagIds)
+        {
+            List<TagDTO> tags = new();
+            foreach (var tagId in tagIds)
+            {
+                var tag = _tagHandlers.GetTagById(tagId);
+
+                if (tag is null)
+                {
+                    UndoCreate(createdPost.Id);
+                    return null;
+                };
+
+                var addedTag = _tagHandlers.CreatePostTag(createdPost, tag);
+
+                if (addedTag is null)
+                {
+                    UndoCreate(createdPost.Id);
+                    return null;
+                }
+
+                tags.Add(addedTag);
+            }
+
+            return tags;
+        }
+
+        public ICollection<CategoryDTO>? AttachCategoriesForPost(PostDTO createdPost, int[] categoryIds)
+        {
+            List<CategoryDTO> categories = new();
+            foreach (var categoryId in categoryIds)
+            {
+                var category = _categoryHandlers.GetCategoryById(categoryId);
+
+                if (category is null)
+                {
+                    UndoCreate(createdPost.Id);
+                    return null;
+                };
+
+                var addedCategory = _categoryHandlers.CreatePostCategory(createdPost, category);
+
+                if (addedCategory is null)
+                {
+                    UndoCreate(createdPost.Id);
+                    return null;
+                }
+
+                categories.Add(addedCategory);
+            }
+
+            return categories;
         }
 
         public PostDTO? CreatePost(int userId, string title, string content)
@@ -115,11 +190,11 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<PostDTO>(newPost);
         }
 
-        public PostDTO? DeletePost(int postId)
+        public PostDTO? UndoCreate(int postId)
         {
             var deletedPost = _postRepository.GetPost(postId);
-            if (deletedPost == null 
-                || deletedPost.Status == false 
+            if (deletedPost == null
+                || deletedPost.Status == false
                 || deletedPost.IsApproved == false) return null;
             return _mapper.Map<PostDTO>(deletedPost);
         }
@@ -132,15 +207,15 @@ namespace backend.Handlers.Implementors
             var validReviewer = _userRepository.GetUser(reviewerId);
             if (validReviewer == null
                 || validReviewer.Status == false
-                || !( validReviewer.Role.Contains("MOD") || validReviewer.Role.Contains("LT") )) return null;
+                || !(validReviewer.Role.Contains("MOD") || validReviewer.Role.Contains("LT"))) return null;
 
             //return null if existedPost is null
             //                              or removed
             //                              or approved
             var existedPost = _postRepository.GetPost(postId);
-            if (existedPost == null 
-                ||  existedPost.Status == false 
-                || ( existedPost.Status == true && existedPost.IsApproved == true ) ) return null;
+            if (existedPost == null
+                || existedPost.Status == false
+                || (existedPost.Status == true && existedPost.IsApproved == true)) return null;
 
             //update info of existedPost which is denied
             existedPost.ReviewerId = reviewerId;
@@ -149,7 +224,7 @@ namespace backend.Handlers.Implementors
             existedPost.UpdatedAt = DateTime.Now;
 
             //update info to database
-            if(!_postRepository.UpdatePost(existedPost)) return null;
+            if (!_postRepository.UpdatePost(existedPost)) return null;
             return _mapper.Map<PostDTO>(existedPost);
         }
 
@@ -165,9 +240,9 @@ namespace backend.Handlers.Implementors
             //                  or removed
             //                  or that user does not have role SU(Student) or role MOD(Moderator)
             var exitedUser = _userRepository.GetUser(userId);
-            if (exitedUser == null 
-                || exitedUser.Status == false 
-                || !( exitedUser.Role.Contains("SU") || exitedUser.Role.Contains("MOD") )) return null;
+            if (exitedUser == null
+                || exitedUser.Status == false
+                || !(exitedUser.Role.Contains("SU") || exitedUser.Role.Contains("MOD"))) return null;
 
             //Search Posts' list of userId
             var existedPostList = _postRepository.SearchPostByUserId(userId);
@@ -183,7 +258,7 @@ namespace backend.Handlers.Implementors
         {
             //init listPost to return
             List<PostDTO> listPost = new List<PostDTO>();
-            
+
             //Search all posts which contain content
             var list = _postRepository.SearchPostsByTitle(title);
 
@@ -211,7 +286,7 @@ namespace backend.Handlers.Implementors
             existedPost.UpdatedAt = DateTime.Now;
 
             //Update to database
-            if(!_postRepository.UpdatePost(existedPost)) return null;
+            if (!_postRepository.UpdatePost(existedPost)) return null;
             return _mapper.Map<PostDTO>(existedPost);
         }
 

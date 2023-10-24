@@ -96,7 +96,7 @@ namespace backend.Controllers
                                         [FromForm] int tagId, 
                                         [FromForm] int categoryId)
         {
-            var deletedPost = _postHandlers.DeletePost(postId);
+            var deletedPost = _postHandlers.UndoCreate(postId);
             if(deletedPost != null)
             {
                 return Ok(deletedPost);
