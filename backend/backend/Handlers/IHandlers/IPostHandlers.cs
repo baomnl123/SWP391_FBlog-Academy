@@ -15,7 +15,9 @@ namespace backend.Handlers.IHandlers
                                                     int[] tagIds, int[] categoryIds, 
                                                     string[] videoURLs, string[] imageURLs);
         //Update post
-        public PostDTO? UpdatePost(int postId, string title, string content, int tagId, int categoryId);
+        public PostDTO? UpdatePost(int postId, string title, string content,
+                                                int[] tagIds, int[] categoryIds,
+                                                string[] videoURLs, string[] imageURLs);
         //Delete post
         public PostDTO? DeletePost(int postId);
         //View pending post's list

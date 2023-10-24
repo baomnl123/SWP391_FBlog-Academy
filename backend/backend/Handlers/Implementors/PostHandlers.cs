@@ -63,16 +63,18 @@ namespace backend.Handlers.Implementors
                                                     int[] tagIds, int[] categoryIds,
                                                     string[] videoURLs, string[] imageURLs)
         {
+            //return null if creating post is failed
             var createdPost = CreatePost(userId, title, content);
             if (createdPost == null) return null;
 
+            //create videos for post
             var videos = _videoHandlers.CreateVideo(createdPost.Id, videoURLs);
             if (videos is not null)
             {
                 createdPost.Videos = videos;
             };
 
-
+            //create images for post
             var images = _imageHandlers.CreateImage(createdPost.Id, imageURLs);
             if (images is not null)
             {
@@ -195,7 +197,9 @@ namespace backend.Handlers.Implementors
             return null;
         }
 
-        public PostDTO? UpdatePost(int postId, string title, string content, int tagId, int categoryId)
+        public PostDTO? UpdatePost(int postId, string title, string content,
+                                                int[] tagIds, int[] categoryIds,
+                                                string[] videoURLs, string[] imageURLs)
         {
             //check post is existed
             var existedPost = _postRepository.GetPost(postId);

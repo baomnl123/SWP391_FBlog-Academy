@@ -78,10 +78,12 @@ namespace backend.Controllers
         public IActionResult UpdatePost([FromForm] int postId, 
                                         [FromForm] string title, 
                                         [FromForm] string content, 
-                                        [FromForm] int tagId, 
-                                        [FromForm] int categoryId)
+                                        [FromForm] int[] tagIds, 
+                                        [FromForm] int[] categoryIds,
+                                        [FromForm] string[] videoURLs,
+                                        [FromForm] string[] imageURLs)
         {
-            var updatedPost = _postHandlers.UpdatePost(postId, title, content, tagId, categoryId);
+            var updatedPost = _postHandlers.UpdatePost(postId, title, content, tagIds, categoryIds, videoURLs, imageURLs);
             if (updatedPost != null)
             {
                 return Ok(updatedPost);
