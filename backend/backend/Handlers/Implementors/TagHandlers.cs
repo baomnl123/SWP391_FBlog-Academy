@@ -180,7 +180,7 @@ namespace backend.Handlers.Implementors
             return null;
         }
 
-        public PostTagDTO? CreatePostTag(PostDTO post, TagDTO tag)
+        public TagDTO? CreatePostTag(PostDTO post, TagDTO tag)
         {
             // If relationship exists, then return null.
             var isExists = _postTagRepository.GetPostTag(post.Id, tag.Id);
@@ -190,7 +190,7 @@ namespace backend.Handlers.Implementors
             if (isExists != null && !isExists.Status)
             {
                 _postTagRepository.EnablePostTag(isExists);
-                return _mapper.Map<PostTagDTO>(isExists);
+                return _mapper.Map<TagDTO>(tag);
             }
 
             // Create a new postTag object if isExists is null, or return isExists otherwise.
@@ -203,18 +203,19 @@ namespace backend.Handlers.Implementors
 
             // Add relationship
             if (_postTagRepository.CreatePostTag(postTag))
-                return _mapper.Map<PostTagDTO>(postTag);
+                return _mapper.Map<TagDTO>(tag);
 
             return null;
         }
 
-        public PostTagDTO? DisablePostTag(int postId, int tagId)
+        public TagDTO? DisablePostTag(int postId, int tagId)
         {
+            var tag = _tagRepository.GetTagById(tagId);
             var postTag = _postTagRepository.GetPostTag(postId, tagId);
             if (postTag == null || postTag.Status == false) return null;
 
             if (_postTagRepository.DisablePostTag(postTag))
-                return _mapper.Map<PostTagDTO>(postTag);
+                return _mapper.Map<TagDTO>(tag);
 
             return null;
         }

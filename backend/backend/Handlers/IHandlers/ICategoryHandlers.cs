@@ -18,7 +18,7 @@ namespace backend.Handlers.IHandlers
         public CategoryDTO? UpdateCategory(int currentCategoryId, string newCategoryName);
         public CategoryDTO? EnableCategory(int categoryId);
         public CategoryDTO? DisableCategory(int categoryId);
-        public PostCategoryDTO? CreatePostCategory(PostDTO post, CategoryDTO category);
-        public PostCategoryDTO? DisablePostCategory(int postId, int categoryId);
+        public CategoryDTO? CreatePostCategory(PostDTO post, CategoryDTO category);
+        public CategoryDTO? DisablePostCategory(int postId, int categoryId);
     }
 }

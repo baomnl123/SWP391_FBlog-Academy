@@ -20,7 +20,7 @@ namespace backend.Handlers.IHandlers
         public TagDTO? DisableTag(int tagId);
         public CategoryTagDTO? CreateCategoryTag(TagDTO tag, CategoryDTO category);
         public CategoryTagDTO? DisableCategoryTag(int tagId, int categoryId);
-        public PostTagDTO? CreatePostTag(PostDTO post, TagDTO tag);
-        public PostTagDTO? DisablePostTag(int postId, int tagId);
+        public TagDTO? CreatePostTag(PostDTO post, TagDTO tag);
+        public TagDTO? DisablePostTag(int postId, int tagId);
     }
 }
