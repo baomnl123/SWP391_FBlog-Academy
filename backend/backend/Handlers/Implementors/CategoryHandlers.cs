@@ -141,7 +141,7 @@ namespace backend.Handlers.Implementors
             return (checkCategory) ? _mapper.Map<CategoryDTO>(category) : null;
         }
 
-        public PostCategoryDTO? CreatePostCategory(PostDTO post, CategoryDTO category)
+        public CategoryDTO? CreatePostCategory(PostDTO post, CategoryDTO category)
         {
             // If relationship exists, then return null.
             var isExists = _postCategoryRepository.GetPostCategory(post.Id, category.Id);
@@ -151,7 +151,7 @@ namespace backend.Handlers.Implementors
             if (isExists != null && !isExists.Status)
             {
                 _postCategoryRepository.EnablePostCategory(isExists);
-                return _mapper.Map<PostCategoryDTO>(isExists);
+                return _mapper.Map<CategoryDTO>(category);
             }
 
             // Create a new postTag object if isExists is null, or return isExists otherwise.
@@ -164,18 +164,19 @@ namespace backend.Handlers.Implementors
 
             // Add relationship
             if (_postCategoryRepository.CreatePostCategory(postCategory))
-                return _mapper.Map<PostCategoryDTO>(postCategory);
+                return _mapper.Map<CategoryDTO>(category);
 
             return null;
         }
 
-        public PostCategoryDTO? DisablePostCategory(int postId, int categoryId)
+        public CategoryDTO? DisablePostCategory(int postId, int categoryId)
         {
+            var category = _categoryRepository.GetCategoryById(categoryId);
             var postCategory = _postCategoryRepository.GetPostCategory(postId, categoryId);
             if (postCategory == null || postCategory.Status == false) return null;
 
             if (_postCategoryRepository.DisablePostCategory(postCategory))
-                return _mapper.Map<PostCategoryDTO>(postCategory);
+                return _mapper.Map<CategoryDTO>(category);
 
             return null;
         }
