@@ -18,8 +18,8 @@ namespace backend.Handlers.IHandlers
         public TagDTO? UpdateTag(int currentTagId, string newTagName);
         public TagDTO? EnableTag(int tagId);
         public TagDTO? DisableTag(int tagId);
-        public CategoryTagDTO? CreateCategoryTag(TagDTO tag, CategoryDTO category);
-        public CategoryTagDTO? DisableCategoryTag(int tagId, int categoryId);
+        public TagDTO? CreateCategoryTag(TagDTO tag, CategoryDTO category);
+        public TagDTO? DisableCategoryTag(int tagId, int categoryId);
         public TagDTO? CreatePostTag(PostDTO post, TagDTO tag);
         public TagDTO? DisablePostTag(int postId, int tagId);
     }

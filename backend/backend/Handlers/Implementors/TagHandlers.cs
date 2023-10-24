@@ -141,7 +141,7 @@ namespace backend.Handlers.Implementors
             return (checkTag && checkCategoryTag && checkPostTag) ? _mapper.Map<TagDTO>(tag) : null;
         }
 
-        public CategoryTagDTO? CreateCategoryTag(TagDTO tag, CategoryDTO category)
+        public TagDTO? CreateCategoryTag(TagDTO tag, CategoryDTO category)
         {
             // If relationship exists, then return null.
             var isExists = _categoryTagRepository.GetCategoryTag(tag.Id, category.Id);
@@ -151,7 +151,7 @@ namespace backend.Handlers.Implementors
             if (isExists != null && !isExists.Status)
             {
                 _categoryTagRepository.EnableCategoryTag(isExists);
-                return _mapper.Map<CategoryTagDTO>(isExists);
+                return _mapper.Map<TagDTO>(tag);
             }
 
             // Create a new categoryTag object if isExists is null, or return isExists otherwise.
@@ -164,18 +164,19 @@ namespace backend.Handlers.Implementors
 
             // Add relationship
             if (_categoryTagRepository.CreateCategoryTag(categoryTag))
-                return _mapper.Map<CategoryTagDTO>(categoryTag);
+                return _mapper.Map<TagDTO>(tag);
 
             return null;
         }
 
-        public CategoryTagDTO? DisableCategoryTag(int tagId, int categoryId)
+        public TagDTO? DisableCategoryTag(int tagId, int categoryId)
         {
+            var tag = _tagRepository.GetTagById(tagId);
             var categoryTag = _categoryTagRepository.GetCategoryTag(tagId, categoryId);
             if (categoryTag == null || categoryTag.Status == false) return null;
 
             if (_categoryTagRepository.DisableCategoryTag(categoryTag))
-                return _mapper.Map<CategoryTagDTO>(categoryTag);
+                return _mapper.Map<TagDTO>(tag);
 
             return null;
         }
