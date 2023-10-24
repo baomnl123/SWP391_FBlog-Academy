@@ -97,9 +97,9 @@ namespace backend.Controllers
             return Ok(user);
         }
         [HttpPut()]
-        public IActionResult UpdateUser([FromForm] int userID, [FromForm] string name, [FromForm] string email, [FromForm] string? password)
+        public IActionResult UpdateUser([FromForm] int userID, [FromForm] string name, [FromForm] string? password)
         {
-            var user = _userHandlers.UpdateUser(userID, name, email, password);
+            var user = _userHandlers.UpdateUser(userID, name, password);
             if (user == null)
             {
                 return BadRequest();
