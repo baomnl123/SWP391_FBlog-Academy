@@ -35,7 +35,7 @@ namespace backend.Handlers.Implementors
             if (existedVote != null)
             {
                 //return null if Upvote or Downvote is set
-                if (existedVote.UpVote || existedVote.DownVote) return null;
+                if ((existedVote.UpVote && vote) || (existedVote.DownVote && !vote)) return null;
 
                 if (vote)
                 {
