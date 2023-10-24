@@ -6,24 +6,35 @@ namespace backend.Handlers.IHandlers
     {
         //Get all posts of user
         public ICollection<PostDTO>? SearchPostByUserId(int userId);
+
         //Search all posts
         public ICollection<PostDTO>? GetAllPosts();
+
         //Search Posts which contain content.
         public ICollection<PostDTO>? SearchPostsByTitle(string title);
+
         //Create post
         public PostDTO? CreatePost(int userId, string title, string content, 
                                                     int[] tagIds, int[] categoryIds, 
                                                     string[] videoURLs, string[] imageURLs);
+        public PostDTO? CreatePost(int userId, string title, string content);
+        public ICollection<TagDTO>? AttachTagsForPost(PostDTO createdPost, int[] tagIds);
+        public ICollection<CategoryDTO>? AttachCategoriesForPost(PostDTO createdPost, int[] categoryIds);
+        
         //Update post
         public PostDTO? UpdatePost(int postId, string title, string content,
                                                 int[] tagIds, int[] categoryIds,
                                                 string[] videoURLs, string[] imageURLs);
+
         //Delete post
-        public PostDTO? DeletePost(int postId);
+        public PostDTO? UndoCreate(int postId);
+
         //View pending post's list
         public ICollection<PostDTO>? ViewPendingPostList();
+
         //Approve post
         public PostDTO? ApprovePost(int reviewerId, int postId);
+
         //Deny post
         public PostDTO? DenyPost(int reviewerId, int postId, int tagId, int categoryId);
     }
