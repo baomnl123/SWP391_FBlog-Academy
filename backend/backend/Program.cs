@@ -6,7 +6,7 @@ using backend.Repositories.IRepositories;
 using RestSharp;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddSwaggerGen();
 // Add services to the container.
 builder.Services.AddSingleton<IRestClient, RestClient>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

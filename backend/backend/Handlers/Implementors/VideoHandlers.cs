@@ -104,7 +104,7 @@ namespace backend.Handlers.Implementors
             video.Url = newVideoURL;
 
             // If update succeed then return video, else return null
-            if (_videoRepository.DisableVideo(video))
+            if (_videoRepository.UpdateVideo(postId,video))
                 return _mapper.Map<VideoDTO>(video);
 
             return null;

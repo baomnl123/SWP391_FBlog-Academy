@@ -454,6 +454,9 @@ namespace backend.Models
                 entity.Property(e => e.Id)
                     .HasColumnName("id");
 
+                entity.Property(e => e.AvatarUrl)
+                    .IsRequired();
+
                 entity.Property(e => e.CreatedAt)
                     .HasColumnType("datetime")
                     .HasColumnName("created_at");
