@@ -13,6 +13,7 @@ namespace backend.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    avatar_url = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     password = table.Column<string>(type: "varchar(65)", unicode: false, maxLength: 65, nullable: true),
