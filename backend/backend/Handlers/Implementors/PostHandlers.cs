@@ -261,7 +261,7 @@ namespace backend.Handlers.Implementors
         {
             //disable videos of post if post has videos
             var deletingVideos = _videoHandlers.GetVideosByPost(deletingPost.Id);
-            if (deletingVideos is not null)
+            if (deletingVideos is not null && deletingVideos.Count > 0)
             {
                 foreach (var video in deletingVideos)
                 {
@@ -273,7 +273,7 @@ namespace backend.Handlers.Implementors
 
             //disable images of post if post has images
             var deletingImages = _imageHandlers.GetImagesByPost(deletingPost.Id);
-            if (deletingImages is not null)
+            if (deletingImages is not null && deletingImages.Count > 0)
             {
                 foreach (var image in deletingImages)
                 {
@@ -303,7 +303,7 @@ namespace backend.Handlers.Implementors
 
             return deletingPost;
         }
-        public PostDTO? DenyPost(int reviewerId, int postId, int tagId, int categoryId)
+        public PostDTO? DenyPost(int reviewerId, int postId)
         {
             //return null if validReviewer is null
             //                              or removed
@@ -311,7 +311,7 @@ namespace backend.Handlers.Implementors
             var validReviewer = _userRepository.GetUser(reviewerId);
             if (validReviewer == null
                 || validReviewer.Status == false
-                || !(validReviewer.Role.Contains("MOD") || validReviewer.Role.Contains("LT"))) return null;
+                || !(validReviewer.Role.Contains("MD") || validReviewer.Role.Contains("LT"))) return null;
 
             //return null if existedPost is null
             //                              or removed
@@ -391,7 +391,7 @@ namespace backend.Handlers.Implementors
         {
             //check post is existed
             var existedPost = _postRepository.GetPost(postId);
-            if (existedPost == null || !(existedPost.Status == true && existedPost.IsApproved == true)) return null;
+            if (existedPost == null || !existedPost.Status == true) return null;
 
             //Update info of existed post
             existedPost.Title = title;
@@ -404,7 +404,7 @@ namespace backend.Handlers.Implementors
             if (updatingPost is null) return null;
 
             //updating videos if it is successful, return null otherwise 
-            if (videoURLs is not null)
+            if (videoURLs is not null && videoURLs.Length > 0)
             {
                 var updatedVideos = UpdateVideosOfPost(postId, videoURLs);
                 if (updatedVideos is null) return null;
@@ -413,7 +413,7 @@ namespace backend.Handlers.Implementors
             else updatingPost.Videos = null;
 
             //Updating images if it is successful.Otherwise, return null
-            if (imageURLs is not null)
+            if (imageURLs is not null && imageURLs.Length > 0)
             {
                 var updatedImages = UpdateImagesOfPost(postId, imageURLs);
                 if (updatedImages is null) return null;
@@ -421,7 +421,7 @@ namespace backend.Handlers.Implementors
             }
             else updatingPost.Images = null;
 
-            if (tagIds is not null)
+            if (tagIds is not null && tagIds.Length > 0)
             {
                 //Disable all relationship of post and tags to update new
                 var tagsOfPost = _postTagRepository.GetPostTagsByPostId(postId);
@@ -438,7 +438,7 @@ namespace backend.Handlers.Implementors
             }
             else updatingPost.Tags = null;
 
-            if (categoryIds is not null)
+            if (categoryIds is not null && categoryIds.Length > 0)
             {
                 //Disable all relationship of post and categories to update new
                 var categoriesOfPost = _postCategoryRepository.GetPostCategoriesByPostId(postId);

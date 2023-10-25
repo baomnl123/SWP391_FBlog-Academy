@@ -131,7 +131,6 @@ namespace backend.Handlers.Implementors
             var categoryTags = _categoryTagRepository.GetCategoryTagsByCategoryId(category.Id);
             var postCategories = _postCategoryRepository.GetPostCategoriesByCategoryId(category.Id);
             if (category == null || category.Status == false) return null;
-
             // Check if all disable succeeded.
             var checkCategory = _categoryRepository.DisableCategory(category);
             var checkCategoryTag = categoryTags.All(categoryTag => _categoryTagRepository.DisableCategoryTag(categoryTag));
@@ -173,8 +172,8 @@ namespace backend.Handlers.Implementors
         {
             var category = _categoryRepository.GetCategoryById(categoryId);
             var postCategory = _postCategoryRepository.GetPostCategory(postId, categoryId);
-            if (postCategory == null || postCategory.Status == false) return null;
-
+            if (postCategory == null) return null;
+            // || postCategory.Status == false
             if (_postCategoryRepository.DisablePostCategory(postCategory))
                 return _mapper.Map<CategoryDTO>(category);
 

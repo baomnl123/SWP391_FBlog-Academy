@@ -41,6 +41,6 @@ namespace backend.Handlers.IHandlers
         public PostDTO? ApprovePost(int reviewerId, int postId);
 
         //Deny post
-        public PostDTO? DenyPost(int reviewerId, int postId, int tagId, int categoryId);
+        public PostDTO? DenyPost(int reviewerId, int postId);
     }
 }

@@ -455,6 +455,7 @@ namespace backend.Models
                     .HasColumnName("id");
 
                 entity.Property(e => e.AvatarUrl)
+                    .HasColumnName("avatar_url")
                     .IsRequired();
 
                 entity.Property(e => e.CreatedAt)
