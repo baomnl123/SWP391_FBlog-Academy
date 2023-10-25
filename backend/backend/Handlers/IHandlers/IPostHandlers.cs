@@ -15,8 +15,8 @@ namespace backend.Handlers.IHandlers
 
         //Create post
         public PostDTO? CreatePost(int userId, string title, string content, 
-                                                    int[] tagIds, int[] categoryIds, 
-                                                    string[] videoURLs, string[] imageURLs);
+                                                    int[]? tagIds, int[]? categoryIds, 
+                                                    string[]? videoURLs, string[]? imageURLs);
         public PostDTO? CreatePost(int userId, string title, string content);
         public ICollection<TagDTO>? AttachTagsForPost(PostDTO createdPost, int[] tagIds);
         public ICollection<CategoryDTO>? AttachCategoriesForPost(PostDTO createdPost, int[] categoryIds);
@@ -25,9 +25,14 @@ namespace backend.Handlers.IHandlers
         public PostDTO? UpdatePost(int postId, string title, string content,
                                                 int[] tagIds, int[] categoryIds,
                                                 string[] videoURLs, string[] imageURLs);
+        public ICollection<VideoDTO>? UpdateVideosOfPost(int postId, string[] videoURLs);
+        public ICollection<ImageDTO>? UpdateImagesOfPost(int postId, string[] imageURLs);
 
         //Delete post
-        public PostDTO? UndoCreate(int postId);
+        public PostDTO? DisablePost(int postId);
+        public PostDTO? DisableAllRelatedToPost(PostDTO deletingPost);
+        //Delete only post (not related data)
+        public PostDTO? Delete(int postId);
 
         //View pending post's list
         public ICollection<PostDTO>? ViewPendingPostList();

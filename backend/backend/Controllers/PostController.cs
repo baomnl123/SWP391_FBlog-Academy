@@ -61,10 +61,10 @@ namespace backend.Controllers
         public IActionResult CreatePost([FromForm] int userId, 
                                         [FromForm] string title, 
                                         [FromForm] string content, 
-                                        [FromForm] int[] tagIds, 
-                                        [FromForm] int[] categoryIds,
-                                        [FromForm] string[] videoURLs,
-                                        [FromForm] string[] imageURLs)
+                                        [FromForm] int[]? tagIds, 
+                                        [FromForm] int[]? categoryIds,
+                                        [FromForm] string[]? videoURLs,
+                                        [FromForm] string[]? imageURLs)
         {
             var newPost = _postHandlers.CreatePost(userId, title, content, tagIds, categoryIds, videoURLs, imageURLs);
             if (newPost != null)
@@ -96,7 +96,7 @@ namespace backend.Controllers
                                         [FromForm] int tagId, 
                                         [FromForm] int categoryId)
         {
-            var deletedPost = _postHandlers.UndoCreate(postId);
+            var deletedPost = _postHandlers.DisablePost(postId);
             if(deletedPost != null)
             {
                 return Ok(deletedPost);
