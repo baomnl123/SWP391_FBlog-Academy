@@ -20,7 +20,7 @@ namespace backend.Handlers.Implementors
             _userRoleConstrant = new();
             _hashingString = new();
         }
-        public UserDTO? CreateLecturer(string name, string email, string password)
+        public UserDTO? CreateLecturer(string name, string avatarURL, string email, string password)
         {
             //make sure that info is not null
             if (name == null || email == null)
@@ -45,6 +45,7 @@ namespace backend.Handlers.Implementors
                 {
                     existedUser.Password = _hashingString.HashString(password);
                 }
+                existedUser.AvatarUrl = avatarURL;
                 existedUser.Status = true;
                 existedUser.UpdatedAt = DateTime.Now;
                 if (!_userRepository.UpdateUser(existedUser))
@@ -58,6 +59,7 @@ namespace backend.Handlers.Implementors
             User newUser = new()
             {
                 Name = name,
+                AvatarUrl = avatarURL,
                 Email = email,
                 Role = lectureRole,
                 CreatedAt = DateTime.Now,
@@ -77,7 +79,7 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<UserDTO>(newUser);
         }
 
-        public UserDTO? CreateUser(string name, string email, string password)
+        public UserDTO? CreateUser(string name, string avatarURL, string email, string password)
         {
             //make sure that info is not null
             if (name == null || email == null)
@@ -102,6 +104,7 @@ namespace backend.Handlers.Implementors
                 {
                     existedUser.Password = _hashingString.HashString(password);
                 }
+                existedUser.AvatarUrl = avatarURL;
                 existedUser.Status = true;
                 existedUser.UpdatedAt = DateTime.Now;
                 if (!_userRepository.UpdateUser(existedUser))
@@ -116,6 +119,7 @@ namespace backend.Handlers.Implementors
             {
                 Name = name,
                 Email = email,
+                AvatarUrl = avatarURL,
                 Role = studentRole,
                 CreatedAt = DateTime.Now,
                 Status = true,
@@ -324,7 +328,7 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<UserDTO>(user);
         }
 
-        public UserDTO? UpdateUser(int userID, string name, string password)
+        public UserDTO? UpdateUser(int userID, string name, string avatarURL, string password)
         {
             //get user info
             var user = _userRepository.GetUser(userID);
@@ -335,6 +339,8 @@ namespace backend.Handlers.Implementors
             }
             //update
             user.Name = name;
+            user.AvatarUrl = avatarURL;
+            //update password
             if (password != null)
             {
                 user.Password = _hashingString.HashString(password);

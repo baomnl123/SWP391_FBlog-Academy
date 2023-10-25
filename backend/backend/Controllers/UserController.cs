@@ -77,9 +77,9 @@ namespace backend.Controllers
         }
 
         [HttpPost("student")]
-        public IActionResult CreateUser([FromForm] string name, [FromForm] string email, [FromForm] string? password)
+        public IActionResult CreateUser([FromForm] string name,[FromForm] string avatarUrl, [FromForm] string email, [FromForm] string? password)
         {
-            var user = _userHandlers.CreateUser(name, email, password);
+            var user = _userHandlers.CreateUser(name,avatarUrl, email, password);
             if (user == null)
             {
                 return BadRequest();
@@ -87,9 +87,9 @@ namespace backend.Controllers
             return Ok(user);
         }
         [HttpPost("lecturer")]
-        public IActionResult CreateLecturer([FromForm] string name, [FromForm] string email, [FromForm] string? password)
+        public IActionResult CreateLecturer([FromForm] string name,[FromForm] string avatarUrl, [FromForm] string email, [FromForm] string? password)
         {
-            var user = _userHandlers.CreateLecturer(name, email, password);
+            var user = _userHandlers.CreateLecturer(name,avatarUrl, email, password);
             if (user == null)
             {
                 return BadRequest();
@@ -97,9 +97,9 @@ namespace backend.Controllers
             return Ok(user);
         }
         [HttpPut()]
-        public IActionResult UpdateUser([FromForm] int userID, [FromForm] string name, [FromForm] string? password)
+        public IActionResult UpdateUser([FromForm] int userID,[FromForm] string avatarUrl, [FromForm] string name, [FromForm] string? password)
         {
-            var user = _userHandlers.UpdateUser(userID, name, password);
+            var user = _userHandlers.UpdateUser(userID, name, avatarUrl, password);
             if (user == null)
             {
                 return BadRequest();

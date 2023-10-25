@@ -213,8 +213,8 @@ namespace backend.Handlers.Implementors
         {
             var tag = _tagRepository.GetTagById(tagId);
             var postTag = _postTagRepository.GetPostTag(postId, tagId);
-            if (postTag == null || postTag.Status == false) return null;
-
+            if (postTag == null) return null;
+            // || postTag.Status == false
             if (_postTagRepository.DisablePostTag(postTag))
                 return _mapper.Map<TagDTO>(tag);
 

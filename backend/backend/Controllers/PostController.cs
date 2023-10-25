@@ -23,7 +23,7 @@ namespace backend.Controllers
             return NotFound();
         }
 
-        [HttpGet("{title}")]
+        [HttpGet("title/{title}")]
         public IActionResult SearchPostsByTitle(string title)
         {
             var existed = _postHandlers.SearchPostsByTitle(title);
@@ -46,7 +46,7 @@ namespace backend.Controllers
             return NotFound();
         }
 
-        [HttpGet("{userId}")]
+        [HttpGet("user/{userId}")]
         public IActionResult SearchPostByUserId(int userId)
         {
             var existedPostList = _postHandlers.SearchPostByUserId(userId);
@@ -91,10 +91,8 @@ namespace backend.Controllers
             return BadRequest();
         }
 
-        [HttpDelete]
-        public IActionResult DeletePost([FromForm] int postId, 
-                                        [FromForm] int tagId, 
-                                        [FromForm] int categoryId)
+        [HttpDelete("{postId}")]
+        public IActionResult DeletePost(int postId)
         {
             var deletedPost = _postHandlers.DisablePost(postId);
             if(deletedPost != null)
@@ -117,11 +115,9 @@ namespace backend.Controllers
 
         [HttpPut("deny")]
         public IActionResult DenyPost([FromForm] int reviewerId, 
-                                      [FromForm] int postId, 
-                                      [FromForm] int tagId, 
-                                      [FromForm] int categoryId)
+                                      [FromForm] int postId)
         {
-            var deniedPost = _postHandlers.DenyPost(reviewerId, postId, tagId, categoryId);
+            var deniedPost = _postHandlers.DenyPost(reviewerId, postId);
             if(deniedPost != null)
             {
                 return Ok(deniedPost);
