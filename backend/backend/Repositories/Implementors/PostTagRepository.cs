@@ -55,6 +55,17 @@ namespace backend.Repositories.Implementors
             return _context.PostTags.Where(c => c.TagId == tagId).ToList();
         }
 
+        public ICollection<Tag>? GetTagsOf(int postId)
+        {
+            List<Tag> tags = new();
+            var list = _context.PostTags.Where(r => r.PostId == postId && r.Status).Select(r => r.Tag).ToList();
+            if (list is null || list.Count == 0) return null;
+            foreach (var item in list)
+            {
+                if (item.Status) tags.Add(item); 
+            }
+            return tags.Count == 0? null: tags;
+        }
         public bool Save()
         {
             try
