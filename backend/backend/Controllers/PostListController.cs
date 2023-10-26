@@ -24,16 +24,6 @@ namespace backend.Controllers
             }
             return Ok(savelists);
         }
-        [HttpGet("{saveListID}")]
-        public IActionResult GetAllPostBySaveList(int saveListID)
-        {
-            var postList = _postListHandlers.GetAllPostBySaveListID(saveListID);
-            if (postList == null)
-            {
-                return NotFound();
-            }
-            return Ok(postList);
-        }
         [HttpPost]
         public IActionResult AddPostList(int saveListID, int postID)
         {
@@ -44,15 +34,6 @@ namespace backend.Controllers
             }
             return Ok(postList);
         }
-        [HttpDelete]
-        public IActionResult DeletePostList(int saveListID, int postID)
-        {
-            var postList = _postListHandlers.DisablePostList(saveListID, postID);
-            if (postList == null)
-            {
-                return BadRequest();
-            }
-            return Ok(postList);
-        }
+        
     }
 }

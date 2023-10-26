@@ -9,20 +9,25 @@ namespace backend.Handlers.Implementors
 {
     public class ReportPostHandlers : IReportPostHandlers
     {
+        private readonly UserRoleConstrant _userRoleConstrant;
+        private readonly IUserRepository _userRepository;
         private readonly IReportPostRepository _reportPostRepository;
         private readonly IMapper _mapper;
         private readonly ReportStatusConstrant _reportStatusConstrant;
-        public ReportPostHandlers(IMapper mapper, IReportPostRepository reportPostRepository)
+        public ReportPostHandlers(IMapper mapper,
+                                  IReportPostRepository reportPostRepository,
+                                  IUserRepository userRepository)
         {
+            _userRoleConstrant = new();
             _reportStatusConstrant = new();
             _mapper = mapper;
             _reportPostRepository = reportPostRepository;
+            _userRepository = userRepository;
         }
         public ReportPostDTO? AddReportPost(int reporterID, int postID, string content)
         {
-            ReportStatusConstrant reportStatusConstrant = new ReportStatusConstrant();
             //Get Pending Status
-            var pending = reportStatusConstrant.GetPendingStatus();
+            var pending = _reportStatusConstrant.GetPendingStatus();
             //Check Exist
             if (_reportPostRepository.isReported(reporterID, postID))
             {
@@ -43,7 +48,7 @@ namespace backend.Handlers.Implementors
                 return _mapper.Map<ReportPostDTO>(reportPost);
             }
             //Ensure that content is not null
-            if(content == null)
+            if (content == null)
             {
                 content = string.Empty;
             }
@@ -65,28 +70,39 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<ReportPostDTO>(newReportPost);
         }
 
-        public bool DenyReportPost(int reportPostID,int postID)
+        public ReportPostDTO? DenyReportPost(int adminID, int reportPostID, int postID)
         {
+            //get admin
+            var admin = _userRepository.GetUser(adminID);
+            if (admin == null || !admin.Status)
+            {
+                return null;
+            }
+            //get admin role
+            var adminRole = _userRoleConstrant.GetAdminRole();
+            if (!admin.Role.Contains(adminRole))
+            {
+                return null;
+            }
             //Get Report
-            var reportPost = _reportPostRepository.GetReportPostByIDs(reportPostID,postID);
+            var reportPost = _reportPostRepository.GetReportPostByIDs(reportPostID, postID);
             var disableStatus = _reportStatusConstrant.GetDisableStatus();
             //Check Null
-            if (reportPost == null || reportPost.Status.Contains(disableStatus) )
+            if (reportPost == null || reportPost.Status.Contains(disableStatus))
             {
-                return false;
+                return null;
             }
             //Disable Report
             if (!_reportPostRepository.DisableReportPost(reportPost))
             {
-                return false;
+                return null;
             }
-                return true;
+            return _mapper.Map<ReportPostDTO>(reportPost);
         }
 
         public ICollection<ReportPostDTO>? GetAllPendingReportPost()
         {
-            //Init List
-            List<ReportPostDTO> reportPostList = new List<ReportPostDTO>();
+
             //Get List
             var list = _reportPostRepository.GetAllReportPost();
             //Check Null
@@ -94,27 +110,26 @@ namespace backend.Handlers.Implementors
             {
                 return null;
             }
-            else
+            //Init List
+            var reportPostList = new List<ReportPostDTO>();
+            //Get Status
+            var pendingStatus = _reportStatusConstrant.GetPendingStatus();
+            foreach (var reportPost in list)
             {
-                //Get Status
-                var pendingStatus = _reportStatusConstrant.GetPendingStatus();
-                foreach (var reportPost in list)
+                //Check status Status
+                if (reportPost.Status.Contains(pendingStatus))
                 {
-                    //Check status Status
-                    if (reportPost.Status.Contains(pendingStatus))
-                    {
-                        //Map to ReportPostDTO
-                        reportPostList.Add(_mapper.Map<ReportPostDTO>(reportPost));
-                    }
+                    //Map to ReportPostDTO
+                    reportPostList.Add(_mapper.Map<ReportPostDTO>(reportPost));
                 }
-                //Return Result
-                return reportPostList;
             }
+            //Return Result
+            return reportPostList;
         }
         public ICollection<ReportPostDTO>? GetAllReportPost()
         {
             var list = _reportPostRepository.GetAllReportPost();
-            if(list == null || list.Count == 0)
+            if (list == null || list.Count == 0)
             {
                 return null;
             }
@@ -144,30 +159,52 @@ namespace backend.Handlers.Implementors
             {
                 return null;
             }
-                //Map To ReportPostDTO
-                return _mapper.Map<ReportPostDTO>(reportPost);
+            //Map To ReportPostDTO
+            return _mapper.Map<ReportPostDTO>(reportPost);
         }
 
-        public ReportPostDTO? UpdateReportStatus(int reportPostID, int postID, string status)
+        public ReportPostDTO? UpdateReportStatus(int adminID, int reportPostID, int postID, string status)
         {
-            //Get Report
-            var reportPost = _reportPostRepository.GetReportPostByIDs(reportPostID, postID);
             //Get Status
             var disableStatus = _reportStatusConstrant.GetDisableStatus();
+            var approveStatus = _reportStatusConstrant.GetApprovedStatus();
+            var declinedStatus = _reportStatusConstrant.GetDeclinedStatus();
+            var pendingStatus = _reportStatusConstrant.GetPendingStatus();
+            if (!status.Contains(disableStatus)
+                && !status.Contains(approveStatus)
+                && !status.Contains(declinedStatus)
+                && !status.Contains(pendingStatus))
+            {
+                return null;
+            }
+            //Get Report
+            var reportPost = _reportPostRepository.GetReportPostByIDs(reportPostID, postID);
+            //get admin
+            var admin = _userRepository.GetUser(adminID);
+            if(admin == null || !admin.Status)
+            {
+                return null;
+            }
+            //get admin role
+            var adminRole = _userRoleConstrant.GetAdminRole();
+            if (!admin.Role.Contains(adminRole))
+            {
+                return null;
+            }
             //Check Null
             if (reportPost == null || reportPost.Status.Contains(disableStatus))
             {
                 return null;
             }
-                //Update Status
-                reportPost.Status = status;
-                if (!_reportPostRepository.UpdateReportPost(reportPost))
-                {
-                    return null;
-                }
-                    //Map To ReportPostDTO
-                    var result = _mapper.Map<ReportPostDTO>(reportPost);
-                    return result;
+            //Update Status
+            reportPost.Status = status;
+            if (!_reportPostRepository.UpdateReportPost(reportPost))
+            {
+                return null;
+            }
+            //Map To ReportPostDTO
+            var result = _mapper.Map<ReportPostDTO>(reportPost);
+            return result;
         }
     }
 }

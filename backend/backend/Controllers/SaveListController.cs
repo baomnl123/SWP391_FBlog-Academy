@@ -10,9 +10,11 @@ namespace backend.Controllers
     public class SaveListController : ControllerBase
     {
         private readonly ISaveListHandlers _saveListHandlers;
-        public SaveListController(ISaveListHandlers saveListHandlers)
+        private readonly IPostListHandlers _postListHandlers;
+        public SaveListController(ISaveListHandlers saveListHandlers, IPostListHandlers postListHandlers)
         {
             _saveListHandlers = saveListHandlers;
+            _postListHandlers = postListHandlers;
         }
         [HttpGet("{userID}")]
         public IActionResult GetAllSaveList(int userID)
@@ -33,6 +35,17 @@ namespace backend.Controllers
                 return NotFound();
             }
             return Ok(list);
+        }
+
+        [HttpGet("posts/{saveListID}")]
+        public IActionResult GetAllPostBySaveList(int saveListID)
+        {
+            var postList = _postListHandlers.GetAllPostBySaveListID(saveListID);
+            if (postList == null || postList.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(postList);
         }
         [HttpPost]
         public IActionResult AddSaveList([FromForm] int userID, [FromForm] string name)
@@ -65,6 +78,16 @@ namespace backend.Controllers
                 return BadRequest();
             }
             return Ok(saveList);
+        }
+        [HttpDelete("posts")]
+        public IActionResult DeletePostList(int saveListID, int postID)
+        {
+            var postList = _postListHandlers.DisablePostList(saveListID, postID);
+            if (postList == null)
+            {
+                return BadRequest();
+            }
+            return Ok(postList);
         }
     }
 }

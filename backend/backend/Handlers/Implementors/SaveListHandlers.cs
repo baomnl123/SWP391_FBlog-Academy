@@ -71,8 +71,6 @@ namespace backend.Handlers.Implementors
 
         public ICollection<SaveListDTO>? GetAllActiveSaveList(int userID)
         {
-            //init list
-            List<SaveListDTO> saveListsDTO = new();
             //get savelist information
             var saveLists = _saveListRepository.GetAllSaveLists(userID);
             //if savelist is unavailable then return nothing
@@ -80,6 +78,8 @@ namespace backend.Handlers.Implementors
             {
                 return null;
             }
+            //init list
+            var saveListsDTO = new List<SaveListDTO>();
             foreach (var saveList in saveLists)
             {
                 //Map to DTO

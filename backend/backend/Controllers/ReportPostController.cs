@@ -16,7 +16,7 @@ namespace backend.Controllers
         [HttpGet]
         public IActionResult GetAllReportPost()
         {
-            List<ReportPostDTO> reportPostList = (List<ReportPostDTO>)_reportPostHandlers.GetAllReportPost();
+            var reportPostList = _reportPostHandlers.GetAllReportPost();
             if (reportPostList == null || reportPostList.Count == 0)
             {
                 return NotFound();
@@ -26,7 +26,7 @@ namespace backend.Controllers
         [HttpGet("pending")]
         public IActionResult GetAllPendingReportPost()
         {
-            List<ReportPostDTO> reportPostList = (List<ReportPostDTO>)_reportPostHandlers.GetAllPendingReportPost();
+            var reportPostList = _reportPostHandlers.GetAllPendingReportPost();
 
             if (reportPostList == null || reportPostList.Count == 0)
             {
@@ -56,9 +56,9 @@ namespace backend.Controllers
             return Ok(reportPostDTO);
         }
         [HttpPut("status")]
-        public IActionResult UpdateReportStatus([FromForm] int reportPostID, [FromForm] int postID, [FromForm] string status)
+        public IActionResult UpdateReportStatus([FromForm]int adminID, [FromForm] int reportPostID, [FromForm] int postID, [FromForm] string status)
         {
-            var reportPostDTO = _reportPostHandlers.UpdateReportStatus(reportPostID, postID, status);
+            var reportPostDTO = _reportPostHandlers.UpdateReportStatus(adminID, reportPostID, postID, status);
             if (reportPostDTO == null)
             {
                 return BadRequest();
@@ -66,13 +66,14 @@ namespace backend.Controllers
             return Ok(reportPostDTO);
         }
         [HttpDelete]
-        public IActionResult DisableReportPost([FromForm] int reportPostID, [FromForm] int postID)
+        public IActionResult DisableReportPost([FromForm]int adminID,[FromForm] int reportPostID, [FromForm] int postID)
         {
-            if (!_reportPostHandlers.DenyReportPost(reportPostID, postID))
+            var reportPost = _reportPostHandlers.DenyReportPost(adminID, reportPostID, postID);
+            if(reportPost == null)
             {
                 return BadRequest();
             }
-                return Ok();
+            return Ok(reportPost);
         }
     }
 }

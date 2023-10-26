@@ -17,19 +17,24 @@ namespace backend.Handlers.Implementors
             _userRepository = userRepository;
             _mapper = mapper;
         }
-        
+
         public FollowUserDTO? FollowOtherUser(int currentUserID, int userID)
         {
             //Get current User and followUser info
             var currentUser = _userRepository.GetUser(currentUserID);
+            //check if null
+            if (currentUser == null || !currentUser.Status)
+            {
+                return null;
+            }
             var followedUser = _userRepository.GetUser(userID);
             //Check if null
-            if (currentUser == null || followedUser == null)
+            if (followedUser == null || !followedUser.Status)
             {
                 return null;
             }
             //Check if self-follow
-            if (currentUser == followedUser)
+            if (currentUser.Equals(followedUser))
             {
                 return null;
             }
@@ -39,8 +44,7 @@ namespace backend.Handlers.Implementors
             if (followRelationship != null)
             {
                 //If it is available then return nothing
-                if (followRelationship.Status == true)
-
+                if (followRelationship.Status)
                 {
                     return null;
                 }
@@ -74,12 +78,10 @@ namespace backend.Handlers.Implementors
 
         public ICollection<UserDTO>? GetAllFollowerUsers(int currentUserID)
         {
-            //Init list
-            List<UserDTO> listResult = new();
             //Get current user info
             var currentUser = _userRepository.GetUser(currentUserID);
             //if user is not avaiable
-            if (currentUser == null || currentUser.Status == false)
+            if (currentUser == null || !currentUser.Status)
             {
                 return null;
             }
@@ -90,6 +92,8 @@ namespace backend.Handlers.Implementors
             {
                 return null;
             }
+            //Init list
+            var listResult = new List<UserDTO>();
             //map to userdto
             foreach (var user in list)
             {
@@ -97,8 +101,16 @@ namespace backend.Handlers.Implementors
                 if (user.Status)
                 {
                     //map to dto
-                    listResult.Add(_mapper.Map<UserDTO>(user));
+                    var followRelationship = _followUserRepositoy.GetFollowRelationship(user,currentUser);
+                    if (followRelationship != null && followRelationship.Status)
+                    {
+                        listResult.Add(_mapper.Map<UserDTO>(user));
+                    }
                 }
+            }
+            if(listResult.Count == 0)
+            {
+                return null;
             }
             //return list
             return listResult;
@@ -106,50 +118,54 @@ namespace backend.Handlers.Implementors
 
         public ICollection<UserDTO>? GetAllFollowingUsers(int currentUserID)
         {
-            List<UserDTO> listResult = new();
             //Get currentUserData
             var currentUser = _userRepository.GetUser(currentUserID);
             //Check null
-            if (currentUser == null)
+            if (currentUser == null || !currentUser.Status)
             {
                 return null;
             }
-            else
+            //Get FollowingRelationship
+            var list = _followUserRepositoy.GetAllFollowingUsers(currentUser);
+            //if list is empty return nothing
+            if (list == null || list.Count == 0)
             {
-                //Get FollowingRelationship
-                var list = _followUserRepositoy.GetAllFollowingUsers(currentUser);
-
-                //if list is empty return nothing
-                if (list == null || list.Count == 0)
+                return null;
+            }
+            //init new list
+            var listResult = new List<UserDTO>();
+            //Map To UserDTO
+            foreach (var user in list)
+            {
+                if (user.Status)
                 {
-                    return null;
-                }
-                else
-                {
-                    //Map To UserDTO
-                    foreach (var user in list)
+                    var followRelationship = _followUserRepositoy.GetFollowRelationship(currentUser,user);
+                    if(followRelationship != null && followRelationship.Status)
                     {
                         listResult.Add(_mapper.Map<UserDTO>(user));
                     }
-                    //return list
-                    return listResult;
                 }
             }
+            if(listResult.Count == 0)
+            {
+                return null;
+            }
+            //return list
+            return listResult;
         }
 
         public FollowUserDTO? UnfollowUser(int currentUserID, int userID)
         {
             //Get Users Data
             var currentUser = _userRepository.GetUser(currentUserID);
-            var followedUser = _userRepository.GetUser(userID);
-
             //if current user is unavailable then return nothing
-            if (currentUser == null || currentUser.Status == false)
+            if (currentUser == null || !currentUser.Status)
             {
                 return null;
             }
+            var followedUser = _userRepository.GetUser(userID);
             //if followed user is unavailable then return nothing
-            if (followedUser == null || followedUser.Status == false)
+            if (followedUser == null || !followedUser.Status)
             {
                 return null;
             }
@@ -161,7 +177,7 @@ namespace backend.Handlers.Implementors
             //Get Follow Relationship
             var followRelationship = _followUserRepositoy.GetFollowRelationship(currentUser, followedUser);
             //if null or already disabled then return nothing
-            if (followRelationship == null || followRelationship.Status == false)
+            if (followRelationship == null || !followRelationship.Status)
             {
                 return null;
             }

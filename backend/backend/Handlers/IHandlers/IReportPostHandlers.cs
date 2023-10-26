@@ -6,9 +6,9 @@ namespace backend.Handlers.IHandlers
     {
         public ReportPostDTO? AddReportPost(int reporterID, int postID, string content);
         public ReportPostDTO? UpdateReportPost(int reportPostID, int postID, string content);
-        public ReportPostDTO? UpdateReportStatus(int reportPostID, int postID, string status);
+        public ReportPostDTO? UpdateReportStatus(int adminID, int reportPostID, int postID, string status);
         public ICollection<ReportPostDTO>? GetAllPendingReportPost();
         public ICollection<ReportPostDTO>? GetAllReportPost();
-        public bool DenyReportPost(int reportPostID, int postID);
+        public ReportPostDTO? DenyReportPost(int adminID, int reportPostID, int postID);
     }
 }
