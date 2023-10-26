@@ -3,6 +3,9 @@ using backend.DTO;
 using backend.Handlers.IHandlers;
 using backend.Models;
 using backend.Repositories.IRepositories;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Hosting;
+using System.Security.Policy;
 
 namespace backend.Handlers.Implementors
 {
@@ -62,9 +65,34 @@ namespace backend.Handlers.Implementors
                 existedPost.IsApproved = true;
                 existedPost.UpdatedAt = DateTime.Now;
 
+                //Mapping existedPost to data type PostDTO which have more fields (videos, images, tags, categories)
+                var approvingPost = _mapper.Map<PostDTO>(existedPost);
+                //return null if mapping is failed
+                if (approvingPost is null) return null;
+
+                //Return null if get videos of post is failed
+                var videos = _videoHandlers.GetVideosByPost(approvingPost.Id);
+                if (videos == null) return null;
+                approvingPost.Videos = videos;
+
+                //return null if get images of post is failed
+                var images = _imageHandlers.GetImagesByPost(approvingPost.Id);
+                if (images == null) return null;
+                approvingPost.Images = images;
+
+                //return null if get tags of post is failed
+                var tags = _postTagRepository.GetTagsOf(approvingPost.Id);
+                if (tags == null) return null;
+                approvingPost.Tags = _mapper.Map<List<TagDTO>>(tags);
+
+                //return null if get categories of post is failed
+                var categories = _postCategoryRepository.GetCategoriesOf(approvingPost.Id);
+                if (categories == null) return null;
+                approvingPost.Categories = _mapper.Map<List<CategoryDTO>>(categories);
+
                 //Update info to database
                 if (!_postRepository.UpdatePost(existedPost)) return null;
-                return _mapper.Map<PostDTO>(existedPost);
+                return approvingPost;
             }
 
             //return null if reviewer is invalid
@@ -164,7 +192,7 @@ namespace backend.Handlers.Implementors
             {
                 //Undo creating post and return null if category does not exist or is removed
                 var category = _categoryHandlers.GetCategoryById(categoryId);
-                if (category is null)
+                if (category is null || !category.Status)
                 {
                     Delete(createdPost.Id);
                     return null;
@@ -343,8 +371,31 @@ namespace backend.Handlers.Implementors
 
         public ICollection<PostDTO>? GetAllPosts()
         {
+            //return null if get all posts is failed
             var existed = _postRepository.GetAllPosts();
-            return _mapper.Map<List<PostDTO>>(existed);
+            if (existed == null || existed.Count == 0) return null;
+
+            //map to list DTO
+            List<PostDTO> resultList = _mapper.Map<List<PostDTO>>(existed);
+
+            //get related data for all post
+            foreach (var post in resultList)
+            {
+                var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(post.Id));
+                post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : null;
+
+                var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(post.Id));
+                post.Tags = (getTags is not null && getTags.Count > 0) ? getTags : null;
+
+                var getImages = _imageHandlers.GetImagesByPost(post.Id);
+                post.Images = (getImages is not null && getImages.Count != 0) ? getImages : null;
+
+                var getVideos = _videoHandlers.GetVideosByPost(post.Id);
+                post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : null;
+            }
+
+            //return posts'list
+            return resultList;
         }
 
         public ICollection<PostDTO>? SearchPostByUserId(int userId)
@@ -462,58 +513,40 @@ namespace backend.Handlers.Implementors
 
         public ICollection<VideoDTO>? UpdateVideosOfPost(int postId, string[] videoURLs)
         {
-            //create videos' list to return
-            List<VideoDTO> updatedVideos = new();
-
-            //create videos if post doesn't have videos
-            List<VideoDTO>? videosOfPost = (List<VideoDTO>?)_videoHandlers.GetVideosByPost(postId);
-            if (videosOfPost is null)
+            //disable videos of post if post has videos
+            var videos = _videoHandlers.GetVideosByPost(postId);
+            if (videos is not null && videos.Count > 0)
             {
-                var videos = _videoHandlers.CreateVideo(postId, videoURLs);
-                if (videos is null) return null;
-                else return videos;
-            };
-
-            //
-            int indexOfURL = 0;
-            foreach (var video in videosOfPost)
-            {
-                var updatedVideo = _videoHandlers.UpdateVideo(postId, video.Id, videoURLs[indexOfURL++]);
-                if (updatedVideo != null)
+                foreach (var video in videos)
                 {
-                    updatedVideos.Add(updatedVideo);
+                    var successDelete = _videoHandlers.DisableVideo(video.Id);
+                    if (successDelete is null) return null;
                 }
-                else return null;
             }
-            return updatedVideos;
+
+            //update videos
+            var updatedVideos = _videoHandlers.CreateVideo(postId, videoURLs);
+            if (updatedVideos is null) return null;
+            else return updatedVideos;
         }
 
         public ICollection<ImageDTO>? UpdateImagesOfPost(int postId, string[] imageURLs)
         {
-            //Crate images' list to return
-            List<ImageDTO> updatedImages = new();
-
-            //Creating images of post if post does not have images
-            List<ImageDTO>? imagesOfPost = (List<ImageDTO>?)_imageHandlers.GetImagesByPost(postId);
-            if (imagesOfPost is null)
+            // disable images of post if post has images
+            var images = _imageHandlers.GetImagesByPost(postId);
+            if (images is not null && images.Count > 0)
             {
-                var images = _imageHandlers.CreateImage(postId, imageURLs);
-                if (images is null) return null;
-                else return images;
-            };
-
-            //Updating images' list if post has images
-            int indexOfURL = 0;
-            foreach (var image in imagesOfPost)
-            {
-                var updatedImage = _imageHandlers.UpdateImage(postId, image.Id, imageURLs[indexOfURL++]);
-                if (updatedImage != null)
+                foreach (var image in images)
                 {
-                    updatedImages.Add(updatedImage);
+                    var successDelete = _imageHandlers.DisableImage(image.Id);
+                    if (successDelete is null) return null;
                 }
-                else return null;
             }
-            return updatedImages;
+
+            //update images
+            var updatedImages = _imageHandlers.CreateImage(postId, imageURLs);
+            if (updatedImages is null) return null;
+            else return updatedImages;
         }
 
         public ICollection<PostDTO>? ViewPendingPostList()
