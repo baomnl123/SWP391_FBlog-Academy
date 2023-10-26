@@ -12,7 +12,8 @@ namespace backend.Handlers.Implementors
         private readonly IPostRepository _postRepository;
         private readonly IPostListRepository _postListRepository;
         private readonly IMapper _mapper;
-        public PostListHandlers(ISaveListRepository saveListRepository, IPostRepository postRepository, IPostListRepository postListRepository,IMapper mapper) {
+        public PostListHandlers(ISaveListRepository saveListRepository, IPostRepository postRepository, IPostListRepository postListRepository, IMapper mapper)
+        {
             _saveListRepository = saveListRepository;
             _postRepository = postRepository;
             _postListRepository = postListRepository;
@@ -21,10 +22,23 @@ namespace backend.Handlers.Implementors
 
         public PostListDTO? AddPostList(int saveListID, int postID)
         {
+            //get savelist
+            var saveList = _saveListRepository.GetSaveListBySaveListID(saveListID);
+            //check savelist is available or not
+            if (saveList == null || !saveList.Status)
+            {
+                return null;
+            } 
+            //get postID 
+            var post = _postRepository.GetPost(postID);
+            if(post == null || !post.Status)
+            {
+                return null;
+            }
             //get post list
             var postList = _postListRepository.GetPostList(saveListID, postID);
             //check null
-            if(postList != null)
+            if (postList != null)
             {
                 //check whether it is active then do nothing
                 if (postList.Status)
@@ -41,19 +55,6 @@ namespace backend.Handlers.Implementors
                 }
                 //return
                 return _mapper.Map<PostListDTO>(postList);
-            }
-            //check if savelist and post is currently active
-            var saveList = _saveListRepository.GetSaveListBySaveListID(saveListID);
-            var post = _postRepository.GetPost(postID);
-            //check if null
-            if(saveList == null || post == null)
-            {
-                return null;
-            }
-            //check if disabled
-            if(!saveList.Status || !post.Status)
-            {
-                return null;
             }
             //init new postlist
             var newPostList = new PostList()
@@ -74,10 +75,24 @@ namespace backend.Handlers.Implementors
 
         public PostListDTO? DisablePostList(int saveListID, int postID)
         {
+            //get savelist
+            var saveList = _saveListRepository.GetSaveListBySaveListID(saveListID);
+            //check savelist is available or not
+            if (saveList == null || !saveList.Status)
+            {
+                return null;
+            }
+            //get postID 
+            var post = _postRepository.GetPost(postID);
+            //check post is available or not
+            if (post == null || !post.Status)
+            {
+                return null;
+            }
             //get postlist
             var postList = _postListRepository.GetPostList(saveListID, postID);
             //check whether it is disable then do nothing
-            if (!postList.Status)
+            if (postList == null || !postList.Status)
             {
                 return null;
             }
@@ -94,46 +109,74 @@ namespace backend.Handlers.Implementors
 
         public ICollection<PostDTO>? GetAllPostBySaveListID(int saveListID)
         {
-            //init return list
-            var returnList = new List<PostDTO>();
-            //get list of post
-            var list = _postListRepository.GetAllPost(saveListID);
-            //check if list has nothing then return null
-            if(list == null || list.Count == 0)
+            //get savelist
+            var savelist = _saveListRepository.GetSaveListBySaveListID(saveListID);
+            //check savelist is available or not
+            if (savelist == null || !savelist.Status)
             {
                 return null;
             }
-            //check if post is active then add to new list
-            foreach (var post in list)
+            //get list of post
+            var posts = _postListRepository.GetAllPost(saveListID);
+            //check if list has nothing then return null
+            if (posts == null || posts.Count == 0)
             {
+                return null;
+            }
+            //init return list
+            var returnList = new List<PostDTO>();
+            //check if post is active then add to new list
+            foreach (var post in posts)
+            {
+                //if post is available
                 if (post.Status)
                 {
-                    returnList.Add(_mapper.Map<PostDTO>(post));
+                    //check postlist is available or not
+                    var postlist = _postListRepository.GetPostList(saveListID, post.Id);
+                    if (postlist != null && postlist.Status)
+                    {
+                        returnList.Add(_mapper.Map<PostDTO>(post));
+                    }
                 }
             }
+            if (returnList.Count == 0) return null;
             //return
             return returnList;
         }
 
-        public ICollection<SaveListDTO>? GetAllSaveListByPostID(int postID,int userID)
+        public ICollection<SaveListDTO>? GetAllSaveListByPostID(int postID, int userID)
         {
-            //init return list
-            var returnList = new List<SaveListDTO>();
-            //get all savelist
-            var savelist = _postListRepository.GetAllSaveList(postID, userID);
-            //check null
-            if(savelist == null || savelist.Count == 0)
+            //check post
+            var post = _postRepository.GetPost(postID);
+            //check available
+            if (post == null || !post.Status)
             {
                 return null;
             }
+            //get all savelist
+            var savelist = _postListRepository.GetAllSaveList(postID, userID);
+            //check null
+            if (savelist == null || savelist.Count == 0)
+            {
+                return null;
+            }
+            //init return list
+            var returnList = new List<SaveListDTO>();
             //check savelist is active then return
-            foreach(var save in savelist)
+            foreach (var save in savelist)
             {
                 if (save.Status)
                 {
-                    returnList.Add(_mapper.Map<SaveListDTO>(save));
+                    var postlist = _postListRepository.GetPostList(save.Id, postID);
+                    //check available
+                    if (postlist != null && postlist.Status)
+                    {
+                        returnList.Add(_mapper.Map<SaveListDTO>(save));
+                    }
                 }
             }
+            //check empty
+            if (returnList.Count == 0) return null;
             //return
             return returnList;
         }
