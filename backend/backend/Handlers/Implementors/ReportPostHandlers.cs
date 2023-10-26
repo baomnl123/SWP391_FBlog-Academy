@@ -10,22 +10,47 @@ namespace backend.Handlers.Implementors
     public class ReportPostHandlers : IReportPostHandlers
     {
         private readonly UserRoleConstrant _userRoleConstrant;
+        private readonly ReportStatusConstrant _reportStatusConstrant;
         private readonly IUserRepository _userRepository;
         private readonly IReportPostRepository _reportPostRepository;
         private readonly IMapper _mapper;
-        private readonly ReportStatusConstrant _reportStatusConstrant;
+        private readonly IPostRepository _postRepository;
+
         public ReportPostHandlers(IMapper mapper,
                                   IReportPostRepository reportPostRepository,
-                                  IUserRepository userRepository)
+                                  IUserRepository userRepository,
+                                  IPostRepository postRepository)
         {
             _userRoleConstrant = new();
             _reportStatusConstrant = new();
             _mapper = mapper;
             _reportPostRepository = reportPostRepository;
             _userRepository = userRepository;
+            _postRepository = postRepository;
         }
         public ReportPostDTO? AddReportPost(int reporterID, int postID, string content)
         {
+            //get reporter
+            var reporter = _userRepository.GetUser(reporterID);
+            //check reporter is available or not
+            if (reporter == null || !reporter.Status)
+            {
+                return null;
+            }
+            //get role
+            var studentRole = _userRoleConstrant.GetStudentRole();
+            var moderatorRole = _userRoleConstrant.GetModeratorRole();
+            //check reporter is student or moderator
+            if (!reporter.Role.Contains(studentRole) && !reporter.Role.Contains(moderatorRole))
+            {
+                return null;
+            }
+            //var reported post 
+            var reportedPost = _postRepository.GetPost(postID);
+            if (reportedPost == null || !reportedPost.Status)
+            {
+                return null;
+            }
             //Get Pending Status
             var pending = _reportStatusConstrant.GetPendingStatus();
             //Check Exist
@@ -70,7 +95,7 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<ReportPostDTO>(newReportPost);
         }
 
-        public ReportPostDTO? DenyReportPost(int adminID, int reportPostID, int postID)
+        public ReportPostDTO? DenyReportPost(int adminID, int reporterID, int postID)
         {
             //get admin
             var admin = _userRepository.GetUser(adminID);
@@ -85,7 +110,7 @@ namespace backend.Handlers.Implementors
                 return null;
             }
             //Get Report
-            var reportPost = _reportPostRepository.GetReportPostByIDs(reportPostID, postID);
+            var reportPost = _reportPostRepository.GetReportPostByIDs(reporterID, postID);
             var disableStatus = _reportStatusConstrant.GetDisableStatus();
             //Check Null
             if (reportPost == null || reportPost.Status.Contains(disableStatus))
@@ -102,7 +127,6 @@ namespace backend.Handlers.Implementors
 
         public ICollection<ReportPostDTO>? GetAllPendingReportPost()
         {
-
             //Get List
             var list = _reportPostRepository.GetAllReportPost();
             //Check Null
@@ -123,6 +147,10 @@ namespace backend.Handlers.Implementors
                     reportPostList.Add(_mapper.Map<ReportPostDTO>(reportPost));
                 }
             }
+            if(reportPostList.Count == 0)
+            {
+                return null;
+            }
             //Return Result
             return reportPostList;
         }
@@ -136,10 +164,24 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<List<ReportPostDTO>>(list);
         }
 
-        public ReportPostDTO? UpdateReportPost(int reportPostID, int postID, string content)
+        public ReportPostDTO? UpdateReportPost(int reporterID, int postID, string content)
         {
+            //get reporter
+            var reporter = _userRepository.GetUser(reporterID);
+            if(reporter == null || !reporter.Status)
+            {
+                return null;
+            }
+            //get role
+            var studentRole = _userRoleConstrant.GetStudentRole();
+            var moderatorRole = _userRoleConstrant.GetModeratorRole();
+            //check reporter is student or moderator
+            if (!reporter.Role.Contains(studentRole) && !reporter.Role.Contains(moderatorRole))
+            {
+                return null;
+            }
             //Get Report
-            var reportPost = _reportPostRepository.GetReportPostByIDs(reportPostID, postID);
+            var reportPost = _reportPostRepository.GetReportPostByIDs(reporterID, postID);
             //Get Status
             var disableStatus = _reportStatusConstrant.GetDisableStatus();
             //Check Null Or Disable Status
@@ -163,7 +205,7 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<ReportPostDTO>(reportPost);
         }
 
-        public ReportPostDTO? UpdateReportStatus(int adminID, int reportPostID, int postID, string status)
+        public ReportPostDTO? UpdateReportStatus(int adminID, int reporterID, int postID, string status)
         {
             //Get Status
             var disableStatus = _reportStatusConstrant.GetDisableStatus();
@@ -177,20 +219,30 @@ namespace backend.Handlers.Implementors
             {
                 return null;
             }
-            //Get Report
-            var reportPost = _reportPostRepository.GetReportPostByIDs(reportPostID, postID);
+
             //get admin
             var admin = _userRepository.GetUser(adminID);
-            if(admin == null || !admin.Status)
+            //check admin is available or not
+            if (admin == null || !admin.Status)
             {
                 return null;
             }
             //get admin role
             var adminRole = _userRoleConstrant.GetAdminRole();
+            //check if it is admin or not
             if (!admin.Role.Contains(adminRole))
             {
                 return null;
             }
+            //get reporter
+            var reporter = _userRepository.GetUser(reporterID);
+            //check reporter is available or not
+            if (reporter == null || !reporter.Status)
+            {
+                return null;
+            }
+            //Get Report
+            var reportPost = _reportPostRepository.GetReportPostByIDs(reporterID, postID);
             //Check Null
             if (reportPost == null || reportPost.Status.Contains(disableStatus))
             {

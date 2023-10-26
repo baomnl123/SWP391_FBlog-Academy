@@ -170,7 +170,7 @@ namespace backend.Handlers.Implementors
                 return null;
             }
             //if user self-follow then return nothing
-            if (currentUser == followedUser)
+            if (currentUser.Equals(followedUser))
             {
                 return null;
             }

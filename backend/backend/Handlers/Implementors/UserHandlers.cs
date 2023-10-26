@@ -47,7 +47,8 @@ namespace backend.Handlers.Implementors
                 }
                 existedUser.AvatarUrl = avatarURL;
                 existedUser.Status = true;
-                existedUser.UpdatedAt = DateTime.Now;
+                existedUser.CreatedAt = DateTime.Now;
+                existedUser.UpdatedAt = null;
                 if (!_userRepository.UpdateUser(existedUser))
                 {
                     return null;
@@ -106,7 +107,8 @@ namespace backend.Handlers.Implementors
                 }
                 existedUser.AvatarUrl = avatarURL;
                 existedUser.Status = true;
-                existedUser.UpdatedAt = DateTime.Now;
+                existedUser.CreatedAt = DateTime.Now;
+                existedUser.UpdatedAt = null;
                 if (!_userRepository.UpdateUser(existedUser))
                 {
                     return null;
@@ -156,6 +158,7 @@ namespace backend.Handlers.Implementors
             //demote user
             var studentRole = _userRoleConstrant.GetStudentRole();
             user.Role = studentRole;
+            user.UpdatedAt = DateTime.Now;
             //update
             if (!_userRepository.UpdateUser(user))
             {
@@ -301,7 +304,7 @@ namespace backend.Handlers.Implementors
         {
             //get user info
             var user = _userRepository.GetUser(userID);
-            if(user == null)
+            if(user == null || !user.Status)
             {
                 return null;
             }
@@ -315,6 +318,7 @@ namespace backend.Handlers.Implementors
             //demote user
             var moderatorRole = _userRoleConstrant.GetModeratorRole();
             user.Role = moderatorRole;
+            user.UpdatedAt = DateTime.Now;
             //update
             if (!_userRepository.UpdateUser(user))
             {
@@ -336,12 +340,12 @@ namespace backend.Handlers.Implementors
             //update
             user.Name = name;
             user.AvatarUrl = avatarURL;
+            user.UpdatedAt = DateTime.Now;
             //update password
             if (password != null)
             {
                 user.Password = _hashingString.HashString(password);
             }
-            user.UpdatedAt = DateTime.Now;
             //update to db
             if (!_userRepository.UpdateUser(user))
             {

@@ -56,9 +56,9 @@ namespace backend.Controllers
             return Ok(reportPostDTO);
         }
         [HttpPut("status")]
-        public IActionResult UpdateReportStatus([FromForm]int adminID, [FromForm] int reportPostID, [FromForm] int postID, [FromForm] string status)
+        public IActionResult UpdateReportStatus([FromForm]int adminID, [FromForm] int reporterID, [FromForm] int postID, [FromForm] string status)
         {
-            var reportPostDTO = _reportPostHandlers.UpdateReportStatus(adminID, reportPostID, postID, status);
+            var reportPostDTO = _reportPostHandlers.UpdateReportStatus(adminID, reporterID, postID, status);
             if (reportPostDTO == null)
             {
                 return BadRequest();
@@ -66,9 +66,9 @@ namespace backend.Controllers
             return Ok(reportPostDTO);
         }
         [HttpDelete]
-        public IActionResult DisableReportPost([FromForm]int adminID,[FromForm] int reportPostID, [FromForm] int postID)
+        public IActionResult DisableReportPost([FromForm]int adminID,[FromForm] int reporterID, [FromForm] int postID)
         {
-            var reportPost = _reportPostHandlers.DenyReportPost(adminID, reportPostID, postID);
+            var reportPost = _reportPostHandlers.DenyReportPost(adminID, reporterID, postID);
             if(reportPost == null)
             {
                 return BadRequest();

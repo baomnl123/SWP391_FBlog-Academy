@@ -28,9 +28,10 @@ namespace backend.Controllers
             return Ok(list);
         }
         [HttpGet("all/disable")]
-        public IActionResult getDisableUsers() {
+        public IActionResult getDisableUsers()
+        {
             var list = _userHandlers.GetAllDisableUsers();
-            if(list == null || list.Count == 0)
+            if (list == null || list.Count == 0)
             {
                 return NotFound();
             }
@@ -72,17 +73,41 @@ namespace backend.Controllers
         public IActionResult GetUserByEmail(string email)
         {
             var user = _userHandlers.GetUserByEmail(email);
-            if(user == null)
+            if (user == null)
             {
                 return NotFound();
             }
             return Ok(user);
         }
+        [HttpGet("{currentUserID}/follower")]
+        public IActionResult GetAllFollower(int currentUserID)
+        {
+            var listFollowers = _followUserHandlers.GetAllFollowerUsers(currentUserID);
+
+            if (listFollowers == null || listFollowers.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return Ok(listFollowers);
+        }
+        [HttpGet("{currentUserID}/following")]
+        public IActionResult GetAllFollowing(int currentUserID)
+        {
+            var listFollowings = _followUserHandlers.GetAllFollowingUsers(currentUserID);
+
+            if (listFollowings == null || listFollowings.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return Ok(listFollowings);
+        }
 
         [HttpPost("student")]
-        public IActionResult CreateUser([FromForm] string name,[FromForm] string avatarUrl, [FromForm] string email, [FromForm] string? password)
+        public IActionResult CreateUser([FromForm] string name, [FromForm] string avatarUrl, [FromForm] string email, [FromForm] string? password)
         {
-            var user = _userHandlers.CreateUser(name,avatarUrl, email, password);
+            var user = _userHandlers.CreateUser(name, avatarUrl, email, password);
             if (user == null)
             {
                 return BadRequest();
@@ -90,17 +115,27 @@ namespace backend.Controllers
             return Ok(user);
         }
         [HttpPost("lecturer")]
-        public IActionResult CreateLecturer([FromForm] string name,[FromForm] string avatarUrl, [FromForm] string email, [FromForm] string? password)
+        public IActionResult CreateLecturer([FromForm] string name, [FromForm] string avatarUrl, [FromForm] string email, [FromForm] string? password)
         {
-            var user = _userHandlers.CreateLecturer(name,avatarUrl, email, password);
+            var user = _userHandlers.CreateLecturer(name, avatarUrl, email, password);
             if (user == null)
             {
                 return BadRequest();
             }
             return Ok(user);
         }
+        [HttpPost("follow")]
+        public IActionResult Follow([FromForm] int currentUserID, [FromForm] int userID)
+        {
+            var followRelationship = _followUserHandlers.FollowOtherUser(currentUserID, userID);
+            if (followRelationship == null)
+            {
+                return BadRequest();
+            }
+            return Ok(followRelationship);
+        }
         [HttpPut()]
-        public IActionResult UpdateUser([FromForm] int userID,[FromForm] string avatarUrl, [FromForm] string name, [FromForm] string? password)
+        public IActionResult UpdateUser([FromForm] int userID, [FromForm] string avatarUrl, [FromForm] string name, [FromForm] string? password)
         {
             var user = _userHandlers.UpdateUser(userID, name, avatarUrl, password);
             if (user == null)
@@ -133,45 +168,11 @@ namespace backend.Controllers
         public IActionResult disableUser(int userID)
         {
             var user = _userHandlers.DisableUser(userID);
-            if(user == null)
+            if (user == null)
             {
                 return BadRequest();
             }
             return Ok(user);
-        }
-        [HttpGet("{currentUserID}/follower")]
-        public IActionResult GetAllFollower(int currentUserID)
-        {
-            var listFollowers = _followUserHandlers.GetAllFollowerUsers(currentUserID);
-
-            if (listFollowers == null || listFollowers.Count == 0)
-            {
-                return NotFound();
-            }
-
-            return Ok(listFollowers);
-        }
-        [HttpGet("{currentUserID}/following")]
-        public IActionResult GetAllFollowing(int currentUserID)
-        {
-            var listFollowings = _followUserHandlers.GetAllFollowingUsers(currentUserID);
-
-            if (listFollowings == null || listFollowings.Count == 0)
-            {
-                return NotFound();
-            }
-
-            return Ok(listFollowings);
-        }
-        [HttpPost("follow")]
-        public IActionResult Follow([FromForm] int currentUserID, [FromForm] int userID)
-        {
-            var followRelationship = _followUserHandlers.FollowOtherUser(currentUserID, userID);
-            if (followRelationship == null)
-            {
-                return BadRequest();
-            }
-            return Ok(followRelationship);
         }
         [HttpDelete("follow")]
         public IActionResult Unfollow([FromForm] int currentUserID, [FromForm] int userID)

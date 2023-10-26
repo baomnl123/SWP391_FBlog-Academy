@@ -84,6 +84,7 @@ namespace backend.Handlers.Implementors
             }
             //get postID 
             var post = _postRepository.GetPost(postID);
+            //check post is available or not
             if (post == null || !post.Status)
             {
                 return null;
@@ -147,6 +148,7 @@ namespace backend.Handlers.Implementors
         {
             //check post
             var post = _postRepository.GetPost(postID);
+            //check available
             if (post == null || !post.Status)
             {
                 return null;
@@ -166,12 +168,14 @@ namespace backend.Handlers.Implementors
                 if (save.Status)
                 {
                     var postlist = _postListRepository.GetPostList(save.Id, postID);
+                    //check available
                     if (postlist != null && postlist.Status)
                     {
                         returnList.Add(_mapper.Map<SaveListDTO>(save));
                     }
                 }
             }
+            //check empty
             if (returnList.Count == 0) return null;
             //return
             return returnList;

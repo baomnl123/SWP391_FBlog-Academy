@@ -29,6 +29,7 @@ namespace backend.Handlers.Implementors
                 //Reactivate the savelist
                 checkSaveList.Status = true;
                 checkSaveList.CreatedAt = DateTime.Now;
+                checkSaveList.UpdateAt = null;
                 if (!_saveListRepository.UpdateSaveList(checkSaveList))
                 {
                     return null;
@@ -108,13 +109,13 @@ namespace backend.Handlers.Implementors
             {
                 return null;
             }
-            //Check if savelist is not exist
-            if (!_saveListRepository.isExisted(saveListID))
+            //Get savelist
+            var saveList = _saveListRepository.GetSaveListBySaveListID(saveListID);
+            //check available
+            if(saveList == null || !saveList.Status)
             {
                 return null;
             }
-            //Get savelist
-            var saveList = _saveListRepository.GetSaveListBySaveListID(saveListID);
             //Update savelist
             saveList.Name = listName;
             saveList.UpdateAt = DateTime.Now;
