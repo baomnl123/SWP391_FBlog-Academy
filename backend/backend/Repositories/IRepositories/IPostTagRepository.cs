@@ -7,6 +7,7 @@ namespace backend.Repositories.IRepositories
         public PostTag? GetPostTag(int postId, int tagId);
         public ICollection<PostTag> GetPostTagsByPostId(int postId);
         public ICollection<PostTag> GetPostTagsByTagId(int tagId);
+        public ICollection<Tag>? GetTagsOf(int postId);
         public bool CreatePostTag(PostTag postTag);
         public bool UpdatePostTag(PostTag postTag);
         public bool EnablePostTag(PostTag postTag);
