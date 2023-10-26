@@ -24,7 +24,7 @@ namespace backend.Repositories.Implementors
             return _context.Images.FirstOrDefault(c => c.Url == imageURL);
         }
 
-        public ICollection<Image> GetImagesByPost(int postId)
+        public ICollection<Image>? GetImagesByPost(int postId)
         {
             return _context.Images.Where(e => e.PostId == postId && e.Status == true).ToList();
         }

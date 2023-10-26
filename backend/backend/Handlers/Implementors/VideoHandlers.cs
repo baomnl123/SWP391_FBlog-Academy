@@ -74,7 +74,7 @@ namespace backend.Handlers.Implementors
         public VideoDTO? DisableVideo(int videoId)
         {
             var video = _videoRepository.GetVideoById(videoId);
-            if (video == null || video.Status == true) return null;
+            if (video == null || video.Status == false) return null;
 
             // If disable succeed then return video, else return null
             if (_videoRepository.DisableVideo(video))
