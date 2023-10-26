@@ -55,6 +55,17 @@ namespace backend.Repositories.Implementors
             return _context.PostCategories.Where(c => c.PostId == postId).ToList();
         }
 
+        public ICollection<Category>? GetCategoriesOf(int postId)
+        {
+            List<Category> categories = new();
+            var list = _context.PostCategories.Where(r => r.PostId == postId && r.Status).Select(r => r.Category).ToList();
+            if(list == null || list.Count == 0) return null;
+            foreach(var item in list)
+            {
+                if(item.Status) categories.Add(item);
+            }
+            return categories.Count == 0? null : categories;
+        }
         public bool Save()
         {
             try
