@@ -10,6 +10,8 @@ namespace backend.Repositories.IRepositories
         public Post? GetPost(int postId);
         public ICollection<Post>? ViewPendingPostList();
         public ICollection<Post>? SearchPostByUserId(int userId);
+        public ICollection<Post>? ViewPendingPostList(int userId);
+        public ICollection<Post>? ViewDeletedPost(int userId);
         //CRUD post
         public bool CreateNewPost(Post post);
         public bool UpdatePost(Post post);
