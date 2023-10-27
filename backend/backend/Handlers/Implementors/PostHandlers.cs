@@ -21,6 +21,7 @@ namespace backend.Handlers.Implementors
         private readonly ICategoryHandlers _categoryHandlers;
         private readonly IPostTagRepository _postTagRepository;
         private readonly IPostCategoryRepository _postCategoryRepository;
+        private readonly IVotePostRepository _votePostRepository;
         private readonly IMapper _mapper;
         private readonly UserRoleConstrant _userRoleConstrant;
 
@@ -32,6 +33,7 @@ namespace backend.Handlers.Implementors
                             ICategoryHandlers categoryHandlers,
                             IPostTagRepository postTagRepository,
                             IPostCategoryRepository postCategoryRepository,
+                            IVotePostRepository votePostRepository,
                             IMapper mapper)
         {
             _postRepository = postRepository;
@@ -43,6 +45,7 @@ namespace backend.Handlers.Implementors
             _categoryHandlers = categoryHandlers;
             _postTagRepository = postTagRepository;
             _postCategoryRepository = postCategoryRepository;
+            _votePostRepository = votePostRepository;
             _userRoleConstrant = new UserRoleConstrant();
         }
 
@@ -283,6 +286,9 @@ namespace backend.Handlers.Implementors
             //return null if mapping is failed
             if (deletingPost is null) return null;
 
+            //return null if disable all votes of post is failed
+            if (!_votePostRepository.DisableAllVotePostOf(deletedPost)) return null;
+
             //return null if disabling all data related to post is failed
             var successDisabled = DisableAllRelatedToPost(deletingPost);
             if (successDisabled == null) return null;
@@ -368,6 +374,9 @@ namespace backend.Handlers.Implementors
             var disablingPost = _mapper.Map<PostDTO>(existedPost);
             //return null if mapping is failed
             if (disablingPost is null) return null;
+
+            //return null if disable all votes of post is failed
+            if (!_votePostRepository.DisableAllVotePostOf(existedPost)) return null;
 
             //return null if disabling all data related to post is failed
             var successDisabled = DisableAllRelatedToPost(disablingPost);
