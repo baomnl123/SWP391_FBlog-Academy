@@ -657,7 +657,7 @@ namespace backend.Handlers.Implementors
         public ICollection<PostDTO>? ViewDeletedPostOf(int userId)
         {
             //return null if get pending posts' list is failed
-            var existedList = _postRepository.ViewPendingPostList(userId);
+            var existedList = _postRepository.ViewDeletedPost(userId);
             if (existedList == null || existedList.Count == 0) return null;
 
             //map to list DTO
