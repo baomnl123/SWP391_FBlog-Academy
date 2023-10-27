@@ -1,4 +1,5 @@
 ﻿using backend.DTO;
+using backend.Models;
 
 namespace backend.Handlers.IHandlers
 {
@@ -6,12 +7,15 @@ namespace backend.Handlers.IHandlers
     {
         //Get all posts of user
         public ICollection<PostDTO>? SearchPostByUserId(int userId);
-
         //Search all posts
         public ICollection<PostDTO>? GetAllPosts();
-
         //Search Posts which contain content.
         public ICollection<PostDTO>? SearchPostsByTitle(string title);
+        //View pending posts' list
+        public ICollection<PostDTO>? ViewPendingPostList();
+        //View pending posts' list of particular user
+        public ICollection<Post>? ViewPendingPostListOf(int userId);
+        public ICollection<Post>? ViewDeletedPostOf(int userId);
 
         //Create post
         public PostDTO? CreatePost(int userId, string title, string content, 
@@ -34,12 +38,8 @@ namespace backend.Handlers.IHandlers
         //Delete only post (not related data)
         public PostDTO? Delete(int postId);
 
-        //View pending post's list
-        public ICollection<PostDTO>? ViewPendingPostList();
-
         //Approve post
         public PostDTO? ApprovePost(int reviewerId, int postId);
-
         //Deny post
         public PostDTO? DenyPost(int reviewerId, int postId);
     }
