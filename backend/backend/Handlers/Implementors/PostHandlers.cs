@@ -3,8 +3,10 @@ using backend.DTO;
 using backend.Handlers.IHandlers;
 using backend.Models;
 using backend.Repositories.IRepositories;
+using backend.Utils;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Hosting;
+using System.Collections.Generic;
 using System.Security.Policy;
 
 namespace backend.Handlers.Implementors
@@ -19,7 +21,9 @@ namespace backend.Handlers.Implementors
         private readonly ICategoryHandlers _categoryHandlers;
         private readonly IPostTagRepository _postTagRepository;
         private readonly IPostCategoryRepository _postCategoryRepository;
+        private readonly IVotePostRepository _votePostRepository;
         private readonly IMapper _mapper;
+        private readonly UserRoleConstrant _userRoleConstrant;
 
         public PostHandlers(IPostRepository postRepository,
                             IUserRepository userRepository,
@@ -29,6 +33,7 @@ namespace backend.Handlers.Implementors
                             ICategoryHandlers categoryHandlers,
                             IPostTagRepository postTagRepository,
                             IPostCategoryRepository postCategoryRepository,
+                            IVotePostRepository votePostRepository,
                             IMapper mapper)
         {
             _postRepository = postRepository;
@@ -40,6 +45,8 @@ namespace backend.Handlers.Implementors
             _categoryHandlers = categoryHandlers;
             _postTagRepository = postTagRepository;
             _postCategoryRepository = postCategoryRepository;
+            _votePostRepository = votePostRepository;
+            _userRoleConstrant = new UserRoleConstrant();
         }
 
         public PostDTO? ApprovePost(int reviewerId, int postId)
@@ -48,9 +55,12 @@ namespace backend.Handlers.Implementors
             //                  and not yet removed
             //                  and has role MOD(Moderator) or LT(Lecturer)
             var reviewer = _userRepository.GetUser(reviewerId);
+            var modRole = _userRoleConstrant.GetModeratorRole();
+            var lecRole = _userRoleConstrant.GetLecturerRole();
+
             if (reviewer != null
                 && reviewer.Status == true
-                && (reviewer.Role.Contains("MOD") || reviewer.Role.Contains("LT")))
+                && (reviewer.Role.Contains(modRole) || reviewer.Role.Contains(lecRole)))
             {
                 //check post needed approved exists
                 var existedPost = _postRepository.GetPost(postId);
@@ -72,22 +82,22 @@ namespace backend.Handlers.Implementors
 
                 //Return null if get videos of post is failed
                 var videos = _videoHandlers.GetVideosByPost(approvingPost.Id);
-                if (videos == null) return null;
+                if (videos == null || videos.Count == 0) return null;
                 approvingPost.Videos = videos;
 
                 //return null if get images of post is failed
                 var images = _imageHandlers.GetImagesByPost(approvingPost.Id);
-                if (images == null) return null;
+                if (images == null || images.Count == 0) return null;
                 approvingPost.Images = images;
 
                 //return null if get tags of post is failed
                 var tags = _postTagRepository.GetTagsOf(approvingPost.Id);
-                if (tags == null) return null;
+                if (tags == null || tags.Count == 0) return null;
                 approvingPost.Tags = _mapper.Map<List<TagDTO>>(tags);
 
                 //return null if get categories of post is failed
                 var categories = _postCategoryRepository.GetCategoriesOf(approvingPost.Id);
-                if (categories == null) return null;
+                if (categories == null || categories.Count == 0) return null;
                 approvingPost.Categories = _mapper.Map<List<CategoryDTO>>(categories);
 
                 //Update info to database
@@ -108,10 +118,10 @@ namespace backend.Handlers.Implementors
             if (createdPost == null) return null;
 
             //create videos for post if it is necessary
-            if (videoURLs is not null)
+            if (videoURLs is not null && videoURLs.Length > 0)
             {
                 var videos = _videoHandlers.CreateVideo(createdPost.Id, videoURLs);
-                if (videos is null)
+                if (videos is null || videos.Count == 0)
                 {
                     Delete(createdPost.Id);
                     return null;
@@ -121,10 +131,10 @@ namespace backend.Handlers.Implementors
             else createdPost.Videos = null;
 
             //create images for post if it is necessary
-            if (imageURLs is not null)
+            if (imageURLs is not null && imageURLs.Length > 0)
             {
                 var images = _imageHandlers.CreateImage(createdPost.Id, imageURLs);
-                if (images is null)
+                if (images is null || images.Count == 0)
                 {
                     Delete(createdPost.Id);
                     return null;
@@ -134,19 +144,19 @@ namespace backend.Handlers.Implementors
             else createdPost.Images = null;
 
             //add categories for post if it is necessary
-            if (categoryIds is not null)
+            if (categoryIds is not null && categoryIds.Length > 0)
             {
                 var categories = AttachCategoriesForPost(createdPost, categoryIds);
-                if (categories is null) return null;
+                if (categories is null || categories.Count == 0) return null;
                 createdPost.Categories = categories;
             }
             else createdPost.Categories = null;
 
             //add tags for post if it is successful, return null otherwise
-            if (tagIds is not null)
+            if (tagIds is not null && tagIds.Length > 0)
             {
                 var tags = AttachTagsForPost(createdPost, tagIds);
-                if (tags is null) return null;
+                if (tags is null || tags.Count == 0) return null;
                 createdPost.Tags = tags;
             }
             else createdPost.Tags = null;
@@ -200,7 +210,7 @@ namespace backend.Handlers.Implementors
 
                 //Undo creating post and return null if relationship of post and category does not exist or is removed
                 var addedCategory = _categoryHandlers.CreatePostCategory(createdPost, category);
-                if (addedCategory is null)
+                if (addedCategory is null || !addedCategory.Status)
                 {
                     Delete(createdPost.Id);
                     return null;
@@ -276,6 +286,9 @@ namespace backend.Handlers.Implementors
             //return null if mapping is failed
             if (deletingPost is null) return null;
 
+            //return null if disable all votes of post is failed
+            if (!_votePostRepository.DisableAllVotePostOf(deletedPost)) return null;
+
             //return null if disabling all data related to post is failed
             var successDisabled = DisableAllRelatedToPost(deletingPost);
             if (successDisabled == null) return null;
@@ -337,9 +350,11 @@ namespace backend.Handlers.Implementors
             //                              or removed
             //                              or does not have role MOD(Moderator) or LT(Lecturer)
             var validReviewer = _userRepository.GetUser(reviewerId);
+            var modRole = _userRoleConstrant.GetModeratorRole();
+            var lecRole = _userRoleConstrant.GetLecturerRole();
             if (validReviewer == null
                 || validReviewer.Status == false
-                || !(validReviewer.Role.Contains("MD") || validReviewer.Role.Contains("LT"))) return null;
+                || !(validReviewer.Role.Contains(modRole) || validReviewer.Role.Contains(lecRole))) return null;
 
             //return null if existedPost is null
             //                              or removed
@@ -359,6 +374,9 @@ namespace backend.Handlers.Implementors
             var disablingPost = _mapper.Map<PostDTO>(existedPost);
             //return null if mapping is failed
             if (disablingPost is null) return null;
+
+            //return null if disable all votes of post is failed
+            if (!_votePostRepository.DisableAllVotePostOf(existedPost)) return null;
 
             //return null if disabling all data related to post is failed
             var successDisabled = DisableAllRelatedToPost(disablingPost);
@@ -388,7 +406,7 @@ namespace backend.Handlers.Implementors
                 post.Tags = (getTags is not null && getTags.Count > 0) ? getTags : null;
 
                 var getImages = _imageHandlers.GetImagesByPost(post.Id);
-                post.Images = (getImages is not null && getImages.Count != 0) ? getImages : null;
+                post.Images = (getImages is not null && getImages.Count > 0) ? getImages : null;
 
                 var getVideos = _videoHandlers.GetVideosByPost(post.Id);
                 post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : null;
@@ -404,36 +422,66 @@ namespace backend.Handlers.Implementors
             //                  or removed
             //                  or that user does not have role SU(Student) or role MOD(Moderator)
             var exitedUser = _userRepository.GetUser(userId);
+            var studentRole = _userRoleConstrant.GetStudentRole();
+            var modRole = _userRoleConstrant.GetModeratorRole();
             if (exitedUser == null
                 || exitedUser.Status == false
-                || !(exitedUser.Role.Contains("SU") || exitedUser.Role.Contains("MOD"))) return null;
+                || !(exitedUser.Role.Contains(studentRole) || exitedUser.Role.Contains(modRole))) return null;
 
-            //Search Posts' list of userId
+            //return null if search Posts' list of userId is failed
             var existedPostList = _postRepository.SearchPostByUserId(userId);
+            if (existedPostList == null || existedPostList.Count == 0) return null;
 
-            //check null
-            if (existedPostList == null) return null;
+            //map to list DTO
+            List<PostDTO> resultList = _mapper.Map<List<PostDTO>>(existedPostList);
 
-            //return posts' list
-            return _mapper.Map<List<PostDTO>>(existedPostList);
+            //get related data for all post
+            foreach (var post in resultList)
+            {
+                var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(post.Id));
+                post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : null;
+
+                var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(post.Id));
+                post.Tags = (getTags is not null && getTags.Count > 0) ? getTags : null;
+
+                var getImages = _imageHandlers.GetImagesByPost(post.Id);
+                post.Images = (getImages is not null && getImages.Count > 0) ? getImages : null;
+
+                var getVideos = _videoHandlers.GetVideosByPost(post.Id);
+                post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : null;
+            }
+
+            //return posts'list
+            return resultList;
         }
 
         public ICollection<PostDTO>? SearchPostsByTitle(string title)
         {
-            //init listPost to return
-            List<PostDTO> listPost = new List<PostDTO>();
-
             //Search all posts which contain content
             var list = _postRepository.SearchPostsByTitle(title);
+            if (list == null || list.Count == 0) return null;
 
-            //check null
-            if (list != null)
+            //map to list DTO
+            List<PostDTO> resultList = _mapper.Map<List<PostDTO>>(list);
+
+            //get related data for all post
+            foreach (var post in resultList)
             {
-                //Map to List<PostDTO>
-                listPost = _mapper.Map<List<PostDTO>>(list);
-                return listPost;
+                var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(post.Id));
+                post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : null;
+
+                var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(post.Id));
+                post.Tags = (getTags is not null && getTags.Count > 0) ? getTags : null;
+
+                var getImages = _imageHandlers.GetImagesByPost(post.Id);
+                post.Images = (getImages is not null && getImages.Count > 0) ? getImages : null;
+
+                var getVideos = _videoHandlers.GetVideosByPost(post.Id);
+                post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : null;
             }
-            return null;
+
+            //return posts'list
+            return resultList;
         }
 
         public PostDTO? UpdatePost(int postId, string title, string content,
@@ -484,7 +532,7 @@ namespace backend.Handlers.Implementors
 
                 //update tags for post if it is successful, return null otherwise
                 var tags = AttachTagsForPost(updatingPost, tagIds);
-                if (tags is null) return null;
+                if (tags is null || tags.Count == 0) return null;
                 updatingPost.Tags = tags;
             }
             else updatingPost.Tags = null;
@@ -501,7 +549,7 @@ namespace backend.Handlers.Implementors
 
                 //update categories for post if it is successful, return null otherwise
                 var categories = AttachCategoriesForPost(updatingPost, categoryIds);
-                if (categories is null) return null;
+                if (categories is null || categories.Count == 0) return null;
                 updatingPost.Categories = categories;
             }
             else updatingPost.Categories = null;
@@ -526,7 +574,7 @@ namespace backend.Handlers.Implementors
 
             //update videos
             var updatedVideos = _videoHandlers.CreateVideo(postId, videoURLs);
-            if (updatedVideos is null) return null;
+            if (updatedVideos is null || updatedVideos.Count == 0) return null;
             else return updatedVideos;
         }
 
@@ -545,20 +593,94 @@ namespace backend.Handlers.Implementors
 
             //update images
             var updatedImages = _imageHandlers.CreateImage(postId, imageURLs);
-            if (updatedImages is null) return null;
+            if (updatedImages is null || updatedImages.Count == 0) return null;
             else return updatedImages;
         }
 
         public ICollection<PostDTO>? ViewPendingPostList()
         {
-            //Get pending posts list
+            //return null if get pending posts' list is failed
             var existedList = _postRepository.ViewPendingPostList();
+            if (existedList == null || existedList.Count == 0) return null;
 
-            //check null
-            if (existedList == null) return null;
+            //map to list DTO
+            List<PostDTO> resultList = _mapper.Map<List<PostDTO>>(existedList);
 
-            //Map to List<PostDTO>
-            return _mapper.Map<List<PostDTO>>(existedList);
+            //get related data for all post
+            foreach (var post in resultList)
+            {
+                var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(post.Id));
+                post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : null;
+
+                var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(post.Id));
+                post.Tags = (getTags is not null && getTags.Count > 0) ? getTags : null;
+
+                var getImages = _imageHandlers.GetImagesByPost(post.Id);
+                post.Images = (getImages is not null && getImages.Count > 0) ? getImages : null;
+
+                var getVideos = _videoHandlers.GetVideosByPost(post.Id);
+                post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : null;
+            }
+
+            //return posts'list
+            return resultList;
+        }
+
+        public ICollection<PostDTO>? ViewPendingPostListOf(int userId)
+        {
+            //return null if get pending posts' list is failed
+            var existedList = _postRepository.ViewPendingPostList(userId);
+            if (existedList == null || existedList.Count == 0) return null;
+
+            //map to list DTO
+            List<PostDTO> resultList = _mapper.Map<List<PostDTO>>(existedList);
+
+            //get related data for all post
+            foreach (var post in resultList)
+            {
+                var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(post.Id));
+                post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : null;
+
+                var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(post.Id));
+                post.Tags = (getTags is not null && getTags.Count > 0) ? getTags : null;
+
+                var getImages = _imageHandlers.GetImagesByPost(post.Id);
+                post.Images = (getImages is not null && getImages.Count > 0) ? getImages : null;
+
+                var getVideos = _videoHandlers.GetVideosByPost(post.Id);
+                post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : null;
+            }
+
+            //return posts'list
+            return resultList;
+        }
+        public ICollection<PostDTO>? ViewDeletedPostOf(int userId)
+        {
+            //return null if get pending posts' list is failed
+            var existedList = _postRepository.ViewPendingPostList(userId);
+            if (existedList == null || existedList.Count == 0) return null;
+
+            //map to list DTO
+            List<PostDTO> resultList = _mapper.Map<List<PostDTO>>(existedList);
+
+            //get related data for all post
+            foreach (var post in resultList)
+            {
+                var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(post.Id));
+                post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : null;
+
+                var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(post.Id));
+                post.Tags = (getTags is not null && getTags.Count > 0) ? getTags : null;
+
+                var getImages = _imageHandlers.GetImagesByPost(post.Id);
+                post.Images = (getImages is not null && getImages.Count > 0) ? getImages : null;
+
+                var getVideos = _videoHandlers.GetVideosByPost(post.Id);
+                post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : null;
+            }
+
+            //return posts'list
+            return resultList;
         }
     }
 }
