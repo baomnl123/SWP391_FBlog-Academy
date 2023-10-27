@@ -52,7 +52,7 @@ namespace backend.Controllers
         public IActionResult GetCategory(int categoryId)
         {
             var category = _categoryHandlers.GetCategoryById(categoryId);
-            if (category == null) return NotFound();
+            if (category == null || category.Status == false) return NotFound();
 
             return Ok(category);
         }

@@ -54,7 +54,7 @@ namespace backend.Controllers
         public IActionResult GetTag(int tagId)
         {
             var tag = _tagHandlers.GetTagById(tagId);
-            if (tag == null) return NotFound();
+            if (tag == null || tag.Status == false) return NotFound();
 
             return Ok(tag);
         }
