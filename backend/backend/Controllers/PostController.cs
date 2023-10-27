@@ -77,7 +77,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("saved-lists")]
-        public IActionResult GetSaveListByPostID([FromForm] int postID, [FromForm] int userID)
+        public IActionResult GetSaveListByPostID([FromQuery] int postID, [FromQuery] int userID)
         {
             var savelists = _postListHandlers.GetAllSaveListByPostID(postID, userID);
             if (savelists == null || savelists.Count == 0)

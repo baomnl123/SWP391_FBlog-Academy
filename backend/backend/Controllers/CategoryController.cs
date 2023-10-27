@@ -96,8 +96,7 @@ namespace backend.Controllers
                 if (category.Status) return StatusCode(422, $"\"{category.CategoryName}\" aldready exists!");
 
                 // If category already exists, but was disabled, then enable it
-                _categoryHandlers.EnableCategory(category.Id);
-                return Ok(category);
+                return Ok(_categoryHandlers.EnableCategory(category.Id));
             }
 
             var createCategory = _categoryHandlers.CreateCategory(adminId, categoryName);

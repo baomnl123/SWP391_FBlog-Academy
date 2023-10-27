@@ -34,6 +34,17 @@ namespace backend.Controllers
             }
             return Ok(reportPostList);
         }
+        [HttpGet("{userID}")]
+        public IActionResult GetAllPendingReportPost(int userID)
+        {
+            var reportPostList = _reportPostHandlers.GetAllPendingReportPost(userID);
+
+            if (reportPostList == null || reportPostList.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(reportPostList);
+        }
         [HttpPost]
         public IActionResult AddReportPost([FromForm] int reporterID, [FromForm] int postID, [FromForm] string? content)
         {
