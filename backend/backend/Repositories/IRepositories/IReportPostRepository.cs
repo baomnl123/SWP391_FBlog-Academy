@@ -6,6 +6,7 @@ namespace backend.Repositories.IRepositories
     {
         //Get Report Post
         public ICollection<ReportPost>? GetAllReportPost();
+        public ICollection<ReportPost>? GetAllReportPost(int userID);
         public ICollection<ReportPost>? GetReportPostsByContent(string content);
         //public ReportPost? GetReportPostByID(int postID);
         public ReportPost? GetReportPostByIDs(int reporterID, int postID);

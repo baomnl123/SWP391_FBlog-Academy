@@ -153,5 +153,25 @@ namespace backend.Repositories.Implementors
                 return null;
             }
         }
+
+        public ICollection<ReportPost>? GetAllReportPost(int userID)
+        {
+            try
+            {
+                var list = _fblogAcademyContext.ReportPosts.Where(e => e.ReporterId.Equals(userID)).OrderBy(u => u.CreatedAt).ToList();
+                if (list.Count == 0)
+                {
+                    return null;
+                }
+                else
+                {
+                    return list;
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
+            }
+        }
     }
 }
