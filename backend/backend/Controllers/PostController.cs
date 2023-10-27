@@ -57,7 +57,7 @@ namespace backend.Controllers
             return Ok(existedList);
         }
 
-        [HttpGet]
+        [HttpGet("deleted-post/{userId}")]
         public IActionResult ViewDeletedPostOf(int userId)
         {
             var existedList = _postHandlers.ViewDeletedPostOf(userId);
