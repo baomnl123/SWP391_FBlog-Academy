@@ -358,6 +358,7 @@ namespace backend.Handlers.Implementors
         {
             //get user info
             var user = _userRepository.GetUser(email);
+            if (user == null || !user.Status) return null;
             //return userdto info
             return _mapper.Map<UserDTO>(user);
         }
