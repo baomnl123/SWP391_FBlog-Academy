@@ -93,18 +93,52 @@ namespace backend.Repositories.Implementors
         public ICollection<Post>? ViewPendingPostList()
         {
             return _fBlogAcademyContext.Posts.Where(p => p.Status == true 
-                                                    && p.IsApproved == false).OrderByDescending(p => p.CreatedAt).ToList();
+                                                    && p.IsApproved == false).OrderBy(p => p.CreatedAt).ToList();
         }
 
         public ICollection<Post>? SearchPostByUserId(int userId)
         {
             try
             {
-                var existedList = _fBlogAcademyContext.Posts.Where(p => p.UserId == userId).ToList();
+                var existedList = _fBlogAcademyContext.Posts.Where(p => p.UserId == userId 
+                                                                    && p.Status && p.IsApproved)
+                                                                    .OrderByDescending(p => p.CreatedAt).ToList();
                 if (existedList == null) return null;
                 return existedList;
             }
             catch(InvalidOperationException)
+            {
+                return null;
+            }
+        }
+
+        public ICollection<Post>? ViewPendingPostList(int userId)
+        {
+            try
+            {
+                var existedList = _fBlogAcademyContext.Posts.Where(p => p.UserId == userId
+                                                                    && p.Status && !p.IsApproved)
+                                                                    .OrderByDescending(p => p.CreatedAt).ToList();
+                if (existedList == null) return null;
+                return existedList;
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
+            }
+        }
+
+        public ICollection<Post>? ViewDeletedPost(int userId)
+        {
+            try
+            {
+                var existedList = _fBlogAcademyContext.Posts.Where(p => p.UserId == userId
+                                                                    && !p.Status && p.IsApproved)
+                                                                    .OrderByDescending(p => p.CreatedAt).ToList();
+                if (existedList == null) return null;
+                return existedList;
+            }
+            catch (InvalidOperationException)
             {
                 return null;
             }

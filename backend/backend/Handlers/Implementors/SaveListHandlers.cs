@@ -29,6 +29,7 @@ namespace backend.Handlers.Implementors
                 //Reactivate the savelist
                 checkSaveList.Status = true;
                 checkSaveList.CreatedAt = DateTime.Now;
+                checkSaveList.UpdateAt = null;
                 if (!_saveListRepository.UpdateSaveList(checkSaveList))
                 {
                     return null;
@@ -71,8 +72,6 @@ namespace backend.Handlers.Implementors
 
         public ICollection<SaveListDTO>? GetAllActiveSaveList(int userID)
         {
-            //init list
-            List<SaveListDTO> saveListsDTO = new();
             //get savelist information
             var saveLists = _saveListRepository.GetAllSaveLists(userID);
             //if savelist is unavailable then return nothing
@@ -80,6 +79,8 @@ namespace backend.Handlers.Implementors
             {
                 return null;
             }
+            //init list
+            var saveListsDTO = new List<SaveListDTO>();
             foreach (var saveList in saveLists)
             {
                 //Map to DTO
@@ -108,13 +109,13 @@ namespace backend.Handlers.Implementors
             {
                 return null;
             }
-            //Check if savelist is not exist
-            if (!_saveListRepository.isExisted(saveListID))
+            //Get savelist
+            var saveList = _saveListRepository.GetSaveListBySaveListID(saveListID);
+            //check available
+            if(saveList == null || !saveList.Status)
             {
                 return null;
             }
-            //Get savelist
-            var saveList = _saveListRepository.GetSaveListBySaveListID(saveListID);
             //Update savelist
             saveList.Name = listName;
             saveList.UpdateAt = DateTime.Now;

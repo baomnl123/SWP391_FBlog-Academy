@@ -35,7 +35,7 @@ namespace backend.Handlers.Implementors
                 //get existed user
                 var existedUser = _userRepository.GetUser(email);
                 //check if user is enable
-                if (existedUser.Status)
+                if (existedUser != null && existedUser.Status)
                 {
                     return null;
                 }
@@ -47,7 +47,8 @@ namespace backend.Handlers.Implementors
                 }
                 existedUser.AvatarUrl = avatarURL;
                 existedUser.Status = true;
-                existedUser.UpdatedAt = DateTime.Now;
+                existedUser.CreatedAt = DateTime.Now;
+                existedUser.UpdatedAt = null;
                 if (!_userRepository.UpdateUser(existedUser))
                 {
                     return null;
@@ -55,7 +56,7 @@ namespace backend.Handlers.Implementors
                 //return
                 return _mapper.Map<UserDTO>(existedUser);
             }
-            //add new user
+            //init new user
             User newUser = new()
             {
                 Name = name,
@@ -94,7 +95,7 @@ namespace backend.Handlers.Implementors
                 //get existed user
                 var existedUser = _userRepository.GetUser(email);
                 //check if user is enable
-                if (existedUser.Status)
+                if (existedUser != null || existedUser.Status)
                 {
                     return null;
                 }
@@ -106,7 +107,8 @@ namespace backend.Handlers.Implementors
                 }
                 existedUser.AvatarUrl = avatarURL;
                 existedUser.Status = true;
-                existedUser.UpdatedAt = DateTime.Now;
+                existedUser.CreatedAt = DateTime.Now;
+                existedUser.UpdatedAt = null;
                 if (!_userRepository.UpdateUser(existedUser))
                 {
                     return null;
@@ -140,15 +142,13 @@ namespace backend.Handlers.Implementors
 
         public UserDTO? DemoteStudent(int userID)
         {
-            //check if existed
-            if (!_userRepository.isExisted(userID))
+            //get user info
+            var user = _userRepository.GetUser(userID);
+            if(user == null)
             {
                 return null;
             }
-            //get user info
-            var user = _userRepository.GetUser(userID);
             //get status
-            var studentRole = _userRoleConstrant.GetStudentRole();
             var moderatorRole = _userRoleConstrant.GetModeratorRole();
             //check if already demoted
             if (!user.Role.Trim().Contains(moderatorRole))
@@ -156,7 +156,9 @@ namespace backend.Handlers.Implementors
                 return null;
             }
             //demote user
+            var studentRole = _userRoleConstrant.GetStudentRole();
             user.Role = studentRole;
+            user.UpdatedAt = DateTime.Now;
             //update
             if (!_userRepository.UpdateUser(user))
             {
@@ -188,8 +190,6 @@ namespace backend.Handlers.Implementors
 
         public ICollection<UserDTO>? GetAllUsers()
         {
-            //init list dto
-            var listDTO = new List<UserDTO>();
             //get user list
             var list = _userRepository.GetAllUsers();
             //check if list is null of empty
@@ -197,6 +197,8 @@ namespace backend.Handlers.Implementors
             {
                 return null;
             }
+            //init list dto
+            var listDTO = new List<UserDTO>();
             foreach (var user in list)
             {
                 //check user status then map to dto
@@ -211,8 +213,6 @@ namespace backend.Handlers.Implementors
 
         public ICollection<UserDTO>? GetLecturers()
         {
-            //init dto list
-            var listDTO = new List<UserDTO>();
             //get lecture role
             var lectureRole = _userRoleConstrant.GetLecturerRole();
             //get lecture list
@@ -222,6 +222,8 @@ namespace backend.Handlers.Implementors
             {
                 return null;
             }
+            //init dto list
+            var listDTO = new List<UserDTO>();
             foreach (var user in list)
             {
                 //map if user status is true
@@ -236,13 +238,12 @@ namespace backend.Handlers.Implementors
 
         public ICollection<UserDTO>? GetStudentsAndModerator()
         {
-            //init dto list
-            var listDTO = new List<UserDTO>();
-
             //get student role
             var studentRole = _userRoleConstrant.GetStudentRole();
             //get student list
             var studentList = _userRepository.GetUsersByRole(studentRole);
+            //init dto list
+            var listDTO = new List<UserDTO>();
             //if list is null
             if (studentList != null)
             {
@@ -255,7 +256,6 @@ namespace backend.Handlers.Implementors
                     }
                 }
             }
-
             //get student role
             var moderatorRole = _userRoleConstrant.GetModeratorRole();
             //get student list
@@ -297,28 +297,28 @@ namespace backend.Handlers.Implementors
             {
                 return null;
             }
-            return _mapper.Map<List<UserDTO>>(userList);
+            return _mapper.Map<ICollection<UserDTO>>(userList);
         }
 
         public UserDTO? PromoteStudent(int userID)
         {
-            //check if existed
-            if (!_userRepository.isExisted(userID))
+            //get user info
+            var user = _userRepository.GetUser(userID);
+            if(user == null || !user.Status)
             {
                 return null;
             }
-            //get user info
-            var user = _userRepository.GetUser(userID);
             //get status
             var studentRole = _userRoleConstrant.GetStudentRole();
-            var moderatorRole = _userRoleConstrant.GetModeratorRole();
             //check if already demoted
             if (!user.Role.Trim().Contains(studentRole))
             {
                 return null;
             }
             //demote user
+            var moderatorRole = _userRoleConstrant.GetModeratorRole();
             user.Role = moderatorRole;
+            user.UpdatedAt = DateTime.Now;
             //update
             if (!_userRepository.UpdateUser(user))
             {
@@ -340,12 +340,12 @@ namespace backend.Handlers.Implementors
             //update
             user.Name = name;
             user.AvatarUrl = avatarURL;
+            user.UpdatedAt = DateTime.Now;
             //update password
             if (password != null)
             {
                 user.Password = _hashingString.HashString(password);
             }
-            user.UpdatedAt = DateTime.Now;
             //update to db
             if (!_userRepository.UpdateUser(user))
             {

@@ -3,6 +3,7 @@ using backend.DTO;
 using backend.Handlers.IHandlers;
 using backend.Models;
 using backend.Repositories.IRepositories;
+using backend.Utils;
 
 namespace backend.Handlers.Implementors
 {
@@ -13,6 +14,7 @@ namespace backend.Handlers.Implementors
         private readonly ICommentRepository _commentRepository;
         private readonly IVoteCommentRepository _voteCommentRepository;
         private readonly IPostRepository _postRepository;
+        private readonly UserRoleConstrant _userRoleConstrant;
 
         public CommentHandlers(IUserRepository userRepository, 
                                 IPostRepository postRepository,
@@ -25,6 +27,7 @@ namespace backend.Handlers.Implementors
             _commentRepository = commentRepository;
             _voteCommentRepository = voteCommentRepository;
             _postRepository = postRepository;
+            _userRoleConstrant = new UserRoleConstrant();
         }
 
         public CommentDTO? CreateComment(int userId, int postId, string content)
@@ -36,8 +39,10 @@ namespace backend.Handlers.Implementors
             //                      or is removed
             //                      or does not have role SU(Student) or MOD(Moderator)
             var existedUser = _userRepository.GetUser(userId);
+            var studentRole = _userRoleConstrant.GetStudentRole();
+            var modRole = _userRoleConstrant.GetModeratorRole();
             if (existedUser == null || existedUser.Status == false
-                || !( existedUser.Role.Contains("SU") || existedUser.Role.Contains("MOD") )) return null;
+                || !( existedUser.Role.Contains(studentRole) || existedUser.Role.Contains(modRole) )) return null;
 
             //return null if post does not exist
             //                      or is removed
@@ -116,7 +121,7 @@ namespace backend.Handlers.Implementors
 
             //Get All Comments of that post
             var existedComments = _commentRepository.ViewAllComments(postId);
-            if (existedComments == null) return null;
+            if (existedComments == null || existedComments.Count == 0) return null;
             return _mapper.Map<List<CommentDTO>>(existedComments);
         }
     }

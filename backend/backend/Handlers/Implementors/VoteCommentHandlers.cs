@@ -39,16 +39,18 @@ namespace backend.Handlers.Implementors
             if (existedVote != null)
             {
                 //return null if that vote is set
-                if ((existedVote.UpVote && vote) || (existedVote.DownVote && !vote)) return null;
+                if (existedVote.UpVote || existedVote.DownVote) return null;
 
                 //
                 if (vote)
                 {
                     existedVote.UpVote = true;
+                    existedVote.DownVote = false;
                     existedVote.CreateAt = DateTime.Now;
                 }
                 else
                 {
+                    existedVote.UpVote = false;
                     existedVote.DownVote = true;
                     existedVote.CreateAt = DateTime.Now;
                 };
@@ -89,7 +91,7 @@ namespace backend.Handlers.Implementors
 
             //Get all users voting that comment
             var userList = _voteCommentRepository.GetAllUserBy(commentId);
-            if (userList == null) return null;
+            if (userList == null || userList.Count == 0) return null;
             return _mapper.Map<List<UserDTO>>(userList);
         }
 
