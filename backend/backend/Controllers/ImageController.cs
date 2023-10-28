@@ -28,7 +28,7 @@ namespace backend.Controllers
             return Ok(images);
         }
 
-        [HttpPost("create-image")]
+        [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(422)]
         public IActionResult CreateImage([FromForm] int postId, [FromForm] string[] imageURLs)
@@ -43,7 +43,7 @@ namespace backend.Controllers
             return Ok(createImage);
         }
 
-        [HttpPut("update/{postId}/{currentImageId}")]
+        [HttpPut("{postId}/{currentImageId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -58,7 +58,7 @@ namespace backend.Controllers
             return Ok(updateImage);
         }
 
-        [HttpDelete("delete")]
+        [HttpDelete("{imageId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         public IActionResult DeleteImage(int imageId)
