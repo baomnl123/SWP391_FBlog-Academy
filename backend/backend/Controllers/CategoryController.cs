@@ -134,7 +134,7 @@ namespace backend.Controllers
             return Ok(updateCategory);
         }
 
-        [HttpPut("{categoryId}")]
+        [HttpPut("enable/{categoryId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
