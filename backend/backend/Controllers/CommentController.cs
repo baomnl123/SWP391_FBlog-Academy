@@ -31,7 +31,7 @@ namespace backend.Controllers
             return BadRequest();
         }
 
-        [HttpPut]
+        [HttpPut("{commentId}")]
         public IActionResult UpdateComment([FromForm] int commentId, [FromForm] string content)
         {
             var updatedComment = _commentHandlers.UpdateComment(commentId , content);
