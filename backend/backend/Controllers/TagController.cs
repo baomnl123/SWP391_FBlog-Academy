@@ -26,7 +26,7 @@ namespace backend.Controllers
             _userRoleConstrant = new();
         }
 
-        [HttpGet]
+        [HttpGet("all")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Tag>))]
         public IActionResult GetTags()
         {
