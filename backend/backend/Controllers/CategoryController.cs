@@ -68,7 +68,7 @@ namespace backend.Controllers
             return Ok(posts);
         }
 
-        [HttpGet("{categoryId}/tag")]
+        [HttpGet("{categoryId}/tags")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
         [ProducesResponseType(400)]
         public IActionResult GetTagsByCategory(int categoryId)
@@ -79,7 +79,7 @@ namespace backend.Controllers
             return Ok(tags);
         }
 
-        [HttpPost("create-category")]
+        [HttpPost("category")]
         [ProducesResponseType(204)]
         [ProducesResponseType(422)]
         public IActionResult CreateCategory(int adminId, [FromForm] string categoryName)
@@ -105,7 +105,7 @@ namespace backend.Controllers
             return Ok(createCategory);
         }
 
-        [HttpPut("update/{currentCategoryId}")]
+        [HttpPut("{currentCategoryId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -134,7 +134,7 @@ namespace backend.Controllers
             return Ok(updateCategory);
         }
 
-        [HttpPut("enable/{categoryId}")]
+        [HttpPut("{categoryId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -150,7 +150,7 @@ namespace backend.Controllers
             return Ok(enableCategory);
         }
 
-        [HttpDelete("delete/{categoryId}")]
+        [HttpDelete("{categoryId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         public IActionResult DeleteCategory(int categoryId)
