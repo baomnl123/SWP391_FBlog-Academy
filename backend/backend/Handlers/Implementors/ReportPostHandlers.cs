@@ -147,13 +147,47 @@ namespace backend.Handlers.Implementors
                     reportPostList.Add(_mapper.Map<ReportPostDTO>(reportPost));
                 }
             }
-            if(reportPostList.Count == 0)
+            if (reportPostList.Count == 0)
             {
                 return null;
             }
             //Return Result
             return reportPostList;
         }
+
+        public ICollection<ReportPostDTO>? GetAllPendingReportPost(int userID)
+        {
+            //get user
+            var user = _userRepository.GetUser(userID);
+            if (user == null || !user.Status)
+            {
+                return null;
+            }
+            //Get List
+            var list = _reportPostRepository.GetAllReportPost(userID);
+            //Check Null
+            if (list == null || list.Count == 0)
+            {
+                return null;
+            }
+            //Init List
+            var reportPostList = new List<ReportPostDTO>();
+            //Get Status
+            var disableStatus = _reportStatusConstrant.GetDisableStatus();
+            foreach (var reportPost in list)
+            {
+                //Check status Status
+                //Map to ReportPostDTO
+                reportPostList.Add(_mapper.Map<ReportPostDTO>(reportPost));
+            }
+            if (reportPostList.Count == 0)
+            {
+                return null;
+            }
+            //Return Result
+            return reportPostList;
+        }
+
         public ICollection<ReportPostDTO>? GetAllReportPost()
         {
             var list = _reportPostRepository.GetAllReportPost();
@@ -168,7 +202,7 @@ namespace backend.Handlers.Implementors
         {
             //get reporter
             var reporter = _userRepository.GetUser(reporterID);
-            if(reporter == null || !reporter.Status)
+            if (reporter == null || !reporter.Status)
             {
                 return null;
             }

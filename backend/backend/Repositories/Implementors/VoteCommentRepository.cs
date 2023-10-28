@@ -51,8 +51,8 @@ namespace backend.Repositories.Implementors
 
         public ICollection<User>? GetAllUserBy(int commentId)
         {
-            return _fBlogAcademyContext.VoteComments.Where(v => v.CommentId == commentId)
-                                                    .Select(v => v.User).ToList();
+            return _fBlogAcademyContext.VoteComments.Where(v => v.CommentId == commentId 
+                                                            && ( (v.UpVote && !v.DownVote) || (!v.UpVote && v.DownVote) )).Select(v => v.User).ToList();
         }
 
         public VoteComment? GetVoteComment(int userId, int commentId)
