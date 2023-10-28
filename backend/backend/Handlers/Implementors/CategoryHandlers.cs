@@ -62,6 +62,8 @@ namespace backend.Handlers.Implementors
             if (category == null || category.Status == false) return null;
 
             var posts = _categoryRepository.GetPostsByCategory(categoryId);
+            if(posts == null || posts.Count == 0) return null;
+
             return _mapper.Map<List<PostDTO>>(posts);
         }
 
@@ -71,6 +73,8 @@ namespace backend.Handlers.Implementors
             if (category == null || category.Status == false) return null;
 
             var tags = _categoryRepository.GetTagsByCategory(categoryId);
+            if(tags == null || tags.Count == 0) return null;
+
             return _mapper.Map<List<TagDTO>>(tags);
         }
 
