@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
+import CmtBtn from "../CmtBtn/CmtBtn";
 import DeleteButton from "../DeleteButton";
 export default function VideoPost({
   dp,
@@ -142,30 +143,7 @@ export default function VideoPost({
           </div>
           <div className="flex-row interact-icons comment" id="com-react">
             <img src="images/comment.png" alt="" />
-            <Button className="Comment-Btn" onClick={handleShow}>
-              Comment
-            </Button>
-            <Modal show={show} onHide={handleClose}>
-              <Modal.Header closeButton>
-                <Modal.Title>Modal heading</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <Form>
-                  <Form.Group
-                    className="mb-3"
-                    controlId="exampleForm.ControlTextarea1"
-                  >
-                    <Form.Label>Hãy viết suy nghĩ của bạn lên blog</Form.Label>
-                    <Form.Control as="textarea" rows={3} />
-                  </Form.Group>
-                </Form>
-              </Modal.Body>
-              <Modal.Footer>
-                <Button variant="primary" onClick={handleClose}>
-                  Comment
-                </Button>
-              </Modal.Footer>
-            </Modal>
+            <CmtBtn />
           </div>
           <div className="flex-row interact-icons" id="com-react">
             <img src="images/report.png" alt="" />

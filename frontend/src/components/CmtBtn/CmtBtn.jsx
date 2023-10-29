@@ -15,10 +15,10 @@ function CmtBtn() {
       </Button>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
+          <Modal.Title>Comment</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Comments />
+          <Comments currentUserId="1" />
         </Modal.Body>
       </Modal>
     </>

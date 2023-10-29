@@ -151,6 +151,15 @@ export default function PhotoPost({
           </div>
           <div className="flex-row interact mind share">
             <div>
+            <div
+                className="flex-row interact-icons like-container"
+                id="com-react"
+                ref={likeBtn}
+                onClick={handleLike}
+              >
+                <div className="like-icon"></div>
+                <p className="like">Like</p>
+              </div>
               <div
                 className="flex-row interact-icons like-container"
                 id="com-react"
