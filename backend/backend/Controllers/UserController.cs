@@ -164,6 +164,26 @@ namespace backend.Controllers
             }
             return Ok(user);
         }
+        [HttpPut("{userID}/award")]
+        public IActionResult GiveAward(int userID)
+        {
+            var user = _userHandlers.GiveAward(userID);
+            if (user == null || !user.Status)
+            {
+                return BadRequest();
+            }
+            return Ok(user);
+        }
+        [HttpDelete("{userID}/award")]
+        public IActionResult RemoveAward(int userID)
+        {
+            var user = _userHandlers.RemoveAward(userID);
+            if(user == null || !user.Status)
+            {
+                return BadRequest();
+            }
+            return Ok(user);
+        }
         [HttpDelete("{userID}")]
         public IActionResult disableUser(int userID)
         {
