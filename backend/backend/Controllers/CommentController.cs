@@ -15,7 +15,7 @@ namespace backend.Controllers
             _commentHandlers = commentHandlers;
         }
 
-        [HttpGet("{postId}")]
+        [HttpGet("{postId}/comments")]
         public IActionResult GetAllComments(int postId)
         {
             var commentList = _commentHandlers.ViewAllComments(postId);
