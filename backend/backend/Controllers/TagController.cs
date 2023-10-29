@@ -59,7 +59,7 @@ namespace backend.Controllers
             return Ok(tag);
         }
 
-        [HttpGet("{tagId}/post")]
+        [HttpGet("{tagId}/posts")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Tag>))]
         [ProducesResponseType(400)]
         public IActionResult GetPostsByTag(int tagId)
@@ -70,7 +70,7 @@ namespace backend.Controllers
             return Ok(posts);
         }
 
-        [HttpGet("{tagId}/category")]
+        [HttpGet("{tagId}/categories")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Tag>))]
         [ProducesResponseType(400)]
         public IActionResult GetCategoriesByTag(int tagId)
@@ -81,7 +81,7 @@ namespace backend.Controllers
             return Ok(categories);
         }
 
-        [HttpPost("create")]
+        [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(422)]
         public IActionResult CreateTag([FromForm] int adminId, [FromForm] int categoryId, [FromForm] string tagName)
@@ -125,7 +125,7 @@ namespace backend.Controllers
             return Ok(createTag);
         }
 
-        [HttpPut("update/{currentTagId}")]
+        [HttpPut("{currentTagId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -166,7 +166,7 @@ namespace backend.Controllers
             return Ok(enableTag);
         }
 
-        [HttpDelete("delete/{tagId}")]
+        [HttpDelete("{tagId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         public IActionResult DeleteTag(int tagId)
@@ -177,10 +177,10 @@ namespace backend.Controllers
             return Ok(deleteTag);
         }
 
-        [HttpDelete("delete-relationship/{tagId}")]
+        [HttpDelete("{categoryId}/{tagId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult DeleteRelationship([FromForm] int categoryId, [FromForm] int tagId)
+        public IActionResult DeleteRelationship(int categoryId, int tagId)
         {
             var deleteRelationship = _tagHandlers.DisableCategoryTag(tagId, categoryId);
             if (deleteRelationship == null) ModelState.AddModelError("", "Something went wrong delete relationship");
