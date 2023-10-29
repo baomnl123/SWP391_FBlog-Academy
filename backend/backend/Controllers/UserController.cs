@@ -37,7 +37,7 @@ namespace backend.Controllers
             }
             return Ok(list);
         }
-        [HttpGet("students-and-moderator")]
+        [HttpGet("students-and-moderators")]
         public IActionResult GetStudentsAndModerators()
         {
             var list = _userHandlers.GetStudentsAndModerator();
@@ -48,7 +48,7 @@ namespace backend.Controllers
             return Ok(list);
         }
 
-        [HttpGet("all/lecturer")]
+        [HttpGet("all/lecturers")]
         public IActionResult GetLecturers()
         {
             var list = _userHandlers.GetLecturers();
@@ -69,7 +69,7 @@ namespace backend.Controllers
             }
             return Ok(user);
         }
-        [HttpGet("email/{email}")]
+        [HttpGet("{email}")]
         public IActionResult GetUserByEmail(string email)
         {
             var user = _userHandlers.GetUserByEmail(email);

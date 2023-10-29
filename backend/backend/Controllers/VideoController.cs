@@ -26,7 +26,7 @@ namespace backend.Controllers
             return Ok(videos);
         }
 
-        [HttpPost("create-video")]
+        [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(422)]
         public IActionResult CreateVideo([FromForm] int postId, [FromForm] string[] videoURLs)
@@ -41,7 +41,7 @@ namespace backend.Controllers
             return Ok(createVideo);
         }
 
-        [HttpPut("update/{postId}/{currentVideoId}")]
+        [HttpPut("{postId}/{currentVideoId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -56,7 +56,7 @@ namespace backend.Controllers
             return Ok(updateVideo);
         }
 
-        [HttpDelete("delete")]
+        [HttpDelete("{videoId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         public IActionResult DeleteVideo(int videoId)

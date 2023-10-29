@@ -37,7 +37,7 @@ namespace backend.Controllers
             return Ok(list);
         }
 
-        [HttpGet("posts/{saveListID}")]
+        [HttpGet("{saveListID}/posts")]
         public IActionResult GetAllPostBySaveList(int saveListID)
         {
             var postList = _postListHandlers.GetAllPostBySaveListID(saveListID);
@@ -58,7 +58,7 @@ namespace backend.Controllers
             return Ok(saveList);
         }
 
-        [HttpPut]
+        [HttpPut("{saveListID}")]
         public IActionResult UpdateSaveList([FromForm]int saveListID, [FromForm]string name)
         {
             var saveList = _saveListHandlers.UpdateSaveListName(saveListID, name);
@@ -79,7 +79,7 @@ namespace backend.Controllers
             }
             return Ok(saveList);
         }
-        [HttpDelete("posts")]
+        [HttpDelete("{postID}")]
         public IActionResult DeletePostList(int saveListID, int postID)
         {
             var postList = _postListHandlers.DisablePostList(saveListID, postID);
