@@ -362,5 +362,41 @@ namespace backend.Handlers.Implementors
             //return userdto info
             return _mapper.Map<UserDTO>(user);
         }
+
+        public UserDTO? GiveAward(int userID)
+        {
+            //get user
+            var existedUser = _userRepository.GetUser(userID);
+            //check if user is unavailable
+            if (existedUser == null || !existedUser.Status) return null;
+            //check if user is awarded
+            if (existedUser.IsAwarded) return null;
+            //update user
+            existedUser.IsAwarded = true;
+            //update to db
+            if (!_userRepository.UpdateUser(existedUser))
+            {
+                return null;
+            }
+            return _mapper.Map<UserDTO>(existedUser);
+        }
+
+        public UserDTO? RemoveAward(int userID)
+        {
+            //get user
+            var existedUser = _userRepository.GetUser(userID);
+            //check if user is unavailable
+            if (existedUser == null || !existedUser.Status) return null;
+            //check if user is awarded
+            if (!existedUser.IsAwarded) return null;
+            //update user
+            existedUser.IsAwarded = false;
+            //update to db
+            if (!_userRepository.UpdateUser(existedUser))
+            {
+                return null;
+            }
+            return _mapper.Map<UserDTO>(existedUser);
+        }
     }
 }
