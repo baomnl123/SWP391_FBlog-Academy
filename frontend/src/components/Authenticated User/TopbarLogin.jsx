@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { Button, ButtonGroup } from "@chakra-ui/react";
+
 import { UserButton } from "@clerk/clerk-react";
-export default function Topbar() {
+export default function TopbarLogin() {
   const [isOpen, setIsOpen] = useState(false);
   const container = useRef();
 
@@ -42,9 +42,7 @@ export default function Topbar() {
           </a>
         </div>
         <ul className="top-menu">
-          <Button colorScheme="green">
-            <a href="/sign-in">Login</a>
-          </Button>
+          <UserButton />
           <li className="nav" onClick={handleClick} ref={container}></li>
         </ul>
       </nav>

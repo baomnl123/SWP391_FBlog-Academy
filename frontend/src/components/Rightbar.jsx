@@ -1,10 +1,10 @@
+import { Routes, Route } from "react-router-dom";
+import { Popup } from "reactjs-popup";
+import { useState } from "react";
+import React from "react";
 
-
-
-export default function RightBar() {
-    return (
-        <nav className="right-bar">
-
-        </nav>
-    )
+function Rightbar() {
+  return <div>Rightbar</div>;
 }
+
+export default Rightbar;
