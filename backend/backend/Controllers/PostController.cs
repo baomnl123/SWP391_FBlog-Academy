@@ -18,6 +18,10 @@ namespace backend.Controllers
             _postHandlers = postHandlers;
             _postListHandlers = postListHandlers;
         }
+        /// <summary>
+        /// Get list of available Posts.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("all")]
         public IActionResult GetAllPosts()
         {
@@ -26,6 +30,11 @@ namespace backend.Controllers
             return NotFound();
         }
 
+        /// <summary>
+        /// Get list of Posts by its title.
+        /// </summary>
+        /// <param name="title"></param>
+        /// <returns></returns>
         [HttpGet("title/{title}")]
         public IActionResult SearchPostsByTitle(string title)
         {
@@ -38,6 +47,10 @@ namespace backend.Controllers
             return NotFound();
         }
 
+        /// <summary>
+        /// Get list of Posts that are waited for approval. (Moderator | Lecturer)
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("pending")]
         public IActionResult ViewPendingPostList()
         {
@@ -49,6 +62,11 @@ namespace backend.Controllers
             return NotFound();
         }
 
+        /// <summary>
+        /// Get list of Posts that are waited for approval by selected User. (Moderator | Lecturer)
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         [HttpGet("pending/{userId}")]
         public IActionResult ViewPendingPostListOf(int userId)
         {
@@ -57,6 +75,11 @@ namespace backend.Controllers
             return Ok(existedList);
         }
 
+        /// <summary>
+        /// Get list of deleted Posts of selected User. (Student | Moderator)
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         [HttpGet("deleted-post/{userId}")]
         public IActionResult ViewDeletedPostOf(int userId)
         {
@@ -65,6 +88,11 @@ namespace backend.Controllers
             return Ok(existedList);
         }
 
+        /// <summary>
+        /// Get list of Posts of selected User.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         [HttpGet("user/{userId}")]
         public IActionResult SearchPostByUserId(int userId)
         {
@@ -76,8 +104,14 @@ namespace backend.Controllers
             return NotFound();
         }
 
-        [HttpGet("saved-lists")]
-        public IActionResult GetSaveListByPostID([FromQuery] int postID, [FromQuery] int userID)
+        /// <summary>
+        /// Get list of Savelists by selected Post. (Student | Moderator)
+        /// </summary>
+        /// <param name="postID"></param>
+        /// <param name="userID"></param>
+        /// <returns></returns>
+        [HttpGet("save-lists/{postID}/{userID}")]
+        public IActionResult GetSaveListByPostID(int postID, int userID)
         {
             var savelists = _postListHandlers.GetAllSaveListByPostID(postID, userID);
             if (savelists == null || savelists.Count == 0)
@@ -87,6 +121,12 @@ namespace backend.Controllers
             return Ok(savelists);
         }
 
+        /// <summary>
+        /// Save the selected Post to the selected Savelist. (Student | Moderator)
+        /// </summary>
+        /// <param name="saveListID"></param>
+        /// <param name="postID"></param>
+        /// <returns></returns>
         [HttpPost("saved-post")]
         public IActionResult AddPostList([FromForm] int saveListID, [FromForm] int postID)
         {
@@ -98,6 +138,17 @@ namespace backend.Controllers
             return Ok(postList);
         }
 
+        /// <summary>
+        /// Create new Post. (Student | Moderator)
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="title"></param>
+        /// <param name="content"></param>
+        /// <param name="tagIds"></param>
+        /// <param name="categoryIds"></param>
+        /// <param name="videoURLs"></param>
+        /// <param name="imageURLs"></param>
+        /// <returns></returns>
         [HttpPost]
         public IActionResult CreatePost([FromForm] int userId, 
                                         [FromForm] string title, 
@@ -115,6 +166,17 @@ namespace backend.Controllers
             return BadRequest();
         }
 
+        /// <summary>
+        /// Update selected Post. (Student | Moderator)
+        /// </summary>
+        /// <param name="postId"></param>
+        /// <param name="title"></param>
+        /// <param name="content"></param>
+        /// <param name="tagIds"></param>
+        /// <param name="categoryIds"></param>
+        /// <param name="videoURLs"></param>
+        /// <param name="imageURLs"></param>
+        /// <returns></returns>
         [HttpPut]
         public IActionResult UpdatePost([FromForm] int postId, 
                                         [FromForm] string title, 
@@ -132,6 +194,11 @@ namespace backend.Controllers
             return BadRequest();
         }
 
+        /// <summary>
+        /// Ban/Disable/Delete selected Post. (Admin)
+        /// </summary>
+        /// <param name="postId"></param>
+        /// <returns></returns>
         [HttpDelete("{postId}")]
         public IActionResult DeletePost(int postId)
         {
@@ -143,6 +210,12 @@ namespace backend.Controllers
             return BadRequest();
         }
 
+        /// <summary>
+        /// Approve selected Post. (Moderator | Lecturer)
+        /// </summary>
+        /// <param name="reviewerId"></param>
+        /// <param name="postId"></param>
+        /// <returns></returns>
         [HttpPut("approve")]
         public IActionResult ApprovePost([FromForm] int reviewerId, [FromForm] int postId)
         {
@@ -154,6 +227,12 @@ namespace backend.Controllers
             return BadRequest();
         }
 
+        /// <summary>
+        /// Deny selected Post. (Moderator | Lecturer)
+        /// </summary>
+        /// <param name="reviewerId"></param>
+        /// <param name="postId"></param>
+        /// <returns></returns>
         [HttpPut("deny")]
         public IActionResult DenyPost([FromForm] int reviewerId, 
                                       [FromForm] int postId)

@@ -24,6 +24,10 @@ namespace backend.Controllers
             _userRoleConstrant = new();
         }
 
+        /// <summary>
+        /// Get all the Categories that are available. (Admin)
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("all")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
         public IActionResult GetCategories()
@@ -35,6 +39,10 @@ namespace backend.Controllers
             return Ok(categories);
         }
 
+        /// <summary>
+        /// Get all the Categories that are disable. (Admin)
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("disable")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
         public IActionResult GetDisableCategories()
@@ -46,6 +54,11 @@ namespace backend.Controllers
             return Ok(categories);
         }
 
+        /// <summary>
+        /// Get Category with selected CategoryID. 
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <returns></returns>
         [HttpGet("{categoryId}")]
         [ProducesResponseType(200, Type = typeof(Category))]
         [ProducesResponseType(400)]
@@ -57,6 +70,11 @@ namespace backend.Controllers
             return Ok(category);
         }
 
+        /// <summary>
+        /// Get all Posts that have the selected Category. (Admin)
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <returns></returns>
         [HttpGet("{categoryId}/posts")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
         [ProducesResponseType(400)]
@@ -68,6 +86,11 @@ namespace backend.Controllers
             return Ok(posts);
         }
 
+        /// <summary>
+        /// Get all Tags that have the selected Category. 
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <returns></returns>
         [HttpGet("{categoryId}/tags")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
         [ProducesResponseType(400)]
@@ -79,6 +102,12 @@ namespace backend.Controllers
             return Ok(tags);
         }
 
+        /// <summary>
+        /// Create a new Category. (Admin)
+        /// </summary>
+        /// <param name="adminId"></param>
+        /// <param name="categoryName"></param>
+        /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(422)]
@@ -105,6 +134,12 @@ namespace backend.Controllers
             return Ok(createCategory);
         }
 
+        /// <summary>
+        /// Update the selected Category. (Admin)
+        /// </summary>
+        /// <param name="newCategoryName"></param>
+        /// <param name="currentCategoryId"></param>
+        /// <returns></returns>
         [HttpPut("{currentCategoryId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -134,6 +169,11 @@ namespace backend.Controllers
             return Ok(updateCategory);
         }
 
+        /// <summary>
+        /// Enable the selected "disabled" Category. (Admin)
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <returns></returns>
         [HttpPut("enable/{categoryId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -150,6 +190,11 @@ namespace backend.Controllers
             return Ok(enableCategory);
         }
 
+        /// <summary>
+        /// Delete the selected Category. (Admin)
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <returns></returns>
         [HttpDelete("{categoryId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]

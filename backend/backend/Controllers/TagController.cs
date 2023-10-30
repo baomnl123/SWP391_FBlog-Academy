@@ -26,6 +26,10 @@ namespace backend.Controllers
             _userRoleConstrant = new();
         }
 
+        /// <summary>
+        /// Get list of enable Tags. (Admin)
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("all")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Tag>))]
         public IActionResult GetTags()
@@ -37,6 +41,10 @@ namespace backend.Controllers
             return Ok(tags);
         }
 
+        /// <summary>
+        /// Get list of enable Tags. (Admin)
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("disable")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Tag>))]
         public IActionResult GetDisableTags()
@@ -48,6 +56,11 @@ namespace backend.Controllers
             return Ok(tags);
         }
 
+        /// <summary>
+        /// Get selected Tag by ID.
+        /// </summary>
+        /// <param name="tagId"></param>
+        /// <returns></returns>
         [HttpGet("{tagId}")]
         [ProducesResponseType(200, Type = typeof(Tag))]
         [ProducesResponseType(400)]
@@ -59,6 +72,11 @@ namespace backend.Controllers
             return Ok(tag);
         }
 
+        /// <summary>
+        /// Get list of Posts that contains selected Tag. (Admin)
+        /// </summary>
+        /// <param name="tagId"></param>
+        /// <returns></returns>
         [HttpGet("{tagId}/posts")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Tag>))]
         [ProducesResponseType(400)]
@@ -70,6 +88,11 @@ namespace backend.Controllers
             return Ok(posts);
         }
 
+        /// <summary>
+        /// Get list of categories that contains selected Tag.
+        /// </summary>
+        /// <param name="tagId"></param>
+        /// <returns></returns>
         [HttpGet("{tagId}/categories")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Tag>))]
         [ProducesResponseType(400)]
@@ -81,6 +104,13 @@ namespace backend.Controllers
             return Ok(categories);
         }
 
+        /// <summary>
+        /// Create a new Tag. (Admin)
+        /// </summary>
+        /// <param name="adminId"></param>
+        /// <param name="categoryId"></param>
+        /// <param name="tagName"></param>
+        /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(422)]
@@ -125,6 +155,12 @@ namespace backend.Controllers
             return Ok(createTag);
         }
 
+        /// <summary>
+        /// Update selected Tag. (Admin)
+        /// </summary>
+        /// <param name="newTagName"></param>
+        /// <param name="currentTagId"></param>
+        /// <returns></returns>
         [HttpPut("{currentTagId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -154,6 +190,11 @@ namespace backend.Controllers
             return Ok(updateTage);
         }
 
+        /// <summary>
+        /// Enable selected Tag. (Admin)
+        /// </summary>
+        /// <param name="tagId"></param>
+        /// <returns></returns>
         [HttpPut("enable/{tagId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -166,6 +207,11 @@ namespace backend.Controllers
             return Ok(enableTag);
         }
 
+        /// <summary>
+        /// Delete selected Tag. (Admin)
+        /// </summary>
+        /// <param name="tagId"></param>
+        /// <returns></returns>
         [HttpDelete("{tagId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -177,6 +223,12 @@ namespace backend.Controllers
             return Ok(deleteTag);
         }
 
+        /// <summary>
+        /// Remove selected Tag from selected Category. (Admin)
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <param name="tagId"></param>
+        /// <returns></returns>
         [HttpDelete("{categoryId}/{tagId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
