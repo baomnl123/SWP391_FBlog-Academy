@@ -1,16 +1,12 @@
 import { Form, Input, Modal, ModalProps, SelectProps, Space } from 'antd'
-import { useEffect } from 'react'
 
-const CreateLecture = (props: ModalProps & { initialValues?: { name: string; category: string[] } }) => {
-  const { open, onOk, onCancel, initialValues, ...rest } = props
+const CreateLecture = (
+  props: ModalProps & {
+    onFinish?: (value: { email: string; password: string }) => void
+  }
+) => {
+  const { open, onOk, onCancel, ...rest } = props
   const [form] = Form.useForm()
-  console.log(initialValues)
-  useEffect(() => {
-    form.setFieldsValue({
-      name: initialValues?.name ?? '',
-      category: initialValues?.category ?? []
-    })
-  }, [form, initialValues])
 
   const options: SelectProps['options'] = []
   for (let i = 0; i < 20; i++) {
@@ -35,7 +31,11 @@ const CreateLecture = (props: ModalProps & { initialValues?: { name: string; cat
         onCancel?.(e)
       }}
     >
-      <Form<{ name: string }> form={form} layout='vertical' onFinish={(value) => console.log(value)}>
+      <Form<{ email: string; password: string }>
+        form={form}
+        layout='vertical'
+        onFinish={(value) => props.onFinish?.(value)}
+      >
         <Space className='w-full' direction='vertical' size={20}>
           <Form.Item label='Email' name='email' rules={[{ required: true, message: 'Email is required' }]}>
             <Input placeholder='Email' />

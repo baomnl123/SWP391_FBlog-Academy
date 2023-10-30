@@ -1,8 +1,9 @@
 import { useAntdTable } from 'ahooks'
 import { Button, ConfigProvider, Flex, Form, Input, Modal, Space, Table, Typography } from 'antd'
 import { ColumnsType } from 'antd/es/table'
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import CreateTag from './CreateTag'
+import { tag } from '@/data'
 
 type DataType = {
   id: number
@@ -14,32 +15,41 @@ type Result = {
   list: DataType[]
 }
 
-const getTableData = (
-  { current, pageSize }: { current: number; pageSize: number },
-  formData: object
-): Promise<Result> => {
-  console.log(current, pageSize, formData)
-  const data: DataType[] = []
-  for (let i = 0; i < 20; i++) {
-    data.push({
-      id: i,
-      name: `Tag${i}`
-    })
-  }
-  return Promise.resolve({
-    total: 20,
-    list: data
-  })
-}
-
 export default function Tag() {
+  // data category
+  const [tagData, setTagData] = useState(tag)
+  const [tagUpdate, setTagUpdate] = useState(-1)
+
   const [createTag, setCreateTag] = useState(false)
-  const [initialValues, setInitialValues] = useState<{ name: string; category: string[] } | undefined>({
-    name: '',
-    category: []
-  })
+  const [initialValues, setInitialValues] = useState<{ name: string; category: string[] } | undefined>()
   const [modal, contextHolder] = Modal.useModal()
   const [form] = Form.useForm()
+
+  const getTableData = (
+    { current, pageSize }: { current: number; pageSize: number },
+    formData: object
+  ): Promise<Result> => {
+    console.log(current, pageSize, formData)
+    const data: DataType[] = []
+    for (let i = 0; i < 20; i++) {
+      data.push({
+        id: i,
+        name: `Tag${i}`
+      })
+    }
+    return Promise.resolve({
+      total: 20,
+      list: data
+    })
+  }
+
+  const onDelete = useCallback(
+    (id: number) => {
+      const result = tagData.filter((cate) => cate.id !== id)
+      setTagData(result)
+    },
+    [tagData]
+  )
 
   const { tableProps, search, data } = useAntdTable(getTableData, {
     defaultPageSize: 5,
@@ -74,6 +84,7 @@ export default function Tag() {
                 category: []
               })
               setCreateTag(true)
+              setTagUpdate(record.id)
             }}
           >
             Update
@@ -88,7 +99,7 @@ export default function Tag() {
                 centered: true,
                 content: 'Do you want to delete this tag?',
                 onOk() {
-                  console.log('ok')
+                  onDelete(record.id)
                 },
                 onCancel() {
                   console.log('cancel')
@@ -138,9 +149,43 @@ export default function Tag() {
         <Space align='start' direction='vertical' className='w-full'>
           {searchForm}
         </Space>
-        <Table {...tableProps} columns={columns} />
+        <Table rowKey='id' {...tableProps} columns={columns} dataSource={tagData} pagination={{ defaultPageSize: 5 }} />
       </Space>
-      <CreateTag initialValues={initialValues} centered open={createTag} onCancel={() => setCreateTag(false)} />
+      <CreateTag
+        initialValues={initialValues}
+        centered
+        open={createTag}
+        onCancel={() => {
+          setCreateTag(false)
+          setInitialValues(undefined)
+        }}
+        onFinish={(value) => {
+          console.log('onFinish')
+          if (initialValues) {
+            const result = tagData.map((tag) => {
+              if (tag.id === tagUpdate) {
+                tag.name = value.name
+              }
+
+              return tag
+            })
+            setTagData(result)
+          } else {
+            const result = [
+              {
+                id: tagData.length,
+                name: value.name
+              },
+              ...tagData
+            ]
+            setTagData(result)
+          }
+        }}
+        onOk={() => {
+          setCreateTag(false)
+          setInitialValues(undefined)
+        }}
+      />
       {contextHolder}
     </ConfigProvider>
   )
