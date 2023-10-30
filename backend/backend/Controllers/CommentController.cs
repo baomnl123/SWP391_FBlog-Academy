@@ -15,6 +15,11 @@ namespace backend.Controllers
             _commentHandlers = commentHandlers;
         }
 
+        /// <summary>
+        /// Get all Comments by selected Post.
+        /// </summary>
+        /// <param name="postId"></param>
+        /// <returns></returns>
         [HttpGet("{postId}/comments")]
         public IActionResult GetAllComments(int postId)
         {
@@ -22,7 +27,13 @@ namespace backend.Controllers
             if (commentList != null) return Ok(commentList);
             return NotFound();
         }
-
+        /// <summary>
+        /// Create a new Comment for selected Post. (Student | Moderator)
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="postId"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
         [HttpPost]
         public IActionResult CreateNewComment([FromForm] int userId, [FromForm] int postId, [FromForm] string content) 
         {
@@ -31,6 +42,13 @@ namespace backend.Controllers
             return BadRequest();
         }
 
+        /// <summary>
+        /// Update the selected Comment. (Student | Moderator)
+        /// </summary>
+        /// <param name="commentId"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+
         [HttpPut("{commentId}")]
         public IActionResult UpdateComment([FromForm] int commentId, [FromForm] string content)
         {
@@ -38,6 +56,12 @@ namespace backend.Controllers
             if (updatedComment != null) return Ok(updatedComment);
             return BadRequest();
         }
+
+        /// <summary>
+        /// Delete the selected Comment (Student | Moderator)
+        /// </summary>
+        /// <param name="commentId"></param>
+        /// <returns></returns>
 
         [HttpDelete("{commentId}")]
         public IActionResult DeleteComment(int commentId)

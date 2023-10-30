@@ -16,6 +16,11 @@ namespace backend.Controllers
             _videoHandlers = videoHandlers;
         }
 
+        /// <summary>
+        /// Get list of Videos of selected Posts.
+        /// </summary>
+        /// <param name="postId"></param>
+        /// <returns></returns>
         [HttpGet("{postId}/videos")]
         [ProducesResponseType(400)]
         public IActionResult GetVideoByPost(int postId)
@@ -26,6 +31,12 @@ namespace backend.Controllers
             return Ok(videos);
         }
 
+        /// <summary>
+        /// Create a new Video of selected Post. (Student | Moderator)
+        /// </summary>
+        /// <param name="postId"></param>
+        /// <param name="videoURLs"></param>
+        /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(422)]
@@ -41,6 +52,13 @@ namespace backend.Controllers
             return Ok(createVideo);
         }
 
+        /// <summary>
+        /// Update selected Video by selected Post. (Student | Moderator)
+        /// </summary>
+        /// <param name="postId"></param>
+        /// <param name="newVideoURL"></param>
+        /// <param name="currentVideoId"></param>
+        /// <returns></returns>
         [HttpPut("{postId}/{currentVideoId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -56,6 +74,11 @@ namespace backend.Controllers
             return Ok(updateVideo);
         }
 
+        /// <summary>
+        /// Delete selected Video. (Student | Moderator | Admin)
+        /// </summary>
+        /// <param name="videoId"></param>
+        /// <returns></returns>
         [HttpDelete("{videoId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]

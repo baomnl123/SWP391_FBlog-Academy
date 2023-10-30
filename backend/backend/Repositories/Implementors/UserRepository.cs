@@ -22,20 +22,6 @@ namespace backend.Repositories.Implementors
                 return true;
             }
         }
-
-        //public bool DisableUser(User user)
-        //{
-        //    user.Status = false;
-        //    if (!this.UpdateUser(user))
-        //    {
-        //        return false;
-        //    }
-        //    else
-        //    {
-        //        return true;
-        //    }
-        //}
-
         public ICollection<User>? GetAllUsers()
         {
             try
