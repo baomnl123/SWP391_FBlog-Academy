@@ -1,15 +1,16 @@
 import { Form, Input, Modal, ModalProps, Select, SelectProps, Space } from 'antd'
 import { useEffect } from 'react'
 
-const CreateTag = (props: ModalProps & { initialValues?: { name: string; category: string[] } }) => {
+const CreateTag = (
+  props: ModalProps & {
+    initialValues?: { name: string; category: string[] }
+    onFinish?: (value: { name: string }) => void
+  }
+) => {
   const { open, onOk, onCancel, initialValues, ...rest } = props
   const [form] = Form.useForm()
-  console.log(initialValues)
   useEffect(() => {
-    form.setFieldsValue({
-      name: initialValues?.name ?? '',
-      category: initialValues?.category ?? []
-    })
+    form.setFieldsValue(initialValues)
   }, [form, initialValues])
 
   const options: SelectProps['options'] = []
@@ -35,7 +36,15 @@ const CreateTag = (props: ModalProps & { initialValues?: { name: string; categor
         onCancel?.(e)
       }}
     >
-      <Form<{ name: string }> form={form} layout='vertical' onFinish={(value) => console.log(value)}>
+      <Form<{ name: string; category: string[] }>
+        form={form}
+        layout='vertical'
+        onFinish={(value) => {
+          props.onFinish?.(value)
+          console.log('value', value)
+          form.resetFields()
+        }}
+      >
         <Space className='w-full' direction='vertical' size={20}>
           <Form.Item label='Name' name='name' rules={[{ required: true, message: 'Name tag is required' }]}>
             <Input placeholder='Name tag' />

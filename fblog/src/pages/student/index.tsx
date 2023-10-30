@@ -1,6 +1,8 @@
+import { student } from '@/data'
 import { useAntdTable } from 'ahooks'
 import { Button, ConfigProvider, Flex, Form, Input, Modal, Space, Table, Typography } from 'antd'
 import { ColumnsType } from 'antd/es/table'
+import { useState } from 'react'
 
 type DataType = {
   id: number
@@ -31,6 +33,9 @@ const getTableData = (
 }
 
 export default function Student() {
+  // student data
+  const [studentData, setStudentData] = useState(student)
+
   const [modal, contextHolder] = Modal.useModal()
   const [form] = Form.useForm()
 
@@ -56,7 +61,7 @@ export default function Student() {
       title: 'Action',
       key: 'action',
       width: 150,
-      render: () => (
+      render: (_, record) => (
         <Space size='middle'>
           <Button
             type='text'
@@ -68,7 +73,8 @@ export default function Student() {
                 centered: true,
                 content: 'Are you sure to ban student?',
                 onOk() {
-                  console.log('ok')
+                  const result = studentData.filter((student) => student.id !== record.id)
+                  setStudentData(result)
                 },
                 onCancel() {
                   console.log('cancel')
@@ -111,7 +117,14 @@ export default function Student() {
           <Space align='start' direction='vertical' className='w-full'>
             {searchForm}
           </Space>
-          <Table {...tableProps} columns={columns} />
+          <Table
+            {...tableProps}
+            dataSource={studentData}
+            pagination={{
+              defaultPageSize: 5
+            }}
+            columns={columns}
+          />
         </div>
       </Space>
       {contextHolder}

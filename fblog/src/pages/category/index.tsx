@@ -1,9 +1,10 @@
 import { Button, ConfigProvider, Flex, Form, Input, Modal, Space, Table, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import CreateCategory from './CreateCategory'
 import ListTag from './ListTag'
 import { useAntdTable } from 'ahooks'
+import { category } from '@/data'
 
 type DataType = {
   id: number
@@ -16,10 +17,12 @@ type Result = {
 }
 
 export default function Category() {
+  // data category
+  const [cateData, setCateData] = useState(category)
+  const [cateUpdate, setCateUpdate] = useState(-1)
+
   const [createCategory, setCreateCategory] = useState(false)
-  const [initialValues, setInitValues] = useState<{ name: string } | undefined>({
-    name: ''
-  })
+  const [initialValues, setInitValues] = useState<{ name: string } | undefined>()
   const [tag, setTag] = useState(false)
   const [form] = Form.useForm()
   const [modal, contextHolder] = Modal.useModal()
@@ -49,6 +52,24 @@ export default function Category() {
 
   const { submit } = search
 
+  const searchForm = (
+    <div style={{ marginBottom: 16 }}>
+      <Form form={form} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <Form.Item name='Search'>
+          <Input.Search className='w-96' onSearch={submit} placeholder='search' />
+        </Form.Item>
+      </Form>
+    </div>
+  )
+
+  const onDelete = useCallback(
+    (id: number) => {
+      const result = cateData.filter((cate) => cate.id !== id)
+      setCateData(result)
+    },
+    [cateData]
+  )
+
   const columns: ColumnsType<DataType> = [
     {
       title: 'ID',
@@ -74,6 +95,7 @@ export default function Category() {
                 name: record.name
               })
               setCreateCategory(true)
+              setCateUpdate(record.id)
             }}
           >
             Update
@@ -88,7 +110,7 @@ export default function Category() {
                 centered: true,
                 content: 'Do you want to delete this category?',
                 onOk() {
-                  console.log('ok')
+                  onDelete(record.id)
                 },
                 onCancel() {
                   console.log('cancel')
@@ -102,16 +124,6 @@ export default function Category() {
       )
     }
   ]
-
-  const searchForm = (
-    <div style={{ marginBottom: 16 }}>
-      <Form form={form} style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <Form.Item name='Search'>
-          <Input.Search className='w-96' onSearch={submit} placeholder='search' />
-        </Form.Item>
-      </Form>
-    </div>
-  )
 
   return (
     <ConfigProvider
@@ -135,9 +147,14 @@ export default function Category() {
         </Space>
         <Table
           {...tableProps}
+          dataSource={cateData}
+          pagination={{
+            defaultPageSize: 5
+          }}
+          rowKey='id'
           columns={columns}
           onRow={(data) => {
-            console.log(data)
+            // console.log(data)
             return {
               className: 'cursor-pointer',
               onClick: () => {
@@ -155,6 +172,31 @@ export default function Category() {
         centered
         open={createCategory}
         onCancel={() => {
+          setCreateCategory(false)
+          setInitValues(undefined)
+        }}
+        onFinish={(value) => {
+          if (initialValues) {
+            const result = cateData.map((cate) => {
+              if (cate.id === cateUpdate) {
+                cate.name = value.name
+              }
+
+              return cate
+            })
+            setCateData(result)
+          } else {
+            const result = [
+              {
+                id: cateData.length,
+                name: value.name
+              },
+              ...cateData
+            ]
+            setCateData(result)
+          }
+        }}
+        onOk={() => {
           setCreateCategory(false)
           setInitValues(undefined)
         }}

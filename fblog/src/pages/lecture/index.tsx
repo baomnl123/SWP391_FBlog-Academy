@@ -1,8 +1,9 @@
 import { useAntdTable } from 'ahooks'
 import { Button, ConfigProvider, Flex, Form, Input, Modal, Space, Table, Typography } from 'antd'
 import { ColumnsType } from 'antd/es/table'
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import CreateLecture from './components/CreateLecture'
+import { lecturer } from '@/data'
 
 type DataType = {
   id: number
@@ -33,11 +34,10 @@ const getTableData = (
 }
 
 export default function Lecture() {
-  const [createTag, setCreateTag] = useState(false)
-  const [initialValues] = useState<{ name: string; category: string[] } | undefined>({
-    name: '',
-    category: []
-  })
+  // data lecturer
+  const [dataLec, setDataLec] = useState(lecturer)
+
+  const [createLecture, setCreateLecture] = useState(false)
   const [modal, contextHolder] = Modal.useModal()
   const [form] = Form.useForm()
 
@@ -47,6 +47,14 @@ export default function Lecture() {
   })
 
   const { submit } = search
+
+  const onDelete = useCallback(
+    (id: number) => {
+      const result = dataLec.filter((lec) => lec.id !== id)
+      setDataLec(result)
+    },
+    [dataLec]
+  )
 
   const columns: ColumnsType<DataType> = [
     {
@@ -63,7 +71,7 @@ export default function Lecture() {
       title: 'Action',
       key: 'action',
       width: 150,
-      render: () => (
+      render: (_, record) => (
         <Space size='middle'>
           <Button
             type='text'
@@ -75,7 +83,7 @@ export default function Lecture() {
                 centered: true,
                 content: 'Do you want to delete this tag?',
                 onOk() {
-                  console.log('ok')
+                  onDelete(record.id)
                 },
                 onCancel() {
                   console.log('cancel')
@@ -116,7 +124,7 @@ export default function Lecture() {
           <Button
             type='primary'
             onClick={() => {
-              setCreateTag(true)
+              setCreateLecture(true)
             }}
           >
             Create Lecturer
@@ -125,9 +133,24 @@ export default function Lecture() {
         <Space align='start' direction='vertical' className='w-full'>
           {searchForm}
         </Space>
-        <Table {...tableProps} columns={columns} />
+        <Table {...tableProps} dataSource={dataLec} pagination={{ defaultPageSize: 5 }} columns={columns} />
       </Space>
-      <CreateLecture initialValues={initialValues} centered open={createTag} onCancel={() => setCreateTag(false)} />
+      <CreateLecture
+        centered
+        open={createLecture}
+        onCancel={() => setCreateLecture(false)}
+        onFinish={(value) => {
+          const result = [
+            {
+              id: lecturer.length,
+              name: value.email
+            },
+            ...lecturer
+          ]
+          setDataLec(result)
+        }}
+        onOk={() => setCreateLecture(false)}
+      />
       {contextHolder}
     </ConfigProvider>
   )
