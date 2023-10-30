@@ -69,7 +69,7 @@ namespace backend.Controllers
             }
             return Ok(user);
         }
-        [HttpGet("{email}")]
+        [HttpGet("email/{email}")]
         public IActionResult GetUserByEmail(string email)
         {
             var user = _userHandlers.GetUserByEmail(email);
