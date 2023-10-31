@@ -16,6 +16,7 @@ builder.Services.AddSwaggerGen(c =>
 // Add services to the container.
 builder.Services.AddSingleton<IRestClient, RestClient>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(
@@ -23,10 +24,10 @@ builder.Services.AddCors(options =>
         {
             builder.AllowAnyOrigin()
                 .AllowAnyHeader()
-                .AllowAnyMethod(); //THIS LINE RIGHT HERE IS WHAT YOU NEED
+                .AllowAnyMethod();
         });
 });
-//
+
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IFollowUserRepository, FollowUserRepository>();
 builder.Services.AddScoped<IReportPostRepository, ReportPostRepository>();
