@@ -31,6 +31,7 @@ jobs:
 
       - name: Test
         run: dotnet test ./backend/backend.sln --no-build --verbosity normal backend
+        
       - name: Publish
         run: dotnet publish ./backend/backend.sln --configuration Release --no-build --output '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}'
         
