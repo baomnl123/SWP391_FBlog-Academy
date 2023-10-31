@@ -25,7 +25,7 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Get all the Categories that are available. (Admin)
+        /// Get all the Categories that are available. (Admin) 
         /// </summary>
         /// <returns></returns>
         [HttpGet("all")]
