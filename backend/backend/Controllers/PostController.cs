@@ -19,7 +19,7 @@ namespace backend.Controllers
             _postListHandlers = postListHandlers;
         }
         /// <summary>
-        /// Get list of available Posts.
+        /// Get list of Posts which are created and approved.
         /// </summary>
         /// <returns></returns>
         [HttpGet("all")]
@@ -31,7 +31,7 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Get list of Posts by its title.
+        /// Get list of Posts which are created and approved by title.
         /// </summary>
         /// <param name="title"></param>
         /// <returns></returns>
@@ -48,7 +48,7 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Get list of Posts that are waited for approval. (Moderator | Lecturer)
+        /// Get list of Posts that are waiting for approval. (Moderator | Lecturer)
         /// </summary>
         /// <returns></returns>
         [HttpGet("pending")]
@@ -63,7 +63,7 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Get list of Posts that are waited for approval by selected User. (Moderator | Lecturer)
+        /// Get list of Posts belong to selected User that are waiting for approval. (Moderator | Lecturer)
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
@@ -89,7 +89,7 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Get list of Posts of selected User.
+        /// Get list of Posts which are created and approved of selected User.
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
@@ -195,7 +195,7 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Ban/Disable/Delete selected Post. (Admin)
+        /// Ban/Disable/Delete selected Post. (Admin | Moderator | Student)
         /// </summary>
         /// <param name="postId"></param>
         /// <returns></returns>
