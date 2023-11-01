@@ -17,6 +17,10 @@ namespace backend.Controllers
             _followUserHandlers = followUserHandlers;
         }
 
+        /// <summary>
+        /// Get list of enable Users. (Moderator | Lecturer | Admin)
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("all/enable")]
         public IActionResult getAllUsers()
         {
@@ -27,6 +31,11 @@ namespace backend.Controllers
             }
             return Ok(list);
         }
+
+        /// <summary>
+        /// Get list of disable Users. (Moderator | Lecturer | Admin)
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("all/disable")]
         public IActionResult getDisableUsers()
         {
@@ -37,6 +46,11 @@ namespace backend.Controllers
             }
             return Ok(list);
         }
+
+        /// <summary>
+        /// Get list of Students and Moderators. (Lecturer | Admin)
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("students-and-moderators")]
         public IActionResult GetStudentsAndModerators()
         {
@@ -48,6 +62,10 @@ namespace backend.Controllers
             return Ok(list);
         }
 
+        /// <summary>
+        /// Get list of Lecturers. (Admin)
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("all/lecturers")]
         public IActionResult GetLecturers()
         {
@@ -59,6 +77,11 @@ namespace backend.Controllers
             return Ok(list);
         }
 
+        /// <summary>
+        /// Get selected User by his/her ID.
+        /// </summary>
+        /// <param name="userID"></param>
+        /// <returns></returns>
         [HttpGet("{userID}")]
         public IActionResult GetUser(int userID)
         {
@@ -69,6 +92,12 @@ namespace backend.Controllers
             }
             return Ok(user);
         }
+
+        /// <summary>
+        /// Get selected User by his/her email
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
         [HttpGet("email/{email}")]
         public IActionResult GetUserByEmail(string email)
         {
@@ -79,6 +108,12 @@ namespace backend.Controllers
             }
             return Ok(user);
         }
+
+        /// <summary>
+        /// Get list of people that follow selected User. (Student | Moderator)
+        /// </summary>
+        /// <param name="currentUserID"></param>
+        /// <returns></returns>
         [HttpGet("{currentUserID}/follower")]
         public IActionResult GetAllFollower(int currentUserID)
         {
@@ -91,6 +126,12 @@ namespace backend.Controllers
 
             return Ok(listFollowers);
         }
+
+        /// <summary>
+        /// Get list of people that selected User follows. (Student | Moderator)
+        /// </summary>
+        /// <param name="currentUserID"></param>
+        /// <returns></returns>
         [HttpGet("{currentUserID}/following")]
         public IActionResult GetAllFollowing(int currentUserID)
         {
@@ -104,8 +145,16 @@ namespace backend.Controllers
             return Ok(listFollowings);
         }
 
+        /// <summary>
+        /// Create a new User account. (Guest)
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="avatarUrl"></param>
+        /// <param name="email"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
         [HttpPost("student")]
-        public IActionResult CreateUser([FromForm] string name, [FromForm] string avatarUrl, [FromForm] string email, [FromForm] string? password)
+        public IActionResult CreateUser([FromForm] string name, [FromForm] string? avatarUrl, [FromForm] string email, [FromForm] string? password)
         {
             var user = _userHandlers.CreateUser(name, avatarUrl, email, password);
             if (user == null)
@@ -114,8 +163,17 @@ namespace backend.Controllers
             }
             return Ok(user);
         }
+
+        /// <summary>
+        /// Create a new Lecturer account. (Admin)
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="avatarUrl"></param>
+        /// <param name="email"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
         [HttpPost("lecturer")]
-        public IActionResult CreateLecturer([FromForm] string name, [FromForm] string avatarUrl, [FromForm] string email, [FromForm] string? password)
+        public IActionResult CreateLecturer([FromForm] string name, [FromForm] string? avatarUrl, [FromForm] string email, [FromForm] string? password)
         {
             var user = _userHandlers.CreateLecturer(name, avatarUrl, email, password);
             if (user == null)
@@ -124,6 +182,13 @@ namespace backend.Controllers
             }
             return Ok(user);
         }
+
+        /// <summary>
+        /// Follow selected User. (Student | Moderator)
+        /// </summary>
+        /// <param name="currentUserID"></param>
+        /// <param name="userID"></param>
+        /// <returns></returns>
         [HttpPost("follow")]
         public IActionResult Follow([FromForm] int currentUserID, [FromForm] int userID)
         {
@@ -134,8 +199,17 @@ namespace backend.Controllers
             }
             return Ok(followRelationship);
         }
+
+        /// <summary>
+        /// Update selected User.
+        /// </summary>
+        /// <param name="userID"></param>
+        /// <param name="avatarUrl"></param>
+        /// <param name="name"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
         [HttpPut()]
-        public IActionResult UpdateUser([FromForm] int userID, [FromForm] string avatarUrl, [FromForm] string name, [FromForm] string? password)
+        public IActionResult UpdateUser([FromForm] int userID, [FromForm] string? avatarUrl, [FromForm] string name, [FromForm] string? password)
         {
             var user = _userHandlers.UpdateUser(userID, name, avatarUrl, password);
             if (user == null)
@@ -144,6 +218,12 @@ namespace backend.Controllers
             }
             return Ok(user);
         }
+
+        /// <summary>
+        /// Promote Student to Moderator (Lecturer)
+        /// </summary>
+        /// <param name="userID"></param>
+        /// <returns></returns>
         [HttpPut("{userID}/promote")]
         public IActionResult PromoteStudent(int userID)
         {
@@ -154,6 +234,12 @@ namespace backend.Controllers
             }
             return Ok(user);
         }
+
+        /// <summary>
+        /// Demote Moderator to Student (Lecturer)
+        /// </summary>
+        /// <param name="userID"></param>
+        /// <returns></returns>
         [HttpPut("{userID}/demote")]
         public IActionResult DemoteStudent(int userID)
         {
@@ -164,6 +250,12 @@ namespace backend.Controllers
             }
             return Ok(user);
         }
+
+        /// <summary>
+        /// Give award to selected Student. (Moderator | Lecturer)
+        /// </summary>
+        /// <param name="userID"></param>
+        /// <returns></returns>
         [HttpPut("{userID}/award")]
         public IActionResult GiveAward(int userID)
         {
@@ -174,6 +266,12 @@ namespace backend.Controllers
             }
             return Ok(user);
         }
+
+        /// <summary>
+        /// Remove Award from selected Student (Moderator | Lecturer)
+        /// </summary>
+        /// <param name="userID"></param>
+        /// <returns></returns>
         [HttpDelete("{userID}/award")]
         public IActionResult RemoveAward(int userID)
         {
@@ -184,6 +282,12 @@ namespace backend.Controllers
             }
             return Ok(user);
         }
+
+        /// <summary>
+        /// Ban selected User. (Admin)
+        /// </summary>
+        /// <param name="userID"></param>
+        /// <returns></returns>
         [HttpDelete("{userID}")]
         public IActionResult disableUser(int userID)
         {
@@ -194,6 +298,13 @@ namespace backend.Controllers
             }
             return Ok(user);
         }
+
+        /// <summary>
+        /// Unfollow selected User. (Student | Moderator)
+        /// </summary>
+        /// <param name="currentUserID"></param>
+        /// <param name="userID"></param>
+        /// <returns></returns>
         [HttpDelete("follow")]
         public IActionResult Unfollow([FromForm] int currentUserID, [FromForm] int userID)
         {

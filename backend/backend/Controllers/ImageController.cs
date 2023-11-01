@@ -18,6 +18,11 @@ namespace backend.Controllers
             _imageHandlers = imageHandlers;
         }
 
+        /// <summary>
+        /// Get all Images by selected Post.
+        /// </summary>
+        /// <param name="postId"></param>
+        /// <returns></returns>
         [HttpGet("{postId}/images")]
         [ProducesResponseType(400)]
         public IActionResult GetImageByPost(int postId)
@@ -28,6 +33,12 @@ namespace backend.Controllers
             return Ok(images);
         }
 
+        /// <summary>
+        /// Create new Images for selected Post (Student | Moderator)
+        /// </summary>
+        /// <param name="postId"></param>
+        /// <param name="imageURLs"></param>
+        /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(422)]
@@ -43,6 +54,13 @@ namespace backend.Controllers
             return Ok(createImage);
         }
 
+        /// <summary>
+        /// Update Image for selected Post. (Student | Moderator)
+        /// </summary>
+        /// <param name="postId"></param>
+        /// <param name="newImageURL"></param>
+        /// <param name="currentImageId"></param>
+        /// <returns></returns>
         [HttpPut("{postId}/{currentImageId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -58,6 +76,11 @@ namespace backend.Controllers
             return Ok(updateImage);
         }
 
+        /// <summary>
+        /// Delete Image of selected Post. (Student | Moderator | Admin)
+        /// </summary>
+        /// <param name="imageId"></param>
+        /// <returns></returns>
         [HttpDelete("{imageId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]

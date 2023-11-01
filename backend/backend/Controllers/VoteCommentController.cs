@@ -14,6 +14,13 @@ namespace backend.Controllers
             _voteCommentHandlers = voteCommentHandlers;
         }
 
+        /// <summary>
+        /// Vote a Comment (Student | Moderator)
+        /// </summary>
+        /// <param name="currentUserId"></param>
+        /// <param name="commentId"></param>
+        /// <param name="vote"></param>
+        /// <returns></returns>
         [HttpPost]
         public IActionResult VoteComment([FromForm] int currentUserId, [FromForm] int commentId, [FromForm] bool vote)
         {
@@ -22,6 +29,13 @@ namespace backend.Controllers
             return Ok(successVote);
         }
 
+        /// <summary>
+        /// Change to from upvote to downvote or from downvote to upvote (Student | Moderator)
+        /// </summary>
+        /// <param name="currentUserId"></param>
+        /// <param name="commentId"></param>
+        /// <param name="vote"></param>
+        /// <returns></returns>
         [HttpPut]
         public IActionResult DisableUpVoteComment([FromForm] int currentUserId, [FromForm] int commentId, [FromForm] bool vote) 
         {
@@ -30,6 +44,11 @@ namespace backend.Controllers
             return Ok(UpdatedVote);
         }
 
+        /// <summary>
+        /// Get list of Users that vote that Comments. 
+        /// </summary>
+        /// <param name="commentId"></param>
+        /// <returns></returns>
         [HttpGet("{commentId}")]
         public IActionResult GetAllUsersVotedBy(int commentId)
         {
@@ -38,6 +57,12 @@ namespace backend.Controllers
             return Ok(userList);
         }
 
+        /// <summary>
+        /// Change to not Vote at all. (Student | Moderator)
+        /// </summary>
+        /// <param name="currentUserId"></param>
+        /// <param name="commentId"></param>
+        /// <returns></returns>
         [HttpDelete]
         public IActionResult DisableVoteComment([FromForm] int currentUserId, [FromForm] int commentId)
         {

@@ -16,6 +16,12 @@ namespace backend.Controllers
             _saveListHandlers = saveListHandlers;
             _postListHandlers = postListHandlers;
         }
+
+        /// <summary>
+        /// Get list of enable Savelist of selected User. (Student | Moderator)
+        /// </summary>
+        /// <param name="userID"></param>
+        /// <returns></returns>
         [HttpGet("{userID}")]
         public IActionResult GetAllSaveList(int userID)
         {
@@ -26,6 +32,12 @@ namespace backend.Controllers
             }
             return Ok(saveList);
         }
+
+        /// <summary>
+        /// Get list of enable Savelist of selected User. (Student | Moderator)
+        /// </summary>
+        /// <param name="userID"></param>
+        /// <returns></returns>
         [HttpGet("{userID}/disable")]
         public IActionResult getDisableUsers(int userID)
         {
@@ -37,6 +49,11 @@ namespace backend.Controllers
             return Ok(list);
         }
 
+        /// <summary>
+        /// Get list of Posts that are saved from this Savelist. 
+        /// </summary>
+        /// <param name="saveListID"></param>
+        /// <returns></returns>
         [HttpGet("{saveListID}/posts")]
         public IActionResult GetAllPostBySaveList(int saveListID)
         {
@@ -47,6 +64,13 @@ namespace backend.Controllers
             }
             return Ok(postList);
         }
+
+        /// <summary>
+        /// Create a new Savelist. (Student | Moderator)
+        /// </summary>
+        /// <param name="userID"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
         [HttpPost]
         public IActionResult AddSaveList([FromForm] int userID, [FromForm] string name)
         {
@@ -58,6 +82,12 @@ namespace backend.Controllers
             return Ok(saveList);
         }
 
+        /// <summary>
+        /// Update selected Savelist. (Student | Moderator)
+        /// </summary>
+        /// <param name="saveListID"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
         [HttpPut("{saveListID}")]
         public IActionResult UpdateSaveList([FromForm]int saveListID, [FromForm]string name)
         {
@@ -69,6 +99,11 @@ namespace backend.Controllers
             return Ok(saveList);
         }
 
+        /// <summary>
+        /// Delete selected Savelist. (Student | Moderator)
+        /// </summary>
+        /// <param name="saveListID"></param>
+        /// <returns></returns>
         [HttpDelete("{saveListID}")]
         public IActionResult DisableSaveList(int saveListID)
         {
@@ -79,7 +114,14 @@ namespace backend.Controllers
             }
             return Ok(saveList);
         }
-        [HttpDelete("{postID}")]
+
+        /// <summary>
+        /// Delete selected Post from selected Savelist. (Student | Moderator)
+        /// </summary>
+        /// <param name="saveListID"></param>
+        /// <param name="postID"></param>
+        /// <returns></returns>
+        [HttpDelete("{saveListID}/{postID}")]
         public IActionResult DeletePostList(int saveListID, int postID)
         {
             var postList = _postListHandlers.DisablePostList(saveListID, postID);

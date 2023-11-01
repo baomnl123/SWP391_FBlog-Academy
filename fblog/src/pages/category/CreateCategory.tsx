@@ -1,7 +1,9 @@
 import { Form, Input, Modal, ModalProps } from 'antd'
 import { useEffect } from 'react'
 
-const CreateCategory = (props: ModalProps & { initialValues?: { name: string } }) => {
+const CreateCategory = (
+  props: ModalProps & { initialValues?: { name: string }; onFinish?: (value: { name: string }) => void }
+) => {
   const { open, onOk, onCancel, initialValues, ...rest } = props
   const [form] = Form.useForm()
 
@@ -24,7 +26,14 @@ const CreateCategory = (props: ModalProps & { initialValues?: { name: string } }
         onCancel?.(e)
       }}
     >
-      <Form<{ name: string }> form={form} layout='vertical' onFinish={(value) => console.log(value)}>
+      <Form<{ name: string }>
+        form={form}
+        layout='vertical'
+        onFinish={(value) => {
+          props.onFinish?.(value)
+          form.resetFields()
+        }}
+      >
         <Form.Item label='Name' name='name' rules={[{ required: true, message: 'Name category is required' }]}>
           <Input placeholder='Name category' />
         </Form.Item>

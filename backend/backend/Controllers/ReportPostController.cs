@@ -13,6 +13,10 @@ namespace backend.Controllers
         {
             _reportPostHandlers = reportPostHandlers;
         }
+        /// <summary>
+        /// Get list of Report Posts. (Admin)
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public IActionResult GetAllReportPost()
         {
@@ -23,6 +27,11 @@ namespace backend.Controllers
             }
             return Ok(reportPostList);
         }
+
+        /// <summary>
+        /// Get list of pending Report Post. (Admin)
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("pending")]
         public IActionResult GetAllPendingReportPost()
         {
@@ -34,6 +43,12 @@ namespace backend.Controllers
             }
             return Ok(reportPostList);
         }
+
+        /// <summary>
+        /// Get list of Report Post of selected User. (Admin)
+        /// </summary>
+        /// <param name="userID"></param>
+        /// <returns></returns>
         [HttpGet("{userID}")]
         public IActionResult GetAllPendingReportPost(int userID)
         {
@@ -45,6 +60,14 @@ namespace backend.Controllers
             }
             return Ok(reportPostList);
         }
+
+        /// <summary>
+        /// Create New Report Post. (Student | Moderator)
+        /// </summary>
+        /// <param name="reporterID"></param>
+        /// <param name="postID"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
         [HttpPost]
         public IActionResult AddReportPost([FromForm] int reporterID, [FromForm] int postID, [FromForm] string? content)
         {
@@ -56,6 +79,14 @@ namespace backend.Controllers
             }
             return Ok(reportPost);
         }
+
+        /// <summary>
+        /// Update content of selected Report Post. (Student | Moderator)
+        /// </summary>
+        /// <param name="reportPostID"></param>
+        /// <param name="postID"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
         [HttpPut("content")]
         public IActionResult UpdateReportContent([FromForm] int reportPostID, [FromForm] int postID, [FromForm] string? content)
         {
@@ -66,6 +97,15 @@ namespace backend.Controllers
             }
             return Ok(reportPostDTO);
         }
+
+        /// <summary>
+        /// Update status of the Report Post. (Admin)
+        /// </summary>
+        /// <param name="adminID"></param>
+        /// <param name="reporterID"></param>
+        /// <param name="postID"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
         [HttpPut("status")]
         public IActionResult UpdateReportStatus([FromForm]int adminID, [FromForm] int reporterID, [FromForm] int postID, [FromForm] string status)
         {
@@ -76,6 +116,14 @@ namespace backend.Controllers
             }
             return Ok(reportPostDTO);
         }
+
+        /// <summary>
+        /// Disable Report Post. (Admin)
+        /// </summary>
+        /// <param name="adminID"></param>
+        /// <param name="reporterID"></param>
+        /// <param name="postID"></param>
+        /// <returns></returns>
         [HttpDelete]
         public IActionResult DisableReportPost([FromForm]int adminID,[FromForm] int reporterID, [FromForm] int postID)
         {
