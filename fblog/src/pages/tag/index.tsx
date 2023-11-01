@@ -136,7 +136,7 @@ export default function Tag() {
     >
       <Space className='w-full' size={20} direction='vertical'>
         <Flex justify='space-between' align='center'>
-          <Typography.Title level={5}>Quantity: {data?.total}</Typography.Title>
+          <Typography.Title level={5}>Quantity: {tagData?.length}</Typography.Title>
           <Button
             type='primary'
             onClick={() => {

@@ -7,7 +7,6 @@ const Dashboard = () => {
   const handleChangeTab = useCallback((type: CardType) => {
     setActiveTab(type)
   }, [])
-
   return (
     <>
       <div className='grid gap-6 grid-cols-3'>
