@@ -1,7 +1,8 @@
+import api from '@/config/api'
 import { useAntdTable } from 'ahooks'
-import { Button, ConfigProvider, Flex, Form, Input, Modal, ModalProps, Space, Table, Typography } from 'antd'
+import { Button, ConfigProvider, Flex, Form, Input, Modal, ModalProps, Space, Table, Typography, message } from 'antd'
 import { ColumnsType } from 'antd/es/table'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import CreateTag from './CreateTag'
 
 type DataType = {
@@ -14,38 +15,46 @@ type Result = {
   list: DataType[]
 }
 
-const getTableData = (
-  { current, pageSize }: { current: number; pageSize: number },
-  formData: object
-): Promise<Result> => {
-  console.log(current, pageSize, formData)
-  const data: DataType[] = []
-  for (let i = 0; i < 20; i++) {
-    data.push({
-      id: i,
-      name: `Tag${i}`
-    })
-  }
-  return Promise.resolve({
-    total: 20,
-    list: data
-  })
-}
-
-const ListTag = (props: ModalProps & { category: string }) => {
+const ListTag = (props: ModalProps & { category?: { id: number; name: string } }) => {
   const { open, onOk, onCancel, title, category, ...rest } = props
   const [form] = Form.useForm()
   const [createTag, setCreateTag] = useState(false)
-  const [initialValues, setInitialValues] = useState<{ name: string; category: string } | undefined>({
-    name: '',
-    category: ''
-  })
+  const [initialValues, setInitialValues] = useState<
+    { name: string; category?: { id: number; name: string } } | undefined
+  >()
   const [modal, contextHolder] = Modal.useModal()
+
+  const getTableData = async (
+    { current, pageSize }: { current: number; pageSize: number },
+    formData: object
+  ): Promise<Result> => {
+    console.log(current, pageSize, formData)
+    const response = await api.getTagByCategory(category?.id ?? 0)
+    return Promise.resolve({
+      total: response?.length,
+      list: (response ?? []).map((item) => ({
+        id: item.id,
+        name: item.tagName
+      }))
+    })
+  }
 
   const { tableProps, search, data } = useAntdTable(getTableData, {
     defaultPageSize: 5,
     form
   })
+
+  const onDelete = useCallback(
+    async (id: number) => {
+      try {
+        await api.deleteTagFromCategory(category?.id ?? 0, id)
+        message.success('Delete tag successfully')
+      } catch (e) {
+        console.error(e)
+      }
+    },
+    [category?.id]
+  )
 
   const { submit } = search
 
@@ -72,7 +81,7 @@ const ListTag = (props: ModalProps & { category: string }) => {
               e.stopPropagation()
               setInitialValues({
                 name: record.name,
-                category: category ?? ''
+                category
               })
               setCreateTag(true)
             }}
@@ -88,8 +97,8 @@ const ListTag = (props: ModalProps & { category: string }) => {
                 title: 'Delete tag',
                 centered: true,
                 content: 'Do you want to delete this tag?',
-                onOk() {
-                  console.log('ok')
+                async onOk() {
+                  await onDelete(record.id)
                 },
                 onCancel() {
                   console.log('cancel')
@@ -113,6 +122,7 @@ const ListTag = (props: ModalProps & { category: string }) => {
       </Form>
     </div>
   )
+
   return (
     <ConfigProvider
       theme={{
@@ -152,7 +162,7 @@ const ListTag = (props: ModalProps & { category: string }) => {
             <Space align='start' direction='vertical' className='w-full'>
               {searchForm}
             </Space>
-            <Table {...tableProps} columns={columns} />
+            <Table {...tableProps} columns={columns} rowKey='id' />
           </div>
         </Space>
       </Modal>

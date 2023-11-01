@@ -1,10 +1,10 @@
-import { Button, ConfigProvider, Flex, Form, Input, Modal, Space, Table, Typography } from 'antd'
+import api from '@/config/api'
+import { useAntdTable } from 'ahooks'
+import { Button, ConfigProvider, Flex, Form, Input, Modal, Space, Table, Typography, message } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import { useCallback, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import CreateCategory from './CreateCategory'
 import ListTag from './ListTag'
-import { useAntdTable } from 'ahooks'
-import { category } from '@/data'
 
 type DataType = {
   id: number
@@ -17,35 +17,30 @@ type Result = {
 }
 
 export default function Category() {
-  // data category
-  const [cateData, setCateData] = useState(category)
-  const [cateUpdate, setCateUpdate] = useState(-1)
-
   const [createCategory, setCreateCategory] = useState(false)
-  const [initialValues, setInitValues] = useState<{ name: string } | undefined>()
+  const [initialValues, setInitValues] = useState<{ id: number; name: string } | undefined>()
+  const [category, setCategory] = useState<{ id: number; name: string } | undefined>()
   const [tag, setTag] = useState(false)
   const [form] = Form.useForm()
   const [modal, contextHolder] = Modal.useModal()
 
-  const getTableData = (
+  const getTableData = async (
     { current, pageSize }: { current: number; pageSize: number },
     formData: object
   ): Promise<Result> => {
     console.log(current, pageSize, formData)
-    const data: DataType[] = []
-    for (let i = 0; i < 20; i++) {
-      data.push({
-        id: i,
-        name: `category${i}`
-      })
-    }
+    const response = await api.getCategories()
+
     return Promise.resolve({
-      total: 20,
-      list: data
+      total: response.length,
+      list: response.map((item) => ({
+        id: item.id,
+        name: item.categoryName
+      }))
     })
   }
 
-  const { tableProps, search, data } = useAntdTable(getTableData, {
+  const { tableProps, search, data, refresh, loading } = useAntdTable(getTableData, {
     defaultPageSize: 5,
     form
   })
@@ -63,11 +58,27 @@ export default function Category() {
   )
 
   const onDelete = useCallback(
-    (id: number) => {
-      const result = cateData.filter((cate) => cate.id !== id)
-      setCateData(result)
+    (e: React.MouseEvent, id: number) => {
+      e.stopPropagation()
+      modal.confirm({
+        title: 'Delete category',
+        centered: true,
+        content: 'Do you want to delete this category?',
+        async onOk() {
+          try {
+            await api.deleteCategory(id)
+            message.success('Delete category success!')
+            refresh()
+          } catch (e) {
+            console.error(e)
+          }
+        },
+        onCancel() {
+          console.log('cancel')
+        }
+      })
     },
-    [cateData]
+    [modal, refresh]
   )
 
   const columns: ColumnsType<DataType> = [
@@ -92,32 +103,15 @@ export default function Category() {
             onClick={(e) => {
               e.stopPropagation()
               setInitValues({
-                name: record.name
+                name: record.name,
+                id: record.id
               })
               setCreateCategory(true)
-              setCateUpdate(record.id)
             }}
           >
             Update
           </Button>
-          <Button
-            type='text'
-            danger
-            onClick={(e) => {
-              e.stopPropagation()
-              modal.confirm({
-                title: 'Delete category',
-                centered: true,
-                content: 'Do you want to delete this category?',
-                onOk() {
-                  onDelete(record.id)
-                },
-                onCancel() {
-                  console.log('cancel')
-                }
-              })
-            }}
-          >
+          <Button type='text' danger onClick={(e) => onDelete(e, record.id)}>
             Delete
           </Button>
         </Space>
@@ -147,20 +141,17 @@ export default function Category() {
         </Space>
         <Table
           {...tableProps}
-          dataSource={cateData}
-          pagination={{
-            defaultPageSize: 5
-          }}
+          loading={loading}
           rowKey='id'
           columns={columns}
           onRow={(data) => {
-            // console.log(data)
             return {
               className: 'cursor-pointer',
               onClick: () => {
                 setTag(true)
-                setInitValues({
-                  name: data.name
+                setCategory({
+                  name: data.name,
+                  id: data.id
                 })
               }
             }
@@ -175,40 +166,23 @@ export default function Category() {
           setCreateCategory(false)
           setInitValues(undefined)
         }}
-        onFinish={(value) => {
-          if (initialValues) {
-            const result = cateData.map((cate) => {
-              if (cate.id === cateUpdate) {
-                cate.name = value.name
-              }
-
-              return cate
-            })
-            setCateData(result)
-          } else {
-            const result = [
-              {
-                id: cateData.length,
-                name: value.name
-              },
-              ...cateData
-            ]
-            setCateData(result)
-          }
-        }}
         onOk={() => {
           setCreateCategory(false)
           setInitValues(undefined)
         }}
+        onSuccess={refresh}
       />
-      <ListTag
-        category={initialValues?.name ?? ''}
-        centered
-        open={tag}
-        onCancel={() => {
-          setTag(false)
-        }}
-      />
+      {category && (
+        <ListTag
+          category={category}
+          centered
+          open={tag}
+          onCancel={() => {
+            setTag(false)
+            setCategory(undefined)
+          }}
+        />
+      )}
       {contextHolder}
     </ConfigProvider>
   )

@@ -1,15 +1,38 @@
-import { Form, Input, Modal, ModalProps } from 'antd'
-import { useEffect } from 'react'
+import api from '@/config/api'
+import { Form, Input, Modal, ModalProps, message } from 'antd'
+import { useCallback, useEffect } from 'react'
 
 const CreateCategory = (
-  props: ModalProps & { initialValues?: { name: string }; onFinish?: (value: { name: string }) => void }
+  props: ModalProps & { initialValues?: { name: string; id: number }; onSuccess?: () => void }
 ) => {
-  const { open, onOk, onCancel, initialValues, ...rest } = props
+  const { open, onOk, onCancel, initialValues, onSuccess, ...rest } = props
   const [form] = Form.useForm()
 
   useEffect(() => {
     form.setFieldsValue(initialValues)
   }, [form, initialValues])
+
+  const onFinish = useCallback(
+    async (value: { name: string }) => {
+      try {
+        const payload = new FormData()
+        if (initialValues) {
+          payload.append('newCategoryName', value.name)
+          await api.updateCategory(initialValues.id, payload)
+          message.success('Update category successfully')
+        } else {
+          const id = Number(localStorage.getItem('id'))
+          payload.append('categoryName', value.name)
+          await api.createCategory(id, payload)
+          message.success('Create category successfully')
+        }
+        onSuccess?.()
+      } catch (e) {
+        console.error(e)
+      }
+    },
+    [initialValues, onSuccess]
+  )
 
   return (
     <Modal
@@ -26,14 +49,7 @@ const CreateCategory = (
         onCancel?.(e)
       }}
     >
-      <Form<{ name: string }>
-        form={form}
-        layout='vertical'
-        onFinish={(value) => {
-          props.onFinish?.(value)
-          form.resetFields()
-        }}
-      >
+      <Form<{ name: string }> form={form} layout='vertical' onFinish={onFinish}>
         <Form.Item label='Name' name='name' rules={[{ required: true, message: 'Name category is required' }]}>
           <Input placeholder='Name category' />
         </Form.Item>

@@ -148,11 +148,12 @@ const BaseLayout = ({ children }: PropsWithChildren) => {
             </Flex>
           </Header>
           <Content style={{ margin: '0 16px' }}>
-            <Breadcrumb style={{ margin: '16px 0' }}>
-              {crumbs.map((crumb, index) => (
-                <Breadcrumb.Item key={index}>{crumb}</Breadcrumb.Item>
-              ))}
-            </Breadcrumb>
+            <Breadcrumb
+              style={{ margin: '16px 0' }}
+              items={crumbs.map((crumb) => ({
+                title: crumb
+              }))}
+            />
             <FloatButton
               className='min-h-[unset] w-10 h-10 m-auto text-center rounded-[50%] fixed bottom-10 right-10 p-0'
               onClick={handleClick}
