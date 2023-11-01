@@ -154,7 +154,7 @@ namespace backend.Controllers
         /// <param name="password"></param>
         /// <returns></returns>
         [HttpPost("student")]
-        public IActionResult CreateUser([FromForm] string name, [FromForm] string avatarUrl, [FromForm] string email, [FromForm] string? password)
+        public IActionResult CreateUser([FromForm] string name, [FromForm] string? avatarUrl, [FromForm] string email, [FromForm] string? password)
         {
             var user = _userHandlers.CreateUser(name, avatarUrl, email, password);
             if (user == null)
@@ -173,7 +173,7 @@ namespace backend.Controllers
         /// <param name="password"></param>
         /// <returns></returns>
         [HttpPost("lecturer")]
-        public IActionResult CreateLecturer([FromForm] string name, [FromForm] string avatarUrl, [FromForm] string email, [FromForm] string? password)
+        public IActionResult CreateLecturer([FromForm] string name, [FromForm] string? avatarUrl, [FromForm] string email, [FromForm] string? password)
         {
             var user = _userHandlers.CreateLecturer(name, avatarUrl, email, password);
             if (user == null)
@@ -209,7 +209,7 @@ namespace backend.Controllers
         /// <param name="password"></param>
         /// <returns></returns>
         [HttpPut()]
-        public IActionResult UpdateUser([FromForm] int userID, [FromForm] string avatarUrl, [FromForm] string name, [FromForm] string? password)
+        public IActionResult UpdateUser([FromForm] int userID, [FromForm] string? avatarUrl, [FromForm] string name, [FromForm] string? password)
         {
             var user = _userHandlers.UpdateUser(userID, name, avatarUrl, password);
             if (user == null)

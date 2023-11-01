@@ -41,11 +41,20 @@ namespace backend.Handlers.Implementors
                 }
                 //if user is disable then update the user into enable status
                 existedUser.Name = name;
+                //check if password is null
                 if (password != null)
                 {
                     existedUser.Password = _hashingString.HashString(password);
                 }
-                existedUser.AvatarUrl = avatarURL;
+                //check if avatar is null
+                if (avatarURL == null)
+                {
+                    existedUser.AvatarUrl = string.Empty;
+                }
+                else
+                {
+                    existedUser.AvatarUrl = avatarURL;
+                }
                 existedUser.Status = true;
                 existedUser.CreatedAt = DateTime.Now;
                 existedUser.UpdatedAt = null;
@@ -60,13 +69,18 @@ namespace backend.Handlers.Implementors
             User newUser = new()
             {
                 Name = name,
-                AvatarUrl = avatarURL,
                 Email = email,
+                AvatarUrl = avatarURL,
                 Role = lectureRole,
                 CreatedAt = DateTime.Now,
                 Status = true,
                 IsAwarded = false,
             };
+            //if avatar is null
+            if(newUser.AvatarUrl == null)
+            {
+                newUser.AvatarUrl = string.Empty;
+            }
             if (password != null)
             {
                 newUser.Password = _hashingString.HashString(password);
@@ -105,7 +119,14 @@ namespace backend.Handlers.Implementors
                 {
                     existedUser.Password = _hashingString.HashString(password);
                 }
-                existedUser.AvatarUrl = avatarURL;
+                if(avatarURL == null)
+                {
+                    existedUser.AvatarUrl= string.Empty;
+                }
+                else
+                {
+                    existedUser.AvatarUrl = avatarURL;
+                }
                 existedUser.Status = true;
                 existedUser.CreatedAt = DateTime.Now;
                 existedUser.UpdatedAt = null;
@@ -127,6 +148,11 @@ namespace backend.Handlers.Implementors
                 Status = true,
                 IsAwarded = false,
             };
+            //if avatar is null
+            if (newUser.AvatarUrl == null)
+            {
+                newUser.AvatarUrl = string.Empty;
+            }
             if (password != null)
             {
                 newUser.Password = _hashingString.HashString(password);
@@ -144,7 +170,7 @@ namespace backend.Handlers.Implementors
         {
             //get user info
             var user = _userRepository.GetUser(userID);
-            if(user == null)
+            if (user == null)
             {
                 return null;
             }
@@ -304,7 +330,7 @@ namespace backend.Handlers.Implementors
         {
             //get user info
             var user = _userRepository.GetUser(userID);
-            if(user == null || !user.Status)
+            if (user == null || !user.Status)
             {
                 return null;
             }
@@ -339,7 +365,14 @@ namespace backend.Handlers.Implementors
             }
             //update
             user.Name = name;
-            user.AvatarUrl = avatarURL;
+            if(avatarURL == null)
+            {
+                user.AvatarUrl = string.Empty;
+            }
+            else
+            {
+                user.AvatarUrl = avatarURL;
+            }
             user.UpdatedAt = DateTime.Now;
             //update password
             if (password != null)
