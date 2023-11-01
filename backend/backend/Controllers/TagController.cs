@@ -114,7 +114,7 @@ namespace backend.Controllers
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(422)]
-        public IActionResult CreateTag([FromForm] int adminId, [FromForm] int categoryId, [FromForm] string tagName)
+        public IActionResult CreateTag(int adminId, int categoryId, [FromForm] string tagName)
         {
             // Check if admin exists
             var admin = _userHandlers.GetUser(adminId);
