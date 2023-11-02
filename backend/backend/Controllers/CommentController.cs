@@ -35,7 +35,7 @@ namespace backend.Controllers
         /// <param name="content"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult CreateNewComment([FromForm] int userId, [FromForm] int postId, [FromForm] string content) 
+        public IActionResult CreateNewComment(int userId, int postId, [FromForm] string content) 
         {
             var newComment = _commentHandlers.CreateComment(userId, postId, content);
             if (newComment != null) return Ok(newComment);
@@ -50,7 +50,7 @@ namespace backend.Controllers
         /// <returns></returns>
 
         [HttpPut("{commentId}")]
-        public IActionResult UpdateComment([FromForm] int commentId, [FromForm] string content)
+        public IActionResult UpdateComment(int commentId, [FromForm] string content)
         {
             var updatedComment = _commentHandlers.UpdateComment(commentId , content);
             if (updatedComment != null) return Ok(updatedComment);

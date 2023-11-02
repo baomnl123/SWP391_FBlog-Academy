@@ -20,7 +20,7 @@ namespace backend.Repositories.Implementors
                 _fBlogAcademyContext.Add(post);
                 return Save();
             }
-            catch(InvalidOperationException)
+            catch (InvalidOperationException)
             {
                 return false;
             }
@@ -92,7 +92,7 @@ namespace backend.Repositories.Implementors
 
         public ICollection<Post>? ViewPendingPostList()
         {
-            return _fBlogAcademyContext.Posts.Where(p => p.Status == true 
+            return _fBlogAcademyContext.Posts.Where(p => p.Status == true
                                                     && p.IsApproved == false).OrderBy(p => p.CreatedAt).ToList();
         }
 
@@ -100,13 +100,13 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                var existedList = _fBlogAcademyContext.Posts.Where(p => p.UserId == userId 
+                var existedList = _fBlogAcademyContext.Posts.Where(p => p.UserId == userId
                                                                     && p.Status && p.IsApproved)
                                                                     .OrderByDescending(p => p.CreatedAt).ToList();
                 if (existedList == null) return null;
                 return existedList;
             }
-            catch(InvalidOperationException)
+            catch (InvalidOperationException)
             {
                 return null;
             }
@@ -142,6 +142,64 @@ namespace backend.Repositories.Implementors
             {
                 return null;
             }
+        }
+
+        public ICollection<Post>? GetPost(int[] categoryID, int[] tagID)
+        {
+            try
+            {
+                List<Post> posts = new();
+                var postList = _fBlogAcademyContext.Posts.ToArray();
+                //check if post has all the category and tags
+                if(tagID == null || tagID.Length == 0)
+                {
+                    foreach (var post in postList)
+                    {
+                        var categories = _fBlogAcademyContext.PostCategories.Where(e => e.PostId.Equals(post.Id)).Select(e => e.CategoryId).ToArray();
+                        if (AreAllElementsInArray(categoryID, categories))
+                        {
+                            posts.Add(post);
+                        }
+                    }
+                }else if(categoryID == null || categoryID.Length == 0)
+                {
+                    foreach (var post in postList)
+                    {
+                        var tags = _fBlogAcademyContext.PostTags.Where(e => e.PostId.Equals(post.Id)).Select(e => e.TagId).ToArray();
+                        if (AreAllElementsInArray(tagID, tags))
+                        {
+                            posts.Add(post);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var post in postList)
+                    {
+                        var tags = _fBlogAcademyContext.PostTags.Where(e => e.PostId.Equals(post.Id)).Select(e => e.TagId).ToArray();
+                        var categories = _fBlogAcademyContext.PostCategories.Where(e => e.PostId.Equals(post.Id)).Select(e => e.CategoryId).ToArray();
+                        if (AreAllElementsInArray(categoryID, categories) && AreAllElementsInArray(tagID, tags))
+                        {
+                            posts.Add(post);
+                        }
+                    }
+                }
+
+                if (posts.Count == 0)
+                {
+                    return null;
+                }
+                return posts;
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
+            }
+        }
+
+        static bool AreAllElementsInArray(int[] sub, int[] main)
+        {
+            return sub.All(item => main.Contains(item));
         }
     }
 }

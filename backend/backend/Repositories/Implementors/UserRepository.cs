@@ -1,6 +1,8 @@
+using backend.DTO;
 using backend.Models;
 using backend.Repositories.IRepositories;
 using backend.Utils;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Repositories.Implementors
 {
@@ -207,6 +209,23 @@ namespace backend.Repositories.Implementors
                     return null;
                 }
                 return list;
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
+            }
+        }
+
+        public User? GetUserByPostID(int postID)
+        {
+            try
+            {
+                var user = _fBlogAcademyContext.Posts.Where(e => e.Id.Equals(postID)).Select(e => e.User).FirstOrDefault();
+                if (user == null || !user.Status)
+                {
+                    return null;
+                }
+                return user;
             }
             catch (InvalidOperationException)
             {

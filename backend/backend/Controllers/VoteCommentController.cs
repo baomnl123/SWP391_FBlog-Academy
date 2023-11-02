@@ -22,7 +22,7 @@ namespace backend.Controllers
         /// <param name="vote"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult VoteComment([FromForm] int currentUserId, [FromForm] int commentId, [FromForm] bool vote)
+        public IActionResult VoteComment(int currentUserId, int commentId, [FromForm] bool vote)
         {
             var successVote = _voteCommentHandlers.CreateVote(currentUserId, commentId, vote);
             if (successVote == null) return BadRequest();
@@ -37,7 +37,7 @@ namespace backend.Controllers
         /// <param name="vote"></param>
         /// <returns></returns>
         [HttpPut]
-        public IActionResult DisableUpVoteComment([FromForm] int currentUserId, [FromForm] int commentId, [FromForm] bool vote) 
+        public IActionResult DisableUpVoteComment(int currentUserId, int commentId, [FromForm] bool vote) 
         {
             var UpdatedVote = _voteCommentHandlers.UpdateVote(currentUserId, commentId, vote);
             if (UpdatedVote == null) return BadRequest();
@@ -64,7 +64,7 @@ namespace backend.Controllers
         /// <param name="commentId"></param>
         /// <returns></returns>
         [HttpDelete]
-        public IActionResult DisableVoteComment([FromForm] int currentUserId, [FromForm] int commentId)
+        public IActionResult DisableVoteComment(int currentUserId, int commentId)
         {
             var successDisableVote = _voteCommentHandlers.DisableVote(currentUserId, commentId);
             if (successDisableVote == null) return BadRequest();

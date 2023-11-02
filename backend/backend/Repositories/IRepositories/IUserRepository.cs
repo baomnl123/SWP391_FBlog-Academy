@@ -1,4 +1,5 @@
-﻿using backend.Models;
+﻿using backend.DTO;
+using backend.Models;
 
 namespace backend.Repositories.IRepositories
 {
@@ -12,6 +13,7 @@ namespace backend.Repositories.IRepositories
         public ICollection<User>? GetUsersByUsername(string username);
         public ICollection<User>? GetUsersByRole(string role);
         public ICollection<User>? GetStudentsAndModerators();
+        public User? GetUserByPostID(int postID);
         //CRUD Users
         public bool CreateUser(User user);
         public bool UpdateUser(User user);

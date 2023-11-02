@@ -72,7 +72,7 @@ namespace backend.Controllers
         /// <param name="name"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult AddSaveList([FromForm] int userID, [FromForm] string name)
+        public IActionResult AddSaveList(int userID, [FromForm] string name)
         {
             var saveList = _saveListHandlers.AddSaveList(userID, name);
             if (saveList == null)
@@ -89,7 +89,7 @@ namespace backend.Controllers
         /// <param name="name"></param>
         /// <returns></returns>
         [HttpPut("{saveListID}")]
-        public IActionResult UpdateSaveList([FromForm]int saveListID, [FromForm]string name)
+        public IActionResult UpdateSaveList(int saveListID, [FromForm]string name)
         {
             var saveList = _saveListHandlers.UpdateSaveListName(saveListID, name);
             if (saveList == null)
@@ -121,7 +121,7 @@ namespace backend.Controllers
         /// <param name="saveListID"></param>
         /// <param name="postID"></param>
         /// <returns></returns>
-        [HttpDelete("{saveListID}/{postID}")]
+        [HttpDelete]
         public IActionResult DeletePostList(int saveListID, int postID)
         {
             var postList = _postListHandlers.DisablePostList(saveListID, postID);

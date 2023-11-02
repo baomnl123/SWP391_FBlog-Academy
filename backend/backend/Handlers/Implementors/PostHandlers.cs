@@ -80,6 +80,10 @@ namespace backend.Handlers.Implementors
                 //return null if mapping is failed
                 if (approvingPost is null) return null;
 
+                var user = _userRepository.GetUserByPostID(approvingPost.Id);
+                if (user == null || !user.Status) return null;
+                approvingPost.User = _mapper.Map<UserDTO>(user);
+
                 //Return null if get videos of post is failed
                 var videos = _videoHandlers.GetVideosByPost(approvingPost.Id);
                 if (videos == null || videos.Count == 0) return null;
@@ -116,6 +120,12 @@ namespace backend.Handlers.Implementors
             //return null if creating post is failed
             var createdPost = CreatePost(userId, title, content);
             if (createdPost == null) return null;
+
+            //attach user for post
+            if (AttachUserForPost(createdPost, userId) is null)
+            {
+                return null;
+            }
 
             //create videos for post if it is necessary
             if (videoURLs is not null && videoURLs.Length > 0)
@@ -160,6 +170,7 @@ namespace backend.Handlers.Implementors
                 createdPost.Tags = tags;
             }
             else createdPost.Tags = null;
+
 
             return createdPost;
         }
@@ -221,6 +232,17 @@ namespace backend.Handlers.Implementors
             }
 
             return categories;
+        }
+        public UserDTO? AttachUserForPost(PostDTO createdPost, int userID)
+        {
+            var user = _userRepository.GetUser(userID);
+            if (user == null || !user.Status)
+            {
+                return null;
+            }
+            var userDTO = _mapper.Map<UserDTO>(user);
+            createdPost.User = userDTO;
+            return userDTO;
         }
 
         public PostDTO? CreatePost(int userId, string title, string content)
@@ -399,6 +421,9 @@ namespace backend.Handlers.Implementors
             //get related data for all post
             foreach (var post in resultList)
             {
+                var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(post.Id));
+                post.User = (getUser is not null && getUser.Status) ? getUser : null;
+
                 var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(post.Id));
                 post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : null;
 
@@ -438,6 +463,9 @@ namespace backend.Handlers.Implementors
             //get related data for all post
             foreach (var post in resultList)
             {
+                var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(post.Id));
+                post.User = (getUser is not null && getUser.Status) ? getUser : null;
+
                 var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(post.Id));
                 post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : null;
 
@@ -467,6 +495,9 @@ namespace backend.Handlers.Implementors
             //get related data for all post
             foreach (var post in resultList)
             {
+                var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(post.Id));
+                post.User = (getUser is not null && getUser.Status) ? getUser : null;
+
                 var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(post.Id));
                 post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : null;
 
@@ -609,6 +640,9 @@ namespace backend.Handlers.Implementors
             //get related data for all post
             foreach (var post in resultList)
             {
+                var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(post.Id));
+                post.User = (getUser is not null && getUser.Status) ? getUser : null;
+
                 var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(post.Id));
                 post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : null;
 
@@ -638,6 +672,9 @@ namespace backend.Handlers.Implementors
             //get related data for all post
             foreach (var post in resultList)
             {
+                var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(post.Id));
+                post.User = (getUser is not null && getUser.Status) ? getUser : null;
+
                 var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(post.Id));
                 post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : null;
 
@@ -666,6 +703,9 @@ namespace backend.Handlers.Implementors
             //get related data for all post
             foreach (var post in resultList)
             {
+                var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(post.Id));
+                post.User = (getUser is not null && getUser.Status) ? getUser : null;
+
                 var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(post.Id));
                 post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : null;
 
@@ -681,6 +721,56 @@ namespace backend.Handlers.Implementors
 
             //return posts'list
             return resultList;
+        }
+
+        public ICollection<PostDTO>? GetAllPosts(int[] categoryIDs, int[] tagIDs)
+        {
+            //if both categories and tags are empty getallposts.
+            if ((categoryIDs == null || categoryIDs.Length == 0) && (tagIDs == null || tagIDs.Length == 0))
+            {
+                return GetAllPosts();
+            }
+            //get post list based on categoryiesIDs and tagIDs
+            var postList = _postRepository.GetPost(categoryIDs, tagIDs);
+            //check if null
+            if (postList == null || postList.Count == 0)
+            {
+                return null;
+            }
+            //init new List
+            var postListDTO = new List<PostDTO>();
+            foreach(var post in postList)
+            {
+                if (post.Status)
+                {
+                    //init postDTO
+                    var postDTO = _mapper.Map<PostDTO>(post);
+
+                    var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(postDTO.Id));
+                    postDTO.User = (getUser is not null && getUser.Status) ? getUser : null;
+
+                    var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(postDTO.Id));
+                    postDTO.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : null;
+
+                    var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(postDTO.Id));
+                    postDTO.Tags = (getTags is not null && getTags.Count > 0) ? getTags : null;
+
+                    var getImages = _imageHandlers.GetImagesByPost(postDTO.Id);
+                    postDTO.Images = (getImages is not null && getImages.Count > 0) ? getImages : null;
+
+                    var getVideos = _videoHandlers.GetVideosByPost(postDTO.Id);
+                    postDTO.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : null;
+
+                    postListDTO.Add(postDTO);
+                }
+            }
+
+            if(postListDTO.Count == 0)
+            {
+                return null;
+            }
+
+            return postListDTO;
         }
     }
 }
