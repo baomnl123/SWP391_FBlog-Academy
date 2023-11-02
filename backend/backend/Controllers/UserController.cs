@@ -190,7 +190,7 @@ namespace backend.Controllers
         /// <param name="userID"></param>
         /// <returns></returns>
         [HttpPost("follow")]
-        public IActionResult Follow([FromForm] int currentUserID, [FromForm] int userID)
+        public IActionResult Follow(int currentUserID, int userID)
         {
             var followRelationship = _followUserHandlers.FollowOtherUser(currentUserID, userID);
             if (followRelationship == null)
@@ -208,8 +208,8 @@ namespace backend.Controllers
         /// <param name="name"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        [HttpPut()]
-        public IActionResult UpdateUser([FromForm] int userID, [FromForm] string? avatarUrl, [FromForm] string name, [FromForm] string? password)
+        [HttpPut("{userID}")]
+        public IActionResult UpdateUser(int userID, [FromForm] string? avatarUrl, [FromForm] string name, [FromForm] string? password)
         {
             var user = _userHandlers.UpdateUser(userID, name, avatarUrl, password);
             if (user == null)
@@ -306,7 +306,7 @@ namespace backend.Controllers
         /// <param name="userID"></param>
         /// <returns></returns>
         [HttpDelete("follow")]
-        public IActionResult Unfollow([FromForm] int currentUserID, [FromForm] int userID)
+        public IActionResult Unfollow(int currentUserID, int userID)
         {
             var user = _followUserHandlers.UnfollowUser(currentUserID, userID);
             if (user == null)

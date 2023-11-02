@@ -35,7 +35,7 @@ namespace backend.Controllers
         /// <param name="vote"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult CreateNewVote([FromForm] int currentUserId, [FromForm] int postId, [FromForm] bool vote) 
+        public IActionResult CreateNewVote(int currentUserId, int postId, [FromForm] bool vote) 
         {
             var createdVote = _votePostHandlers.CreateNewVotePost(currentUserId, postId, vote);
             if (createdVote == null) return BadRequest();
@@ -50,7 +50,7 @@ namespace backend.Controllers
         /// <param name="vote"></param>
         /// <returns></returns>
         [HttpPut]
-        public IActionResult UpdateVote([FromForm] int currentUserId, [FromForm] int postId, [FromForm] bool vote)
+        public IActionResult UpdateVote(int currentUserId, int postId, [FromForm] bool vote)
         {
             var updatedVote = _votePostHandlers.UpdateVotePost(currentUserId, postId, vote);
             if (updatedVote == null) return BadRequest();
@@ -64,7 +64,7 @@ namespace backend.Controllers
         /// <param name="postId"></param>
         /// <returns></returns>
         [HttpDelete]
-        public IActionResult DeleteVote([FromForm] int currentUserId, [FromForm] int postId) 
+        public IActionResult DeleteVote(int currentUserId, int postId) 
         {
             var deletedVote = _votePostHandlers.DisableVotePost(currentUserId, postId);
             if (deletedVote == null) return BadRequest();

@@ -16,6 +16,8 @@ namespace backend.Handlers.IHandlers
         //View pending posts' list of particular user
         public ICollection<PostDTO>? ViewPendingPostListOf(int userId);
         public ICollection<PostDTO>? ViewDeletedPostOf(int userId);
+        //Get posts by both categories and tags
+        public ICollection<PostDTO>? GetAllPosts(int[] categoryIDs, int[] tagIDs);
 
         //Create post
         public PostDTO? CreatePost(int userId, string title, string content, 

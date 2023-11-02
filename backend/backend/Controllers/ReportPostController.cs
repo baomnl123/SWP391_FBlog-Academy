@@ -69,7 +69,7 @@ namespace backend.Controllers
         /// <param name="content"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult AddReportPost([FromForm] int reporterID, [FromForm] int postID, [FromForm] string? content)
+        public IActionResult AddReportPost(int reporterID, int postID, [FromForm] string? content)
         {
             var reportPost = _reportPostHandlers.AddReportPost(reporterID, postID, content);
 
@@ -88,9 +88,9 @@ namespace backend.Controllers
         /// <param name="content"></param>
         /// <returns></returns>
         [HttpPut("content")]
-        public IActionResult UpdateReportContent([FromForm] int reportPostID, [FromForm] int postID, [FromForm] string? content)
+        public IActionResult UpdateReportContent(int reporterID, int postID, [FromForm] string? content)
         {
-            var reportPostDTO = _reportPostHandlers.UpdateReportPost(reportPostID, postID, content);
+            var reportPostDTO = _reportPostHandlers.UpdateReportPost(reporterID, postID, content);
             if (reportPostDTO == null)
             {
                 return BadRequest();
@@ -107,7 +107,7 @@ namespace backend.Controllers
         /// <param name="status"></param>
         /// <returns></returns>
         [HttpPut("status")]
-        public IActionResult UpdateReportStatus([FromForm]int adminID, [FromForm] int reporterID, [FromForm] int postID, [FromForm] string status)
+        public IActionResult UpdateReportStatus(int adminID, int reporterID, int postID, [FromForm] string status)
         {
             var reportPostDTO = _reportPostHandlers.UpdateReportStatus(adminID, reporterID, postID, status);
             if (reportPostDTO == null)
@@ -125,7 +125,7 @@ namespace backend.Controllers
         /// <param name="postID"></param>
         /// <returns></returns>
         [HttpDelete]
-        public IActionResult DisableReportPost([FromForm]int adminID,[FromForm] int reporterID, [FromForm] int postID)
+        public IActionResult DisableReportPost(int adminID, int reporterID, int postID)
         {
             var reportPost = _reportPostHandlers.DenyReportPost(adminID, reporterID, postID);
             if(reportPost == null)

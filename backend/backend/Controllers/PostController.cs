@@ -128,7 +128,7 @@ namespace backend.Controllers
         /// <param name="postID"></param>
         /// <returns></returns>
         [HttpPost("saved-post")]
-        public IActionResult AddPostList([FromForm] int saveListID, [FromForm] int postID)
+        public IActionResult AddPostList(int saveListID, int postID)
         {
             var postList = _postListHandlers.AddPostList(saveListID, postID);
             if (postList == null)
@@ -150,7 +150,7 @@ namespace backend.Controllers
         /// <param name="imageURLs"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult CreatePost([FromForm] int userId, 
+        public IActionResult CreatePost(int userId, 
                                         [FromForm] string title, 
                                         [FromForm] string content, 
                                         [FromForm] int[]? tagIds, 
@@ -178,7 +178,7 @@ namespace backend.Controllers
         /// <param name="imageURLs"></param>
         /// <returns></returns>
         [HttpPut]
-        public IActionResult UpdatePost([FromForm] int postId, 
+        public IActionResult UpdatePost(int postId, 
                                         [FromForm] string title, 
                                         [FromForm] string content, 
                                         [FromForm] int[] tagIds, 
@@ -217,7 +217,7 @@ namespace backend.Controllers
         /// <param name="postId"></param>
         /// <returns></returns>
         [HttpPut("approve")]
-        public IActionResult ApprovePost([FromForm] int reviewerId, [FromForm] int postId)
+        public IActionResult ApprovePost(int reviewerId, int postId)
         {
             var approvedPost = _postHandlers.ApprovePost(reviewerId, postId);
             if(approvedPost != null)
@@ -234,8 +234,7 @@ namespace backend.Controllers
         /// <param name="postId"></param>
         /// <returns></returns>
         [HttpPut("deny")]
-        public IActionResult DenyPost([FromForm] int reviewerId, 
-                                      [FromForm] int postId)
+        public IActionResult DenyPost(int reviewerId, int postId)
         {
             var deniedPost = _postHandlers.DenyPost(reviewerId, postId);
             if(deniedPost != null)
@@ -243,6 +242,17 @@ namespace backend.Controllers
                 return Ok(deniedPost);
             }
             return BadRequest();
+        }
+
+        [HttpGet("category-tag")]
+        public IActionResult GetPostByCategoryAndTag([FromQuery] int[] categoryID, [FromQuery] int[] tagID)
+        {
+            var postList = _postHandlers.GetAllPosts(categoryID, tagID);
+            if(postList == null || postList.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(postList);
         }
     }
 }
