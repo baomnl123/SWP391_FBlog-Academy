@@ -59,7 +59,7 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                var list = _fblogAcademyContext.FollowUsers.Where(u => u.FollowedId.Equals(user.Id))
+                var list = _fblogAcademyContext.FollowUsers.Where(u => u.FollowedId.Equals(user.Id)).OrderByDescending(u => u.CreatedAt)
                                                            .Select(u => u.Follower).ToList();
                 if (list == null || list.Count == 0)
                 {
@@ -78,7 +78,7 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                var list = _fblogAcademyContext.FollowUsers.Where(u => u.FollowerId.Equals(user.Id))
+                var list = _fblogAcademyContext.FollowUsers.Where(u => u.FollowerId.Equals(user.Id)).OrderByDescending(u => u.CreatedAt)
                                                            .Select(u => u.Followed).ToList();
                 if(list == null || list.Count == 0)
                 {

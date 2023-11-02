@@ -11,6 +11,7 @@ namespace backend.Repositories.IRepositories
         public User? GetUser(string email);
         public ICollection<User>? GetUsersByUsername(string username);
         public ICollection<User>? GetUsersByRole(string role);
+        public ICollection<User>? GetStudentsAndModerators();
         //CRUD Users
         public bool CreateUser(User user);
         public bool UpdateUser(User user);

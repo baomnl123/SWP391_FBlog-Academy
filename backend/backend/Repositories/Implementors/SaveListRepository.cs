@@ -27,33 +27,6 @@ namespace backend.Repositories.Implementors
             }
         }
 
-        //public bool DisableSaveList(int saveListID)
-        //{
-        //    try
-        //    {
-        //        if (!this.isExisted(saveListID))
-        //        {
-        //            return false;
-        //        }
-        //        var savelist = GetSaveListBySaveListID(saveListID);
-
-        //        if (savelist == null)
-        //        {
-        //            return false;
-        //        }
-        //        savelist.Status = false;
-        //        if (!this.UpdateSaveList(savelist))
-        //        {
-        //            return false;
-        //        }
-        //        return true;
-        //    }
-        //    catch (InvalidOperationException)
-        //    {
-        //        return false;
-        //    }
-        //}
-
         public SaveList? GetSaveListBySaveListID(int saveListID)
         {
             try
@@ -71,7 +44,7 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                var list = _fblogacademycontext.SaveLists.Where(u => u.UserId.Equals(userID)).OrderBy(u => u.Id).ToList();
+                var list = _fblogacademycontext.SaveLists.Where(u => u.UserId.Equals(userID)).OrderBy(u => u.Name).ToList();
                 if (list == null || list.Count == 0)
                 {
                     return null;
@@ -89,7 +62,7 @@ namespace backend.Repositories.Implementors
             try
             {
                 var list = _fblogacademycontext.SaveLists.Where(u => u.UserId.Equals(userID) 
-                                                                  && u.Status == false).OrderBy(u => u.Id).ToList();
+                                                                  && u.Status == false).OrderBy(u => u.Name).ToList();
                 if (list == null || list.Count == 0)
                 {
                     return null;
