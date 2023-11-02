@@ -245,9 +245,9 @@ namespace backend.Controllers
         }
 
         [HttpGet("category-tag")]
-        public IActionResult GetPostByCategoryAndTag([FromQuery] int[] categoryID, [FromQuery] int[] tagID)
+        public IActionResult GetPostByCategoryAndTag([FromQuery] int[] categoryID, [FromQuery] int[] tagID, [FromQuery]string? searchValue)
         {
-            var postList = _postHandlers.GetAllPosts(categoryID, tagID);
+            var postList = _postHandlers.GetAllPosts(categoryID, tagID, searchValue);
             if(postList == null || postList.Count == 0)
             {
                 return NotFound();
