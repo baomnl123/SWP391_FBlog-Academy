@@ -42,7 +42,7 @@ namespace backend.Repositories.Implementors
             try
             {
                 var listPost = _fBlogAcademyContext.Posts.Where(p => p.Status == true
-                                                                && p.Title.Contains(title)
+                                                                && p.Title.ToLower().Contains(title.ToLower())
                                                                 && p.IsApproved == true).OrderByDescending(p => p.CreatedAt).ToList();
                 if (listPost != null)
                 {

@@ -723,12 +723,16 @@ namespace backend.Handlers.Implementors
             return resultList;
         }
 
-        public ICollection<PostDTO>? GetAllPosts(int[] categoryIDs, int[] tagIDs)
+        public ICollection<PostDTO>? GetAllPosts(int[] categoryIDs, int[] tagIDs,string searchValue)
         {
             //if both categories and tags are empty getallposts.
-            if ((categoryIDs == null || categoryIDs.Length == 0) && (tagIDs == null || tagIDs.Length == 0))
+            if ((categoryIDs == null || categoryIDs.Length == 0) && (tagIDs == null || tagIDs.Length == 0) && (searchValue == null || searchValue.Equals(string.Empty)))
             {
                 return GetAllPosts();
+            }
+            if ((categoryIDs == null || categoryIDs.Length == 0) && (tagIDs == null || tagIDs.Length == 0))
+            {
+                return SearchPostsByTitle(searchValue);
             }
             //get post list based on categoryiesIDs and tagIDs
             var postList = _postRepository.GetPost(categoryIDs, tagIDs);
@@ -765,10 +769,28 @@ namespace backend.Handlers.Implementors
                 }
             }
 
+            if(searchValue != null)
+            {
+                if (!searchValue.Equals(string.Empty))
+                {
+
+                    for (int i = postListDTO.Count - 1 ; i >= 0; i--)
+                    {
+                        var post = postListDTO.ElementAt(i);
+                        if (!post.Title.ToLower().Contains(searchValue.ToLower()) && !post.Content.ToLower().Contains(searchValue.ToLower()))
+                        {
+                            postListDTO.Remove(post);
+                        }
+                    }
+                }
+            }
+
             if(postListDTO.Count == 0)
             {
                 return null;
             }
+
+            
 
             return postListDTO;
         }
