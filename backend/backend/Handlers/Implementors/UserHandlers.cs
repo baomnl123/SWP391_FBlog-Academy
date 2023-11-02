@@ -77,7 +77,7 @@ namespace backend.Handlers.Implementors
                 IsAwarded = false,
             };
             //if avatar is null
-            if(newUser.AvatarUrl == null)
+            if (newUser.AvatarUrl == null)
             {
                 newUser.AvatarUrl = string.Empty;
             }
@@ -119,9 +119,9 @@ namespace backend.Handlers.Implementors
                 {
                     existedUser.Password = _hashingString.HashString(password);
                 }
-                if(avatarURL == null)
+                if (avatarURL == null)
                 {
-                    existedUser.AvatarUrl= string.Empty;
+                    existedUser.AvatarUrl = string.Empty;
                 }
                 else
                 {
@@ -264,38 +264,21 @@ namespace backend.Handlers.Implementors
 
         public ICollection<UserDTO>? GetStudentsAndModerator()
         {
-            //get student role
-            var studentRole = _userRoleConstrant.GetStudentRole();
-            //get student list
-            var studentList = _userRepository.GetUsersByRole(studentRole);
+            //get students and moderators list
+            var list = _userRepository.GetStudentsAndModerators();
+            if (list == null || list.Count == 0)
+            {
+                return null;
+            }
             //init dto list
             var listDTO = new List<UserDTO>();
             //if list is null
-            if (studentList != null)
+            foreach (var user in list)
             {
-                foreach (var user in studentList)
+                //map if user status is true
+                if (user.Status)
                 {
-                    //map if user status is true
-                    if (user.Status)
-                    {
-                        listDTO.Add(_mapper.Map<UserDTO>(user));
-                    }
-                }
-            }
-            //get student role
-            var moderatorRole = _userRoleConstrant.GetModeratorRole();
-            //get student list
-            var moderatorList = _userRepository.GetUsersByRole(moderatorRole);
-            //if list is null
-            if (moderatorList != null)
-            {
-                foreach (var user in moderatorList)
-                {
-                    //map if user status is true
-                    if (user.Status)
-                    {
-                        listDTO.Add(_mapper.Map<UserDTO>(user));
-                    }
+                    listDTO.Add(_mapper.Map<UserDTO>(user));
                 }
             }
             if (listDTO.Count == 0)
@@ -365,7 +348,7 @@ namespace backend.Handlers.Implementors
             }
             //update
             user.Name = name;
-            if(avatarURL == null)
+            if (avatarURL == null)
             {
                 user.AvatarUrl = string.Empty;
             }

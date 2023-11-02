@@ -29,7 +29,7 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                var list = _fBlogAcademyContext.PostLists.Where(e => e.SaveList.Id.Equals(saveListID))
+                var list = _fBlogAcademyContext.PostLists.Where(e => e.SaveList.Id.Equals(saveListID)).OrderByDescending(e => e.CreatedAt)
                                                      .Select(e => e.SavePost).ToList();
                 return list;
             }
@@ -90,7 +90,7 @@ namespace backend.Repositories.Implementors
             try
             {
                 var saveList = _fBlogAcademyContext.PostLists.Where(e => e.SavePostId.Equals(postID) && e.SaveList.UserId.Equals(userID))
-                                                             .Select(e => e.SaveList).ToList();
+                                                             .Select(e => e.SaveList).OrderBy(e => e.Name).ToList();
                 return saveList;
             }
             catch (InvalidOperationException)

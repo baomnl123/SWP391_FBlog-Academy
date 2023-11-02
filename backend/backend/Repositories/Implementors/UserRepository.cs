@@ -1,13 +1,16 @@
 using backend.Models;
 using backend.Repositories.IRepositories;
+using backend.Utils;
 
 namespace backend.Repositories.Implementors
 {
     public class UserRepository : IUserRepository
     {
+        private readonly UserRoleConstrant _userRoleConstrant;
         private readonly FBlogAcademyContext _fBlogAcademyContext;
         public UserRepository()
         {
+            this._userRoleConstrant = new();
             this._fBlogAcademyContext = new();
         }
         public bool CreateUser(User user)
@@ -26,7 +29,7 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                var list = _fBlogAcademyContext.Users.OrderBy(u => u.Name).ToList();
+                var list = _fBlogAcademyContext.Users.OrderBy(u => u.Name).OrderBy(u => u.Id).ToList();
                 if(list == null || list.Count == 0)
                 {
                     return null;
@@ -45,7 +48,7 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                var userList = _fBlogAcademyContext.Users.Where(u => !u.Status).OrderBy(u => u.Name).ToList();
+                var userList = _fBlogAcademyContext.Users.Where(u => !u.Status).OrderBy(u => u.Id).ToList();
                 if (userList == null || userList.Count == 0)
                 {
                     return null;
@@ -88,7 +91,7 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                var list = _fBlogAcademyContext.Users.Where(u => u.Name.Equals(username)).OrderBy(u => u.Name).ToList();
+                var list = _fBlogAcademyContext.Users.Where(u => u.Name.Equals(username)).OrderBy(u => u.Id).ToList();
                 if (list == null || list.Count == 0)
                 {
                     return null;
@@ -107,7 +110,7 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                var list = _fBlogAcademyContext.Users.Where(u => u.Role.Trim().Contains(role)).OrderBy(u => u.Name).ToList();
+                var list = _fBlogAcademyContext.Users.Where(u => u.Role.Trim().Contains(role)).OrderBy(u => u.Id).ToList();
                 if (list == null || list.Count == 0)
                 {
                     return null;
@@ -191,6 +194,24 @@ namespace backend.Repositories.Implementors
                 return false;
             }
         }
-        
+
+        public ICollection<User>? GetStudentsAndModerators()
+        {
+            try
+            {
+                var studentRole = _userRoleConstrant.GetStudentRole();
+                var moderatorRole = _userRoleConstrant.GetModeratorRole();
+                var list = _fBlogAcademyContext.Users.Where(e => e.Role.Equals(studentRole) || e.Role.Equals(moderatorRole)).OrderBy(e => e.Id).ToList();
+                if (list == null || list.Count == 0)
+                {
+                    return null;
+                }
+                return list;
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
+            }
+        }
     }
 }
