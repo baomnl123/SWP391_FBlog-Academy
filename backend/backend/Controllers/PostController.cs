@@ -244,6 +244,10 @@ namespace backend.Controllers
             return BadRequest();
         }
 
+        /// <summary>
+        /// Get list of Posts by Category and Tag.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("category-tag")]
         public IActionResult GetPostByCategoryAndTag([FromQuery] int[] categoryID, [FromQuery] int[] tagID, [FromQuery]string? searchValue)
         {
