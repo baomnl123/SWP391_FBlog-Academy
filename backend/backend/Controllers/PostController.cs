@@ -245,7 +245,7 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Get list of Posts by Category and Tag.
+        /// Get list of Posts by Category or Tag or searchValue.
         /// </summary>
         /// <returns></returns>
         [HttpGet("category-tag")]
