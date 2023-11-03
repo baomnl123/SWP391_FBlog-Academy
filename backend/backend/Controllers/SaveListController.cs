@@ -28,7 +28,8 @@ namespace backend.Controllers
             var saveList = (List<SaveListDTO>)_saveListHandlers.GetAllActiveSaveList(userID);
             if (saveList == null || saveList.Count == 0)
             {
-                return NotFound();
+                var emptyList = new List<UserDTO>();
+                return Ok(emptyList);
             }
             return Ok(saveList);
         }
@@ -44,7 +45,8 @@ namespace backend.Controllers
             var list = _saveListHandlers.GetAllDisableSaveList(userID);
             if (list == null || list.Count == 0)
             {
-                return NotFound();
+                var emptyList = new List<UserDTO>();
+                return Ok(emptyList);
             }
             return Ok(list);
         }
@@ -60,7 +62,8 @@ namespace backend.Controllers
             var postList = _postListHandlers.GetAllPostBySaveListID(saveListID);
             if (postList == null || postList.Count == 0)
             {
-                return NotFound();
+                var emptyList = new List<UserDTO>();
+                return Ok(emptyList);
             }
             return Ok(postList);
         }
