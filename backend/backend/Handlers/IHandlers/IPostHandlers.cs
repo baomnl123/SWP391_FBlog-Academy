@@ -18,6 +18,12 @@ namespace backend.Handlers.IHandlers
         public ICollection<PostDTO>? ViewDeletedPostOf(int userId);
         //Get posts by both categories and tags
         public ICollection<PostDTO>? GetAllPosts(int[] categoryIDs, int[] tagIDs,string searchValue);
+        //Get post by post id
+        public PostDTO? GetPostBy(int postId);
+        //Get posts by video
+        public ICollection<VideoDTO> GetPostsByVideo();
+        //Get posts by image
+        public ICollection<PostDTO>? GetPostsByImage();
 
         //Create post
         public PostDTO? CreatePost(int userId, string title, string content, 

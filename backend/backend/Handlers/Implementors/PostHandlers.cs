@@ -831,5 +831,46 @@ namespace backend.Handlers.Implementors
 
             return postListDTO;
         }
+
+        public PostDTO? GetPostBy(int postId)
+        {
+            //Get post by post's id
+            var existedPost = _postRepository.GetPost(postId);
+            if (existedPost == null || !existedPost.Status || !existedPost.IsApproved) return null;
+
+            //Mapping existedPost to data type PostDTO which have more fields (videos, images, tags, categories)
+            var existingPost = _mapper.Map<PostDTO>(existedPost);
+            //return null if mapping is failed
+            if (existingPost is null) return null;
+
+            var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(existingPost.Id));
+            existingPost.User = (getUser is not null && getUser.Status) ? getUser : null;
+
+            var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(existingPost.Id));
+            existingPost.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
+
+            var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(existingPost.Id));
+            existingPost.Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
+
+            var getImages = _imageHandlers.GetImagesByPost(existingPost.Id);
+            existingPost.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
+
+            var getVideos = _videoHandlers.GetVideosByPost(existingPost.Id);
+            existingPost.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : new List<VideoDTO>();
+
+            var postUpvote = _votePostRepository.GetAllUsersVotedBy(existingPost.Id);
+            existingPost.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
+
+            return existingPost;
+        }
+
+        public ICollection<VideoDTO> GetPostsByVideo()
+        {
+            throw new Exception();
+        }
+        public ICollection<PostDTO>? GetPostsByImage()
+        {
+            throw new Exception();
+        }
     }
 }
