@@ -26,8 +26,11 @@ namespace backend.Controllers
         public IActionResult GetAllPosts()
         {
             var existed = _postHandlers.GetAllPosts();
-            if (existed != null) { return Ok(existed); }
-            return NotFound();
+            if (existed == null || existed.Count == 0)
+            {
+                existed = new List<PostDTO>();
+            }
+            return Ok(existed);
         }
 
         /// <summary>
@@ -40,11 +43,11 @@ namespace backend.Controllers
         {
             var existed = _postHandlers.SearchPostsByTitle(title);
 
-            if(existed != null)
+            if (existed == null || existed.Count == 0)
             {
-                return Ok(existed.ToList());
+                existed = new List<PostDTO>();
             }
-            return NotFound();
+            return Ok(existed.ToList());
         }
 
         /// <summary>
@@ -55,11 +58,11 @@ namespace backend.Controllers
         public IActionResult ViewPendingPostList()
         {
             var existed = _postHandlers.ViewPendingPostList();
-            if (existed != null)
+            if (existed == null || existed.Count == 0)
             {
-                return Ok(existed.ToList());
+                existed = new List<PostDTO>();
             }
-            return NotFound();
+            return Ok(existed.ToList());
         }
 
         /// <summary>
@@ -71,7 +74,10 @@ namespace backend.Controllers
         public IActionResult ViewPendingPostListOf(int userId)
         {
             var existedList = _postHandlers.ViewPendingPostListOf(userId);
-            if (existedList == null) return NotFound();
+            if (existedList == null || existedList.Count == 0)
+            {
+                existedList = new List<PostDTO>();
+            }
             return Ok(existedList);
         }
 
@@ -84,7 +90,10 @@ namespace backend.Controllers
         public IActionResult ViewDeletedPostOf(int userId)
         {
             var existedList = _postHandlers.ViewDeletedPostOf(userId);
-            if (existedList == null) return NotFound();
+            if (existedList == null || existedList.Count == 0)
+            {
+                existedList = new List<PostDTO>();
+            }
             return Ok(existedList);
         }
 
@@ -97,11 +106,11 @@ namespace backend.Controllers
         public IActionResult SearchPostByUserId(int userId)
         {
             var existedPostList = _postHandlers.SearchPostByUserId(userId);
-            if (existedPostList != null)
+            if (existedPostList == null || existedPostList.Count == 0)
             {
-                return Ok(existedPostList.ToList());
+                existedPostList = new List<PostDTO>();
             }
-            return NotFound();
+            return Ok(existedPostList.ToList());
         }
 
         /// <summary>
@@ -116,7 +125,7 @@ namespace backend.Controllers
             var savelists = _postListHandlers.GetAllSaveListByPostID(postID, userID);
             if (savelists == null || savelists.Count == 0)
             {
-                return NotFound();
+                savelists = new List<SaveListDTO>();
             }
             return Ok(savelists);
         }
@@ -150,10 +159,10 @@ namespace backend.Controllers
         /// <param name="imageURLs"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult CreatePost(int userId, 
-                                        [FromForm] string title, 
-                                        [FromForm] string content, 
-                                        [FromQuery] int[]? tagIds, 
+        public IActionResult CreatePost(int userId,
+                                        [FromForm] string title,
+                                        [FromForm] string content,
+                                        [FromQuery] int[]? tagIds,
                                         [FromQuery] int[]? categoryIds,
                                         [FromQuery] string[]? videoURLs,
                                         [FromQuery] string[]? imageURLs)
@@ -178,10 +187,10 @@ namespace backend.Controllers
         /// <param name="imageURLs"></param>
         /// <returns></returns>
         [HttpPut]
-        public IActionResult UpdatePost(int postId, 
-                                        [FromForm] string title, 
-                                        [FromForm] string content, 
-                                        [FromQuery] int[] tagIds, 
+        public IActionResult UpdatePost(int postId,
+                                        [FromForm] string title,
+                                        [FromForm] string content,
+                                        [FromQuery] int[] tagIds,
                                         [FromQuery] int[] categoryIds,
                                         [FromQuery] string[] videoURLs,
                                         [FromQuery] string[] imageURLs)
@@ -203,7 +212,7 @@ namespace backend.Controllers
         public IActionResult DeletePost(int postId)
         {
             var deletedPost = _postHandlers.DisablePost(postId);
-            if(deletedPost != null)
+            if (deletedPost != null)
             {
                 return Ok(deletedPost);
             }
@@ -220,7 +229,7 @@ namespace backend.Controllers
         public IActionResult ApprovePost(int reviewerId, int postId)
         {
             var approvedPost = _postHandlers.ApprovePost(reviewerId, postId);
-            if(approvedPost != null)
+            if (approvedPost != null)
             {
                 return Ok(approvedPost);
             }
@@ -237,7 +246,7 @@ namespace backend.Controllers
         public IActionResult DenyPost(int reviewerId, int postId)
         {
             var deniedPost = _postHandlers.DenyPost(reviewerId, postId);
-            if(deniedPost != null)
+            if (deniedPost != null)
             {
                 return Ok(deniedPost);
             }
@@ -249,12 +258,12 @@ namespace backend.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("category-tag")]
-        public IActionResult GetPostByCategoryAndTag([FromQuery] int[] categoryID, [FromQuery] int[] tagID, [FromQuery]string? searchValue)
+        public IActionResult GetPostByCategoryAndTag([FromQuery] int[] categoryID, [FromQuery] int[] tagID, [FromQuery] string? searchValue)
         {
             var postList = _postHandlers.GetAllPosts(categoryID, tagID, searchValue);
-            if(postList == null || postList.Count == 0)
+            if (postList == null || postList.Count == 0)
             {
-                return NotFound();
+                postList = new List<PostDTO>();
             }
             return Ok(postList);
         }

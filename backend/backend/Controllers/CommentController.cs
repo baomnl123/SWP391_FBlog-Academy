@@ -25,7 +25,7 @@ namespace backend.Controllers
         public IActionResult GetAllComments(int postId)
         {
             var commentList = _commentHandlers.ViewAllComments(postId);
-            if (commentList == null)
+            if (commentList == null || commentList.Count == 0)
             {
                 commentList = new List<CommentDTO>();
             }
