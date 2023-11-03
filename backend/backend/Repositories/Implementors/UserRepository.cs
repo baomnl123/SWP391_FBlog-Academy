@@ -232,5 +232,22 @@ namespace backend.Repositories.Implementors
                 return null;
             }
         }
+
+        public User? GetUserByCommentID(int commentID)
+        {
+            try
+            {
+                var user = _fBlogAcademyContext.Comments.Where(e => e.Id.Equals(commentID)).Select(e => e.User).FirstOrDefault();
+                if (user == null || !user.Status)
+                {
+                    return null;
+                }
+                return user;
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
+            }
+        }
     }
 }

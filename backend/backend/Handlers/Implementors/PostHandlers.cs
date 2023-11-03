@@ -96,6 +96,9 @@ namespace backend.Handlers.Implementors
                 var getVideos = _videoHandlers.GetVideosByPost(approvingPost.Id);
                 approvingPost.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : null;
 
+                var postUpvote = _votePostRepository.GetAllUsersVotedBy(approvingPost.Id);
+                approvingPost.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
+
                 //Update info to database
                 if (!_postRepository.UpdatePost(existedPost)) return null;
                 return approvingPost;
@@ -163,6 +166,8 @@ namespace backend.Handlers.Implementors
             }
             else createdPost.Tags = null;
 
+            var postUpvote = _votePostRepository.GetAllUsersVotedBy(createdPost.Id);
+            createdPost.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
 
             return createdPost;
         }
@@ -307,6 +312,9 @@ namespace backend.Handlers.Implementors
             var successDisabled = DisableAllRelatedToPost(deletingPost);
             if (successDisabled == null) return null;
 
+            var postUpvote = _votePostRepository.GetAllUsersVotedBy(successDisabled.Id);
+            successDisabled.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
+
             //return null if deleting post is failed.Otherwise, return deleted post with data type PostDTO 
             if (!_postRepository.UpdatePost(deletedPost)) return null;
             return _mapper.Map<PostDTO>(deletedPost);
@@ -396,6 +404,9 @@ namespace backend.Handlers.Implementors
             var successDisabled = DisableAllRelatedToPost(disablingPost);
             if (successDisabled == null) return null;
 
+            var postUpvote = _votePostRepository.GetAllUsersVotedBy(successDisabled.Id);
+            successDisabled.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
+
             //update info to database
             if (!_postRepository.UpdatePost(existedPost)) return null;
             return _mapper.Map<PostDTO>(existedPost);
@@ -427,6 +438,9 @@ namespace backend.Handlers.Implementors
 
                 var getVideos = _videoHandlers.GetVideosByPost(post.Id);
                 post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : null;
+
+                var postUpvote = _votePostRepository.GetAllUsersVotedBy(post.Id);
+                post.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
             }
 
             //return posts'list
@@ -469,6 +483,9 @@ namespace backend.Handlers.Implementors
 
                 var getVideos = _videoHandlers.GetVideosByPost(post.Id);
                 post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : null;
+
+                var postUpvote = _votePostRepository.GetAllUsersVotedBy(post.Id);
+                post.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
             }
 
             //return posts'list
@@ -501,6 +518,9 @@ namespace backend.Handlers.Implementors
 
                 var getVideos = _videoHandlers.GetVideosByPost(post.Id);
                 post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : null;
+
+                var postUpvote = _votePostRepository.GetAllUsersVotedBy(post.Id);
+                post.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
             }
 
             //return posts'list
@@ -577,6 +597,9 @@ namespace backend.Handlers.Implementors
             }
             else updatingPost.Categories = null;
 
+            var postUpvote = _votePostRepository.GetAllUsersVotedBy(updatingPost.Id);
+            updatingPost.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
+
             //Update to database
             if (!_postRepository.UpdatePost(existedPost)) return null;
             return updatingPost;
@@ -646,6 +669,9 @@ namespace backend.Handlers.Implementors
 
                 var getVideos = _videoHandlers.GetVideosByPost(post.Id);
                 post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : null;
+
+                var postUpvote = _votePostRepository.GetAllUsersVotedBy(post.Id);
+                post.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
             }
 
             //return posts'list
@@ -678,6 +704,9 @@ namespace backend.Handlers.Implementors
 
                 var getVideos = _videoHandlers.GetVideosByPost(post.Id);
                 post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : null;
+
+                var postUpvote = _votePostRepository.GetAllUsersVotedBy(post.Id);
+                post.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
             }
 
             //return posts'list
@@ -709,6 +738,9 @@ namespace backend.Handlers.Implementors
 
                 var getVideos = _videoHandlers.GetVideosByPost(post.Id);
                 post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : null;
+
+                var postUpvote = _votePostRepository.GetAllUsersVotedBy(post.Id);
+                post.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
             }
 
             //return posts'list
@@ -757,6 +789,9 @@ namespace backend.Handlers.Implementors
                     var getVideos = _videoHandlers.GetVideosByPost(postDTO.Id);
                     postDTO.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : null;
 
+                    var postUpvote = _votePostRepository.GetAllUsersVotedBy(postDTO.Id);
+                    postDTO.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
+
                     postListDTO.Add(postDTO);
                 }
             }
@@ -781,8 +816,6 @@ namespace backend.Handlers.Implementors
             {
                 return null;
             }
-
-            
 
             return postListDTO;
         }

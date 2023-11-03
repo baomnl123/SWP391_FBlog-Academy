@@ -14,6 +14,7 @@ namespace backend.Repositories.IRepositories
         public ICollection<User>? GetUsersByRole(string role);
         public ICollection<User>? GetStudentsAndModerators();
         public User? GetUserByPostID(int postID);
+        public User? GetUserByCommentID(int commentID);
         //CRUD Users
         public bool CreateUser(User user);
         public bool UpdateUser(User user);
