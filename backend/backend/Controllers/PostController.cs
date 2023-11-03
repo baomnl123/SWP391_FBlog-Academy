@@ -267,5 +267,17 @@ namespace backend.Controllers
             }
             return Ok(postList);
         }
+
+        /// <summary>
+        /// Get Post which is approved by post Id
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("{postId}")]
+        public IActionResult GetPostBy(int postId)
+        {
+            var post = _postHandlers.GetPostBy(postId);
+            if (post == null) return NotFound(); 
+            return Ok(post);
+        }
     }
 }
