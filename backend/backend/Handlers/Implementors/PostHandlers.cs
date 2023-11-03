@@ -864,13 +864,46 @@ namespace backend.Handlers.Implementors
             return existingPost;
         }
 
-        public ICollection<VideoDTO> GetPostsByVideo()
+        public ICollection<PostDTO>? GetPostsHaveVideo()
         {
-            throw new Exception();
+            //get all posts
+            var initPosts = GetAllPosts();
+            if (initPosts is null || initPosts.Count == 0) return new List<PostDTO>();
+
+            //instantiate return list
+            var result = new List<PostDTO>();
+
+            //add post to result list if post has at least 1 video
+            foreach (var post in initPosts)
+            {
+                if (post.Videos is not null && post.Videos.Count > 0)
+                {
+                    result.Add(post);
+                } 
+            }
+
+            return result;
         }
-        public ICollection<PostDTO>? GetPostsByImage()
+
+        public ICollection<PostDTO>? GetPostsHaveImage()
         {
-            throw new Exception();
+            //get all posts
+            var initPosts = GetAllPosts();
+            if (initPosts is null || initPosts.Count == 0) return new List<PostDTO>();
+
+            //instantiate return list
+            var result = new List<PostDTO>();
+
+            //add post to result list if post has at least 1 image
+            foreach (var post in initPosts)
+            {
+                if (post.Images is not null && post.Images.Count > 0)
+                {
+                    result.Add(post);
+                }
+            }
+
+            return result;
         }
     }
 }
