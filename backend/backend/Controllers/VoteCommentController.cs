@@ -1,4 +1,5 @@
-﻿using backend.Handlers.IHandlers;
+﻿using backend.DTO;
+using backend.Handlers.IHandlers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
@@ -53,7 +54,10 @@ namespace backend.Controllers
         public IActionResult GetAllUsersVotedBy(int commentId)
         {
             var userList = _voteCommentHandlers.GetAllUsersVotedBy(commentId);
-            if (userList == null) return NotFound(); 
+            if (userList == null)
+            {
+                userList = new List<UserDTO>();
+            }
             return Ok(userList);
         }
 
