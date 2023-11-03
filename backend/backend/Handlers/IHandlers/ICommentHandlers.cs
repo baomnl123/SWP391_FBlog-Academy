@@ -6,6 +6,8 @@ namespace backend.Handlers.IHandlers
     {
         //View All Comments
         public ICollection<CommentDTO>? ViewAllComments(int postId);
+        //Get Comment by comment's id
+        public CommentDTO? GetCommentBy(int commentId);
         //Create comment
         public CommentDTO? CreateComment(int userId, int postId, string content);
         //Update comment

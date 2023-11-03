@@ -1,5 +1,6 @@
 ﻿using backend.DTO;
 using backend.Handlers.IHandlers;
+using backend.Handlers.Implementors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -73,6 +74,18 @@ namespace backend.Controllers
             var deletedComment = _commentHandlers.DeleteComment(commentId);
             if (deletedComment != null) return Ok(deletedComment);
             return BadRequest();
+        }
+
+        /// <summary>
+        /// Get Comment which is not disabled by comment Id
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("{postId}")]
+        public IActionResult GetCommentBy(int commentId)
+        {
+            var comment = _commentHandlers.GetCommentBy(commentId);
+            if (comment == null) return NotFound();
+            return Ok(comment);
         }
     }
 }
