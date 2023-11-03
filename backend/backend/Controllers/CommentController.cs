@@ -1,4 +1,5 @@
-﻿using backend.Handlers.IHandlers;
+﻿using backend.DTO;
+using backend.Handlers.IHandlers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,8 +25,11 @@ namespace backend.Controllers
         public IActionResult GetAllComments(int postId)
         {
             var commentList = _commentHandlers.ViewAllComments(postId);
-            if (commentList != null) return Ok(commentList);
-            return NotFound();
+            if (commentList == null)
+            {
+                commentList = new List<CommentDTO>();
+            }
+            return Ok(commentList);
         }
         /// <summary>
         /// Create a new Comment for selected Post. (Student | Moderator)
