@@ -160,5 +160,25 @@ namespace backend.Handlers.Implementors
 
             return existedCommentsDTO;
         }
+
+        public CommentDTO? GetCommentBy(int commentId)
+        {
+            //get comment by comment id
+            var existedComment = _commentRepository.GetComment(commentId);
+            if (existedComment == null || !existedComment.Status) return null;
+
+            //Mapping existedComment to data type CommentDTO which have more fields
+            var existingComment = _mapper.Map<CommentDTO>(existedComment);
+            //return null if mapping is failed
+            if (existingComment is null) return null;
+
+            var commentUpvote = _voteCommentRepository.GetAllUserBy(existingComment.Id);
+            existingComment.Upvotes = (commentUpvote == null || commentUpvote.Count == 0) ? 0 : commentUpvote.Count;
+
+            var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByCommentID(existingComment.Id));
+            existingComment.User = (getUser is not null && getUser.Status) ? getUser : null;
+
+            return existingComment;
+        }
     }
 }
