@@ -279,5 +279,35 @@ namespace backend.Controllers
             if (post == null) return NotFound(); 
             return Ok(post);
         }
+
+        /// <summary>
+        /// Get Posts which have image
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("all-post-has-image")]
+        public IActionResult GetPostsHaveImage()
+        {
+            var posts = _postHandlers.GetPostsHaveImage();
+            if (posts is null || posts.Count == 0)
+            {
+                posts = new List<PostDTO>();
+            }
+            return Ok(posts);
+        }
+
+        /// <summary>
+        /// Get Posts which have video
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("all-post-has-video")]
+        public IActionResult GetPostsHaveVideo()
+        {
+            var posts = _postHandlers.GetPostsHaveVideo();
+            if (posts is null || posts.Count == 0)
+            {
+                posts = new List<PostDTO>();
+            }
+            return Ok(posts);
+        }
     }
 }

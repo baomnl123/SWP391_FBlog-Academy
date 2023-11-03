@@ -20,10 +20,10 @@ namespace backend.Handlers.IHandlers
         public ICollection<PostDTO>? GetAllPosts(int[] categoryIDs, int[] tagIDs,string searchValue);
         //Get post by post id
         public PostDTO? GetPostBy(int postId);
-        //Get posts by video
-        public ICollection<VideoDTO> GetPostsByVideo();
-        //Get posts by image
-        public ICollection<PostDTO>? GetPostsByImage();
+        //Get posts have video
+        public ICollection<PostDTO>? GetPostsHaveVideo();
+        //Get posts have image
+        public ICollection<PostDTO>? GetPostsHaveImage();
 
         //Create post
         public PostDTO? CreatePost(int userId, string title, string content, 
