@@ -7,6 +7,7 @@
         public int? ReviewerId { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
+        public int? Upvotes { get; set; } = 0;
         public ICollection<VideoDTO>? Videos { get; set; }
         public ICollection<ImageDTO>? Images { get; set; }
         public ICollection<CategoryDTO>? Categories { get; set; }
