@@ -23,7 +23,8 @@ namespace backend.Controllers
             var reportPostList = _reportPostHandlers.GetAllReportPost();
             if (reportPostList == null || reportPostList.Count == 0)
             {
-                return NotFound();
+                var emptyList = new List<UserDTO>();
+                return Ok(emptyList);
             }
             return Ok(reportPostList);
         }
@@ -39,7 +40,8 @@ namespace backend.Controllers
 
             if (reportPostList == null || reportPostList.Count == 0)
             {
-                return NotFound();
+                var emptyList = new List<UserDTO>();
+                return Ok(emptyList);
             }
             return Ok(reportPostList);
         }
@@ -56,7 +58,8 @@ namespace backend.Controllers
 
             if (reportPostList == null || reportPostList.Count == 0)
             {
-                return NotFound();
+                var emptyList = new List<UserDTO>();
+                return Ok(emptyList);
             }
             return Ok(reportPostList);
         }

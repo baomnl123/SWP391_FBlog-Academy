@@ -2,6 +2,7 @@
 using backend.DTO;
 using backend.Handlers.IHandlers;
 using backend.Models;
+using backend.Repositories.Implementors;
 using backend.Repositories.IRepositories;
 using backend.Utils;
 
@@ -64,7 +65,13 @@ namespace backend.Handlers.Implementors
 
             //Add new comment to database
             if (!_commentRepository.Add(newComment)) return null;
-            return _mapper.Map<CommentDTO>(newComment);
+
+            var newCommentDTO = _mapper.Map<CommentDTO>(newComment);
+
+            var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByCommentID(newCommentDTO.Id));
+            newCommentDTO.User = (getUser is not null && getUser.Status) ? getUser : null;
+
+            return newCommentDTO;
         }
 
         public CommentDTO? DeleteComment(int commentId)
@@ -86,9 +93,17 @@ namespace backend.Handlers.Implementors
             if (!_commentRepository.Update(existedComment)) return null;
 
 
+            var existedCommentDTO = _mapper.Map<CommentDTO>(existedComment);
+
+            var commentUpvote = _voteCommentRepository.GetAllUserBy(existedCommentDTO.Id);
+            existedCommentDTO.Upvotes = (commentUpvote == null || commentUpvote.Count == 0) ? 0 : commentUpvote.Count;
+
+            var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByCommentID(existedCommentDTO.Id));
+            existedCommentDTO.User = (getUser is not null && getUser.Status) ? getUser : null;
+
             //return deletedComment if deleting successful
             //                          and disable all vote of that comment
-            return _mapper.Map<CommentDTO>(existedComment);
+            return existedCommentDTO;
         }
 
         public CommentDTO? UpdateComment(int commentId, string content)
@@ -107,7 +122,16 @@ namespace backend.Handlers.Implementors
 
             //update to database
             if (!_commentRepository.Update(existedComment)) return null;
-            return _mapper.Map<CommentDTO>(existedComment);
+
+            var existedCommentDTO = _mapper.Map<CommentDTO>(existedComment);
+
+            var commentUpvote = _voteCommentRepository.GetAllUserBy(existedCommentDTO.Id);
+            existedCommentDTO.Upvotes = (commentUpvote == null || commentUpvote.Count == 0) ? 0 : commentUpvote.Count;
+
+            var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByCommentID(existedCommentDTO.Id));
+            existedCommentDTO.User = (getUser is not null && getUser.Status) ? getUser : null;
+
+            return existedCommentDTO;
         }
 
         public ICollection<CommentDTO>? ViewAllComments(int postId)
@@ -122,7 +146,19 @@ namespace backend.Handlers.Implementors
             //Get All Comments of that post
             var existedComments = _commentRepository.ViewAllComments(postId);
             if (existedComments == null || existedComments.Count == 0) return null;
-            return _mapper.Map<List<CommentDTO>>(existedComments);
+
+            var existedCommentsDTO = _mapper.Map<List<CommentDTO>>(existedComments);
+
+            foreach(var comment in existedCommentsDTO)
+            {
+                var commentUpvote = _voteCommentRepository.GetAllUserBy(comment.Id);
+                comment.Upvotes = (commentUpvote == null || commentUpvote.Count == 0) ? 0 : commentUpvote.Count;
+
+                var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByCommentID(comment.Id));
+                comment.User = (getUser is not null && getUser.Status) ? getUser : null;
+            }
+
+            return existedCommentsDTO;
         }
     }
 }
