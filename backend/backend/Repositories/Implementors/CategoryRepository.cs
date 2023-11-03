@@ -70,13 +70,12 @@ namespace backend.Repositories.Implementors
 
         public Category? GetCategoryById(int categoryId)
         {
-            return _context.Categories.FirstOrDefault(c => c.Id == categoryId && c.Status == true);
+            return _context.Categories.FirstOrDefault(e => e.Id == categoryId);
         }
 
         public Category? GetCategoryByName(string categoryName)
         {
-            return _context.Categories.FirstOrDefault(c => c.CategoryName.Trim().ToUpper() == categoryName.Trim().ToUpper()
-                                                      && c.Status == true);
+            return _context.Categories.FirstOrDefault(c => c.CategoryName.Trim().ToUpper() == categoryName.Trim().ToUpper());
         }
 
         public ICollection<Post> GetPostsByCategory(int categoryId)
