@@ -12,19 +12,34 @@ namespace backend.Handlers.Implementors
 {
     public class TagHandlers : ITagHandlers
     {
+        private readonly IUserRepository _userRepository;
+        private readonly IVideoHandlers _videoHandlers;
+        private readonly IImageHandlers _imageHandlers;
         private readonly ITagRepository _tagRepository;
         private readonly ICategoryTagRepository _categoryTagRepository;
+        private readonly IPostCategoryRepository _postCategoryRepository;
         private readonly IPostTagRepository _postTagRepository;
+        private readonly IVotePostRepository _votePostRepository;
         private readonly IMapper _mapper;
 
-        public TagHandlers(ITagRepository tagRepository,
-                           ICategoryTagRepository categoryTagRepository,
-                           IPostTagRepository postTagRepository,
-                           IMapper mapper)
+        public TagHandlers(IUserRepository userRepository,
+                                IVideoHandlers videoHandlers,
+                                IImageHandlers imageHandlers,
+                                ITagRepository tagRepository,
+                                ICategoryTagRepository categoryTagRepository,
+                                IPostCategoryRepository postCategoryRepository,
+                                IPostTagRepository postTagRepository,
+                                IVotePostRepository votePostRepository,
+                                IMapper mapper)
         {
+            _userRepository = userRepository;
+            _videoHandlers = videoHandlers;
+            _imageHandlers = imageHandlers;
             _tagRepository = tagRepository;
             _categoryTagRepository = categoryTagRepository;
+            _postCategoryRepository = postCategoryRepository;
             _postTagRepository = postTagRepository;
+            _votePostRepository = votePostRepository;
             _mapper = mapper;
         }
 
@@ -62,7 +77,35 @@ namespace backend.Handlers.Implementors
             if (tag == null || tag.Status == false) return null;
 
             var posts = _tagRepository.GetPostsByTag(tagId);
-            return _mapper.Map<List<PostDTO>>(posts);
+            if (posts == null || posts.Count == 0) return null;
+
+            //map to list DTO
+            List<PostDTO> resultList = _mapper.Map<List<PostDTO>>(posts);
+
+            //get related data for all post
+            foreach (var post in resultList)
+            {
+                var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(post.Id));
+                post.User = (getUser is not null && getUser.Status) ? getUser : null;
+
+                var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(post.Id));
+                post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : null;
+
+                var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(post.Id));
+                post.Tags = (getTags is not null && getTags.Count > 0) ? getTags : null;
+
+                var getImages = _imageHandlers.GetImagesByPost(post.Id);
+                post.Images = (getImages is not null && getImages.Count > 0) ? getImages : null;
+
+                var getVideos = _videoHandlers.GetVideosByPost(post.Id);
+                post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : null;
+
+                var postUpvote = _votePostRepository.GetAllUsersVotedBy(post.Id);
+                post.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
+            }
+
+            //return posts'list
+            return resultList;
         }
 
         public ICollection<CategoryDTO>? GetCategoriesByTag(int tagId)
