@@ -7,6 +7,7 @@ using backend.Repositories.Implementors;
 using backend.Repositories.IRepositories;
 using backend.Utils;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 
 namespace backend.Handlers.Implementors
 {
@@ -45,8 +46,17 @@ namespace backend.Handlers.Implementors
 
         public ICollection<TagDTO> GetTags()
         {
-            var categories = _tagRepository.GetAllTags();
-            return _mapper.Map<List<TagDTO>>(categories);
+            var tags = _tagRepository.GetAllTags();
+            List<TagDTO> result = _mapper.Map<List<TagDTO>>(tags);
+
+            //get related data for all tag
+            foreach ( var tag in result )
+            {
+                var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_categoryTagRepository.GetCategoriesOf(tag.Id));
+                tag.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
+            }
+
+            return result;
         }
 
         public ICollection<TagDTO> GetDisableTags()
