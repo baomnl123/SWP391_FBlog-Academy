@@ -53,6 +53,7 @@ namespace backend.Handlers.Implementors
             }
             //Get Pending Status
             var pending = _reportStatusConstrant.GetPendingStatus();
+            var reportPostDTO = new ReportPostDTO();
             //Check Exist
             if (_reportPostRepository.isReported(reporterID, postID))
             {
@@ -70,7 +71,21 @@ namespace backend.Handlers.Implementors
                 {
                     return null;
                 }
-                return _mapper.Map<ReportPostDTO>(reportPost);
+
+                reportPostDTO = _mapper.Map<ReportPostDTO>(reportPost);
+
+                var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUser(reportPost.ReporterId));
+                var getPost = _mapper.Map<PostDTO?>(_postRepository.GetPost(reportPost.PostId));
+                if ((getUser != null || getUser.Status) && (getPost != null || getPost.Status))
+                {
+                    reportPostDTO.Reporter = (getUser is not null && getUser.Status) ? getUser : null;
+                    reportPostDTO.Post = (getPost is not null && getPost.Status) ? getPost : null;
+                    if (reportPost.AdminId != null && reportPost.AdminId != 0)
+                    {
+                        var getAdmin = _mapper.Map<UserDTO?>(_userRepository.GetUser(reportPost.AdminId.HasValue ? reportPost.AdminId.Value : 0));
+                        reportPostDTO.Admin = (getAdmin is not null && getAdmin.Status) ? getAdmin : null;
+                    }
+                }
             }
             //Ensure that content is not null
             if (content == null)
@@ -91,8 +106,25 @@ namespace backend.Handlers.Implementors
             {
                 return null;
             }
+            else
+            {
+                reportPostDTO = _mapper.Map<ReportPostDTO>(newReportPost);
+
+                var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUser(newReportPost.ReporterId));
+                var getPost = _mapper.Map<PostDTO?>(_postRepository.GetPost(newReportPost.PostId));
+                if ((getUser != null || getUser.Status) && (getPost != null || getPost.Status))
+                {
+                    reportPostDTO.Reporter = (getUser is not null && getUser.Status) ? getUser : null;
+                    reportPostDTO.Post = (getPost is not null && getPost.Status) ? getPost : null;
+                    if (newReportPost.AdminId != null && newReportPost.AdminId != 0)
+                    {
+                        var getAdmin = _mapper.Map<UserDTO?>(_userRepository.GetUser(newReportPost.AdminId.HasValue ? newReportPost.AdminId.Value : 0));
+                        reportPostDTO.Admin = (getAdmin is not null && getAdmin.Status) ? getAdmin : null;
+                    }
+                }
+            }
             //Map To DB
-            return _mapper.Map<ReportPostDTO>(newReportPost);
+            return reportPostDTO;
         }
 
         public ReportPostDTO? DenyReportPost(int adminID, int reporterID, int postID)
@@ -122,6 +154,7 @@ namespace backend.Handlers.Implementors
             {
                 return null;
             }
+
             return _mapper.Map<ReportPostDTO>(reportPost);
         }
 
@@ -143,8 +176,21 @@ namespace backend.Handlers.Implementors
                 //Check status Status
                 if (reportPost.Status.Contains(pendingStatus))
                 {
-                    //Map to ReportPostDTO
-                    reportPostList.Add(_mapper.Map<ReportPostDTO>(reportPost));
+                    var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUser(reportPost.ReporterId));
+                    var getPost = _mapper.Map<PostDTO?>(_postRepository.GetPost(reportPost.PostId));
+                    if ((getUser != null || getUser.Status) && (getPost != null || getPost.Status))
+                    {
+                        var reportPostDTO = _mapper.Map<ReportPostDTO>(reportPost);
+
+                        reportPostDTO.Reporter = (getUser is not null && getUser.Status) ? getUser : null;
+                        reportPostDTO.Post = (getPost is not null && getPost.Status) ? getPost : null;
+                        if (reportPost.AdminId != null && reportPost.AdminId != 0)
+                        {
+                            var getAdmin = _mapper.Map<UserDTO?>(_userRepository.GetUser(reportPost.AdminId.HasValue ? reportPost.AdminId.Value : 0));
+                            reportPostDTO.Admin = (getAdmin is not null && getAdmin.Status) ? getAdmin : null;
+                        }
+                        reportPostList.Add(reportPostDTO);
+                    }
                 }
             }
             if (reportPostList.Count == 0)
@@ -176,9 +222,22 @@ namespace backend.Handlers.Implementors
             var disableStatus = _reportStatusConstrant.GetDisableStatus();
             foreach (var reportPost in list)
             {
-                //Check status Status
-                //Map to ReportPostDTO
-                reportPostList.Add(_mapper.Map<ReportPostDTO>(reportPost));
+                var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUser(reportPost.ReporterId));
+                var getPost = _mapper.Map<PostDTO?>(_postRepository.GetPost(reportPost.PostId));
+                if ((getUser != null || getUser.Status) && (getPost != null || getPost.Status))
+                {
+                    var reportPostDTO = _mapper.Map<ReportPostDTO>(reportPost);
+
+                    reportPostDTO.Reporter = (getUser is not null && getUser.Status) ? getUser : null;
+                    reportPostDTO.Post = (getPost is not null && getPost.Status) ? getPost : null;
+                    if (reportPost.AdminId != null && reportPost.AdminId != 0)
+                    {
+                        var getAdmin = _mapper.Map<UserDTO?>(_userRepository.GetUser(reportPost.AdminId.HasValue ? reportPost.AdminId.Value : 0));
+                        reportPostDTO.Admin = (getAdmin is not null && getAdmin.Status) ? getAdmin : null;
+                    }
+
+                    reportPostList.Add(reportPostDTO);
+                }
             }
             if (reportPostList.Count == 0)
             {
@@ -195,7 +254,30 @@ namespace backend.Handlers.Implementors
             {
                 return null;
             }
-            return _mapper.Map<List<ReportPostDTO>>(list);
+
+            var reportPostList = new List<ReportPostDTO>();
+
+            foreach (var reportPost in list)
+            {
+                var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUser(reportPost.ReporterId));
+                var getPost = _mapper.Map<PostDTO?>(_postRepository.GetPost(reportPost.PostId));
+                if ((getUser != null || getUser.Status) && (getPost != null || getPost.Status))
+                {
+                    var reportPostDTO = _mapper.Map<ReportPostDTO>(reportPost);
+
+                    reportPostDTO.Reporter = (getUser is not null && getUser.Status) ? getUser : null;
+                    reportPostDTO.Post = (getPost is not null && getPost.Status) ? getPost : null;
+                    if (reportPost.AdminId != null && reportPost.AdminId != 0)
+                    {
+                        var getAdmin = _mapper.Map<UserDTO?>(_userRepository.GetUser(reportPost.AdminId.HasValue ? reportPost.AdminId.Value : 0));
+                        reportPostDTO.Admin = (getAdmin is not null && getAdmin.Status) ? getAdmin : null;
+                    }
+
+                    reportPostList.Add(reportPostDTO);
+                }
+            }
+
+            return reportPostList;
         }
 
         public ReportPostDTO? UpdateReportPost(int reporterID, int postID, string content)
@@ -235,8 +317,24 @@ namespace backend.Handlers.Implementors
             {
                 return null;
             }
+
+            var reportPostDTO = _mapper.Map<ReportPostDTO>(reportPost);
+
+            var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUser(reportPost.ReporterId));
+            var getPost = _mapper.Map<PostDTO?>(_postRepository.GetPost(reportPost.PostId));
+            if ((getUser != null || getUser.Status) && (getPost != null || getPost.Status))
+            {
+                reportPostDTO.Reporter = (getUser is not null && getUser.Status) ? getUser : null;
+                reportPostDTO.Post = (getPost is not null && getPost.Status) ? getPost : null;
+                if (reportPost.AdminId != null && reportPost.AdminId != 0)
+                {
+                    var getAdmin = _mapper.Map<UserDTO?>(_userRepository.GetUser(reportPost.AdminId.HasValue ? reportPost.AdminId.Value : 0));
+                    reportPostDTO.Admin = (getAdmin is not null && getAdmin.Status) ? getAdmin : null;
+                }
+            }
+
             //Map To ReportPostDTO
-            return _mapper.Map<ReportPostDTO>(reportPost);
+            return reportPostDTO;
         }
 
         public ReportPostDTO? UpdateReportStatus(int adminID, int reporterID, int postID, string status)
@@ -283,14 +381,30 @@ namespace backend.Handlers.Implementors
                 return null;
             }
             //Update Status
+            reportPost.AdminId = adminID;
             reportPost.Status = status;
             if (!_reportPostRepository.UpdateReportPost(reportPost))
             {
                 return null;
             }
+
             //Map To ReportPostDTO
-            var result = _mapper.Map<ReportPostDTO>(reportPost);
-            return result;
+            var reportPostDTO = _mapper.Map<ReportPostDTO>(reportPost);
+
+            var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUser(reportPost.ReporterId));
+            var getPost = _mapper.Map<PostDTO?>(_postRepository.GetPost(reportPost.PostId));
+            if ((getUser != null || getUser.Status) && (getPost != null || getPost.Status))
+            {
+                reportPostDTO.Reporter = (getUser is not null && getUser.Status) ? getUser : null;
+                reportPostDTO.Post = (getPost is not null && getPost.Status) ? getPost : null;
+                if (reportPost.AdminId != null && reportPost.AdminId != 0)
+                {
+                    var getAdmin = _mapper.Map<UserDTO?>(_userRepository.GetUser(reportPost.AdminId.HasValue ? reportPost.AdminId.Value : 0));
+                    reportPostDTO.Admin = (getAdmin is not null && getAdmin.Status) ? getAdmin : null;
+                }
+            }
+
+            return reportPostDTO;
         }
     }
 }
