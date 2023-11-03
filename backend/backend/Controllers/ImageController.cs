@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using backend.DTO;
 using backend.Handlers.IHandlers;
 using backend.Handlers.Implementors;
 using backend.Models;
@@ -28,7 +29,11 @@ namespace backend.Controllers
         public IActionResult GetImageByPost(int postId)
         {
             var images = _imageHandlers.GetImagesByPost(postId);
-            if (images == null) return NotFound();
+            if (images == null)
+            {
+                var emptyList = new List<ImageDTO>();
+                return Ok(emptyList);
+            }
 
             return Ok(images);
         }
