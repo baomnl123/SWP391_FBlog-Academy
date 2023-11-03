@@ -27,7 +27,8 @@ namespace backend.Controllers
             var list = _userHandlers.GetAllUsers();
             if (list == null)
             {
-                return NotFound();
+                var emptyList = new List<UserDTO>();
+                return Ok(emptyList);
             }
             return Ok(list);
         }
@@ -42,7 +43,8 @@ namespace backend.Controllers
             var list = _userHandlers.GetAllDisableUsers();
             if (list == null || list.Count == 0)
             {
-                return NotFound();
+                var emptyList = new List<UserDTO>();
+                return Ok(emptyList);
             }
             return Ok(list);
         }
@@ -57,7 +59,8 @@ namespace backend.Controllers
             var list = _userHandlers.GetStudentsAndModerator();
             if (list == null)
             {
-                return NotFound();
+                var emptyList = new List<UserDTO>();
+                return Ok(emptyList);
             }
             return Ok(list);
         }
@@ -72,7 +75,8 @@ namespace backend.Controllers
             var list = _userHandlers.GetLecturers();
             if (list == null)
             {
-                return NotFound();
+                var emptyList = new List<UserDTO>();
+                return Ok(emptyList);
             }
             return Ok(list);
         }
@@ -121,7 +125,8 @@ namespace backend.Controllers
 
             if (listFollowers == null || listFollowers.Count == 0)
             {
-                return NotFound();
+                var emptyList = new List<UserDTO>();
+                return Ok(emptyList);
             }
 
             return Ok(listFollowers);
@@ -139,7 +144,8 @@ namespace backend.Controllers
 
             if (listFollowings == null || listFollowings.Count == 0)
             {
-                return NotFound();
+                var emptyList = new List<UserDTO>();
+                return Ok(emptyList);
             }
 
             return Ok(listFollowings);
