@@ -84,25 +84,17 @@ namespace backend.Handlers.Implementors
                 if (user == null || !user.Status) return null;
                 approvingPost.User = _mapper.Map<UserDTO>(user);
 
-                //Return null if get videos of post is failed
-                var videos = _videoHandlers.GetVideosByPost(approvingPost.Id);
-                if (videos == null || videos.Count == 0) return null;
-                approvingPost.Videos = videos;
+                var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(approvingPost.Id));
+                approvingPost.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : null;
 
-                //return null if get images of post is failed
-                var images = _imageHandlers.GetImagesByPost(approvingPost.Id);
-                if (images == null || images.Count == 0) return null;
-                approvingPost.Images = images;
+                var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(approvingPost.Id));
+                approvingPost.Tags = (getTags is not null && getTags.Count > 0) ? getTags : null;
 
-                //return null if get tags of post is failed
-                var tags = _postTagRepository.GetTagsOf(approvingPost.Id);
-                if (tags == null || tags.Count == 0) return null;
-                approvingPost.Tags = _mapper.Map<List<TagDTO>>(tags);
+                var getImages = _imageHandlers.GetImagesByPost(approvingPost.Id);
+                approvingPost.Images = (getImages is not null && getImages.Count > 0) ? getImages : null;
 
-                //return null if get categories of post is failed
-                var categories = _postCategoryRepository.GetCategoriesOf(approvingPost.Id);
-                if (categories == null || categories.Count == 0) return null;
-                approvingPost.Categories = _mapper.Map<List<CategoryDTO>>(categories);
+                var getVideos = _videoHandlers.GetVideosByPost(approvingPost.Id);
+                approvingPost.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : null;
 
                 //Update info to database
                 if (!_postRepository.UpdatePost(existedPost)) return null;
