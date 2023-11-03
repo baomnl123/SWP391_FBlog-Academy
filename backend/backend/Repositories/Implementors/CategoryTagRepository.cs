@@ -55,6 +55,18 @@ namespace backend.Repositories.Implementors
             return _context.CategoryTags.Where(c => c.TagId == tagId).ToList();
         }
 
+        public ICollection<Category>? GetCategoriesOf(int tagId)
+        {
+            List<Category> categories = new();
+            var list = _context.CategoryTags.Where(c => c.TagId == tagId && c.Status).Select(c => c.Category).ToList();
+            if (list is null || list.Count == 0) return null;
+            foreach (var item in list)
+            {
+                if (item.Status) categories.Add(item);
+            }
+            return categories.Count == 0 ? null : categories;
+        }
+
         public bool Save()
         {
             try

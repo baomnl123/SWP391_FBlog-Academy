@@ -7,6 +7,7 @@ using backend.Repositories.Implementors;
 using backend.Repositories.IRepositories;
 using backend.Utils;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 
 namespace backend.Handlers.Implementors
 {
@@ -45,8 +46,17 @@ namespace backend.Handlers.Implementors
 
         public ICollection<TagDTO> GetTags()
         {
-            var categories = _tagRepository.GetAllTags();
-            return _mapper.Map<List<TagDTO>>(categories);
+            var tags = _tagRepository.GetAllTags();
+            List<TagDTO> result = _mapper.Map<List<TagDTO>>(tags);
+
+            //get related data for all tag
+            foreach ( var tag in result )
+            {
+                var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_categoryTagRepository.GetCategoriesOf(tag.Id));
+                tag.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
+            }
+
+            return result;
         }
 
         public ICollection<TagDTO> GetDisableTags()
@@ -89,16 +99,16 @@ namespace backend.Handlers.Implementors
                 post.User = (getUser is not null && getUser.Status) ? getUser : null;
 
                 var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(post.Id));
-                post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : null;
+                post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
 
                 var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(post.Id));
-                post.Tags = (getTags is not null && getTags.Count > 0) ? getTags : null;
+                post.Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
 
                 var getImages = _imageHandlers.GetImagesByPost(post.Id);
-                post.Images = (getImages is not null && getImages.Count > 0) ? getImages : null;
+                post.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
 
                 var getVideos = _videoHandlers.GetVideosByPost(post.Id);
-                post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : null;
+                post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : new List<VideoDTO>();
 
                 var postUpvote = _votePostRepository.GetAllUsersVotedBy(post.Id);
                 post.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;

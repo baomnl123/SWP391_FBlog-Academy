@@ -7,6 +7,7 @@ namespace backend.Repositories.IRepositories
         public CategoryTag? GetCategoryTag(int tagId, int categoryId);
         public ICollection<CategoryTag> GetCategoryTagsByTagId(int tagId);
         public ICollection<CategoryTag> GetCategoryTagsByCategoryId(int categoryId);
+        public ICollection<Category>? GetCategoriesOf(int tagId);
         public bool CreateCategoryTag(CategoryTag categoryTag);
         public bool UpdateCategoryTag(CategoryTag categoryTag);
         public bool EnableCategoryTag(CategoryTag categoryTag);
