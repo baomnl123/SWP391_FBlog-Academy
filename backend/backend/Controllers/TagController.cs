@@ -36,7 +36,11 @@ namespace backend.Controllers
         {
             var tags = _tagHandlers.GetTags();
 
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (tags == null)
+            {
+                var emptyList = new List<TagDTO>();
+                return Ok(emptyList);
+            }
 
             return Ok(tags);
         }
@@ -83,7 +87,11 @@ namespace backend.Controllers
         public IActionResult GetPostsByTag(int tagId)
         {
             var posts = _tagHandlers.GetPostsByTag(tagId);
-            if (posts == null) return NotFound();
+            if (posts == null)
+            {
+                var emptyList = new List<PostDTO>();
+                return Ok(emptyList);
+            }
 
             return Ok(posts);
         }
@@ -99,7 +107,11 @@ namespace backend.Controllers
         public IActionResult GetCategoriesByTag(int tagId)
         {
             var categories = _tagHandlers.GetCategoriesByTag(tagId);
-            if (categories == null) return NotFound();
+            if (categories == null)
+            {
+                var emptyList = new List<CategoryDTO>();
+                return Ok(emptyList);
+            }
 
             return Ok(categories);
         }

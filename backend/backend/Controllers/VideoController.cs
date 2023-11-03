@@ -1,4 +1,5 @@
-﻿using backend.Handlers.IHandlers;
+﻿using backend.DTO;
+using backend.Handlers.IHandlers;
 using backend.Handlers.Implementors;
 using backend.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +27,11 @@ namespace backend.Controllers
         public IActionResult GetVideoByPost(int postId)
         {
             var videos = _videoHandlers.GetVideosByPost(postId);
-            if (videos == null) return NotFound();
+            if (videos == null)
+            {
+                var emptyList = new List<VideoDTO>();
+                return Ok(emptyList);
+            }
 
             return Ok(videos);
         }

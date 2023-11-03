@@ -34,7 +34,11 @@ namespace backend.Controllers
         {
             var categories = _categoryHandlers.GetCategories();
 
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (categories == null)
+            {
+                var emptyList = new List<CategoryDTO>();
+                return Ok(emptyList);
+            }
 
             return Ok(categories);
         }
@@ -49,7 +53,11 @@ namespace backend.Controllers
         {
             var categories = _categoryHandlers.GetDisableCategories();
 
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (categories == null)
+            {
+                var emptyList = new List<CategoryDTO>();
+                return Ok(emptyList);
+            }
 
             return Ok(categories);
         }
@@ -81,7 +89,11 @@ namespace backend.Controllers
         public IActionResult GetPostsByCategory(int categoryId)
         {
             var posts = _categoryHandlers.GetPostsByCategory(categoryId);
-            if (posts == null) return NotFound();
+            if (posts == null)
+            {
+                var emptyList = new List<PostDTO>();
+                return Ok(emptyList);
+            }
 
             return Ok(posts);
         }
@@ -97,7 +109,11 @@ namespace backend.Controllers
         public IActionResult GetTagsByCategory(int categoryId)
         {
             var tags = _categoryHandlers.GetTagsByCategory(categoryId);
-            if (tags == null) return NotFound();
+            if (tags == null)
+            {
+                var emptyList = new List<TagDTO>();
+                return Ok(emptyList);
+            }
 
             return Ok(tags);
         }
