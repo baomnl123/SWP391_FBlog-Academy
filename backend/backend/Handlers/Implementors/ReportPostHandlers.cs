@@ -15,11 +15,13 @@ namespace backend.Handlers.Implementors
         private readonly IReportPostRepository _reportPostRepository;
         private readonly IMapper _mapper;
         private readonly IPostRepository _postRepository;
+        private readonly IPostHandlers _postHandlers;
 
         public ReportPostHandlers(IMapper mapper,
                                   IReportPostRepository reportPostRepository,
                                   IUserRepository userRepository,
-                                  IPostRepository postRepository)
+                                  IPostRepository postRepository,
+                                  IPostHandlers postHandlers)
         {
             _userRoleConstrant = new();
             _reportStatusConstrant = new();
@@ -27,6 +29,7 @@ namespace backend.Handlers.Implementors
             _reportPostRepository = reportPostRepository;
             _userRepository = userRepository;
             _postRepository = postRepository;
+            _postHandlers = postHandlers;
         }
         public ReportPostDTO? AddReportPost(int reporterID, int postID, string content)
         {
@@ -75,8 +78,8 @@ namespace backend.Handlers.Implementors
                 reportPostDTO = _mapper.Map<ReportPostDTO>(reportPost);
 
                 var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUser(reportPost.ReporterId));
-                var getPost = _mapper.Map<PostDTO?>(_postRepository.GetPost(reportPost.PostId));
-                if ((getUser != null || getUser.Status) && (getPost != null || getPost.Status))
+                var getPost = _mapper.Map<PostDTO?>(_postHandlers.GetPostBy(reportPost.PostId));
+                if ((getUser?.Status == true) && (getPost?.Status == true))
                 {
                     reportPostDTO.Reporter = (getUser is not null && getUser.Status) ? getUser : null;
                     reportPostDTO.Post = (getPost is not null && getPost.Status) ? getPost : null;
@@ -177,8 +180,8 @@ namespace backend.Handlers.Implementors
                 if (reportPost.Status.Contains(pendingStatus))
                 {
                     var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUser(reportPost.ReporterId));
-                    var getPost = _mapper.Map<PostDTO?>(_postRepository.GetPost(reportPost.PostId));
-                    if ((getUser != null || getUser.Status) && (getPost != null || getPost.Status))
+                    var getPost = _mapper.Map<PostDTO?>(_postHandlers.GetPostBy(reportPost.PostId));
+                    if ((getUser?.Status == true) && (getPost?.Status == true))
                     {
                         var reportPostDTO = _mapper.Map<ReportPostDTO>(reportPost);
 
@@ -223,8 +226,8 @@ namespace backend.Handlers.Implementors
             foreach (var reportPost in list)
             {
                 var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUser(reportPost.ReporterId));
-                var getPost = _mapper.Map<PostDTO?>(_postRepository.GetPost(reportPost.PostId));
-                if ((getUser != null || getUser.Status) && (getPost != null || getPost.Status))
+                var getPost = _mapper.Map<PostDTO?>(_postHandlers.GetPostBy(reportPost.PostId));
+                if ((getUser?.Status == true) && (getPost?.Status == true))
                 {
                     var reportPostDTO = _mapper.Map<ReportPostDTO>(reportPost);
 
@@ -260,8 +263,8 @@ namespace backend.Handlers.Implementors
             foreach (var reportPost in list)
             {
                 var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUser(reportPost.ReporterId));
-                var getPost = _mapper.Map<PostDTO?>(_postRepository.GetPost(reportPost.PostId));
-                if ((getUser != null || getUser.Status) && (getPost != null || getPost.Status))
+                var getPost = _mapper.Map<PostDTO?>(_postHandlers.GetPostBy(reportPost.PostId));
+                if ((getUser?.Status == true) && (getPost?.Status == true))
                 {
                     var reportPostDTO = _mapper.Map<ReportPostDTO>(reportPost);
 
@@ -321,8 +324,8 @@ namespace backend.Handlers.Implementors
             var reportPostDTO = _mapper.Map<ReportPostDTO>(reportPost);
 
             var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUser(reportPost.ReporterId));
-            var getPost = _mapper.Map<PostDTO?>(_postRepository.GetPost(reportPost.PostId));
-            if ((getUser != null || getUser.Status) && (getPost != null || getPost.Status))
+            var getPost = _mapper.Map<PostDTO?>(_postHandlers.GetPostBy(reportPost.PostId));
+            if ((getUser?.Status == true) && (getPost?.Status == true))
             {
                 reportPostDTO.Reporter = (getUser is not null && getUser.Status) ? getUser : null;
                 reportPostDTO.Post = (getPost is not null && getPost.Status) ? getPost : null;
@@ -392,8 +395,8 @@ namespace backend.Handlers.Implementors
             var reportPostDTO = _mapper.Map<ReportPostDTO>(reportPost);
 
             var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUser(reportPost.ReporterId));
-            var getPost = _mapper.Map<PostDTO?>(_postRepository.GetPost(reportPost.PostId));
-            if ((getUser != null || getUser.Status) && (getPost != null || getPost.Status))
+            var getPost = _mapper.Map<PostDTO?>(_postHandlers.GetPostBy(reportPost.PostId));
+            if ((getUser?.Status == true) && (getPost?.Status == true))
             {
                 reportPostDTO.Reporter = (getUser is not null && getUser.Status) ? getUser : null;
                 reportPostDTO.Post = (getPost is not null && getPost.Status) ? getPost : null;
