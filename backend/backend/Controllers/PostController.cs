@@ -153,10 +153,10 @@ namespace backend.Controllers
         public IActionResult CreatePost(int userId, 
                                         [FromForm] string title, 
                                         [FromForm] string content, 
-                                        [FromForm] int[]? tagIds, 
-                                        [FromForm] int[]? categoryIds,
-                                        [FromForm] string[]? videoURLs,
-                                        [FromForm] string[]? imageURLs)
+                                        [FromQuery] int[]? tagIds, 
+                                        [FromQuery] int[]? categoryIds,
+                                        [FromQuery] string[]? videoURLs,
+                                        [FromQuery] string[]? imageURLs)
         {
             var newPost = _postHandlers.CreatePost(userId, title, content, tagIds, categoryIds, videoURLs, imageURLs);
             if (newPost != null)
@@ -181,10 +181,10 @@ namespace backend.Controllers
         public IActionResult UpdatePost(int postId, 
                                         [FromForm] string title, 
                                         [FromForm] string content, 
-                                        [FromForm] int[] tagIds, 
-                                        [FromForm] int[] categoryIds,
-                                        [FromForm] string[] videoURLs,
-                                        [FromForm] string[] imageURLs)
+                                        [FromQuery] int[] tagIds, 
+                                        [FromQuery] int[] categoryIds,
+                                        [FromQuery] string[] videoURLs,
+                                        [FromQuery] string[] imageURLs)
         {
             var updatedPost = _postHandlers.UpdatePost(postId, title, content, tagIds, categoryIds, videoURLs, imageURLs);
             if (updatedPost != null)
