@@ -24,7 +24,7 @@ namespace backend.Controllers
         public IActionResult GetAllUsersVotedBy(int postId)
         {
             var userList = _votePostHandlers.GetAllUsersVotedBy(postId);
-            if (userList == null)
+            if (userList == null || userList.Count == 0)
             {
                 userList = new List<UserDTO>();
             }

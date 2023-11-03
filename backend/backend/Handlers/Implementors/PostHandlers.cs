@@ -85,16 +85,16 @@ namespace backend.Handlers.Implementors
                 approvingPost.User = _mapper.Map<UserDTO>(user);
 
                 var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(approvingPost.Id));
-                approvingPost.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : null;
+                approvingPost.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
 
                 var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(approvingPost.Id));
-                approvingPost.Tags = (getTags is not null && getTags.Count > 0) ? getTags : null;
+                approvingPost.Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
 
                 var getImages = _imageHandlers.GetImagesByPost(approvingPost.Id);
-                approvingPost.Images = (getImages is not null && getImages.Count > 0) ? getImages : null;
+                approvingPost.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
 
                 var getVideos = _videoHandlers.GetVideosByPost(approvingPost.Id);
-                approvingPost.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : null;
+                approvingPost.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : new List<VideoDTO>();
 
                 var postUpvote = _votePostRepository.GetAllUsersVotedBy(approvingPost.Id);
                 approvingPost.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
@@ -133,7 +133,7 @@ namespace backend.Handlers.Implementors
                 };
                 createdPost.Videos = videos;
             }
-            else createdPost.Videos = null;
+            else createdPost.Videos = new List<VideoDTO>();
 
             //create images for post if it is necessary
             if (imageURLs is not null && imageURLs.Length > 0)
@@ -146,7 +146,7 @@ namespace backend.Handlers.Implementors
                 };
                 createdPost.Images = images;
             }
-            else createdPost.Images = null;
+            else createdPost.Images = new List<ImageDTO>();
 
             //add categories for post if it is necessary
             if (categoryIds is not null && categoryIds.Length > 0)
@@ -155,7 +155,7 @@ namespace backend.Handlers.Implementors
                 if (categories is null || categories.Count == 0) return null;
                 createdPost.Categories = categories;
             }
-            else createdPost.Categories = null;
+            else createdPost.Categories = new List<CategoryDTO>();
 
             //add tags for post if it is successful, return null otherwise
             if (tagIds is not null && tagIds.Length > 0)
@@ -164,7 +164,7 @@ namespace backend.Handlers.Implementors
                 if (tags is null || tags.Count == 0) return null;
                 createdPost.Tags = tags;
             }
-            else createdPost.Tags = null;
+            else createdPost.Tags = new List<TagDTO>();
 
             var postUpvote = _votePostRepository.GetAllUsersVotedBy(createdPost.Id);
             createdPost.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
@@ -305,6 +305,10 @@ namespace backend.Handlers.Implementors
             //return null if mapping is failed
             if (deletingPost is null) return null;
 
+            //Get user who owns post
+            var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(deletingPost.Id));
+            deletingPost.User = (getUser is not null && getUser.Status) ? getUser : null;
+
             //return null if disable all votes of post is failed
             if (!_votePostRepository.DisableAllVotePostOf(deletedPost)) return null;
 
@@ -332,7 +336,7 @@ namespace backend.Handlers.Implementors
                     if (successDelete is null) return null;
                 }
             }
-            deletingPost.Videos = null;
+            deletingPost.Videos = new List<VideoDTO>();
 
             //disable images of post if post has images
             var deletingImages = _imageHandlers.GetImagesByPost(deletingPost.Id);
@@ -344,7 +348,7 @@ namespace backend.Handlers.Implementors
                     if (successDelete is null) return null;
                 }
             }
-            deletingPost.Images = null;
+            deletingPost.Images = new List<ImageDTO>();
 
             //disable tags of post if post has tags
             var tagsOfPost = _postTagRepository.GetPostTagsByPostId(deletingPost.Id);
@@ -353,7 +357,7 @@ namespace backend.Handlers.Implementors
                 var disabledTag = _tagHandlers.DisablePostTag(deletingPost.Id, tag.TagId);
                 if (disabledTag is null) return null;
             }
-            deletingPost.Tags = null;
+            deletingPost.Tags = new List<TagDTO>();
 
             //disable categories of post if post has categories
             var categoriesOfPost = _postCategoryRepository.GetPostCategoriesByPostId(deletingPost.Id);
@@ -362,7 +366,7 @@ namespace backend.Handlers.Implementors
                 var disabledCategory = _categoryHandlers.DisablePostCategory(deletingPost.Id, category.CategoryId);
                 if (disabledCategory is null) return null;
             }
-            deletingPost.Categories = null;
+            deletingPost.Categories = new List<CategoryDTO>();
 
             return deletingPost;
         }
@@ -397,6 +401,10 @@ namespace backend.Handlers.Implementors
             //return null if mapping is failed
             if (disablingPost is null) return null;
 
+            //Get user who owns post
+            var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(disablingPost.Id));
+            disablingPost.User = (getUser is not null && getUser.Status) ? getUser : null;
+
             //return null if disable all votes of post is failed
             if (!_votePostRepository.DisableAllVotePostOf(existedPost)) return null;
 
@@ -428,16 +436,16 @@ namespace backend.Handlers.Implementors
                 post.User = (getUser is not null && getUser.Status) ? getUser : null;
 
                 var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(post.Id));
-                post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : null;
+                post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
 
                 var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(post.Id));
-                post.Tags = (getTags is not null && getTags.Count > 0) ? getTags : null;
+                post.Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
 
                 var getImages = _imageHandlers.GetImagesByPost(post.Id);
-                post.Images = (getImages is not null && getImages.Count > 0) ? getImages : null;
+                post.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
 
                 var getVideos = _videoHandlers.GetVideosByPost(post.Id);
-                post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : null;
+                post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : new List<VideoDTO>();
 
                 var postUpvote = _votePostRepository.GetAllUsersVotedBy(post.Id);
                 post.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
@@ -473,16 +481,16 @@ namespace backend.Handlers.Implementors
                 post.User = (getUser is not null && getUser.Status) ? getUser : null;
 
                 var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(post.Id));
-                post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : null;
+                post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
 
                 var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(post.Id));
-                post.Tags = (getTags is not null && getTags.Count > 0) ? getTags : null;
+                post.Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
 
                 var getImages = _imageHandlers.GetImagesByPost(post.Id);
-                post.Images = (getImages is not null && getImages.Count > 0) ? getImages : null;
+                post.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
 
                 var getVideos = _videoHandlers.GetVideosByPost(post.Id);
-                post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : null;
+                post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : new List<VideoDTO>();
 
                 var postUpvote = _votePostRepository.GetAllUsersVotedBy(post.Id);
                 post.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
@@ -508,16 +516,16 @@ namespace backend.Handlers.Implementors
                 post.User = (getUser is not null && getUser.Status) ? getUser : null;
 
                 var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(post.Id));
-                post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : null;
+                post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
 
                 var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(post.Id));
-                post.Tags = (getTags is not null && getTags.Count > 0) ? getTags : null;
+                post.Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
 
                 var getImages = _imageHandlers.GetImagesByPost(post.Id);
-                post.Images = (getImages is not null && getImages.Count > 0) ? getImages : null;
+                post.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
 
                 var getVideos = _videoHandlers.GetVideosByPost(post.Id);
-                post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : null;
+                post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : new List<VideoDTO>();
 
                 var postUpvote = _votePostRepository.GetAllUsersVotedBy(post.Id);
                 post.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
@@ -545,6 +553,10 @@ namespace backend.Handlers.Implementors
             //return null if mapping is failed
             if (updatingPost is null) return null;
 
+            //Get user who owns post
+            var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(updatingPost.Id));
+            updatingPost.User = (getUser is not null && getUser.Status) ? getUser : null;
+
             //updating videos if it is successful, return null otherwise 
             if (videoURLs is not null && videoURLs.Length > 0)
             {
@@ -552,7 +564,7 @@ namespace backend.Handlers.Implementors
                 if (updatedVideos is null) return null;
                 updatingPost.Videos = updatedVideos;
             }
-            else updatingPost.Videos = null;
+            else updatingPost.Videos = new List<VideoDTO>();
 
             //Updating images if it is successful.Otherwise, return null
             if (imageURLs is not null && imageURLs.Length > 0)
@@ -561,7 +573,7 @@ namespace backend.Handlers.Implementors
                 if (updatedImages is null) return null;
                 updatingPost.Images = updatedImages;
             }
-            else updatingPost.Images = null;
+            else updatingPost.Images = new List<ImageDTO>();
 
             if (tagIds is not null && tagIds.Length > 0)
             {
@@ -578,7 +590,7 @@ namespace backend.Handlers.Implementors
                 if (tags is null || tags.Count == 0) return null;
                 updatingPost.Tags = tags;
             }
-            else updatingPost.Tags = null;
+            else updatingPost.Tags = new List<TagDTO>();
 
             if (categoryIds is not null && categoryIds.Length > 0)
             {
@@ -595,7 +607,7 @@ namespace backend.Handlers.Implementors
                 if (categories is null || categories.Count == 0) return null;
                 updatingPost.Categories = categories;
             }
-            else updatingPost.Categories = null;
+            else updatingPost.Categories = new List<CategoryDTO>();
 
             var postUpvote = _votePostRepository.GetAllUsersVotedBy(updatingPost.Id);
             updatingPost.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
@@ -620,7 +632,7 @@ namespace backend.Handlers.Implementors
 
             //update videos
             var updatedVideos = _videoHandlers.CreateVideo(postId, videoURLs);
-            if (updatedVideos is null || updatedVideos.Count == 0) return null;
+            if (updatedVideos is null || updatedVideos.Count == 0) return new List<VideoDTO>();
             else return updatedVideos;
         }
 
@@ -639,7 +651,7 @@ namespace backend.Handlers.Implementors
 
             //update images
             var updatedImages = _imageHandlers.CreateImage(postId, imageURLs);
-            if (updatedImages is null || updatedImages.Count == 0) return null;
+            if (updatedImages is null || updatedImages.Count == 0) return new List<ImageDTO>();
             else return updatedImages;
         }
 
@@ -659,16 +671,16 @@ namespace backend.Handlers.Implementors
                 post.User = (getUser is not null && getUser.Status) ? getUser : null;
 
                 var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(post.Id));
-                post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : null;
+                post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
 
                 var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(post.Id));
-                post.Tags = (getTags is not null && getTags.Count > 0) ? getTags : null;
+                post.Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
 
                 var getImages = _imageHandlers.GetImagesByPost(post.Id);
-                post.Images = (getImages is not null && getImages.Count > 0) ? getImages : null;
+                post.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
 
                 var getVideos = _videoHandlers.GetVideosByPost(post.Id);
-                post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : null;
+                post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : new List<VideoDTO>();
 
                 var postUpvote = _votePostRepository.GetAllUsersVotedBy(post.Id);
                 post.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
@@ -694,16 +706,16 @@ namespace backend.Handlers.Implementors
                 post.User = (getUser is not null && getUser.Status) ? getUser : null;
 
                 var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(post.Id));
-                post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : null;
+                post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
 
                 var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(post.Id));
-                post.Tags = (getTags is not null && getTags.Count > 0) ? getTags : null;
+                post.Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
 
                 var getImages = _imageHandlers.GetImagesByPost(post.Id);
-                post.Images = (getImages is not null && getImages.Count > 0) ? getImages : null;
+                post.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
 
                 var getVideos = _videoHandlers.GetVideosByPost(post.Id);
-                post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : null;
+                post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : new List<VideoDTO>();
 
                 var postUpvote = _votePostRepository.GetAllUsersVotedBy(post.Id);
                 post.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
@@ -728,16 +740,16 @@ namespace backend.Handlers.Implementors
                 post.User = (getUser is not null && getUser.Status) ? getUser : null;
 
                 var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(post.Id));
-                post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : null;
+                post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
 
                 var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(post.Id));
-                post.Tags = (getTags is not null && getTags.Count > 0) ? getTags : null;
+                post.Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
 
                 var getImages = _imageHandlers.GetImagesByPost(post.Id);
-                post.Images = (getImages is not null && getImages.Count > 0) ? getImages : null;
+                post.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
 
                 var getVideos = _videoHandlers.GetVideosByPost(post.Id);
-                post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : null;
+                post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : new List<VideoDTO>();
 
                 var postUpvote = _votePostRepository.GetAllUsersVotedBy(post.Id);
                 post.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
@@ -778,16 +790,16 @@ namespace backend.Handlers.Implementors
                     postDTO.User = (getUser is not null && getUser.Status) ? getUser : null;
 
                     var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(postDTO.Id));
-                    postDTO.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : null;
+                    postDTO.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
 
                     var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(postDTO.Id));
-                    postDTO.Tags = (getTags is not null && getTags.Count > 0) ? getTags : null;
+                    postDTO.Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
 
                     var getImages = _imageHandlers.GetImagesByPost(postDTO.Id);
-                    postDTO.Images = (getImages is not null && getImages.Count > 0) ? getImages : null;
+                    postDTO.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
 
                     var getVideos = _videoHandlers.GetVideosByPost(postDTO.Id);
-                    postDTO.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : null;
+                    postDTO.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : new List<VideoDTO>();
 
                     var postUpvote = _votePostRepository.GetAllUsersVotedBy(postDTO.Id);
                     postDTO.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;

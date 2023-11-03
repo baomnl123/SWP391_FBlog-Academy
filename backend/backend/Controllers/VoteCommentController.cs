@@ -54,7 +54,7 @@ namespace backend.Controllers
         public IActionResult GetAllUsersVotedBy(int commentId)
         {
             var userList = _voteCommentHandlers.GetAllUsersVotedBy(commentId);
-            if (userList == null)
+            if (userList == null || userList.Count == 0)
             {
                 userList = new List<UserDTO>();
             }
