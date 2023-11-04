@@ -269,6 +269,16 @@ namespace backend.Handlers.Implementors
             //add new post to database
             if (!_postRepository.CreateNewPost(newPost)) return null;
 
+            //approve post if post's owner is award
+            if (existedUser.IsAwarded == true)
+            {
+                //update info of createdPost
+                newPost.IsApproved = true;
+
+                //Update info to database
+                if (!_postRepository.UpdatePost(newPost)) return null;
+            }
+
             //add newPostTag ralationship to database
             return _mapper.Map<PostDTO>(newPost);
         }
