@@ -8,14 +8,18 @@ namespace backend.Handlers.Implementors
 {
     public class PostListHandlers : IPostListHandlers
     {
+        private readonly ISaveListHandlers _saveListHandlers;
         private readonly ISaveListRepository _saveListRepository;
         private readonly IPostRepository _postRepository;
+        private readonly IPostHandlers _postHandlers;
         private readonly IPostListRepository _postListRepository;
         private readonly IMapper _mapper;
-        public PostListHandlers(ISaveListRepository saveListRepository, IPostRepository postRepository, IPostListRepository postListRepository, IMapper mapper)
+        public PostListHandlers(ISaveListRepository saveListRepository, IPostRepository postRepository, IPostListRepository postListRepository, IMapper mapper, ISaveListHandlers saveListHandlers, IPostHandlers postHandlers)
         {
+            _saveListHandlers = saveListHandlers;
             _saveListRepository = saveListRepository;
             _postRepository = postRepository;
+            _postHandlers = postHandlers;
             _postListRepository = postListRepository;
             _mapper = mapper;
         }
@@ -24,19 +28,23 @@ namespace backend.Handlers.Implementors
         {
             //get savelist
             var saveList = _saveListRepository.GetSaveListBySaveListID(saveListID);
+
             //check savelist is available or not
             if (saveList == null || !saveList.Status)
             {
                 return null;
             } 
+
             //get postID 
             var post = _postRepository.GetPost(postID);
             if(post == null || !post.Status)
             {
                 return null;
             }
+
             //get post list
             var postList = _postListRepository.GetPostList(saveListID, postID);
+
             //check null
             if (postList != null)
             {
@@ -70,7 +78,17 @@ namespace backend.Handlers.Implementors
                 return null;
             }
             //return
-            return _mapper.Map<PostListDTO>(newPostList);
+
+            var postListDTO = _mapper.Map<PostListDTO>(newPostList);
+
+            var saveListDTO = _saveListHandlers.GetSaveList(saveListID);
+            postListDTO.SaveList = (saveListDTO is not null && saveListDTO.Status) ? saveListDTO : null;
+
+            var postDTO = _postHandlers.GetPostBy(postID);
+            postListDTO.SavePost = (postDTO is not null && postDTO.Status) ? postDTO : null;
+
+
+            return postListDTO;
         }
 
         public PostListDTO? DisablePostList(int saveListID, int postID)
@@ -135,7 +153,11 @@ namespace backend.Handlers.Implementors
                     var postlist = _postListRepository.GetPostList(saveListID, post.Id);
                     if (postlist != null && postlist.Status)
                     {
-                        returnList.Add(_mapper.Map<PostDTO>(post));
+                        var postDTO = _postHandlers.GetPostBy(post.Id);
+                        if (postDTO != null)
+                        {
+                            returnList.Add(postDTO);
+                        }
                     }
                 }
             }
@@ -171,7 +193,11 @@ namespace backend.Handlers.Implementors
                     //check available
                     if (postlist != null && postlist.Status)
                     {
-                        returnList.Add(_mapper.Map<SaveListDTO>(save));
+                        var saveList = _saveListHandlers.GetSaveList(save.Id);
+                        if(saveList != null)
+                        {
+                            returnList.Add(saveList);
+                        }
                     }
                 }
             }
