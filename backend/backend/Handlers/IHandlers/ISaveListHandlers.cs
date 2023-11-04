@@ -10,5 +10,6 @@ namespace backend.Handlers.IHandlers
         public SaveListDTO? AddSaveList(int userID, string name);
         public SaveListDTO? DisableSaveList(int saveListID);
         public SaveListDTO? UpdateSaveListName(int saveListID,string name);
+        public SaveListDTO? GetSaveList(int saveListID);
     }
 }

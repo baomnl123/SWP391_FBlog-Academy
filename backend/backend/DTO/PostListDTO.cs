@@ -2,8 +2,8 @@
 {
     public class PostListDTO
     {
-        public int SaveListId { get; set; }
-        public int SavePostId { get; set; }
+        public SaveListDTO? SaveList { get; set; }
+        public PostDTO? SavePost { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool Status { get; set; }
     }

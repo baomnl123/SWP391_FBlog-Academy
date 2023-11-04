@@ -52,6 +52,22 @@ namespace backend.Controllers
         }
 
         /// <summary>
+        /// Get selected SaveList by its ID
+        /// </summary>
+        /// <param name="saveListID"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult GetSaveList(int saveListID)
+        {
+            var savelist = _saveListHandlers.GetSaveList(saveListID);
+            if(savelist == null || !savelist.Status)
+            {
+                return NotFound();
+            }
+            return Ok(savelist);
+        }
+
+        /// <summary>
         /// Get list of Posts that are saved from this Savelist. 
         /// </summary>
         /// <param name="saveListID"></param>
