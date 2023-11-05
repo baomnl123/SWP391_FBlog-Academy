@@ -340,21 +340,8 @@ namespace backend.Handlers.Implementors
             return reportPostDTO;
         }
 
-        public ReportPostDTO? UpdateReportStatus(int adminID, int reporterID, int postID, string status)
+        public ReportPostDTO? ApproveReportPost(int adminID, int reporterID, int postID)
         {
-            //Get Status
-            var disableStatus = _reportStatusConstrant.GetDisableStatus();
-            var approveStatus = _reportStatusConstrant.GetApprovedStatus();
-            var declinedStatus = _reportStatusConstrant.GetDeclinedStatus();
-            var pendingStatus = _reportStatusConstrant.GetPendingStatus();
-            if (!status.Contains(disableStatus)
-                && !status.Contains(approveStatus)
-                && !status.Contains(declinedStatus)
-                && !status.Contains(pendingStatus))
-            {
-                return null;
-            }
-
             //get admin
             var admin = _userRepository.GetUser(adminID);
             //check admin is available or not
@@ -376,6 +363,9 @@ namespace backend.Handlers.Implementors
             {
                 return null;
             }
+            //Get Status
+            var disableStatus = _reportStatusConstrant.GetDisableStatus();
+            var approveStatus = _reportStatusConstrant.GetApprovedStatus();
             //Get Report
             var reportPost = _reportPostRepository.GetReportPostByIDs(reporterID, postID);
             //Check Null
@@ -385,7 +375,7 @@ namespace backend.Handlers.Implementors
             }
             //Update Status
             reportPost.AdminId = adminID;
-            reportPost.Status = status;
+            reportPost.Status = approveStatus;
             if (!_reportPostRepository.UpdateReportPost(reportPost))
             {
                 return null;
