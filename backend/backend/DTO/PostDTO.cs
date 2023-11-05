@@ -17,6 +17,8 @@
         public ICollection<TagDTO>? Tags { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+        public bool? Upvote { get; set; } = false;
+        public bool? Downvote { get; set; } = false;
         public bool IsApproved { get; set; }
         public bool Status { get; set; }
     }

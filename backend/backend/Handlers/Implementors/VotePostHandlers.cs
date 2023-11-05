@@ -104,6 +104,8 @@ namespace backend.Handlers.Implementors
 
         public ICollection<UserDTO>? GetAllUsersVotedBy(int postId)
         {
+            List<User>? result = new List<User>();
+
             //return null if post does not exist or is removed or is not approved
             var existedPost = _postRepository.GetPost(postId);
             if (existedPost == null || !existedPost.Status || !existedPost.IsApproved) return null;
@@ -112,12 +114,22 @@ namespace backend.Handlers.Implementors
             var existedUsers = _votePostRepository.GetAllUsersVotedBy(postId);
             if (existedUsers == null || existedUsers.Count == 0) return null;
 
+            foreach (var user in existedUsers)
+            {
+                if (user.Status)
+                {
+                    result.Add(user);
+                }
+            }
+
             //return user's list
-            return _mapper.Map<List<UserDTO>>(existedUsers);
+            return _mapper.Map<List<UserDTO>>(result);
         }
 
         public ICollection<UserDTO>? GetAllUsersDownVotedBy(int postId)
         {
+            List<User>? result = new List<User>();
+
             //return null if post does not exist or is removed or is not approved
             var existedPost = _postRepository.GetPost(postId);
             if (existedPost == null || !existedPost.Status || !existedPost.IsApproved) return null;
@@ -126,8 +138,16 @@ namespace backend.Handlers.Implementors
             var existedUsers = _votePostRepository.GetAllUsersDownVotedBy(postId);
             if (existedUsers == null || existedUsers.Count == 0) return null;
 
+            foreach (var user in existedUsers)
+            {
+                if (user.Status)
+                {
+                    result.Add(user);
+                }
+            }
+
             //return user's list
-            return _mapper.Map<List<UserDTO>>(existedUsers);
+            return _mapper.Map<List<UserDTO>>(result);
         }
 
         public VotePostDTO? UpdateVotePost(int currentUserId, int postId, bool vote)

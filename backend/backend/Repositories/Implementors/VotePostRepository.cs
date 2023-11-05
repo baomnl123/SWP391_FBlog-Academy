@@ -50,13 +50,13 @@ namespace backend.Repositories.Implementors
         public ICollection<User>? GetAllUsersVotedBy(int postId)
         {
             return _fBlogAcademyContext.VotePosts.Where(v => v.PostId == postId 
-                                                            && (v.UpVote && !v.DownVote)).Select(v => v.User).ToList();
+                                                            && (v.UpVote && !v.DownVote)).Select(v => v.User).Where(v => v.Status).ToList();
         }
 
         public ICollection<User>? GetAllUsersDownVotedBy(int postId)
         {
             return _fBlogAcademyContext.VotePosts.Where(v => v.PostId == postId
-                                                            && (!v.UpVote && v.DownVote)).Select(v => v.User).ToList();
+                                                            && (!v.UpVote && v.DownVote)).Select(v => v.User).Where(v => v.Status).ToList();
         }
 
         public VotePost? GetVotePost(int currentUserId, int postId)

@@ -22,10 +22,10 @@ namespace backend.Controllers
         /// Get list of Posts which are created and approved.
         /// </summary>
         /// <returns></returns>
-        [HttpGet("all")]
-        public IActionResult GetAllPosts()
+        [HttpGet("all/{currentUserId}")]
+        public IActionResult GetAllPosts(int currentUserId)
         {
-            var existed = _postHandlers.GetAllPosts();
+            var existed = _postHandlers.GetAllPosts(currentUserId);
             if (existed == null || existed.Count == 0)
             {
                 existed = new List<PostDTO>();
@@ -38,10 +38,10 @@ namespace backend.Controllers
         /// </summary>
         /// <param name="title"></param>
         /// <returns></returns>
-        [HttpGet("title/{title}")]
-        public IActionResult SearchPostsByTitle(string title)
+        [HttpGet("title")]
+        public IActionResult SearchPostsByTitle(string title, int currentUserId)
         {
-            var existed = _postHandlers.SearchPostsByTitle(title);
+            var existed = _postHandlers.SearchPostsByTitle(title, currentUserId);
 
             if (existed == null || existed.Count == 0)
             {
@@ -258,9 +258,9 @@ namespace backend.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("category-tag")]
-        public IActionResult GetPostByCategoryAndTag([FromQuery] int[] categoryID, [FromQuery] int[] tagID, [FromQuery] string? searchValue)
+        public IActionResult GetPostByCategoryAndTag([FromQuery] int[] categoryID, [FromQuery] int[] tagID, [FromQuery] string? searchValue, [FromQuery] int currentUserId)
         {
-            var postList = _postHandlers.GetAllPosts(categoryID, tagID, searchValue);
+            var postList = _postHandlers.GetAllPosts(categoryID, tagID, searchValue, currentUserId);
             if (postList == null || postList.Count == 0)
             {
                 postList = new List<PostDTO>();
@@ -273,9 +273,9 @@ namespace backend.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("{postId}")]
-        public IActionResult GetPostBy(int postId)
+        public IActionResult GetPostBy(int postId, int currentUserId)
         {
-            var post = _postHandlers.GetPostBy(postId);
+            var post = _postHandlers.GetPostBy(postId, currentUserId);
             if (post == null) return NotFound(); 
             return Ok(post);
         }
@@ -285,9 +285,9 @@ namespace backend.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("all-post-has-image")]
-        public IActionResult GetPostsHaveImage()
+        public IActionResult GetPostsHaveImage(int currentUserId)
         {
-            var posts = _postHandlers.GetPostsHaveImage();
+            var posts = _postHandlers.GetPostsHaveImage(currentUserId);
             if (posts is null || posts.Count == 0)
             {
                 posts = new List<PostDTO>();
@@ -300,9 +300,9 @@ namespace backend.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("all-post-has-video")]
-        public IActionResult GetPostsHaveVideo()
+        public IActionResult GetPostsHaveVideo(int currentUserId)
         {
-            var posts = _postHandlers.GetPostsHaveVideo();
+            var posts = _postHandlers.GetPostsHaveVideo(currentUserId);
             if (posts is null || posts.Count == 0)
             {
                 posts = new List<PostDTO>();
