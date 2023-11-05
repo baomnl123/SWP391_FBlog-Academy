@@ -32,7 +32,14 @@ const CreateLecture = (
           <Form.Item label='Name' name='name' rules={[{ required: true, message: 'Name is required' }]}>
             <Input placeholder='Name' />
           </Form.Item>
-          <Form.Item label='Email' name='email' rules={[{ required: true, message: 'Email is required' }]}>
+          <Form.Item
+            label='Email'
+            name='email'
+            rules={[
+              { required: true, message: 'Email is required' },
+              { type: 'email', message: 'Invalid E-mail!' }
+            ]}
+          >
             <Input placeholder='Email' />
           </Form.Item>
           <Form.Item label='Password' name='password' rules={[{ required: true, message: 'Password is required' }]}>

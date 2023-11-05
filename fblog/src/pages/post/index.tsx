@@ -97,6 +97,9 @@ export default function Post() {
           return (
             <div key={id}>
               <PostDetail
+                reporterAvt={item?.reporter?.avatarUrl}
+                reporterName={item?.reporter?.name}
+                reportDate={item?.reporter?.createdAt}
                 onApprove={async () => {
                   await approvePost(item?.reporter?.id, id)
                 }}
