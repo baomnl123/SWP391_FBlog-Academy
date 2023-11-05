@@ -23,9 +23,21 @@ namespace backend.Controllers
         /// <param name="vote"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult VoteComment(int currentUserId, int commentId, [FromForm] bool vote)
+        public IActionResult VoteComment(int currentUserId, int commentId, [FromForm] string vote)
         {
-            var successVote = _voteCommentHandlers.CreateVote(currentUserId, commentId, vote);
+            var boolVote = true;
+            if (vote.ToLower().Trim().Contains("true"))
+            {
+            }
+            else if(vote.ToLower().Trim().Contains("false"))
+            {
+                boolVote = false;
+            }
+            else
+            {
+                return BadRequest();
+            }
+            var successVote = _voteCommentHandlers.CreateVote(currentUserId, commentId, boolVote);
             if (successVote == null) return BadRequest();
             return Ok(successVote);
         }
@@ -38,9 +50,21 @@ namespace backend.Controllers
         /// <param name="vote"></param>
         /// <returns></returns>
         [HttpPut]
-        public IActionResult DisableUpVoteComment(int currentUserId, int commentId, [FromForm] bool vote) 
+        public IActionResult DisableUpVoteComment(int currentUserId, int commentId, [FromForm] string vote) 
         {
-            var UpdatedVote = _voteCommentHandlers.UpdateVote(currentUserId, commentId, vote);
+            var boolVote = true;
+            if (vote.ToLower().Trim().Contains("true"))
+            {
+            }
+            else if (vote.ToLower().Trim().Contains("false"))
+            {
+                boolVote = false;
+            }
+            else
+            {
+                return BadRequest();
+            }
+            var UpdatedVote = _voteCommentHandlers.UpdateVote(currentUserId, commentId, boolVote);
             if (UpdatedVote == null) return BadRequest();
             return Ok(UpdatedVote);
         }
