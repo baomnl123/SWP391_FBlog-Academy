@@ -479,49 +479,58 @@ namespace backend.Handlers.Implementors
 
             //map to list DTO
             List<PostDTO> resultList = _mapper.Map<List<PostDTO>>(existed);
+            var onlyStudentCategory = _categoryRepository.GetCategoryByName(_specialCategories.GetOnlyStudent());
+            var validViewer = CheckCurrentUser(currentUserId);
 
-            //get related data for all post
-            foreach (var post in resultList)
+            if (validViewer.Role.Contains(_userRoleConstrant.GetLecturerRole()))
             {
-                var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(post.Id));
-                post.User = (getUser is not null && getUser.Status) ? getUser : null;
-
-                var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(post.Id));
-                post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
-
-                var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(post.Id));
-                post.Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
-
-                var getImages = _imageHandlers.GetImagesByPost(post.Id);
-                post.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
-
-                var getVideos = _videoHandlers.GetVideosByPost(post.Id);
-                post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : new List<VideoDTO>();
-
-                var postUpvote = _votePostRepository.GetAllUsersVotedBy(post.Id);
-
-                var UsersUpvote = _mapper.Map<List<UserDTO>>(postUpvote);
-                post.UsersUpvote = (UsersUpvote is not null && UsersUpvote.Count > 0) ? UsersUpvote : new List<UserDTO>();
-                post.Upvotes = (UsersUpvote == null || UsersUpvote.Count == 0) ? 0 : UsersUpvote.Count;
-
-                var postDownvote = _votePostRepository.GetAllUsersDownVotedBy(post.Id);
-
-                var UsersDownvote = _mapper.Map<List<UserDTO>>(postDownvote);
-                post.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
-                post.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
-
-                var validViewer = CheckCurrentUser(currentUserId);
-                if (validViewer != null)
+                //get related data for all post
+                foreach (var post in resultList)
                 {
-                    var vote = _votePostRepository.GetVotePost(currentUserId, post.Id);
-                    if (vote != null)
+                    var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(post.Id));
+                    if (!getCategories.Any(item => item.Id == onlyStudentCategory.Id))
                     {
-                        post.Upvote = vote.UpVote;
-                        post.Downvote = vote.DownVote;
+                        var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(post.Id));
+                        post.User = (getUser is not null && getUser.Status) ? getUser : null;
+
+
+                        post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
+
+                        var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(post.Id));
+                        post.Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
+
+                        var getImages = _imageHandlers.GetImagesByPost(post.Id);
+                        post.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
+
+                        var getVideos = _videoHandlers.GetVideosByPost(post.Id);
+                        post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : new List<VideoDTO>();
+
+                        var postUpvote = _votePostRepository.GetAllUsersVotedBy(post.Id);
+
+                        var UsersUpvote = _mapper.Map<List<UserDTO>>(postUpvote);
+                        post.UsersUpvote = (UsersUpvote is not null && UsersUpvote.Count > 0) ? UsersUpvote : new List<UserDTO>();
+                        post.Upvotes = (UsersUpvote == null || UsersUpvote.Count == 0) ? 0 : UsersUpvote.Count;
+
+                        var postDownvote = _votePostRepository.GetAllUsersDownVotedBy(post.Id);
+
+                        var UsersDownvote = _mapper.Map<List<UserDTO>>(postDownvote);
+                        post.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
+                        post.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
+
+                        
+                        if (validViewer != null)
+                        {
+                            var vote = _votePostRepository.GetVotePost(currentUserId, post.Id);
+                            if (vote != null)
+                            {
+                                post.Upvote = vote.UpVote;
+                                post.Downvote = vote.DownVote;
+                            }
+                        }
+
                     }
                 }
             }
-
             //return posts'list
             return resultList;
         }
