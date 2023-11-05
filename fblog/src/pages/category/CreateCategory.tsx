@@ -37,7 +37,7 @@ const CreateCategory = (
   return (
     <Modal
       {...rest}
-      title='Create Category'
+      title={initialValues ? 'Update Category':'Create Category'}
       destroyOnClose
       open={open}
       onOk={(e) => {

@@ -1,16 +1,29 @@
-import { calculateTimeAgo } from '@/utils/helpers'
-import { Card, Checkbox } from 'antd'
+import { Avatar, Button, Card, Checkbox } from 'antd'
 import { CheckboxChangeEvent } from 'antd/es/checkbox'
 import { CardProps } from 'antd/lib'
-import { useEffect, useState } from 'react'
+import dayjs from 'dayjs'
+import { ReactNode, useEffect, useState } from 'react'
+import relativeTime from 'dayjs/plugin/relativeTime'
+dayjs.extend(relativeTime)
+
+import { Swiper, SwiperSlide } from 'swiper/react'
+
+import 'swiper/css'
+import 'swiper/css/navigation'
+import 'swiper/css/pagination'
+
+import { Keyboard, Mousewheel, Navigation, Pagination } from 'swiper/modules'
 export interface PostDetailProps extends CardProps {
   title?: string
   description?: string
   avatar?: string
   author?: string
-  time?: number
+  time?: Date
   checked?: boolean
+  slideContent?: ReactNode[]
   handleChangeStatus?: (value: boolean) => void
+  onApprove?: () => void
+  onDeny?: () => void
 }
 
 const PostDetail = ({
@@ -21,6 +34,9 @@ const PostDetail = ({
   time,
   handleChangeStatus,
   checked,
+  slideContent,
+  onApprove,
+  onDeny,
   ...props
 }: PostDetailProps) => {
   const [checkedBox, setCheckedBox] = useState(checked ?? false)
@@ -37,14 +53,14 @@ const PostDetail = ({
   return (
     <Card className='mb-8' {...props}>
       <div className='flex'>
-        <Checkbox onChange={onChange} checked={checkedBox}></Checkbox>
+        <Checkbox className='hidden' onChange={onChange} checked={checkedBox}></Checkbox>
         <div className='ml-2 flex gap-2'>
           <div>
-            <img className='w-9 h-9 rounded-[50%]' src={avatar} alt={title} />
+            <Avatar className='w-9 h-9 rounded-[50%]' src={avatar} alt={title} />
           </div>
           <div>
             <h1 className='text-base font-semibold'>{author}</h1>
-            <p>{calculateTimeAgo(time ?? 0)}</p>
+            <p>{dayjs(time).fromNow()}</p>
           </div>
         </div>
       </div>
@@ -53,7 +69,26 @@ const PostDetail = ({
         <p className='text-base'>
           <div className='mt-3'>{description && <div dangerouslySetInnerHTML={{ __html: title }} />}</div>
         </p>
-        <div className='mt-3'>{description && <div dangerouslySetInnerHTML={{ __html: description }} />}</div>
+        <div className='my-3'>{description && <div dangerouslySetInnerHTML={{ __html: description }} />}</div>
+        <Swiper
+          cssMode={true}
+          navigation={true}
+          pagination={true}
+          mousewheel={true}
+          keyboard={true}
+          modules={[Navigation, Pagination, Mousewheel, Keyboard]}
+          className='mySwiper rounded-3xl py-'
+        >
+          {slideContent?.map((slide, index) => <SwiperSlide key={index}>{slide}</SwiperSlide>)}
+        </Swiper>
+      </div>
+      <div className='text-right mt-4'>
+        <Button type='primary' onClick={() => onApprove?.()}>
+          Approve
+        </Button>
+        <Button type='primary' danger className='ml-2' onClick={() => onDeny?.()}>
+          Deny
+        </Button>
       </div>
     </Card>
   )

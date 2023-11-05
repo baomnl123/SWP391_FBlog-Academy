@@ -1,45 +1,63 @@
-import { useAntdTable } from 'ahooks'
-import { Button, ConfigProvider, Flex, Form, Input, Modal, Space, Table, Typography } from 'antd'
+import { useAntdTable, useRequest } from 'ahooks'
+import { Button, ConfigProvider, Flex, Form, Input, Modal, Space, Table, Typography, message } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import { useState, useCallback } from 'react'
 import CreateLecture from './components/CreateLecture'
-import { lecturer } from '@/data'
+import { Lecturers } from '@/types'
+import api from '@/config/api'
 
 type DataType = {
   id: number
   name: string
+  email: string
 }
 
 type Result = {
   total: number
-  list: DataType[]
-}
-
-const getTableData = (
-  { current, pageSize }: { current: number; pageSize: number },
-  formData: object
-): Promise<Result> => {
-  console.log(current, pageSize, formData)
-  const data: DataType[] = []
-  for (let i = 0; i < 20; i++) {
-    data.push({
-      id: i,
-      name: `Lecturer${i}`
-    })
-  }
-  return Promise.resolve({
-    total: 20,
-    list: data
-  })
+  list: Lecturers[]
 }
 
 export default function Lecture() {
   // data lecturer
-  const [dataLec, setDataLec] = useState(lecturer)
 
   const [createLecture, setCreateLecture] = useState(false)
   const [modal, contextHolder] = Modal.useModal()
   const [form] = Form.useForm()
+
+  const { runAsync: getLectures } = useRequest(api.getLecturers, {
+    manual: true,
+    onSuccess: (res) => {
+      if (res) {
+        return res
+      }
+    },
+    onError: (err) => {
+      console.log(err)
+    }
+  })
+
+  const getTableData = async (_: never, { search }: { search: string }): Promise<Result> => {
+    const res = await getLectures()
+    if (res) {
+      let object = {
+        total: res.length,
+        list: res
+      }
+      if (search) {
+        const data = res.filter((item) => item.name.includes(search))
+        object = {
+          total: data.length,
+          list: data
+        }
+      }
+
+      return object
+    }
+    return {
+      total: 0,
+      list: []
+    }
+  }
 
   const { tableProps, search, data } = useAntdTable(getTableData, {
     defaultPageSize: 5,
@@ -48,13 +66,36 @@ export default function Lecture() {
 
   const { submit } = search
 
-  const onDelete = useCallback(
-    (id: number) => {
-      const result = dataLec.filter((lec) => lec.id !== id)
-      setDataLec(result)
+  const { runAsync: createLectures } = useRequest(api.createLectures, {
+    manual: true,
+    onSuccess: (res) => {
+      if (res) {
+        message.success('Create lectures success')
+        submit()
+        setCreateLecture(false)
+      }
     },
-    [dataLec]
-  )
+    onError: (err) => {
+      console.log(err)
+    }
+  })
+
+  const { runAsync: deleteLectures } = useRequest(api.deleteLectures, {
+    manual: true,
+    onSuccess: (res) => {
+      if (res) {
+        message.success('Delete lectures success')
+        submit()
+      }
+    },
+    onError: (err) => {
+      console.log(err)
+    }
+  })
+
+  const onDelete = useCallback((id: number) => {
+    deleteLectures(id.toString())
+  }, [])
 
   const columns: ColumnsType<DataType> = [
     {
@@ -66,6 +107,11 @@ export default function Lecture() {
       title: 'Name',
       key: 'name',
       dataIndex: 'name'
+    },
+    {
+      title: 'Email',
+      key: 'email',
+      dataIndex: 'email'
     },
     {
       title: 'Action',
@@ -101,7 +147,7 @@ export default function Lecture() {
   const searchForm = (
     <div style={{ marginBottom: 16 }}>
       <Form form={form} style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <Form.Item name='Search'>
+        <Form.Item name='search'>
           <Input.Search className='w-80' onSearch={submit} placeholder='Search' />
         </Form.Item>
       </Form>
@@ -120,7 +166,7 @@ export default function Lecture() {
     >
       <Space className='w-full' size={20} direction='vertical'>
         <Flex justify='space-between' align='center'>
-          <Typography.Title level={5}>Account: {dataLec?.length}</Typography.Title>
+          <Typography.Title level={5}>Account: {data?.total ?? 0}</Typography.Title>
           <Button
             type='primary'
             onClick={() => {
@@ -133,23 +179,16 @@ export default function Lecture() {
         <Space align='start' direction='vertical' className='w-full'>
           {searchForm}
         </Space>
-        <Table {...tableProps} dataSource={dataLec} pagination={{ defaultPageSize: 5 }} columns={columns} />
+        <Table {...tableProps} columns={columns} />
       </Space>
       <CreateLecture
         centered
         open={createLecture}
         onCancel={() => setCreateLecture(false)}
         onFinish={(value) => {
-          const result = [
-            {
-              id: lecturer.length,
-              name: value.email
-            },
-            ...lecturer
-          ]
-          setDataLec(result)
+          createLectures(value)
         }}
-        onOk={() => setCreateLecture(false)}
+        // onOk={() => setCreateLecture(false)}
       />
       {contextHolder}
     </ConfigProvider>

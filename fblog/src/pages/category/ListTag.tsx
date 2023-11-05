@@ -20,7 +20,7 @@ const ListTag = (props: ModalProps & { category?: { id: number; name: string } }
   const [form] = Form.useForm()
   const [createTag, setCreateTag] = useState(false)
   const [initialValues, setInitialValues] = useState<
-    { name: string; category?: { id: number; name: string } } | undefined
+    { tag?: { name: string; id: number }; category?: { id: number; name: string } } | undefined
   >()
   const [modal, contextHolder] = Modal.useModal()
 
@@ -39,7 +39,7 @@ const ListTag = (props: ModalProps & { category?: { id: number; name: string } }
     })
   }
 
-  const { tableProps, search, data } = useAntdTable(getTableData, {
+  const { tableProps, search, data, refresh } = useAntdTable(getTableData, {
     defaultPageSize: 5,
     form
   })
@@ -80,7 +80,10 @@ const ListTag = (props: ModalProps & { category?: { id: number; name: string } }
             onClick={(e) => {
               e.stopPropagation()
               setInitialValues({
-                name: record.name,
+                tag: {
+                  id: record.id,
+                  name: record.name
+                },
                 category
               })
               setCreateTag(true)
@@ -99,6 +102,7 @@ const ListTag = (props: ModalProps & { category?: { id: number; name: string } }
                 content: 'Do you want to delete this tag?',
                 async onOk() {
                   await onDelete(record.id)
+                  refresh()
                 },
                 onCancel() {
                   console.log('cancel')
@@ -150,7 +154,10 @@ const ListTag = (props: ModalProps & { category?: { id: number; name: string } }
               onClick={() => {
                 setCreateTag(true)
                 setInitialValues({
-                  name: '',
+                  tag: {
+                    name: '',
+                    id: 0
+                  },
                   category
                 })
               }}
@@ -166,7 +173,18 @@ const ListTag = (props: ModalProps & { category?: { id: number; name: string } }
           </div>
         </Space>
       </Modal>
-      <CreateTag initialValues={initialValues} centered open={createTag} onCancel={() => setCreateTag(false)} />
+      <CreateTag
+        initialValues={initialValues}
+        centered
+        open={createTag}
+        onCancel={() => setCreateTag(false)}
+        onOk={() => {
+          setCreateTag(false)
+        }}
+        onSuccess={() => {
+          refresh()
+        }}
+      />
       {contextHolder}
     </ConfigProvider>
   )

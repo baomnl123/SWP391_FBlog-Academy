@@ -1,15 +1,19 @@
-import { Form, Input, Modal, ModalProps, Select, Space } from 'antd'
-import { useEffect } from 'react'
+import api from '@/config/api'
+import { Form, Input, Modal, ModalProps, Select, Space, message } from 'antd'
+import { useCallback, useEffect } from 'react'
 
 const CreateTag = (
-  props: ModalProps & { initialValues?: { name: string; category?: { id: number; name: string } } }
+  props: ModalProps & {
+    initialValues?: { tag?: { name: string; id: number }; category?: { id: number; name: string } }
+    onSuccess?: () => void
+  }
 ) => {
-  const { open, onOk, onCancel, initialValues, ...rest } = props
+  const { open, onOk, onCancel, initialValues, onSuccess, ...rest } = props
   const [form] = Form.useForm()
 
   useEffect(() => {
     form.setFieldsValue({
-      name: initialValues?.name,
+      name: initialValues?.tag?.name,
       category: {
         label: initialValues?.category?.name,
         value: initialValues?.category?.id
@@ -17,25 +21,38 @@ const CreateTag = (
     })
   }, [form, initialValues])
 
-  // const onFinish = useCallback(async (value) => {
-  //   try {
-  //     const adminId = localStorage.getItem('id') ?? ''
-  //     const formData = new FormData()
-  //     formData.append('tagName', value.name)
-  //     formData.append('categoryId', value.category.id)
-  //     formData.append('adminId', adminId)
-  //     await api.createTag(formData)
-  //   } catch (e) {
-  //     console.error(e)
-  //   }
-  // }, [])
+  const onFinish = useCallback(
+    async (value: {
+      name: string
+      category: {
+        value: number
+      }
+    }) => {
+      try {
+        const adminId = localStorage.getItem('id') ?? ''
+        const formData = new FormData()
+        if (initialValues?.tag?.name) {
+          formData.append('newTagName', value.name)
+          await api.updateTag(initialValues.tag?.id ?? 0, formData)
+          message.success('Update tag successfully')
+        } else {
+          formData.append('tagName', value.name)
+          await api.createTag(Number(adminId), value.category.value, formData)
+          message.success('Create tag successfully')
+        }
 
-  console.log(!!initialValues?.name)
+        onSuccess?.()
+      } catch (e) {
+        console.error(e)
+      }
+    },
+    [initialValues?.tag?.id, initialValues?.tag?.name, onSuccess]
+  )
 
   return (
     <Modal
       {...rest}
-      title='Create Tag'
+      title={initialValues?.tag?.id ? 'Update Tag' : 'Create Tag'}
       destroyOnClose
       open={open}
       onOk={(e) => {
@@ -47,7 +64,7 @@ const CreateTag = (
         onCancel?.(e)
       }}
     >
-      <Form<{ name: string }> form={form} layout='vertical' onFinish={(value) => console.log(value)}>
+      <Form form={form} layout='vertical' onFinish={onFinish}>
         <Space className='w-full' direction='vertical' size={20}>
           <Form.Item label='Name' name='name' rules={[{ required: true, message: 'Name tag is required' }]}>
             <Input placeholder='Name tag' />

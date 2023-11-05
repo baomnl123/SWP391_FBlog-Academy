@@ -24,16 +24,12 @@ export default function Category() {
   const [form] = Form.useForm()
   const [modal, contextHolder] = Modal.useModal()
 
-  const getTableData = async (
-    { current, pageSize }: { current: number; pageSize: number },
-    formData: object
-  ): Promise<Result> => {
-    console.log(current, pageSize, formData)
+  const getTableData = async (_: never, { search }: { search: string }): Promise<Result> => {
     const response = await api.getCategories()
-
+    const data = response.filter((item) => item.categoryName.toLowerCase().includes(search?.toLowerCase() ?? ''))
     return Promise.resolve({
-      total: response.length,
-      list: response.map((item) => ({
+      total: data.length,
+      list: data.map((item) => ({
         id: item.id,
         name: item.categoryName
       }))
@@ -50,7 +46,7 @@ export default function Category() {
   const searchForm = (
     <div style={{ marginBottom: 16 }}>
       <Form form={form} style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <Form.Item name='Search'>
+        <Form.Item name='search'>
           <Input.Search className='w-96' onSearch={submit} placeholder='search' />
         </Form.Item>
       </Form>
