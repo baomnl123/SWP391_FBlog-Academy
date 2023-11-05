@@ -71,16 +71,16 @@ const Vote = ({
         onClick={async () => {
           if (upvote && !downvote) return
           if (!upvote && !downvote) {
-            await voteUpdate({
+            await votePost({
               currentUserId: userId ?? 0,
               postId: postId ?? 0,
-              vote: true
+              vote: 'true'
             })
           }
-          await votePost({
+          await voteUpdate({
             currentUserId: userId ?? 0,
             postId: postId ?? 0,
-            vote: true
+            vote: 'true'
           })
         }}
       >
@@ -91,16 +91,16 @@ const Vote = ({
         onClick={async () => {
           if (downvote && !upvote) return
           if (!upvote && !downvote) {
-            await voteUpdate2({
+            await votePost2({
               currentUserId: userId ?? 0,
               postId: postId ?? 0,
-              vote: true
+              vote: 'false'
             })
           }
-          await votePost2({
+          await voteUpdate2({
             currentUserId: userId ?? 0,
             postId: postId ?? 0,
-            vote: true
+            vote: 'false'
           })
         }}
       >

@@ -9,7 +9,7 @@ import { MoreOutlined } from '@ant-design/icons'
 import ModalReport from './components/ModalReport'
 import ModalComment from './components/ModalComment'
 import CreateUpdatePost from './components/CreateUpdatePost'
-import { useNavigate } from 'react-router-dom'
+import { UNSAFE_DataRouterStateContext, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/store'
 import { useRequest } from 'ahooks'
@@ -17,7 +17,7 @@ import api from '@/api'
 import dayjs from 'dayjs'
 import ModalSave from './components/ModalSave'
 import Vote from './components/Vote'
-import { PendingPost } from '@/types'
+import { PendingPost, User } from '@/types'
 
 export default function Dashboard() {
   const [modal, contextHolder] = Modal.useModal()
@@ -131,26 +131,30 @@ export default function Dashboard() {
 
   useEffect(() => {
     getPost({
-      categoryID: !categories ? undefined : (categories as unknown as number[]),
-      tagID: !tag ? undefined : (tag as unknown as number[])
-    })
-  }, [categories, tag])
+      categoryID: !categories ? undefined : (categories as number[]),
+      tagID: !tag ? undefined : (tag as number[]),
+      currentUserId: user?.id // Accessing the ID property of the User object if it exists
+    });
+  }, [categories, tag, user]);
 
   const {
     data: postData,
     loading: postLoading,
     run: getPost
-  } = useRequest(async ({ categoryID, tagID }: { categoryID?: number[]; tagID?: number[] }) => {
-    try {
-      const res = await api.postCategoryTag({
-        categoryID,
-        tagID
-      })
-      return res
-    } catch (error) {
-      console.log(error)
+  } = useRequest(
+    async ({ categoryID, tagID, currentUserId }: { categoryID?: number[]; tagID?: number[]; currentUserId?: number }) => {
+      try {
+        const res = await api.postCategoryTag({
+          categoryID,
+          tagID,
+          currentUserId
+        });
+        return res;
+      } catch (error) {
+        console.log(error);
+      }
     }
-  })
+  );
 
   const data = !postFilter ? postData : postFilter
 
