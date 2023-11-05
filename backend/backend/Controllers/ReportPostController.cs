@@ -110,7 +110,7 @@ namespace backend.Controllers
         /// <param name="status"></param>
         /// <returns></returns>
         [HttpPut("status")]
-        public IActionResult UpdateReportStatus(int adminID, int reporterID, int postID, [FromForm] string status)
+        public IActionResult ApproveReportPost(int adminID, int reporterID, int postID)
         {
             var reportPostDTO = _reportPostHandlers.UpdateReportStatus(adminID, reporterID, postID, status);
             if (reportPostDTO == null)
