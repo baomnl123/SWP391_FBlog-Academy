@@ -17,11 +17,11 @@ namespace backend.Handlers.Implementors
         private readonly IPostRepository _postRepository;
         private readonly UserRoleConstrant _userRoleConstrant;
 
-        public CommentHandlers(IUserRepository userRepository, 
+        public CommentHandlers(IUserRepository userRepository,
                                 IPostRepository postRepository,
                                 ICommentRepository commentRepository,
                                 IVoteCommentRepository voteCommentRepository,
-                                IMapper mapper) 
+                                IMapper mapper)
         {
             _userRepository = userRepository;
             _mapper = mapper;
@@ -43,7 +43,7 @@ namespace backend.Handlers.Implementors
             var studentRole = _userRoleConstrant.GetStudentRole();
             var modRole = _userRoleConstrant.GetModeratorRole();
             if (existedUser == null || existedUser.Status == false
-                || !( existedUser.Role.Contains(studentRole) || existedUser.Role.Contains(modRole) )) return null;
+                || !(existedUser.Role.Contains(studentRole) || existedUser.Role.Contains(modRole))) return null;
 
             //return null if post does not exist
             //                      or is removed
@@ -134,13 +134,13 @@ namespace backend.Handlers.Implementors
             return existedCommentDTO;
         }
 
-        public ICollection<CommentDTO>? ViewAllComments(int postId)
+        public ICollection<CommentDTO>? ViewAllComments(int postId, int currentUserId)
         {
             // return null if post does not exist
             //                      or is removed
             //                      or is not approved
             var existedPost = _postRepository.GetPost(postId);
-            if (existedPost == null || existedPost.Status == false 
+            if (existedPost == null || existedPost.Status == false
                 || !existedPost.IsApproved == true) return null;
 
             //Get All Comments of that post
@@ -149,13 +149,24 @@ namespace backend.Handlers.Implementors
 
             var existedCommentsDTO = _mapper.Map<List<CommentDTO>>(existedComments);
 
-            foreach(var comment in existedCommentsDTO)
+            foreach (var comment in existedCommentsDTO)
             {
                 var commentUpvote = _voteCommentRepository.GetAllUserBy(comment.Id);
                 comment.Upvotes = (commentUpvote == null || commentUpvote.Count == 0) ? 0 : commentUpvote.Count;
 
                 var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByCommentID(comment.Id));
                 comment.User = (getUser is not null && getUser.Status) ? getUser : null;
+
+                var viewer = _userRepository.GetUser(currentUserId);
+                if (viewer is not null && viewer.Status)
+                {
+                    var vote = _voteCommentRepository.GetVoteComment(currentUserId, comment.Id);
+                    if (vote is not null)
+                    {
+                        comment.Upvote = vote.UpVote;
+                        comment.Downvote = vote.DownVote;
+                    }
+                }
             }
 
             return existedCommentsDTO;

@@ -10,6 +10,8 @@ namespace backend.DTO
         public int? Upvotes { get; set; } = 0;  
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+        public bool Upvote {  get; set; } = false;
+        public bool Downvote {  get; set; } = false;
         public bool Status { get; set; }
     }
 }
