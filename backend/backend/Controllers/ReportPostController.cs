@@ -112,7 +112,7 @@ namespace backend.Controllers
         [HttpPut("status")]
         public IActionResult ApproveReportPost(int adminID, int reporterID, int postID)
         {
-            var reportPostDTO = _reportPostHandlers.UpdateReportStatus(adminID, reporterID, postID, status);
+            var reportPostDTO = _reportPostHandlers.ApproveReportPost(adminID, reporterID, postID);
             if (reportPostDTO == null)
             {
                 return BadRequest();
