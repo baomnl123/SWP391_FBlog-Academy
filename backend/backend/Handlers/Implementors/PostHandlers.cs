@@ -6,6 +6,7 @@ using backend.Repositories.IRepositories;
 using backend.Utils;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Hosting;
+using System.Collections;
 using System.Collections.Generic;
 using System.Security.Policy;
 
@@ -482,6 +483,11 @@ namespace backend.Handlers.Implementors
             var onlyStudentCategory = _categoryRepository.GetCategoryByName(_specialCategories.GetOnlyStudent());
             var validViewer = CheckCurrentUser(currentUserId);
 
+            if(validViewer == null || !validViewer.Status)
+            {
+                return null;
+            }
+
             if (validViewer.Role.Contains(_userRoleConstrant.GetLecturerRole()))
             {
                 //get related data for all post
@@ -529,6 +535,55 @@ namespace backend.Handlers.Implementors
                         }
 
                     }
+                }
+            }
+            else
+            {
+                foreach (var post in resultList)
+                {
+                    if (post.Status)
+                    {
+                        var postDTO = _mapper.Map<PostDTO>(post);
+
+                        var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(postDTO.Id));
+                        postDTO.User = (getUser is not null && getUser.Status) ? getUser : null;
+
+                        var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(postDTO.Id));
+                        postDTO.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
+
+                        var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(postDTO.Id));
+                        postDTO.Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
+
+                        var getImages = _imageHandlers.GetImagesByPost(postDTO.Id);
+                        postDTO.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
+
+                        var getVideos = _videoHandlers.GetVideosByPost(postDTO.Id);
+                        postDTO.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : new List<VideoDTO>();
+
+                        var postUpvote = _votePostRepository.GetAllUsersVotedBy(postDTO.Id);
+
+                        var UsersUpvote = _mapper.Map<List<UserDTO>>(postUpvote);
+                        postDTO.UsersUpvote = (UsersUpvote is not null && UsersUpvote.Count > 0) ? UsersUpvote : new List<UserDTO>();
+                        postDTO.Upvotes = (UsersUpvote == null || UsersUpvote.Count == 0) ? 0 : UsersUpvote.Count;
+
+                        var postDownvote = _votePostRepository.GetAllUsersDownVotedBy(postDTO.Id);
+
+                        var UsersDownvote = _mapper.Map<List<UserDTO>>(postDownvote);
+                        postDTO.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
+                        postDTO.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
+
+
+                        if (validViewer != null)
+                        {
+                            var vote = _votePostRepository.GetVotePost(currentUserId, postDTO.Id);
+                            if (vote != null)
+                            {
+                                postDTO.Upvote = vote.UpVote;
+                                postDTO.Downvote = vote.DownVote;
+                            }
+                        }
+                    }
+
                 }
             }
             //return posts'list
@@ -658,7 +713,6 @@ namespace backend.Handlers.Implementors
                                     postDTO.Downvote = vote.DownVote;
                                 }
                             }
-
                             resultList.Add(postDTO);
                         }
                     }
@@ -710,7 +764,6 @@ namespace backend.Handlers.Implementors
                                 postDTO.Downvote = vote.DownVote;
                             }
                         }
-
                         resultList.Add(postDTO);
                     }
 
@@ -1011,6 +1064,11 @@ namespace backend.Handlers.Implementors
             var onlyStudentCategory = _categoryRepository.GetCategoryByName(_specialCategories.GetOnlyStudent());
             var validViewer = CheckCurrentUser(currentUserId);
 
+            if (validViewer == null || !validViewer.Status)
+            {
+                return null;
+            }
+
             if (validViewer.Role.Contains(_userRoleConstrant.GetLecturerRole()))
             {
                 foreach (var post in postList)
@@ -1111,7 +1169,6 @@ namespace backend.Handlers.Implementors
                                 postDTO.Downvote = vote.DownVote;
                             }
                         }
-
                         postListDTO.Add(postDTO);
                     }
                 }
