@@ -53,6 +53,12 @@ namespace backend.Repositories.Implementors
                                                             && (v.UpVote && !v.DownVote)).Select(v => v.User).ToList();
         }
 
+        public ICollection<User>? GetAllUsersDownVotedBy(int postId)
+        {
+            return _fBlogAcademyContext.VotePosts.Where(v => v.PostId == postId
+                                                            && (!v.UpVote && v.DownVote)).Select(v => v.User).ToList();
+        }
+
         public VotePost? GetVotePost(int currentUserId, int postId)
         {
             return _fBlogAcademyContext.VotePosts.Where(v => v.UserId == currentUserId && v.PostId == postId).FirstOrDefault();

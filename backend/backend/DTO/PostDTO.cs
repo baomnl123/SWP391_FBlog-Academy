@@ -8,6 +8,9 @@
         public string Title { get; set; }
         public string Content { get; set; }
         public int? Upvotes { get; set; } = 0;
+        public ICollection<UserDTO>? UsersUpvote { get; set; } = new List<UserDTO>();
+        public int? Downvotes { get; set; } = 0;
+        public ICollection<UserDTO>? UsersDownvote { get; set; } = new List<UserDTO>();
         public ICollection<VideoDTO>? Videos { get; set; }
         public ICollection<ImageDTO>? Images { get; set; }
         public ICollection<CategoryDTO>? Categories { get; set; }
