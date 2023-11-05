@@ -23,9 +23,9 @@ namespace backend.Controllers
         /// <param name="postId"></param>
         /// <returns></returns>
         [HttpGet("{postId}/comments")]
-        public IActionResult GetAllComments(int postId)
+        public IActionResult GetAllComments(int postId, int currentUserId)
         {
-            var commentList = _commentHandlers.ViewAllComments(postId);
+            var commentList = _commentHandlers.ViewAllComments(postId, currentUserId);
             if (commentList == null || commentList.Count == 0)
             {
                 commentList = new List<CommentDTO>();

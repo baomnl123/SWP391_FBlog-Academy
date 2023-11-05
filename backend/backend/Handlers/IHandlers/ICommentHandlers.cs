@@ -5,7 +5,7 @@ namespace backend.Handlers.IHandlers
     public interface ICommentHandlers
     {
         //View All Comments
-        public ICollection<CommentDTO>? ViewAllComments(int postId);
+        public ICollection<CommentDTO>? ViewAllComments(int postId, int currentUserId);
         //Get Comment by comment's id
         public CommentDTO? GetCommentBy(int commentId);
         //Create comment
