@@ -97,7 +97,7 @@ namespace backend.Handlers.Implementors
                 approvingPost.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : new List<VideoDTO>();
 
                 var postUpvote = _votePostRepository.GetAllUsersVotedBy(approvingPost.Id);
-                
+
                 var UsersUpvote = _mapper.Map<List<UserDTO>>(postUpvote);
                 approvingPost.UsersUpvote = (UsersUpvote is not null && UsersUpvote.Count > 0) ? UsersUpvote : new List<UserDTO>();
                 approvingPost.Upvotes = (UsersUpvote == null || UsersUpvote.Count == 0) ? 0 : UsersUpvote.Count;
@@ -466,7 +466,7 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<PostDTO>(existedPost);
         }
 
-        public ICollection<PostDTO>? GetAllPosts()
+        public ICollection<PostDTO>? GetAllPosts(int currentUserId)
         {
             //return null if get all posts is failed
             var existed = _postRepository.GetAllPosts();
@@ -504,6 +504,17 @@ namespace backend.Handlers.Implementors
                 var UsersDownvote = _mapper.Map<List<UserDTO>>(postDownvote);
                 post.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
                 post.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
+
+                var validViewer = CheckCurrentUser(currentUserId);
+                if (validViewer != null)
+                {
+                    var vote = _votePostRepository.GetVotePost(currentUserId, post.Id);
+                    if (vote != null)
+                    {
+                        post.Upvote = vote.UpVote;
+                        post.Downvote = vote.DownVote;
+                    }
+                }
             }
 
             //return posts'list
@@ -558,13 +569,24 @@ namespace backend.Handlers.Implementors
                 var UsersDownvote = _mapper.Map<List<UserDTO>>(postDownvote);
                 post.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
                 post.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
+
+                var validViewer = CheckCurrentUser(userId);
+                if (validViewer != null)
+                {
+                    var vote = _votePostRepository.GetVotePost(userId, post.Id);
+                    if (vote != null)
+                    {
+                        post.Upvote = vote.UpVote;
+                        post.Downvote = vote.DownVote;
+                    }
+                }
             }
 
             //return posts'list
             return resultList;
         }
-
-        public ICollection<PostDTO>? SearchPostsByTitle(string title)
+        
+        public ICollection<PostDTO>? SearchPostsByTitle(string title, int currentUserId)
         {
             //Search all posts which contain content
             var list = _postRepository.SearchPostsByTitle(title);
@@ -602,6 +624,17 @@ namespace backend.Handlers.Implementors
                 var UsersDownvote = _mapper.Map<List<UserDTO>>(postDownvote);
                 post.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
                 post.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
+
+                var validViewer = CheckCurrentUser(currentUserId);
+                if (validViewer != null)
+                {
+                    var vote = _votePostRepository.GetVotePost(currentUserId, post.Id);
+                    if (vote != null)
+                    {
+                        post.Upvote = vote.UpVote;
+                        post.Downvote = vote.DownVote;
+                    }
+                }
             }
 
             //return posts'list
@@ -868,16 +901,16 @@ namespace backend.Handlers.Implementors
             return resultList;
         }
 
-        public ICollection<PostDTO>? GetAllPosts(int[] categoryIDs, int[] tagIDs,string searchValue)
+        public ICollection<PostDTO>? GetAllPosts(int[] categoryIDs, int[] tagIDs, string searchValue, int currentUserId)
         {
             //if both categories and tags are empty getallposts.
             if ((categoryIDs == null || categoryIDs.Length == 0) && (tagIDs == null || tagIDs.Length == 0) && (searchValue == null || searchValue.Equals(string.Empty)))
             {
-                return GetAllPosts();
+                return GetAllPosts(currentUserId);
             }
             if ((categoryIDs == null || categoryIDs.Length == 0) && (tagIDs == null || tagIDs.Length == 0))
             {
-                return SearchPostsByTitle(searchValue);
+                return SearchPostsByTitle(searchValue, currentUserId);
             }
             //get post list based on categoryiesIDs and tagIDs
             var postList = _postRepository.GetPost(categoryIDs, tagIDs);
@@ -888,7 +921,7 @@ namespace backend.Handlers.Implementors
             }
             //init new List
             var postListDTO = new List<PostDTO>();
-            foreach(var post in postList)
+            foreach (var post in postList)
             {
                 if (post.Status)
                 {
@@ -922,16 +955,27 @@ namespace backend.Handlers.Implementors
                     postDTO.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
                     postDTO.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
 
+                    var validViewer = CheckCurrentUser(currentUserId);
+                    if (validViewer != null)
+                    {
+                        var vote = _votePostRepository.GetVotePost(currentUserId, postDTO.Id);
+                        if (vote != null)
+                        {
+                            postDTO.Upvote = vote.UpVote;
+                            postDTO.Downvote = vote.DownVote;
+                        }
+                    }
+
                     postListDTO.Add(postDTO);
                 }
             }
 
-            if(searchValue != null)
+            if (searchValue != null)
             {
                 if (!searchValue.Equals(string.Empty))
                 {
 
-                    for (int i = postListDTO.Count - 1 ; i >= 0; i--)
+                    for (int i = postListDTO.Count - 1; i >= 0; i--)
                     {
                         var post = postListDTO.ElementAt(i);
                         if (!post.Title.ToLower().Contains(searchValue.ToLower()) && !post.Content.ToLower().Contains(searchValue.ToLower()))
@@ -942,12 +986,64 @@ namespace backend.Handlers.Implementors
                 }
             }
 
-            if(postListDTO.Count == 0)
+            if (postListDTO.Count == 0)
             {
                 return null;
             }
 
             return postListDTO;
+        }
+
+        public PostDTO? GetPostBy(int postId, int currentUserId)
+        {
+            //Get post by post's id
+            var existedPost = _postRepository.GetPost(postId);
+            if (existedPost == null || !existedPost.Status || !existedPost.IsApproved) return null;
+
+            //Mapping existedPost to data type PostDTO which have more fields (videos, images, tags, categories)
+            var existingPost = _mapper.Map<PostDTO>(existedPost);
+            //return null if mapping is failed
+            if (existingPost is null) return null;
+
+            var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(existingPost.Id));
+            existingPost.User = (getUser is not null && getUser.Status) ? getUser : null;
+
+            var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(existingPost.Id));
+            existingPost.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
+
+            var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(existingPost.Id));
+            existingPost.Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
+
+            var getImages = _imageHandlers.GetImagesByPost(existingPost.Id);
+            existingPost.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
+
+            var getVideos = _videoHandlers.GetVideosByPost(existingPost.Id);
+            existingPost.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : new List<VideoDTO>();
+
+            var postUpvote = _votePostRepository.GetAllUsersVotedBy(existingPost.Id);
+
+            var UsersUpvote = _mapper.Map<List<UserDTO>>(postUpvote);
+            existingPost.UsersUpvote = (UsersUpvote is not null && UsersUpvote.Count > 0) ? UsersUpvote : new List<UserDTO>();
+            existingPost.Upvotes = (UsersUpvote == null || UsersUpvote.Count == 0) ? 0 : UsersUpvote.Count;
+
+            var postDownvote = _votePostRepository.GetAllUsersDownVotedBy(existingPost.Id);
+
+            var UsersDownvote = _mapper.Map<List<UserDTO>>(postDownvote);
+            existingPost.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
+            existingPost.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
+
+            var validViewer = CheckCurrentUser(currentUserId);
+            if (validViewer != null)
+            {
+                var vote = _votePostRepository.GetVotePost(currentUserId, existingPost.Id);
+                if (vote != null)
+                {
+                    existingPost.Upvote = vote.UpVote;
+                    existingPost.Downvote = vote.DownVote;
+                }
+            }
+
+            return existingPost;
         }
 
         public PostDTO? GetPostBy(int postId)
@@ -991,10 +1087,10 @@ namespace backend.Handlers.Implementors
             return existingPost;
         }
 
-        public ICollection<PostDTO>? GetPostsHaveVideo()
+        public ICollection<PostDTO>? GetPostsHaveVideo(int currentUserId)
         {
             //get all posts
-            var initPosts = GetAllPosts();
+            var initPosts = GetAllPosts(currentUserId);
             if (initPosts is null || initPosts.Count == 0) return new List<PostDTO>();
 
             //instantiate return list
@@ -1006,16 +1102,16 @@ namespace backend.Handlers.Implementors
                 if (post.Videos is not null && post.Videos.Count > 0)
                 {
                     result.Add(post);
-                } 
+                }
             }
 
             return result;
         }
 
-        public ICollection<PostDTO>? GetPostsHaveImage()
+        public ICollection<PostDTO>? GetPostsHaveImage(int currentUserId)
         {
             //get all posts
-            var initPosts = GetAllPosts();
+            var initPosts = GetAllPosts(currentUserId);
             if (initPosts is null || initPosts.Count == 0) return new List<PostDTO>();
 
             //instantiate return list
@@ -1031,6 +1127,14 @@ namespace backend.Handlers.Implementors
             }
 
             return result;
+        }
+
+        public UserDTO? CheckCurrentUser(int currentUserId)
+        {
+            var user = _userRepository.GetUser(currentUserId);
+            if (user == null || !user.Status) return null;
+
+            return _mapper.Map<UserDTO>(user);
         }
     }
 }

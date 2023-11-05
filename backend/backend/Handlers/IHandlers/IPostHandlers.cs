@@ -8,22 +8,25 @@ namespace backend.Handlers.IHandlers
         //Get all posts of user
         public ICollection<PostDTO>? SearchPostByUserId(int userId);
         //Search all posts
-        public ICollection<PostDTO>? GetAllPosts();
+        public ICollection<PostDTO>? GetAllPosts(int currentUserId);
         //Search Posts which contain content.
-        public ICollection<PostDTO>? SearchPostsByTitle(string title);
+        public ICollection<PostDTO>? SearchPostsByTitle(string title, int currentUserId);
         //View pending posts' list
         public ICollection<PostDTO>? ViewPendingPostList();
         //View pending posts' list of particular user
         public ICollection<PostDTO>? ViewPendingPostListOf(int userId);
         public ICollection<PostDTO>? ViewDeletedPostOf(int userId);
         //Get posts by both categories and tags
-        public ICollection<PostDTO>? GetAllPosts(int[] categoryIDs, int[] tagIDs,string searchValue);
+        public ICollection<PostDTO>? GetAllPosts(int[] categoryIDs, int[] tagIDs,string searchValue, int currentUserId);
+        //Get post by post id and currentUserId
+        public PostDTO? GetPostBy(int postId, int currentUserId);
         //Get post by post id
         public PostDTO? GetPostBy(int postId);
+
         //Get posts have video
-        public ICollection<PostDTO>? GetPostsHaveVideo();
+        public ICollection<PostDTO>? GetPostsHaveVideo(int currentUserId);
         //Get posts have image
-        public ICollection<PostDTO>? GetPostsHaveImage();
+        public ICollection<PostDTO>? GetPostsHaveImage(int currentUserId);
 
         //Create post
         public PostDTO? CreatePost(int userId, string title, string content, 
