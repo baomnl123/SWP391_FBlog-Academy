@@ -78,6 +78,13 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 }
 
 app.UseCors("AllowAllOrigin");
+
+app.Use((context, next) =>
+{
+    context.Response.Headers.Add("Referrer-Policy", "strict-origin-when-cross-origin");
+    return next();
+});
+
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
