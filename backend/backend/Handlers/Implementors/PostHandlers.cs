@@ -988,7 +988,7 @@ namespace backend.Handlers.Implementors
             //if both categories and tags are empty getallposts.
             if ((categoryIDs == null || categoryIDs.Length == 0) && (tagIDs == null || tagIDs.Length == 0) && (searchValue == null || searchValue.Equals(string.Empty)) && (currentUserId == null || currentUserId == 0))
             {
-                return GetAllPosts(currentUserId);
+                return null;
             }
             if ((categoryIDs == null || categoryIDs.Length == 0) && (tagIDs == null || tagIDs.Length == 0) && (searchValue == null || searchValue.Equals(string.Empty)))
             {
