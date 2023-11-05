@@ -7,8 +7,10 @@ namespace backend.Repositories.IRepositories
         //Get vote post
         public VotePost? GetVotePost(int currentUserId, int postId);
 
-        //Get all users who vote specific post
+        //Get all users who upvote specific post
         public ICollection<User>? GetAllUsersVotedBy(int postId);
+        //Get all users who downvote specific post
+        public ICollection<User>? GetAllUsersDownVotedBy(int postId);
 
         //CRUD vote post
         public bool Add(VotePost newVotePost);

@@ -97,7 +97,16 @@ namespace backend.Handlers.Implementors
                 approvingPost.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : new List<VideoDTO>();
 
                 var postUpvote = _votePostRepository.GetAllUsersVotedBy(approvingPost.Id);
-                approvingPost.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
+                
+                var UsersUpvote = _mapper.Map<List<UserDTO>>(postUpvote);
+                approvingPost.UsersUpvote = (UsersUpvote is not null && UsersUpvote.Count > 0) ? UsersUpvote : new List<UserDTO>();
+                approvingPost.Upvotes = (UsersUpvote == null || UsersUpvote.Count == 0) ? 0 : UsersUpvote.Count;
+
+                var postDownvote = _votePostRepository.GetAllUsersDownVotedBy(approvingPost.Id);
+
+                var UsersDownvote = _mapper.Map<List<UserDTO>>(postDownvote);
+                approvingPost.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
+                approvingPost.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
 
                 //Update info to database
                 if (!_postRepository.UpdatePost(existedPost)) return null;
@@ -167,7 +176,16 @@ namespace backend.Handlers.Implementors
             else createdPost.Tags = new List<TagDTO>();
 
             var postUpvote = _votePostRepository.GetAllUsersVotedBy(createdPost.Id);
-            createdPost.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
+
+            var UsersUpvote = _mapper.Map<List<UserDTO>>(postUpvote);
+            createdPost.UsersUpvote = (UsersUpvote is not null && UsersUpvote.Count > 0) ? UsersUpvote : new List<UserDTO>();
+            createdPost.Upvotes = (UsersUpvote == null || UsersUpvote.Count == 0) ? 0 : UsersUpvote.Count;
+
+            var postDownvote = _votePostRepository.GetAllUsersDownVotedBy(createdPost.Id);
+
+            var UsersDownvote = _mapper.Map<List<UserDTO>>(postDownvote);
+            createdPost.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
+            createdPost.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
 
             return createdPost;
         }
@@ -327,7 +345,16 @@ namespace backend.Handlers.Implementors
             if (successDisabled == null) return null;
 
             var postUpvote = _votePostRepository.GetAllUsersVotedBy(successDisabled.Id);
-            successDisabled.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
+
+            var UsersUpvote = _mapper.Map<List<UserDTO>>(postUpvote);
+            successDisabled.UsersUpvote = (UsersUpvote is not null && UsersUpvote.Count > 0) ? UsersUpvote : new List<UserDTO>();
+            successDisabled.Upvotes = (UsersUpvote == null || UsersUpvote.Count == 0) ? 0 : UsersUpvote.Count;
+
+            var postDownvote = _votePostRepository.GetAllUsersDownVotedBy(successDisabled.Id);
+
+            var UsersDownvote = _mapper.Map<List<UserDTO>>(postDownvote);
+            successDisabled.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
+            successDisabled.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
 
             //return null if deleting post is failed.Otherwise, return deleted post with data type PostDTO 
             if (!_postRepository.UpdatePost(deletedPost)) return null;
@@ -423,7 +450,16 @@ namespace backend.Handlers.Implementors
             if (successDisabled == null) return null;
 
             var postUpvote = _votePostRepository.GetAllUsersVotedBy(successDisabled.Id);
-            successDisabled.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
+
+            var UsersUpvote = _mapper.Map<List<UserDTO>>(postUpvote);
+            successDisabled.UsersUpvote = (UsersUpvote is not null && UsersUpvote.Count > 0) ? UsersUpvote : new List<UserDTO>();
+            successDisabled.Upvotes = (UsersUpvote == null || UsersUpvote.Count == 0) ? 0 : UsersUpvote.Count;
+
+            var postDownvote = _votePostRepository.GetAllUsersDownVotedBy(successDisabled.Id);
+
+            var UsersDownvote = _mapper.Map<List<UserDTO>>(postDownvote);
+            successDisabled.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
+            successDisabled.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
 
             //update info to database
             if (!_postRepository.UpdatePost(existedPost)) return null;
@@ -458,7 +494,16 @@ namespace backend.Handlers.Implementors
                 post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : new List<VideoDTO>();
 
                 var postUpvote = _votePostRepository.GetAllUsersVotedBy(post.Id);
-                post.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
+
+                var UsersUpvote = _mapper.Map<List<UserDTO>>(postUpvote);
+                post.UsersUpvote = (UsersUpvote is not null && UsersUpvote.Count > 0) ? UsersUpvote : new List<UserDTO>();
+                post.Upvotes = (UsersUpvote == null || UsersUpvote.Count == 0) ? 0 : UsersUpvote.Count;
+
+                var postDownvote = _votePostRepository.GetAllUsersDownVotedBy(post.Id);
+
+                var UsersDownvote = _mapper.Map<List<UserDTO>>(postDownvote);
+                post.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
+                post.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
             }
 
             //return posts'list
@@ -503,7 +548,16 @@ namespace backend.Handlers.Implementors
                 post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : new List<VideoDTO>();
 
                 var postUpvote = _votePostRepository.GetAllUsersVotedBy(post.Id);
-                post.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
+
+                var UsersUpvote = _mapper.Map<List<UserDTO>>(postUpvote);
+                post.UsersUpvote = (UsersUpvote is not null && UsersUpvote.Count > 0) ? UsersUpvote : new List<UserDTO>();
+                post.Upvotes = (UsersUpvote == null || UsersUpvote.Count == 0) ? 0 : UsersUpvote.Count;
+
+                var postDownvote = _votePostRepository.GetAllUsersDownVotedBy(post.Id);
+
+                var UsersDownvote = _mapper.Map<List<UserDTO>>(postDownvote);
+                post.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
+                post.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
             }
 
             //return posts'list
@@ -538,7 +592,16 @@ namespace backend.Handlers.Implementors
                 post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : new List<VideoDTO>();
 
                 var postUpvote = _votePostRepository.GetAllUsersVotedBy(post.Id);
-                post.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
+
+                var UsersUpvote = _mapper.Map<List<UserDTO>>(postUpvote);
+                post.UsersUpvote = (UsersUpvote is not null && UsersUpvote.Count > 0) ? UsersUpvote : new List<UserDTO>();
+                post.Upvotes = (UsersUpvote == null || UsersUpvote.Count == 0) ? 0 : UsersUpvote.Count;
+
+                var postDownvote = _votePostRepository.GetAllUsersDownVotedBy(post.Id);
+
+                var UsersDownvote = _mapper.Map<List<UserDTO>>(postDownvote);
+                post.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
+                post.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
             }
 
             //return posts'list
@@ -620,7 +683,16 @@ namespace backend.Handlers.Implementors
             else updatingPost.Categories = new List<CategoryDTO>();
 
             var postUpvote = _votePostRepository.GetAllUsersVotedBy(updatingPost.Id);
-            updatingPost.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
+
+            var UsersUpvote = _mapper.Map<List<UserDTO>>(postUpvote);
+            updatingPost.UsersUpvote = (UsersUpvote is not null && UsersUpvote.Count > 0) ? UsersUpvote : new List<UserDTO>();
+            updatingPost.Upvotes = (UsersUpvote == null || UsersUpvote.Count == 0) ? 0 : UsersUpvote.Count;
+
+            var postDownvote = _votePostRepository.GetAllUsersDownVotedBy(updatingPost.Id);
+
+            var UsersDownvote = _mapper.Map<List<UserDTO>>(postDownvote);
+            updatingPost.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
+            updatingPost.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
 
             //Update to database
             if (!_postRepository.UpdatePost(existedPost)) return null;
@@ -693,7 +765,16 @@ namespace backend.Handlers.Implementors
                 post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : new List<VideoDTO>();
 
                 var postUpvote = _votePostRepository.GetAllUsersVotedBy(post.Id);
-                post.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
+
+                var UsersUpvote = _mapper.Map<List<UserDTO>>(postUpvote);
+                post.UsersUpvote = (UsersUpvote is not null && UsersUpvote.Count > 0) ? UsersUpvote : new List<UserDTO>();
+                post.Upvotes = (UsersUpvote == null || UsersUpvote.Count == 0) ? 0 : UsersUpvote.Count;
+
+                var postDownvote = _votePostRepository.GetAllUsersDownVotedBy(post.Id);
+
+                var UsersDownvote = _mapper.Map<List<UserDTO>>(postDownvote);
+                post.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
+                post.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
             }
 
             //return posts'list
@@ -728,7 +809,16 @@ namespace backend.Handlers.Implementors
                 post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : new List<VideoDTO>();
 
                 var postUpvote = _votePostRepository.GetAllUsersVotedBy(post.Id);
-                post.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
+
+                var UsersUpvote = _mapper.Map<List<UserDTO>>(postUpvote);
+                post.UsersUpvote = (UsersUpvote is not null && UsersUpvote.Count > 0) ? UsersUpvote : new List<UserDTO>();
+                post.Upvotes = (UsersUpvote == null || UsersUpvote.Count == 0) ? 0 : UsersUpvote.Count;
+
+                var postDownvote = _votePostRepository.GetAllUsersDownVotedBy(post.Id);
+
+                var UsersDownvote = _mapper.Map<List<UserDTO>>(postDownvote);
+                post.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
+                post.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
             }
 
             //return posts'list
@@ -762,7 +852,16 @@ namespace backend.Handlers.Implementors
                 post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : new List<VideoDTO>();
 
                 var postUpvote = _votePostRepository.GetAllUsersVotedBy(post.Id);
-                post.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
+
+                var UsersUpvote = _mapper.Map<List<UserDTO>>(postUpvote);
+                post.UsersUpvote = (UsersUpvote is not null && UsersUpvote.Count > 0) ? UsersUpvote : new List<UserDTO>();
+                post.Upvotes = (UsersUpvote == null || UsersUpvote.Count == 0) ? 0 : UsersUpvote.Count;
+
+                var postDownvote = _votePostRepository.GetAllUsersDownVotedBy(post.Id);
+
+                var UsersDownvote = _mapper.Map<List<UserDTO>>(postDownvote);
+                post.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
+                post.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
             }
 
             //return posts'list
@@ -812,7 +911,16 @@ namespace backend.Handlers.Implementors
                     postDTO.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : new List<VideoDTO>();
 
                     var postUpvote = _votePostRepository.GetAllUsersVotedBy(postDTO.Id);
-                    postDTO.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
+
+                    var UsersUpvote = _mapper.Map<List<UserDTO>>(postUpvote);
+                    postDTO.UsersUpvote = (UsersUpvote is not null && UsersUpvote.Count > 0) ? UsersUpvote : new List<UserDTO>();
+                    postDTO.Upvotes = (UsersUpvote == null || UsersUpvote.Count == 0) ? 0 : UsersUpvote.Count;
+
+                    var postDownvote = _votePostRepository.GetAllUsersDownVotedBy(postDTO.Id);
+
+                    var UsersDownvote = _mapper.Map<List<UserDTO>>(postDownvote);
+                    postDTO.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
+                    postDTO.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
 
                     postListDTO.Add(postDTO);
                 }
@@ -869,7 +977,16 @@ namespace backend.Handlers.Implementors
             existingPost.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : new List<VideoDTO>();
 
             var postUpvote = _votePostRepository.GetAllUsersVotedBy(existingPost.Id);
-            existingPost.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
+
+            var UsersUpvote = _mapper.Map<List<UserDTO>>(postUpvote);
+            existingPost.UsersUpvote = (UsersUpvote is not null && UsersUpvote.Count > 0) ? UsersUpvote : new List<UserDTO>();
+            existingPost.Upvotes = (UsersUpvote == null || UsersUpvote.Count == 0) ? 0 : UsersUpvote.Count;
+
+            var postDownvote = _votePostRepository.GetAllUsersDownVotedBy(existingPost.Id);
+
+            var UsersDownvote = _mapper.Map<List<UserDTO>>(postDownvote);
+            existingPost.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
+            existingPost.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
 
             return existingPost;
         }
