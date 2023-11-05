@@ -1,20 +1,12 @@
-import { Form, Input, Modal, ModalProps, SelectProps, Space } from 'antd'
+import { Form, Input, Modal, ModalProps, Space } from 'antd'
 
 const CreateLecture = (
   props: ModalProps & {
-    onFinish?: (value: { email: string; password: string }) => void
+    onFinish?: (value: { email: string; password: string; name: string }) => void
   }
 ) => {
   const { open, onOk, onCancel, ...rest } = props
   const [form] = Form.useForm()
-
-  const options: SelectProps['options'] = []
-  for (let i = 0; i < 20; i++) {
-    options.push({
-      label: `category ${i}`,
-      value: `category ${i}`
-    })
-  }
 
   return (
     <Modal
@@ -31,12 +23,15 @@ const CreateLecture = (
         onCancel?.(e)
       }}
     >
-      <Form<{ email: string; password: string }>
+      <Form<{ email: string; password: string; name: string }>
         form={form}
         layout='vertical'
         onFinish={(value) => props.onFinish?.(value)}
       >
         <Space className='w-full' direction='vertical' size={20}>
+          <Form.Item label='Name' name='name' rules={[{ required: true, message: 'Name is required' }]}>
+            <Input placeholder='Name' />
+          </Form.Item>
           <Form.Item label='Email' name='email' rules={[{ required: true, message: 'Email is required' }]}>
             <Input placeholder='Email' />
           </Form.Item>

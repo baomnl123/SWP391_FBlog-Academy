@@ -1,43 +1,71 @@
-import { student } from '@/data'
-import { useAntdTable } from 'ahooks'
-import { Button, ConfigProvider, Flex, Form, Input, Modal, Space, Table, Typography } from 'antd'
+import api from '@/config/api'
+import { UserEmail } from '@/types'
+import { useAntdTable, useRequest } from 'ahooks'
+import { Button, ConfigProvider, Flex, Form, Input, Modal, Space, Table, Typography, message } from 'antd'
 import { ColumnsType } from 'antd/es/table'
-import { useState } from 'react'
 
 type DataType = {
   id: number
   name: string
+  email: string
 }
 
 type Result = {
   total: number
-  list: DataType[]
-}
-
-const getTableData = (
-  { current, pageSize }: { current: number; pageSize: number },
-  formData: object
-): Promise<Result> => {
-  console.log(current, pageSize, formData)
-  const data: DataType[] = []
-  for (let i = 0; i < 20; i++) {
-    data.push({
-      id: i,
-      name: `Tag${i}`
-    })
-  }
-  return Promise.resolve({
-    total: 20,
-    list: data
-  })
+  list: UserEmail[]
 }
 
 export default function Student() {
-  // student data
-  const [studentData, setStudentData] = useState(student)
-
   const [modal, contextHolder] = Modal.useModal()
   const [form] = Form.useForm()
+
+  const { runAsync: getStudent } = useRequest(api.getStudent, {
+    manual: true,
+    onSuccess: (res) => {
+      if (res) {
+        return res
+      }
+    },
+    onError: (err) => {
+      console.log(err)
+    }
+  })
+
+  const { runAsync: banStudent } = useRequest(api.banStudent, {
+    manual: true,
+    onSuccess: (res) => {
+      if (res) {
+        message.success('Ban lectures success')
+        submit()
+      }
+    },
+    onError: (err) => {
+      console.log(err)
+    }
+  })
+
+  const getTableData = async (_: never, { search }: { search: string }): Promise<Result> => {
+    const res = await getStudent()
+    if (res) {
+      let object = {
+        total: res.length,
+        list: res
+      }
+      if (search) {
+        const data = res.filter((item) => item.name.includes(search))
+        object = {
+          total: data.length,
+          list: data
+        }
+      }
+
+      return object
+    }
+    return {
+      total: 0,
+      list: []
+    }
+  }
 
   const { tableProps, search, data } = useAntdTable(getTableData, {
     defaultPageSize: 5,
@@ -58,6 +86,11 @@ export default function Student() {
       dataIndex: 'name'
     },
     {
+      title: 'Email',
+      key: 'email',
+      dataIndex: 'email'
+    },
+    {
       title: 'Action',
       key: 'action',
       width: 150,
@@ -73,8 +106,7 @@ export default function Student() {
                 centered: true,
                 content: 'Are you sure to ban student?',
                 onOk() {
-                  const result = studentData.filter((student) => student.id !== record.id)
-                  setStudentData(result)
+                  banStudent(record.id)
                 },
                 onCancel() {
                   console.log('cancel')
@@ -92,7 +124,7 @@ export default function Student() {
   const searchForm = (
     <div style={{ marginBottom: 16 }}>
       <Form form={form} style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <Form.Item name='Search'>
+        <Form.Item name='search'>
           <Input.Search className='w-96' onSearch={submit} placeholder='search' />
         </Form.Item>
       </Form>
@@ -111,20 +143,13 @@ export default function Student() {
     >
       <Space className='w-full' size={20} direction='vertical'>
         <Flex justify='space-between' align='center'>
-          <Typography.Title level={5}>Account: {studentData?.length}</Typography.Title>
+          <Typography.Title level={5}>Account: {data?.total}</Typography.Title>
         </Flex>
         <div>
           <Space align='start' direction='vertical' className='w-full'>
             {searchForm}
           </Space>
-          <Table
-            {...tableProps}
-            dataSource={studentData}
-            pagination={{
-              defaultPageSize: 5
-            }}
-            columns={columns}
-          />
+          <Table {...tableProps} columns={columns} />
         </div>
       </Space>
       {contextHolder}

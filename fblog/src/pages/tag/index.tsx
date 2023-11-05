@@ -1,13 +1,14 @@
+import api from '@/config/api'
 import { useAntdTable } from 'ahooks'
-import { Button, ConfigProvider, Flex, Form, Input, Modal, Space, Table, Typography } from 'antd'
+import { Button, ConfigProvider, Form, Input, Modal, Space, Table, Typography, message } from 'antd'
 import { ColumnsType } from 'antd/es/table'
-import { useState, useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import CreateTag from './CreateTag'
-import { tag } from '@/data'
 
 type DataType = {
   id: number
   name: string
+  category: string
 }
 
 type Result = {
@@ -17,44 +18,51 @@ type Result = {
 
 export default function Tag() {
   // data category
-  const [tagData, setTagData] = useState(tag)
-  const [tagUpdate, setTagUpdate] = useState(-1)
-
   const [createTag, setCreateTag] = useState(false)
-  const [initialValues, setInitialValues] = useState<{ name: string; category: string[] } | undefined>()
+  const [initialValues, setInitialValues] = useState<
+    | {
+        tag?: {
+          id: number
+          name: string
+        }
+      }
+    | undefined
+  >()
   const [modal, contextHolder] = Modal.useModal()
   const [form] = Form.useForm()
 
-  const getTableData = (
-    { current, pageSize }: { current: number; pageSize: number },
-    formData: object
-  ): Promise<Result> => {
-    console.log(current, pageSize, formData)
-    const data: DataType[] = []
-    for (let i = 0; i < 20; i++) {
-      data.push({
-        id: i,
-        name: `Tag${i}`
-      })
-    }
+  const getTableData = async (_: never, { search }: { search: string }): Promise<Result> => {
+    const response = await api.getTags()
+    const data = response.filter((item) => item.tagName.toLowerCase().includes(search?.toLowerCase() ?? ''))
+    console.log('search', search)
+
     return Promise.resolve({
-      total: 20,
-      list: data
+      total: data.length,
+      list: data.map((item) => ({
+        id: item.id,
+        name: item.tagName,
+        category: item.categories.map((category) => category.categoryName).join(', ')
+      }))
     })
   }
 
-  const onDelete = useCallback(
-    (id: number) => {
-      const result = tagData.filter((cate) => cate.id !== id)
-      setTagData(result)
-    },
-    [tagData]
-  )
-
-  const { tableProps, search, data } = useAntdTable(getTableData, {
+  const { tableProps, search, data, refresh } = useAntdTable(getTableData, {
     defaultPageSize: 5,
     form
   })
+
+  const onDelete = useCallback(
+    async (id: number) => {
+      try {
+        await api.deleteTag(id)
+        message.success('Delete successfully')
+        refresh()
+      } catch (e) {
+        console.error(e)
+      }
+    },
+    [refresh]
+  )
 
   const { submit } = search
 
@@ -70,6 +78,11 @@ export default function Tag() {
       dataIndex: 'name'
     },
     {
+      title: 'Category',
+      key: 'category',
+      dataIndex: 'category'
+    },
+    {
       title: 'Action',
       key: 'action',
       width: 150,
@@ -80,11 +93,12 @@ export default function Tag() {
             onClick={(e) => {
               e.stopPropagation()
               setInitialValues({
-                name: record.name,
-                category: []
+                tag: {
+                  id: record.id,
+                  name: record.name
+                }
               })
               setCreateTag(true)
-              setTagUpdate(record.id)
             }}
           >
             Update
@@ -117,7 +131,7 @@ export default function Tag() {
   const searchForm = (
     <div style={{ marginBottom: 16 }}>
       <Form form={form} style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <Form.Item name='Search'>
+        <Form.Item name='search'>
           <Input.Search className='w-80' onSearch={submit} placeholder='search' />
         </Form.Item>
       </Form>
@@ -135,8 +149,9 @@ export default function Tag() {
       }}
     >
       <Space className='w-full' size={20} direction='vertical'>
-        <Flex justify='space-between' align='center'>
-          <Typography.Title level={5}>Quantity: {tagData?.length}</Typography.Title>
+        <Typography.Title level={5}>Quantity: {data?.total}</Typography.Title>
+        {/* <Flex justify='space-between' align='center'>
+          <Typography.Title level={5}>Quantity: {data?.total}</Typography.Title>
           <Button
             type='primary'
             onClick={() => {
@@ -145,11 +160,11 @@ export default function Tag() {
           >
             Create Tag
           </Button>
-        </Flex>
+        </Flex> */}
         <Space align='start' direction='vertical' className='w-full'>
           {searchForm}
         </Space>
-        <Table rowKey='id' {...tableProps} columns={columns} dataSource={tagData} pagination={{ defaultPageSize: 5 }} />
+        <Table rowKey='id' {...tableProps} columns={columns} />
       </Space>
       <CreateTag
         initialValues={initialValues}
@@ -159,30 +174,11 @@ export default function Tag() {
           setCreateTag(false)
           setInitialValues(undefined)
         }}
-        onFinish={(value) => {
-          console.log('onFinish')
-          if (initialValues) {
-            const result = tagData.map((tag) => {
-              if (tag.id === tagUpdate) {
-                tag.name = value.name
-              }
-
-              return tag
-            })
-            setTagData(result)
-          } else {
-            const result = [
-              {
-                id: tagData.length,
-                name: value.name
-              },
-              ...tagData
-            ]
-            setTagData(result)
-          }
-        }}
         onOk={() => {
           setCreateTag(false)
+        }}
+        onSuccess={() => {
+          refresh()
           setInitialValues(undefined)
         }}
       />

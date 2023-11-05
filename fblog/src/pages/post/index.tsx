@@ -1,42 +1,55 @@
-import { Button, message } from 'antd'
+import api from '@/config/api'
+import { useRequest } from 'ahooks'
+import { Image, Spin, message } from 'antd'
 import { useCallback, useState } from 'react'
 import PostDetail from './components/PostDetail'
 
-const fakeData = [
-  {
-    id: '1',
-    title:
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae deleniti quos ipsam dicta, dolorum hic magni Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae deleniti quos ipsam dicta, dolorum hic magni Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae deleniti quos ipsam dicta, dolorum hic magni',
-    description:
-      "<img width='750' src='https://platinumlist.net/guide/wp-content/uploads/2023/03/IMG-worlds-of-adventure.webp' />",
-    author: 'Dong Dang Duong',
-    time: 1698300520000
-  },
-  {
-    id: '2',
-    title: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae deleniti quos ipsam dicta, dolorum hic magni',
-    description:
-      "<iframe width='700' height='315' src='https://www.youtube.com/embed/6lHvks6R6cI?si=yXmJ3TooM6X2rWbo' title='YouTube video player' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share' ></iframe>",
-    avatar: 'https://xsgames.co/randomusers/avatar.php?g=pixel&key=1',
-    author: 'Dong Dang Duong',
-    time: 1698300520000
-  },
-  {
-    id: '3',
-    title: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae deleniti quos ipsam dicta, dolorum hic magni',
-    description:
-      "<iframe width='700' height='315' src='https://www.youtube.com/embed/6lHvks6R6cI?si=yXmJ3TooM6X2rWbo' title='YouTube video player' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share' ></iframe>",
-    avatar: 'https://xsgames.co/randomusers/avatar.php?g=pixel&key=1',
-    author: 'Dong Dang Duong',
-    time: 1698300520000
-  }
-]
-
 export default function Post() {
-  const [listDataSelected, setDataSelected] = useState<string[]>([])
+  const [listDataSelected, setDataSelected] = useState<number[]>([])
+
+  const {
+    data: posts,
+    loading: postLoading,
+    refresh
+  } = useRequest(async () => {
+    try {
+      const res = api.reportPostPending()
+      if (res) {
+        return res
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+  const { runAsync: approvePost } = useRequest(api.approvePost, {
+    manual: true,
+    onSuccess: (res) => {
+      if (res) {
+        message.success('Approve post success')
+        refresh()
+      }
+    },
+    onError: (err) => {
+      console.log(err)
+    }
+  })
+
+  const { runAsync: denyPost } = useRequest(api.denyPost, {
+    manual: true,
+    onSuccess: (res) => {
+      if (res) {
+        message.success('Deny post success')
+        refresh()
+      }
+    },
+    onError: (err) => {
+      console.log(err)
+    }
+  })
 
   const handleAddItem = useCallback(
-    (id: string, value: boolean) => {
+    (id: number, value: boolean) => {
       const newList = [...listDataSelected]
       const index = newList.findIndex((item) => item === id)
       if (index === -1 && value) {
@@ -49,25 +62,24 @@ export default function Post() {
     [listDataSelected]
   )
 
-  const onApprove = useCallback(() => {
-    message.success({
-      content: 'Approve succeeded'
-    })
-    setDataSelected([])
-  }, [])
-  const onCancel = useCallback(() => {
-    message.success({
-      content: 'Cancel succeeded'
-    })
-    setDataSelected([])
-  }, [])
+  // const onApprove = useCallback(() => {
+  //   console.log('listDataSelected', listDataSelected)
+  //   // approvePost()
+  //   const id = getLocalStorage('id')
+  //   approvePost(Number(id ?? 0), listDataSelected[0])
+  //   setDataSelected([])
+  // }, [approvePost, listDataSelected])
+
+  // const onCancel = useCallback(() => {
+  //   const id = getLocalStorage('id')
+  //   denyPost(Number(id ?? 0), listDataSelected[0])
+  //   setDataSelected([])
+  // }, [denyPost, listDataSelected])
 
   return (
-    <div>
-      <div
-        className={`text-right mb-4 duration-300 fixed top-0 right-0 z-[999] h-16 shadow-sm leading-8 bg-white dark:bg-black flex items-center justify-end w-[calc(100%_-_200px)] ${
-          !listDataSelected.length ? 'opacity-0 invisible' : 'opacity-100 visible'
-        }`}
+    <Spin spinning={postLoading}>
+      {/* <div
+        className={`text-right mb-4 duration-300 fixed top-0 right-0 z-[999] h-16 shadow-sm leading-8 bg-white dark:bg-black flex items-center justify-end w-[calc(100%_-_200px)] opacity-0 invisible`}
       >
         <Button type='primary' onClick={onApprove}>
           Approve
@@ -78,25 +90,47 @@ export default function Post() {
         <Button type='primary' className='ml-2 mr-4' style={{ background: '#ccc' }} onClick={() => setDataSelected([])}>
           Cancel
         </Button>
-      </div>
+      </div> */}
       <div>
-        {fakeData.map((item) => {
-          const { time, title, description, avatar, author, id } = item
+        {posts?.map((item) => {
+          const { id, createdAt, title, content, user, images, videos } = item.post
           return (
-            <PostDetail
-              key={id}
-              time={time}
-              title={title}
-              description={description}
-              avatar={avatar}
-              author={author}
-              handleChangeStatus={(value) => handleAddItem(id, value)}
-              checked={listDataSelected.includes(id)}
-              className='max-w-[750px] mx-auto mb-8'
-            />
+            <div key={id}>
+              <PostDetail
+                onApprove={async () => {
+                  await approvePost(item?.reporter?.id, id)
+                }}
+                onDeny={async () => {
+                  await denyPost(item?.reporter?.id, id)
+                }}
+                time={createdAt}
+                title={title}
+                description={content}
+                avatar={user?.avatarUrl ?? ''}
+                author={user?.name}
+                handleChangeStatus={(value) => handleAddItem(id, value)}
+                checked={listDataSelected.includes(id)}
+                className='max-w-[750px] mx-auto mb-8'
+                slideContent={[
+                  ...(images ?? []).map((image) => (
+                    <Image
+                      key={image.id}
+                      src={image.url}
+                      className='w-[1194px] h-[620px]'
+                      placeholder='https://i0.wp.com/thinkfirstcommunication.com/wp-content/uploads/2022/05/placeholder-1-1.png?w=1200&ssl=1'
+                    />
+                  )),
+                  ...(videos ?? []).map((video) => (
+                    <video controls className='w-full'>
+                      <source src={video.url} type='video/mp4' className='object-contain' />
+                    </video>
+                  ))
+                ]}
+              />
+            </div>
           )
         })}
       </div>
-    </div>
+    </Spin>
   )
 }
