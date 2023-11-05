@@ -16,14 +16,30 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Get list of Users that vote selected Post.
+        /// Get list of Users that up vote selected Post.
         /// </summary>
         /// <param name="postId"></param>
         /// <returns></returns>
-        [HttpGet("{postId}")]
+        [HttpGet("all-user-up-vote/{postId}")]
         public IActionResult GetAllUsersVotedBy(int postId)
         {
             var userList = _votePostHandlers.GetAllUsersVotedBy(postId);
+            if (userList == null || userList.Count == 0)
+            {
+                userList = new List<UserDTO>();
+            }
+            return Ok(userList);
+        }
+
+        /// <summary>
+        /// Get list of Users that down vote selected Post.
+        /// </summary>
+        /// <param name="postId"></param>
+        /// <returns></returns>
+        [HttpGet("all-user-down-vote/{postId}")]
+        public IActionResult GetAllUsersDownVotedBy(int postId)
+        {
+            var userList = _votePostHandlers.GetAllUsersDownVotedBy(postId);
             if (userList == null || userList.Count == 0)
             {
                 userList = new List<UserDTO>();

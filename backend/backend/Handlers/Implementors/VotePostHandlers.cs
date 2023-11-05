@@ -116,6 +116,20 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<List<UserDTO>>(existedUsers);
         }
 
+        public ICollection<UserDTO>? GetAllUsersDownVotedBy(int postId)
+        {
+            //return null if post does not exist or is removed or is not approved
+            var existedPost = _postRepository.GetPost(postId);
+            if (existedPost == null || !existedPost.Status || !existedPost.IsApproved) return null;
+
+            //return null if user's list is empty
+            var existedUsers = _votePostRepository.GetAllUsersDownVotedBy(postId);
+            if (existedUsers == null || existedUsers.Count == 0) return null;
+
+            //return user's list
+            return _mapper.Map<List<UserDTO>>(existedUsers);
+        }
+
         public VotePostDTO? UpdateVotePost(int currentUserId, int postId, bool vote)
         {
             //return null if currentUser and post do not exist
