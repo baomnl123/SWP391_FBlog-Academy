@@ -100,6 +100,7 @@ export default function Post() {
                 reporterAvt={item?.reporter?.avatarUrl}
                 reporterName={item?.reporter?.name}
                 reportDate={item?.reporter?.createdAt}
+                reportContent={item?.content}
                 onApprove={async () => {
                   await approvePost(item?.reporter?.id, id)
                 }}
