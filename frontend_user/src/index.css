@@ -1,0 +1,37 @@
+@import 'preflight.css';
+/* @tailwind base; */
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.fixed-sidebar .ant-layout-sider-children {
+  width: 200px;
+  position: fixed;
+  height: calc(100vh - 64px);
+  left: 0;
+  top: 70px;
+}
+
+.custom-bar::-webkit-scrollbar {
+  width: 3px;
+}
+
+/* Track */
+.custom-bar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+.custom-bar::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+.custom-bar::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
