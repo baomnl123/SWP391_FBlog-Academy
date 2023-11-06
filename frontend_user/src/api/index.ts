@@ -272,7 +272,7 @@ const api = {
     return axiosClient.put(url, payload)
   },
 
-  votePost({ currentUserId, postId, vote }: { currentUserId: number; postId: number; vote: boolean }) {
+  votePost({ currentUserId, postId, vote }: { currentUserId: number; postId: number; vote: string }) {
     const url = 'VotePost'
     const formData = new FormData()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -285,7 +285,7 @@ const api = {
     })
   },
 
-  voteUpdate({ currentUserId, postId, vote }: { currentUserId: number; postId: number; vote: boolean }) {
+  voteUpdate({ currentUserId, postId, vote }: { currentUserId: number; postId: number; vote: string }) {
     const url = 'VotePost'
     const formData = new FormData()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
