@@ -15,7 +15,15 @@ const api = {
     return axiosClient.get<unknown, PendingPost[]>(url)
   },
 
-  postCategoryTag({ categoryID, tagID,currentUserId }: { categoryID?: number[]; tagID?: number[], currentUserId?: number }) {
+  postCategoryTag({
+    categoryID,
+    tagID,
+    currentUserId
+  }: {
+    categoryID?: number[]
+    tagID?: number[]
+    currentUserId?: number
+  }) {
     const url = 'Post/category-tag'
     return axiosClient.get<unknown, PendingPost[]>(url, {
       params: {
@@ -68,14 +76,13 @@ const api = {
     return axiosClient.get<unknown, Tag[]>(url)
   },
 
-  filterCategoryTag(categoryID?: number[], tagID?: number[], searchValue?: string, currentUserID?: number) {
+  filterCategoryTag(categoryID?: number[], tagID?: number[], searchValue?: string) {
     const url = `Post/category-tag`
     return axiosClient.get(url, {
       params: {
         categoryID,
         tagID,
-        searchValue,
-        currentUserID
+        searchValue
       }
     })
   },
@@ -265,7 +272,7 @@ const api = {
     return axiosClient.put(url, payload)
   },
 
-  votePost({ currentUserId, postId, vote }: { currentUserId: number; postId: number; vote: string }) {
+  votePost({ currentUserId, postId, vote }: { currentUserId: number; postId: number; vote: boolean }) {
     const url = 'VotePost'
     const formData = new FormData()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -278,7 +285,7 @@ const api = {
     })
   },
 
-  voteUpdate({ currentUserId, postId, vote }: { currentUserId: number; postId: number; vote: string }) {
+  voteUpdate({ currentUserId, postId, vote }: { currentUserId: number; postId: number; vote: boolean }) {
     const url = 'VotePost'
     const formData = new FormData()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
