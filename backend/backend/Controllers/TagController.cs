@@ -251,5 +251,20 @@ namespace backend.Controllers
 
             return Ok(deleteRelationship);
         }
+
+        /// <summary>
+        /// Get top 5 voted Categories
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("top-5-voted")]
+        public IActionResult GetTop5VotedTag()
+        {
+            var posts = _tagHandlers.GetTop5Tags();
+            if (posts is null || posts.Count == 0)
+            {
+                posts = new List<TagDTO>();
+            }
+            return Ok(posts);
+        }
     }
 }

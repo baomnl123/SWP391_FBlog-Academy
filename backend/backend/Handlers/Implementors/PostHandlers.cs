@@ -1341,5 +1341,21 @@ namespace backend.Handlers.Implementors
 
             return _mapper.Map<UserDTO>(user);
         }
+
+        public ICollection<PostDTO>? GetTop5VotedPost(int currentUserId)
+        {
+            var postList = GetAllPosts(currentUserId);
+            if(postList == null || postList.Count == 0)
+            {
+                return null;
+            }
+            var sortedCollection = postList.OrderByDescending(obj => obj.Upvotes).ToList();
+            for (int i = sortedCollection.Count - 1; i >= 0; i--)
+            {
+                if (i < 5) break;
+                sortedCollection.Remove(sortedCollection[i]);
+            }
+            return sortedCollection;
+        }
     }
 }
