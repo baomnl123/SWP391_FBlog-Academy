@@ -31,7 +31,7 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                var list = _fBlogAcademyContext.Users.OrderBy(u => u.Name).OrderBy(u => u.Id).ToList();
+                var list = _fBlogAcademyContext.Users.OrderBy(u => u.Name).OrderBy(u => u.Name).ToList();
                 if(list == null || list.Count == 0)
                 {
                     return null;
@@ -50,7 +50,7 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                var userList = _fBlogAcademyContext.Users.Where(u => !u.Status).OrderBy(u => u.Id).ToList();
+                var userList = _fBlogAcademyContext.Users.Where(u => !u.Status).OrderBy(u => u.Name).ToList();
                 if (userList == null || userList.Count == 0)
                 {
                     return null;
@@ -93,7 +93,7 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                var list = _fBlogAcademyContext.Users.Where(u => u.Name.Equals(username)).OrderBy(u => u.Id).ToList();
+                var list = _fBlogAcademyContext.Users.Where(u => u.Name.Equals(username)).OrderBy(u => u.Name).ToList();
                 if (list == null || list.Count == 0)
                 {
                     return null;
@@ -112,7 +112,7 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                var list = _fBlogAcademyContext.Users.Where(u => u.Role.Trim().Contains(role)).OrderBy(u => u.Id).ToList();
+                var list = _fBlogAcademyContext.Users.Where(u => u.Role.Trim().Contains(role)).OrderBy(u => u.Name).ToList();
                 if (list == null || list.Count == 0)
                 {
                     return null;
@@ -203,7 +203,7 @@ namespace backend.Repositories.Implementors
             {
                 var studentRole = _userRoleConstrant.GetStudentRole();
                 var moderatorRole = _userRoleConstrant.GetModeratorRole();
-                var list = _fBlogAcademyContext.Users.Where(e => e.Role.Equals(studentRole) || e.Role.Equals(moderatorRole)).OrderBy(e => e.Id).ToList();
+                var list = _fBlogAcademyContext.Users.Where(e => e.Role.Equals(studentRole) || e.Role.Equals(moderatorRole)).OrderBy(e => e.Name).ToList();
                 if (list == null || list.Count == 0)
                 {
                     return null;

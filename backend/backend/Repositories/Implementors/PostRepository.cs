@@ -155,7 +155,7 @@ namespace backend.Repositories.Implementors
                 {
                     foreach (var post in postList)
                     {
-                        var categories = _fBlogAcademyContext.PostCategories.Where(e => e.PostId.Equals(post.Id)).Select(e => e.CategoryId).ToArray();
+                        var categories = _fBlogAcademyContext.PostCategories.OrderByDescending(p => p.Post.CreatedAt).Where(e => e.PostId.Equals(post.Id)).Select(e => e.CategoryId).ToArray();
                         if (AreAllElementsInArray(categoryID, categories))
                         {
                             posts.Add(post);
@@ -165,7 +165,7 @@ namespace backend.Repositories.Implementors
                 {
                     foreach (var post in postList)
                     {
-                        var tags = _fBlogAcademyContext.PostTags.Where(e => e.PostId.Equals(post.Id)).Select(e => e.TagId).ToArray();
+                        var tags = _fBlogAcademyContext.PostTags.OrderByDescending(p => p.Post.CreatedAt).Where(e => e.PostId.Equals(post.Id)).Select(e => e.TagId).ToArray();
                         if (AreAllElementsInArray(tagID, tags))
                         {
                             posts.Add(post);
@@ -176,7 +176,7 @@ namespace backend.Repositories.Implementors
                 {
                     foreach (var post in postList)
                     {
-                        var tags = _fBlogAcademyContext.PostTags.Where(e => e.PostId.Equals(post.Id)).Select(e => e.TagId).ToArray();
+                        var tags = _fBlogAcademyContext.PostTags.OrderByDescending(p => p.Post.CreatedAt).Where(e => e.PostId.Equals(post.Id)).Select(e => e.TagId).ToArray();
                         var categories = _fBlogAcademyContext.PostCategories.Where(e => e.PostId.Equals(post.Id)).Select(e => e.CategoryId).ToArray();
                         if (AreAllElementsInArray(categoryID, categories) && AreAllElementsInArray(tagID, tags))
                         {
