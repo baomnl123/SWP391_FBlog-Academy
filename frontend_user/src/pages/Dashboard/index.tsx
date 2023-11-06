@@ -152,11 +152,14 @@ export default function Dashboard() {
       console.log(error)
     }
   })
+<<<<<<< HEAD
 
   useEffect(() => {
     if (!user) return
     getPost({})
   }, [user])
+=======
+>>>>>>> parent of f19f478 (FE Updates)
 
   const data = !postFilter ? postData : postFilter
 

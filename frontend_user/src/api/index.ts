@@ -28,8 +28,7 @@ const api = {
     return axiosClient.get<unknown, PendingPost[]>(url, {
       params: {
         categoryID,
-        tagID,
-        currentUserId
+        tagID
       }
     })
   },
