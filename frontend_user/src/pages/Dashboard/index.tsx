@@ -18,7 +18,6 @@ import dayjs from 'dayjs'
 import ModalSave from './components/ModalSave'
 import Vote from './components/Vote'
 import { PendingPost } from '@/types'
-import { getLocalStorage } from '@/utils/helpers'
 
 export default function Dashboard() {
   const [modal, contextHolder] = Modal.useModal()
