@@ -93,7 +93,7 @@ namespace backend.Repositories.Implementors
         public ICollection<Post>? ViewPendingPostList()
         {
             return _fBlogAcademyContext.Posts.Where(p => p.Status == true
-                                                    && p.IsApproved == false).OrderBy(p => p.CreatedAt).ToList();
+                                                    && p.IsApproved == false).OrderByDescending(p => p.CreatedAt).ToList();
         }
 
         public ICollection<Post>? SearchPostByUserId(int userId)
