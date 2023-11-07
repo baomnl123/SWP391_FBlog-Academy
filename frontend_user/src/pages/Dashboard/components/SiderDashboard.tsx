@@ -90,41 +90,44 @@ const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: Si
           }}
         />
       </div>
-      <Flex
-        align='center'
-        className={`mb-8 mt-8 w-full cursor-pointer ${filter === 'image' ? 'bg-blue-600' : ''} py-2 px-4 rounded-md`}
-        gap={10}
-        onClick={() => {
-          if (filter !== 'image') {
-            setFilter('image')
-            onFilter?.('image')
-            return
-          }
-          setFilter(null)
-          onFilter?.(null)
-        }}
-      >
-        <IconPicture color={isDarkMode ? '#fff' : '#000'} width={30} height={30} />
-        <Typography.Text>Image</Typography.Text>
-      </Flex>
-      <Flex
-        align='center'
-        className={`mb-8 mt-8 w-full cursor-pointer ${filter === 'video' ? 'bg-blue-600' : ''} py-2 px-4 rounded-md`}
-        gap={10}
-        onClick={() => {
-          if (filter !== 'video') {
-            setFilter('video')
-            onFilter?.('video')
-            return
-          }
-          setFilter(null)
-          onFilter?.(null)
-        }}
-      >
-        <IconPhotoFilm color={isDarkMode ? '#fff' : '#000'} width={30} height={30} />
-        <Typography.Text>Video</Typography.Text>
-      </Flex>
+
       <div className='mb-8'>
+        {
+          <Button
+            icon={<FileDoneOutlined />}
+            size='large'
+            className={`w-full text-left mb-4 ${filter === 'image' ? 'bg-blue-600' : ''}`}
+            onClick={() => {
+              if (filter !== 'image') {
+                setFilter('image')
+                onFilter?.('image')
+                return
+              }
+              setFilter(null)
+              onFilter?.(null)
+            }}
+          >
+            Post have Image
+          </Button>
+        }
+        {
+          <Button
+            icon={<FileDoneOutlined />}
+            size='large'
+            className={`w-full text-left mb-4 ${filter === 'video' ? 'bg-blue-600' : ''}`}
+            onClick={() => {
+              if (filter !== 'video') {
+                setFilter('video')
+                onFilter?.('video')
+                return
+              }
+              setFilter(null)
+              onFilter?.(null)
+            }}
+          >
+            Post have Video
+          </Button>
+        }
         {(userInfo as User)?.role === 'LT' && (
           <Button
             icon={<AuditOutlined />}
