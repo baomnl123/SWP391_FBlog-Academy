@@ -4,7 +4,15 @@ import IconPicture from '@/assets/images/svg/IconPicture'
 import SelectLabel from '@/components/SelectLabel'
 import { RootState } from '@/store'
 import { User } from '@/types'
-import { AuditOutlined, FileAddOutlined, FileDoneOutlined, FileSyncOutlined, GiftOutlined } from '@ant-design/icons'
+import {
+  AuditOutlined,
+  FileAddOutlined,
+  FileDoneOutlined,
+  FileImageOutlined,
+  FileSyncOutlined,
+  GiftOutlined,
+  VideoCameraOutlined
+} from '@ant-design/icons'
 import { useRequest } from 'ahooks'
 import { Button, Flex, SelectProps, Typography } from 'antd'
 import { useEffect, useState } from 'react'
@@ -94,7 +102,7 @@ const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: Si
       <div className='mb-8'>
         {
           <Button
-            icon={<FileDoneOutlined />}
+            icon={<FileImageOutlined />}
             size='large'
             className={`w-full text-left mb-4 ${filter === 'image' ? 'bg-blue-600' : ''}`}
             onClick={() => {
@@ -112,7 +120,7 @@ const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: Si
         }
         {
           <Button
-            icon={<FileDoneOutlined />}
+            icon={<VideoCameraOutlined />}
             size='large'
             className={`w-full text-left mb-4 ${filter === 'video' ? 'bg-blue-600' : ''}`}
             onClick={() => {
