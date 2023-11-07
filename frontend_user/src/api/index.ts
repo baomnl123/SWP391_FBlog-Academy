@@ -18,18 +18,21 @@ const api = {
   postCategoryTag({
     categoryID,
     tagID,
-    currentUserId
+    currentUserId,
+    searchValue
   }: {
     categoryID?: number[]
     tagID?: number[]
     currentUserId?: number
+    searchValue?: string
   }) {
     const url = 'Post/category-tag'
     return axiosClient.get<unknown, PendingPost[]>(url, {
       params: {
         categoryID,
         tagID,
-        currentUserId
+        currentUserId,
+        searchValue
       }
     })
   },
@@ -272,7 +275,7 @@ const api = {
     return axiosClient.put(url, payload)
   },
 
-  votePost({ currentUserId, postId, vote }: { currentUserId: number; postId: number; vote: string }) {
+  votePost({ currentUserId, postId, vote }: { currentUserId: number; postId: number; vote: boolean }) {
     const url = 'VotePost'
     const formData = new FormData()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -285,7 +288,7 @@ const api = {
     })
   },
 
-  voteUpdate({ currentUserId, postId, vote }: { currentUserId: number; postId: number; vote: string }) {
+  voteUpdate({ currentUserId, postId, vote }: { currentUserId: number; postId: number; vote: boolean }) {
     const url = 'VotePost'
     const formData = new FormData()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -298,14 +301,24 @@ const api = {
     })
   },
 
-  allPostHasImages() {
+  allPostHasImages(currentUserId: number) {
     const url = 'Post/all-post-has-image'
-    return axiosClient.get<unknown, PendingPost[]>(url)
+    return axiosClient.get<unknown, PendingPost[]>(url, { params: { currentUserId } })
   },
 
-  allPostHasVideo() {
+  allPostHasVideo(currentUserId: number) {
     const url = 'Post/all-post-has-video'
-    return axiosClient.get<unknown, PendingPost[]>(url)
+    return axiosClient.get<unknown, PendingPost[]>(url, { params: { currentUserId } })
+  },
+
+  deleteVote(postId: number, currentUserId: number) {
+    const url = 'VotePost'
+    return axiosClient.delete(url, {
+      params: {
+        currentUserId,
+        postId
+      }
+    })
   }
 }
 

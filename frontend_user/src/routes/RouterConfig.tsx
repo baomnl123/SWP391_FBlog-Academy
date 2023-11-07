@@ -31,7 +31,7 @@ export const Routes = createBrowserRouter([
         path: '/dashboard',
         element: <Dashboard />,
         handle: {
-          crumb: () => 'Dashboard'
+          crumb: () => ''
         }
       },
       {

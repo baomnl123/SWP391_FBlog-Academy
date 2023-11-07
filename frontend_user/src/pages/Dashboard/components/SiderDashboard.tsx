@@ -4,8 +4,9 @@ import IconPicture from '@/assets/images/svg/IconPicture'
 import SelectLabel from '@/components/SelectLabel'
 import { RootState } from '@/store'
 import { User } from '@/types'
+import { AuditOutlined, FileAddOutlined, FileDoneOutlined, FileSyncOutlined, GiftOutlined } from '@ant-design/icons'
 import { useRequest } from 'ahooks'
-import { Button, SelectProps, Space, Typography } from 'antd'
+import { Button, Flex, SelectProps, Typography } from 'antd'
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -89,9 +90,10 @@ const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: Si
           }}
         />
       </div>
-      <Space
-        className={`mb-8 mt-8 w-full cursor-pointer ${filter === 'image' ? 'bg-blue-600' : ''} py-2 px-10 rounded-md`}
-        size={10}
+      <Flex
+        align='center'
+        className={`mb-8 mt-8 w-full cursor-pointer ${filter === 'image' ? 'bg-blue-600' : ''} py-2 px-4 rounded-md`}
+        gap={10}
         onClick={() => {
           if (filter !== 'image') {
             setFilter('image')
@@ -104,10 +106,11 @@ const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: Si
       >
         <IconPicture color={isDarkMode ? '#fff' : '#000'} width={30} height={30} />
         <Typography.Text>Image</Typography.Text>
-      </Space>
-      <Space
-        className={`mb-8 mt-8 w-full cursor-pointer ${filter === 'video' ? 'bg-blue-600' : ''} py-2 px-10 rounded-md`}
-        size={10}
+      </Flex>
+      <Flex
+        align='center'
+        className={`mb-8 mt-8 w-full cursor-pointer ${filter === 'video' ? 'bg-blue-600' : ''} py-2 px-4 rounded-md`}
+        gap={10}
         onClick={() => {
           if (filter !== 'video') {
             setFilter('video')
@@ -120,33 +123,59 @@ const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: Si
       >
         <IconPhotoFilm color={isDarkMode ? '#fff' : '#000'} width={30} height={30} />
         <Typography.Text>Video</Typography.Text>
-      </Space>
+      </Flex>
       <div className='mb-8'>
         {(userInfo as User)?.role === 'LT' && (
-          <Button type='primary' className='w-full mb-4' onClick={() => navigate('/promote')}>
+          <Button
+            icon={<AuditOutlined />}
+            size='large'
+            className='w-full text-left mb-4'
+            onClick={() => navigate('/promote')}
+          >
             Promote
           </Button>
         )}
         {((userInfo as User)?.role === 'LT' ||
           (userInfo as User)?.role === 'MD' ||
           (userInfo as User)?.role === 'SU') && (
-          <Button type='primary' className='w-full mb-4' onClick={() => navigate('/save-list')}>
+          <Button
+            icon={<FileDoneOutlined />}
+            size='large'
+            className='w-full text-left mb-4'
+            onClick={() => navigate('/save-list')}
+          >
             Save list
           </Button>
         )}
         {((userInfo as User)?.role === 'LT' || (userInfo as User)?.role === 'MD') && (
           <>
-            <Button type='primary' className='w-full mb-4' onClick={() => navigate('/view-pending-list')}>
+            <Button
+              className='w-full text-left mb-4'
+              icon={<FileSyncOutlined />}
+              size='large'
+              onClick={() => navigate('/view-pending-list')}
+            >
               View pending list
             </Button>
-            <Button type='primary' className='w-full mb-4' onClick={() => navigate('/give-awards')}>
+            <Button
+              size='large'
+              className='w-full text-left mb-4'
+              icon={<GiftOutlined />}
+              onClick={() => navigate('/give-awards')}
+            >
               Give awards
             </Button>
           </>
         )}
-        <Button type='primary' className='w-full' onClick={() => createPost?.()}>
-          Create Post
-        </Button>
+        {(userInfo as User)?.role !== 'AD' ? (
+          <Button size='large' icon={<FileAddOutlined />} className='w-full text-left' onClick={() => createPost?.()}>
+            Create Post
+          </Button>
+        ) : (
+          <Button size='large' className='w-full text-left'>
+            Go to admin
+          </Button>
+        )}
       </div>
     </div>
   )

@@ -1,22 +1,22 @@
 import api from '@/api'
 import BaseLayout from '@/components/BaseLayout'
 import Card from '@/components/Card'
+import { RootState } from '@/store'
 import { CheckCircleFilled, MoreOutlined } from '@ant-design/icons'
 import { useRequest } from 'ahooks'
 import { Avatar, Button, Dropdown, Flex, Image, MenuProps, Modal, Spin, Typography, message } from 'antd'
 import dayjs from 'dayjs'
 import { useCallback, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import CreateUpdatePost from '../Dashboard/components/CreateUpdatePost'
 import { useSelector } from 'react-redux'
-import { RootState } from '@/store'
+import { useParams } from 'react-router-dom'
+import CreateUpdatePost from '../Dashboard/components/CreateUpdatePost'
 
 export default function UserProfile() {
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
   const [idPost, setIdPost] = useState<number | undefined>()
   const [modal, contextHolder] = Modal.useModal()
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
   const { id } = useParams()
   const currentId = useSelector<RootState>((state) => state.userReducer.user?.id)
 
@@ -79,7 +79,7 @@ export default function UserProfile() {
 
   const { data: following } = useRequest(
     async () => {
-      const response = ''
+      const response = await api.followingByUserId(Number(id ?? 0))
       return response
     },
     {
@@ -177,7 +177,7 @@ export default function UserProfile() {
   return (
     <BaseLayout
       sider={
-        <>
+        <div>
           {/* <div className='mb-6'>
             <SelectLabel
               label='Tag'
@@ -218,10 +218,10 @@ export default function UserProfile() {
             <IconPhotoFilm color={isDarkMode ? '#fff' : '#000'} width={30} height={30} />
             <Typography.Text>Video</Typography.Text>
           </Space> */}
-          <Button block type='primary' onClick={() => navigate('/')}>
+          {/* <Button block type='primary' onClick={() => navigate('/')}>
             Dashboard
-          </Button>
-        </>
+          </Button> */}
+        </div>
       }
     >
       <Spin spinning={loading}>

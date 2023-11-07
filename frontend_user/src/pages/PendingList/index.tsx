@@ -98,7 +98,7 @@ export default function PendingList() {
   return (
     <BaseLayout
       sider={
-        <>
+        <div>
           {/* <div className='mb-6'>
             <SelectLabel
               label='Tag'
@@ -139,10 +139,10 @@ export default function PendingList() {
             <IconPhotoFilm color={isDarkMode ? '#fff' : '#000'} width={30} height={30} />
             <Typography.Text>Video</Typography.Text>
           </Space> */}
-          <Button type='primary' onClick={() => navigate('/')}>
+          {/* <Button type='primary' onClick={() => navigate('/')}>
             Dashboard
-          </Button>
-        </>
+          </Button> */}
+        </div>
       }
     >
       <Spin spinning={loading}>

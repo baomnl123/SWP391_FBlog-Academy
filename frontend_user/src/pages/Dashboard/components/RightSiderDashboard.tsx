@@ -21,7 +21,7 @@ const RightSiderDashboardMenu = ({ title, data, onChange }: RightSiderDashboardM
 
 const RightSiderDashboard = () => {
   return (
-    <div className='px-8 mt-[80px] fixed right-0 max-w-[400px] w-full'>
+    <div className='px-8 mt-[80px] max-w-[300px] w-full fixed right-0'>
       <RightSiderDashboardMenu
         onChange={(value) => {
           console.log(value)

@@ -1,9 +1,8 @@
 import api from '@/api'
 import BaseLayout from '@/components/BaseLayout'
-import SelectLabel from '@/components/SelectLabel'
 import { PlusOutlined } from '@ant-design/icons'
 import { useRequest } from 'ahooks'
-import { Avatar, Button, Card, Flex, SelectProps, Space, Spin, Typography, message } from 'antd'
+import { Avatar, Button, Card, Flex, Space, Spin, Typography, message } from 'antd'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import CreateUpdatePost from '../Dashboard/components/CreateUpdatePost'
@@ -14,20 +13,20 @@ export default function GiveAwards() {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
 
-  const options: SelectProps['options'] = [
-    {
-      label: 'Option 1',
-      value: 1
-    },
-    {
-      label: 'Option 2',
-      value: 2
-    },
-    {
-      label: 'Option 3',
-      value: 3
-    }
-  ]
+  // const options: SelectProps['options'] = [
+  //   {
+  //     label: 'Option 1',
+  //     value: 1
+  //   },
+  //   {
+  //     label: 'Option 2',
+  //     value: 2
+  //   },
+  //   {
+  //     label: 'Option 3',
+  //     value: 3
+  //   }
+  // ]
 
   const { data, refresh } = useRequest(
     async () => {
@@ -96,7 +95,7 @@ export default function GiveAwards() {
       sider={
         <Flex justify='space-between' align='center' vertical className='h-full w-full'>
           <div className='w-full'>
-            <SelectLabel
+            {/* <SelectLabel
               placeHolder='Sorted By'
               optionData={options}
               onChange={(value) => {
@@ -107,11 +106,11 @@ export default function GiveAwards() {
             />
             <Button block type='primary' onClick={() => navigate('/')}>
               Dashboard
-            </Button>
+            </Button> */}
           </div>
           <Button size='large' block type='primary' onClick={() => setOpen(true)}>
             <Flex justify='space-between' align='center'>
-              <Typography.Text>Create Post</Typography.Text>
+              <Typography.Text className='text-white'>Create Post</Typography.Text>
               <PlusOutlined />
             </Flex>
           </Button>
@@ -123,7 +122,12 @@ export default function GiveAwards() {
           <Card className='max-w-[800px] mx-auto'>
             <Space className='w-full' size={20} direction='vertical'>
               {data?.map((user) => (
-                <Flex justify='space-between' align='center'>
+                <Flex
+                  justify='space-between'
+                  align='center'
+                  className='cursor-pointer'
+                  onClick={() => navigate(`/profile/${user?.id}`)}
+                >
                   <Space size={10}>
                     <Avatar size={64} src={user.avatarUrl} />
                     <Typography.Text>{user.name}</Typography.Text>

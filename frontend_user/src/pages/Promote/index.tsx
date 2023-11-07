@@ -62,9 +62,9 @@ export default function Promote() {
     <BaseLayout
       sider={
         <div>
-          <Button block type='primary' onClick={() => navigate('/')}>
+          {/* <Button block type='primary' onClick={() => navigate('/')}>
             Dashboard
-          </Button>
+          </Button> */}
         </div>
       }
     >
@@ -74,7 +74,12 @@ export default function Promote() {
             <Space className='w-full' size={20} direction='vertical'>
               {data?.map((user) => {
                 return (
-                  <Flex justify='space-between' align='center'>
+                  <Flex
+                    justify='space-between'
+                    align='center'
+                    className='cursor-pointer'
+                    onClick={() => navigate(`/profile/${user?.id}`)}
+                  >
                     <Space size={10}>
                       <Avatar size={64} src={user.avatarUrl} />
                       <Typography.Text>{user.name}</Typography.Text>
