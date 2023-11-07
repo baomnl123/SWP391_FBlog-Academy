@@ -63,7 +63,7 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                var list = _fblogAcademyContext.ReportPosts.OrderBy(u => u.CreatedAt).ToList();
+                var list = _fblogAcademyContext.ReportPosts.OrderByDescending(u => u.CreatedAt).ToList();
                 if (list.Count == 0)
                 {
                     return null;
