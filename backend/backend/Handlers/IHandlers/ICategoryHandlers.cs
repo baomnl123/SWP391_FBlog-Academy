@@ -13,6 +13,7 @@ namespace backend.Handlers.IHandlers
         public CategoryDTO? GetCategoryByName(string categoryName);
         public ICollection<PostDTO>? GetPostsByCategory(int categoryId);
         public ICollection<TagDTO>? GetTagsByCategory(int categoryId);
+        public ICollection<CategoryDTO>? GetTop5Categories();
         // CRUD
         public CategoryDTO? CreateCategory(int adminId, string categoryName);
         public CategoryDTO? UpdateCategory(int currentCategoryId, string newCategoryName);

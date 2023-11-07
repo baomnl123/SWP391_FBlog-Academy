@@ -27,7 +27,8 @@ namespace backend.Handlers.IHandlers
         public ICollection<PostDTO>? GetPostsHaveVideo(int currentUserId);
         //Get posts have image
         public ICollection<PostDTO>? GetPostsHaveImage(int currentUserId);
-
+        //Get top 5 post with highest vote.
+        public ICollection<PostDTO>? GetTop5VotedPost(int currentUserId);
         //Create post
         public PostDTO? CreatePost(int userId, string title, string content, 
                                                     int[]? tagIds, int[]? categoryIds, 

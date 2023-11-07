@@ -7,11 +7,14 @@ using backend.Repositories.Implementors;
 using backend.Repositories.IRepositories;
 using backend.Utils;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
+using System.Collections.Generic;
 
 namespace backend.Handlers.Implementors
 {
     public class CategoryHandlers : ICategoryHandlers
     {
+        private readonly IPostRepository _postRepository;
         private readonly IUserRepository _userRepository;
         private readonly IVideoHandlers _videoHandlers;
         private readonly IImageHandlers _imageHandlers;
@@ -30,7 +33,8 @@ namespace backend.Handlers.Implementors
                                 IPostCategoryRepository postCategoryRepository,
                                 IPostTagRepository postTagRepository,
                                 IVotePostRepository votePostRepository,
-                                IMapper mapper)
+                                IMapper mapper,
+                                IPostRepository postRepository)
         {
             _userRepository = userRepository;
             _videoHandlers = videoHandlers;
@@ -41,6 +45,7 @@ namespace backend.Handlers.Implementors
             _postTagRepository = postTagRepository;
             _votePostRepository = votePostRepository;
             _mapper = mapper;
+            _postRepository = postRepository;
         }
 
         public ICollection<CategoryDTO>? GetCategories()
@@ -77,7 +82,7 @@ namespace backend.Handlers.Implementors
             if (category == null || category.Status == false) return null;
 
             var posts = _categoryRepository.GetPostsByCategory(categoryId);
-            if(posts == null || posts.Count == 0) return null;
+            if (posts == null || posts.Count == 0) return null;
 
             //map to list DTO
             List<PostDTO> resultList = _mapper.Map<List<PostDTO>>(posts);
@@ -114,7 +119,7 @@ namespace backend.Handlers.Implementors
             if (category == null || category.Status == false) return null;
 
             var tags = _categoryRepository.GetTagsByCategory(categoryId);
-            if(tags == null || tags.Count == 0) return null;
+            if (tags == null || tags.Count == 0) return null;
 
             return _mapper.Map<List<TagDTO>>(tags);
         }
@@ -223,6 +228,52 @@ namespace backend.Handlers.Implementors
                 return _mapper.Map<CategoryDTO>(category);
 
             return null;
+        }
+
+        public ICollection<CategoryDTO>? GetTop5Categories()
+        {
+
+            var categoriesList = GetCategories();
+            if (categoriesList == null || categoriesList.Count == 0)
+            {
+                return null;
+            }
+            var map = new Dictionary<CategoryDTO, int>();
+            foreach (var category in categoriesList)
+            {
+                if (category.Status)
+                {
+                    int topVotePosts = 0;
+                    var postList = _categoryRepository.GetPostsByCategory(category.Id);
+                    if (postList == null || postList.Count == 0)
+                    {
+
+                    }
+                    else
+                    {
+                        foreach (var post in postList)
+                        {
+                            var votePost = _votePostRepository.GetAllUsersVotedBy(post.Id);
+                            if(votePost == null)
+                            {
+                            }
+                            if(votePost.Count > topVotePosts)
+                            {
+                                topVotePosts = votePost.Count;
+                            }
+                        }
+                        map.Add(category, topVotePosts);
+                    }
+                }
+            }
+            var sortedMap = map.OrderByDescending(p => p.Value)
+                           .ToDictionary(pair => pair.Key, pair => pair.Value);
+            List<CategoryDTO> keysList = new List<CategoryDTO>(sortedMap.Keys);
+            if (keysList == null || keysList.Count == 0)
+            {
+                return null;
+            }
+            return keysList;
         }
     }
 }
