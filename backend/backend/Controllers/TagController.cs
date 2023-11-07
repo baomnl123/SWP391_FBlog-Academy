@@ -253,7 +253,7 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Get top 5 voted Categories
+        /// Get top 5 voted Tags
         /// </summary>
         /// <returns></returns>
         [HttpGet("top-5-voted")]

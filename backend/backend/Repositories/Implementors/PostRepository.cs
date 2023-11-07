@@ -28,8 +28,7 @@ namespace backend.Repositories.Implementors
 
         public ICollection<Post>? GetAllPosts()
         {
-            return _fBlogAcademyContext.Posts.Where(p => p.Status == true
-                                                     && p.IsApproved == true).OrderByDescending(p => p.CreatedAt).ToList();
+            return _fBlogAcademyContext.Posts.Where(p => p.Status && p.IsApproved).OrderByDescending(p => p.CreatedAt).ToList();
         }
 
         public Post? GetPost(int postId)
@@ -41,14 +40,10 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                var listPost = _fBlogAcademyContext.Posts.Where(p => p.Status == true
+                var listPost = _fBlogAcademyContext.Posts.Where(p => p.Status
                                                                 && p.Title.ToLower().Contains(title.ToLower())
                                                                 && p.IsApproved == true).OrderByDescending(p => p.CreatedAt).ToList();
-                if (listPost != null)
-                {
-                    return listPost;
-                }
-                return null;
+                return listPost != null ? listPost : (ICollection<Post>?)null;
             }
             catch (InvalidOperationException)
             {
@@ -92,8 +87,7 @@ namespace backend.Repositories.Implementors
 
         public ICollection<Post>? ViewPendingPostList()
         {
-            return _fBlogAcademyContext.Posts.Where(p => p.Status == true
-                                                    && p.IsApproved == false).OrderByDescending(p => p.CreatedAt).ToList();
+            return _fBlogAcademyContext.Posts.Where(p => p.Status && !p.IsApproved).OrderByDescending(p => p.CreatedAt).ToList();
         }
 
         public ICollection<Post>? SearchPostByUserId(int userId)
@@ -103,8 +97,7 @@ namespace backend.Repositories.Implementors
                 var existedList = _fBlogAcademyContext.Posts.Where(p => p.UserId == userId
                                                                     && p.Status && p.IsApproved)
                                                                     .OrderByDescending(p => p.CreatedAt).ToList();
-                if (existedList == null) return null;
-                return existedList;
+                return existedList != null ? (ICollection<Post>)existedList : null;
             }
             catch (InvalidOperationException)
             {
@@ -119,8 +112,7 @@ namespace backend.Repositories.Implementors
                 var existedList = _fBlogAcademyContext.Posts.Where(p => p.UserId == userId
                                                                     && p.Status && !p.IsApproved)
                                                                     .OrderByDescending(p => p.CreatedAt).ToList();
-                if (existedList == null) return null;
-                return existedList;
+                return existedList != null ? (ICollection<Post>)existedList : null;
             }
             catch (InvalidOperationException)
             {
@@ -135,8 +127,7 @@ namespace backend.Repositories.Implementors
                 var existedList = _fBlogAcademyContext.Posts.Where(p => p.UserId == userId
                                                                     && !p.Status && p.IsApproved)
                                                                     .OrderByDescending(p => p.CreatedAt).ToList();
-                if (existedList == null) return null;
-                return existedList;
+                return existedList != null ? (ICollection<Post>)existedList : null;
             }
             catch (InvalidOperationException)
             {
