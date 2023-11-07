@@ -1355,6 +1355,9 @@ namespace backend.Handlers.Implementors
                 if (i < 5) break;
                 sortedCollection.Remove(sortedCollection[i]);
             }
+            if(sortedCollection.Count > 5) {
+                sortedCollection = sortedCollection.GetRange(0, 5);
+            }
             return sortedCollection;
         }
     }

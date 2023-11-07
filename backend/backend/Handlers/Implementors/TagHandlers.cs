@@ -330,6 +330,10 @@ namespace backend.Handlers.Implementors
                     }
                 }
             }
+            if (keysList.Count > 5)
+            {
+                keysList = keysList.GetRange(0, 5);
+            }
             return keysList;
         }
     }
