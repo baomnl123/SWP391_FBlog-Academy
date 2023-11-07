@@ -4,7 +4,7 @@ import IconUpLong from '@/assets/images/svg/IconUpLong'
 import { RootState } from '@/store'
 import { useRequest } from 'ahooks'
 import { Button, Typography } from 'antd'
-import { useState } from 'react'
+import { useCallback } from 'react'
 import { useSelector } from 'react-redux'
 
 const Vote = ({
@@ -26,17 +26,6 @@ const Vote = ({
     manual: true,
     onSuccess: (res) => {
       if (res) {
-        // setCount(count + 1)
-        onVoteSuccess?.()
-      }
-      console.log(res)
-    }
-  })
-  const { runAsync: votePost2 } = useRequest(api.votePost, {
-    manual: true,
-    onSuccess: (res) => {
-      if (res) {
-        // setCount(count - 1)
         onVoteSuccess?.()
       }
       console.log(res)
@@ -47,61 +36,68 @@ const Vote = ({
     manual: true,
     onSuccess: (res) => {
       if (res) {
-        // setCount(count + 1)
         onVoteSuccess?.()
       }
-      console.log(res)
     }
   })
-  const { runAsync: voteUpdate2 } = useRequest(api.voteUpdate, {
-    manual: true,
-    onSuccess: (res) => {
-      if (res) {
-        // setCount(count - 1)
+
+  const onRemoveVote = useCallback(async () => {
+    try {
+      if (postId && userId) {
+        await api.deleteVote(postId, userId)
         onVoteSuccess?.()
       }
-      console.log(res)
+    } catch (e) {
+      console.error(e)
     }
-  })
-  const [count] = useState(vote)
+  }, [postId, userId, onVoteSuccess])
+
   const isDarkMode = useSelector((state: RootState) => state.themeReducer.darkMode)
   return (
     <>
       <Button
         onClick={async () => {
-          if (upvote && !downvote) return
-          if (!upvote && !downvote) {
-            await voteUpdate({
-              currentUserId: userId ?? 0,
-              postId: postId ?? 0,
-              vote: true
-            })
+          if (upvote) {
+            await onRemoveVote()
+          } else {
+            if (!upvote && !downvote) {
+              await votePost({
+                currentUserId: userId ?? 0,
+                postId: postId ?? 0,
+                vote: true
+              })
+            } else {
+              await voteUpdate({
+                currentUserId: userId ?? 0,
+                postId: postId ?? 0,
+                vote: true
+              })
+            }
           }
-          await votePost({
-            currentUserId: userId ?? 0,
-            postId: postId ?? 0,
-            vote: true
-          })
         }}
       >
         <IconUpLong width={15} height={15} color={upvote && !downvote ? 'blue' : isDarkMode ? '#fff' : '#000'} />
       </Button>
-      <Typography className='min-w-[50px]'>{count}</Typography>
+      <Typography className='min-w-[50px]'>{vote}</Typography>
       <Button
         onClick={async () => {
-          if (downvote && !upvote) return
-          if (!upvote && !downvote) {
-            await voteUpdate2({
-              currentUserId: userId ?? 0,
-              postId: postId ?? 0,
-              vote: true
-            })
+          if (downvote) {
+            await onRemoveVote()
+          } else {
+            if (!upvote && !downvote) {
+              await votePost({
+                currentUserId: userId ?? 0,
+                postId: postId ?? 0,
+                vote: false
+              })
+            } else {
+              await voteUpdate({
+                currentUserId: userId ?? 0,
+                postId: postId ?? 0,
+                vote: false
+              })
+            }
           }
-          await votePost2({
-            currentUserId: userId ?? 0,
-            postId: postId ?? 0,
-            vote: true
-          })
         }}
       >
         <IconDownLong width={15} height={15} color={downvote && !upvote ? 'blue' : isDarkMode ? '#fff' : '#000'} />

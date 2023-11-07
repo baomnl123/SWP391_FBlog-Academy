@@ -17,7 +17,8 @@ export default function Card({
   createDate,
   title,
   content,
-  onClickAvatar
+  onClickAvatar,
+  className
 }: {
   footer?: ReactNode[]
   slideContent?: ReactNode[]
@@ -30,9 +31,10 @@ export default function Card({
   title: string
   content: string
   onClickAvatar?: () => void
+  className?: string
 }) {
   return (
-    <AntCard className='max-w-[1200px] p-5' actions={footer}>
+    <AntCard className={`max-w-[1200px] p-5 ${className}`} actions={footer}>
       <Flex justify='space-between' align='center'>
         <Space size={10} onClick={() => onClickAvatar?.()} className='cursor-pointer'>
           <Avatar size={64} src={user?.avatar} />
@@ -48,7 +50,7 @@ export default function Card({
       <Space className='w-full my-5' direction='vertical' size={10}>
         <div>
           <Typography.Title level={2}>{title}</Typography.Title>
-          <Typography.Paragraph>{content}</Typography.Paragraph>
+          <Typography.Paragraph className='text-base'>{content}</Typography.Paragraph>
         </div>
         <Swiper
           cssMode={true}

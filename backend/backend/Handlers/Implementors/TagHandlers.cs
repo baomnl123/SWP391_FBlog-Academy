@@ -273,5 +273,64 @@ namespace backend.Handlers.Implementors
 
             return null;
         }
+        public ICollection<TagDTO>? GetTop5Tags()
+        {
+
+            var tagList = GetTags();
+            if (tagList == null || tagList.Count == 0)
+            {
+                return null;
+            }
+            var map = new Dictionary<TagDTO, int>();
+            foreach (var tag in tagList)
+            {
+                if (tag.Status)
+                {
+                    int topVotePosts = 0;
+                    var postList = _tagRepository.GetPostsByTag(tag.Id);
+                    if (postList == null || postList.Count == 0)
+                    {
+
+                    }
+                    else
+                    {
+                        foreach (var post in postList)
+                        {
+                            var votePost = _votePostRepository.GetAllUsersVotedBy(post.Id);
+                            if (votePost == null)
+                            {
+                            }
+                            if (votePost.Count > topVotePosts)
+                            {
+                                topVotePosts = votePost.Count;
+                            }
+                        }
+                        map.Add(tag, topVotePosts);
+                    }
+                }
+            }
+            var sortedMap = map.OrderByDescending(p => p.Value)
+                           .ToDictionary(pair => pair.Key, pair => pair.Value);
+            List<TagDTO> keysList = new List<TagDTO>(sortedMap.Keys);
+            if (keysList == null || keysList.Count == 0)
+            {
+                return null;
+            }
+            foreach(var tag in keysList)
+            {
+                if (tag.Status)
+                {
+                    var categories = GetCategoriesByTag(tag.Id);
+                    if(categories == null || categories.Count == 0)
+                    {
+                    }
+                    else
+                    {
+                        tag.Categories = categories;
+                    }
+                }
+            }
+            return keysList;
+        }
     }
 }

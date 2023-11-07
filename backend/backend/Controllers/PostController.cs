@@ -309,5 +309,20 @@ namespace backend.Controllers
             }
             return Ok(posts);
         }
+        /// <summary>
+        /// Get top 5 voted Posts
+        /// </summary>
+        /// <param name="currentUserId"></param>
+        /// <returns></returns>
+        [HttpGet("top-5-voted")]
+        public IActionResult GetTop5VotedPost(int currentUserId)
+        {
+            var posts = _postHandlers.GetTop5VotedPost(currentUserId);
+            if (posts is null || posts.Count == 0)
+            {
+                posts = new List<PostDTO>();
+            }
+            return Ok(posts);
+        }
     }
 }

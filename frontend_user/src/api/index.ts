@@ -18,18 +18,21 @@ const api = {
   postCategoryTag({
     categoryID,
     tagID,
-    currentUserId
+    currentUserId,
+    searchValue
   }: {
     categoryID?: number[]
     tagID?: number[]
     currentUserId?: number
+    searchValue?: string
   }) {
     const url = 'Post/category-tag'
     return axiosClient.get<unknown, PendingPost[]>(url, {
       params: {
         categoryID,
         tagID,
-        currentUserId
+        currentUserId,
+        searchValue
       }
     })
   },
@@ -298,14 +301,24 @@ const api = {
     })
   },
 
-  allPostHasImages() {
+  allPostHasImages(currentUserId: number) {
     const url = 'Post/all-post-has-image'
-    return axiosClient.get<unknown, PendingPost[]>(url)
+    return axiosClient.get<unknown, PendingPost[]>(url, { params: { currentUserId } })
   },
 
-  allPostHasVideo() {
+  allPostHasVideo(currentUserId: number) {
     const url = 'Post/all-post-has-video'
-    return axiosClient.get<unknown, PendingPost[]>(url)
+    return axiosClient.get<unknown, PendingPost[]>(url, { params: { currentUserId } })
+  },
+
+  deleteVote(postId: number, currentUserId: number) {
+    const url = 'VotePost'
+    return axiosClient.delete(url, {
+      params: {
+        currentUserId,
+        postId
+      }
+    })
   }
 }
 

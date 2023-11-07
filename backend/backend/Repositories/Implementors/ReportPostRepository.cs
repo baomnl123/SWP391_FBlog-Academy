@@ -81,7 +81,7 @@ namespace backend.Repositories.Implementors
 
         public ICollection<ReportPost>? GetReportPostsByContent(string content)
         {
-            var list = _fblogAcademyContext.ReportPosts.Where(u => u.Content.Contains(content)).OrderByDescending(u => u.CreatedAt).ToList();
+            var list = _fblogAcademyContext.ReportPosts.Where(u => u.Content.Contains(content)).OrderBy(u => u.CreatedAt).ToList();
             if (list.Count == 0)
             {
                 return null;

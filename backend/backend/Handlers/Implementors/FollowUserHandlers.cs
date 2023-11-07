@@ -11,11 +11,13 @@ namespace backend.Handlers.Implementors
         private readonly IFollowUserRepository _followUserRepositoy;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-        public FollowUserHandlers(IMapper mapper, IFollowUserRepository followUserRepositoy, IUserRepository userRepository)
+        private readonly IUserHandlers _userHandlers;
+        public FollowUserHandlers(IMapper mapper, IFollowUserRepository followUserRepositoy, IUserRepository userRepository, IUserHandlers userHandlers)
         {
             _followUserRepositoy = followUserRepositoy;
             _userRepository = userRepository;
             _mapper = mapper;
+            _userHandlers = userHandlers;
         }
 
         public FollowUserDTO? FollowOtherUser(int currentUserID, int userID)
@@ -56,8 +58,24 @@ namespace backend.Handlers.Implementors
                 {
                     return null;
                 }
+
+                var followRelationshipDTO = _mapper.Map<FollowUserDTO>(followRelationship);
+
+                var currentUserDTO = _userHandlers.GetUser(currentUserID);
+                if(currentUserDTO == null || !currentUserDTO.Status)
+                {
+                    return null;
+                }
+                followRelationshipDTO.Follower = currentUserDTO;
+                var followUserDTO = _userHandlers.GetUser(userID);
+                if (followUserDTO == null || !followUserDTO.Status)
+                {
+                    return null;
+                }
+                followRelationshipDTO.Followed = followUserDTO;
+                
                 //Return
-                return _mapper.Map<FollowUserDTO>(followRelationship);
+                return followRelationshipDTO;
             }
             //If follow relationship is not exist then create new one
             FollowUser newRelationship = new()

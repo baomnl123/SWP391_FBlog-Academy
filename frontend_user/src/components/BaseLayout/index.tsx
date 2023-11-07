@@ -13,8 +13,15 @@ const { Header, Content, Sider } = Layout
 const BaseLayout = ({
   children,
   sider,
-  rightSider
-}: PropsWithChildren<{ sider: ReactNode; rightSider?: ReactNode }>) => {
+  rightSider,
+  showSearch = false,
+  onChangeSearch
+}: PropsWithChildren<{
+  sider: ReactNode
+  rightSider?: ReactNode
+  showSearch?: boolean
+  onChangeSearch?: (value: string) => void
+}>) => {
   // const [isDarkMode, setIsDarkMode] = useState(false)
   const navigate = useNavigate()
   const { defaultAlgorithm, darkAlgorithm } = theme
@@ -67,25 +74,34 @@ const BaseLayout = ({
     >
       <Layout style={{ minHeight: '100vh' }} className={isDarkMode ? 'dark' : ''}>
         <Header style={{ padding: 0, background: isDarkMode ? '#141414' : '#fff' }} className='fixed w-full z-50'>
-          <Flex justify='space-between' align='center' className='w-full px-5 shadow-md'>
+          <Flex align='center' className='w-full px-5 shadow-md' gap={190}>
             <div className='cursor-pointer' onClick={() => navigate('/')}>
               <Typography.Title level={1}>Logo</Typography.Title>
             </div>
-            <Input prefix={<SearchOutlined />} className='w-[500px]' />
-
-            <Switch onChange={(e) => handleClick(e)} checked={!!isDarkMode} />
+            {showSearch && (
+              <Input
+                prefix={<SearchOutlined />}
+                className='w-[1300px]'
+                onChange={(e) => {
+                  onChangeSearch?.(e.target.value)
+                }}
+              />
+            )}
           </Flex>
         </Header>
         <Layout>
-          <Sider theme={isDarkMode ? 'dark' : 'light'} className='shadow-md fixed-sidebar'>
-            <Flex justify='space-between' vertical className='h-full pb-5'>
+          <Sider width={300} theme={isDarkMode ? 'dark' : 'light'} className='shadow-md fixed-sidebar'>
+            <Flex justify='space-between' vertical className='h-full w-full pb-5'>
               <Flex gap={10} vertical className='w-full px-5 grow mb-5'>
                 {sider}
               </Flex>
-              <Space size={10} align='center' className='cursor-pointer px-5 flex-none'>
-                <UserButton />
-                <Typography.Text>Profile</Typography.Text>
-              </Space>
+              <Flex justify='space-between' align='center' className='mr-5'>
+                <Space size={10} align='center' className='cursor-pointer px-5 flex-none'>
+                  <UserButton />
+                  <Typography.Text>Profile</Typography.Text>
+                </Space>
+                <Switch onChange={(e) => handleClick(e)} className='ml-5' checked={!!isDarkMode} />
+              </Flex>
             </Flex>
           </Sider>
           <Layout style={{ padding: '65px 0 24px 24px' }}>
@@ -99,7 +115,7 @@ const BaseLayout = ({
             <Content style={{ margin: '0 16px' }}>{children}</Content>
           </Layout>
           {rightSider && (
-            <Sider width={400} theme={isDarkMode ? 'dark' : 'light'} className='shadow-md'>
+            <Sider width={300} theme={isDarkMode ? 'dark' : 'light'} className='shadow-md'>
               {rightSider}
             </Sider>
           )}

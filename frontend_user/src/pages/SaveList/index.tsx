@@ -55,18 +55,27 @@ export default function SaveList() {
   return (
     <BaseLayout
       sider={
-        <div>
+        <Flex justify='space-between' align='center' vertical className='h-full w-full'>
+          <div className='w-full'>
+            {/* <SelectLabel
+            placeHolder='Sorted By'
+            optionData={options}
+            onChange={(value) => {
+              console.log(value)
+            }}
+            mode={undefined}
+            className='w-full'
+          />
           <Button block type='primary' onClick={() => navigate('/')}>
             Dashboard
+          </Button> */}
+          </div>
+          <Button size='large' block type='primary' onClick={() => setOpen(true)}>
+            Create Save List
           </Button>
-        </div>
+        </Flex>
       }
     >
-      <div className='text-right my-5'>
-        <Button type='primary' onClick={() => setOpen(true)}>
-          Create save list
-        </Button>
-      </div>
       <Card className='w-[800px] mx-auto'>
         <List
           dataSource={data}

@@ -1,23 +1,23 @@
-import BaseLayout from '@/components/BaseLayout'
-import SiderDashboard, { FilterType } from './components/SiderDashboard'
-import Card from '@/components/Card/index'
-import { Button, Dropdown, Image, Modal, Spin, Typography, message } from 'antd'
-import { useEffect, useState } from 'react'
-import IconReport from '@/assets/images/svg/IconReport'
-import RightSiderDashboard from './components/RightSiderDashboard'
-import { MoreOutlined } from '@ant-design/icons'
-import ModalReport from './components/ModalReport'
-import ModalComment from './components/ModalComment'
-import CreateUpdatePost from './components/CreateUpdatePost'
-import { useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
-import { RootState } from '@/store'
-import { useRequest } from 'ahooks'
 import api from '@/api'
-import dayjs from 'dayjs'
-import ModalSave from './components/ModalSave'
-import Vote from './components/Vote'
+import IconReport from '@/assets/images/svg/IconReport'
+import BaseLayout from '@/components/BaseLayout'
+import Card from '@/components/Card/index'
+import { RootState } from '@/store'
 import { PendingPost } from '@/types'
+import { MoreOutlined } from '@ant-design/icons'
+import { useRequest } from 'ahooks'
+import { Button, Dropdown, Image, Modal, Spin, Typography, message } from 'antd'
+import dayjs from 'dayjs'
+import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import CreateUpdatePost from './components/CreateUpdatePost'
+import ModalComment from './components/ModalComment'
+import ModalReport from './components/ModalReport'
+import ModalSave from './components/ModalSave'
+import RightSiderDashboard from './components/RightSiderDashboard'
+import SiderDashboard, { FilterType } from './components/SiderDashboard'
+import Vote from './components/Vote'
 
 export default function Dashboard() {
   const [modal, contextHolder] = Modal.useModal()
@@ -123,11 +123,11 @@ export default function Dashboard() {
     if (!filter) {
       setPostFilter(null)
     } else if (filter === 'image') {
-      getAllPostHasImages()
+      getAllPostHasImages(user?.id ?? 0)
     } else {
-      getAllPostHasVideos()
+      getAllPostHasVideos(user?.id ?? 0)
     }
-  }, [filter, getAllPostHasImages, getAllPostHasVideos])
+  }, [filter, getAllPostHasImages, getAllPostHasVideos, user])
 
   useEffect(() => {
     getPost({
@@ -139,19 +139,23 @@ export default function Dashboard() {
   const {
     data: postData,
     loading: postLoading,
-    run: getPost
-  } = useRequest(async ({ categoryID, tagID }: { categoryID?: number[]; tagID?: number[] }) => {
-    try {
-      const res = await api.postCategoryTag({
-        categoryID,
-        tagID,
-        currentUserId: Number(user?.id ?? 0)
-      })
-      return res
-    } catch (error) {
-      console.log(error)
+    run: getPost,
+    refresh
+  } = useRequest(
+    async ({ categoryID, tagID, searchValue }: { categoryID?: number[]; tagID?: number[]; searchValue?: string }) => {
+      try {
+        const res = await api.postCategoryTag({
+          categoryID,
+          tagID,
+          currentUserId: Number(user?.id ?? 0),
+          searchValue
+        })
+        return res
+      } catch (error) {
+        console.log(error)
+      }
     }
-  })
+  )
 
   useEffect(() => {
     if (!user) return
@@ -162,6 +166,10 @@ export default function Dashboard() {
 
   return (
     <BaseLayout
+      showSearch
+      onChangeSearch={(value) => {
+        getPost({ searchValue: value })
+      }}
       rightSider={<RightSiderDashboard />}
       sider={
         <SiderDashboard
@@ -197,6 +205,7 @@ export default function Dashboard() {
           return (
             <div key={post?.id} className='mb-10'>
               <Card
+                className='mx-auto'
                 onClickAvatar={() => navigate(`/profile/${post?.user?.id}`)}
                 user={{
                   username: post?.user?.name,
@@ -235,51 +244,55 @@ export default function Dashboard() {
                     </video>
                   ))
                 ]}
-                footer={[
-                  <div key={1} className='flex items-center'>
-                    <Vote
-                      vote={post?.upvotes ?? 0}
-                      postId={post.id}
-                      userId={user?.id}
-                      downvote={post.downvote}
-                      upvote={post.upvote}
-                      onVoteSuccess={() => {
-                        getPost({})
-                      }}
-                    />
-                  </div>,
-                  <div key={2} className='cursor-pointer'>
-                    <Typography
-                      onClick={() => {
-                        setOpenComment(true)
-                        setIdPost(post?.id)
-                      }}
-                    >
-                      Comment
-                    </Typography>
-                  </div>,
-                  <div key={3} className='cursor-pointer'>
-                    <Typography
-                      onClick={() => {
-                        // setOpenComment(true)
-                        setIdPost(post.id)
-                        setOpenSave(true)
-                      }}
-                    >
-                      Save
-                    </Typography>
-                  </div>,
-                  <div key={4} className='flex justify-end'>
-                    <div
-                      onClick={() => {
-                        setOpenReport(true)
-                        setIdPost(post?.id)
-                      }}
-                    >
-                      <IconReport color={isDarkMode ? '#fff' : '#000'} />
-                    </div>
-                  </div>
-                ]}
+                footer={
+                  user?.role === 'AD'
+                    ? []
+                    : [
+                        <div key={1} className='flex items-center'>
+                          <Vote
+                            vote={Number(post?.upvotes ?? 0) - Number(post?.downvote ?? 0)}
+                            postId={post.id}
+                            userId={user?.id}
+                            downvote={post.downvote}
+                            upvote={post.upvote}
+                            onVoteSuccess={() => {
+                              refresh()
+                            }}
+                          />
+                        </div>,
+                        <div key={2} className='cursor-pointer'>
+                          <Typography
+                            onClick={() => {
+                              setOpenComment(true)
+                              setIdPost(post?.id)
+                            }}
+                          >
+                            Comment
+                          </Typography>
+                        </div>,
+                        <div key={3} className='cursor-pointer'>
+                          <Typography
+                            onClick={() => {
+                              // setOpenComment(true)
+                              setIdPost(post.id)
+                              setOpenSave(true)
+                            }}
+                          >
+                            Save
+                          </Typography>
+                        </div>,
+                        <div key={4} className='flex justify-end'>
+                          <div
+                            onClick={() => {
+                              setOpenReport(true)
+                              setIdPost(post?.id)
+                            }}
+                          >
+                            <IconReport color={isDarkMode ? '#fff' : '#000'} />
+                          </div>
+                        </div>
+                      ]
+                }
               ></Card>
             </div>
           )
