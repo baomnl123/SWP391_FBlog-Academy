@@ -288,7 +288,7 @@ export default function Dashboard() {
                               setIdPost(post?.id)
                             }}
                           >
-                            <IconReport color={isDarkMode ? '#fff' : '#000'} />
+                            <IconReport color={isDarkMode ? '#c78243' : '#bc7838'} />
                           </div>
                         </div>
                       ]
