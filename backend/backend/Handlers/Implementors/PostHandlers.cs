@@ -505,8 +505,32 @@ namespace backend.Handlers.Implementors
                     if (!getCategories.Any(item => item.Id == onlyStudentCategory.Id))
                     {
                         var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(post.Id));
-                        post.User = (getUser is not null && getUser.Status) ? getUser : null;
 
+                        //get users follow relationship
+                        if (getUser != null)
+                        {
+                            if (getUser.Status)
+                            {
+                                var user = _userRepository.GetUser(getUser.Id);
+                                if (user != null)
+                                {
+                                    if (user.Status)
+                                    {
+                                        var followRelationship = _followUserRepository.GetFollowRelationship(currentUser, user);
+                                        if (followRelationship != null)
+                                        {
+                                            if (followRelationship.Status)
+                                            {
+                                                getUser.isFollowed = true;
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+
+                        post.User = (getUser is not null && getUser.Status) ? getUser : null;
 
                         post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
 
@@ -613,6 +637,31 @@ namespace backend.Handlers.Implementors
                         var postDTO = _mapper.Map<PostDTO>(post);
 
                         var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(postDTO.Id));
+
+                        //get users follow relationship
+                        if (getUser != null)
+                        {
+                            if (getUser.Status)
+                            {
+                                var user = _userRepository.GetUser(getUser.Id);
+                                if (user != null)
+                                {
+                                    if (user.Status)
+                                    {
+                                        var followRelationship = _followUserRepository.GetFollowRelationship(currentUser, user);
+                                        if (followRelationship != null)
+                                        {
+                                            if (followRelationship.Status)
+                                            {
+                                                getUser.isFollowed = true;
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+
                         postDTO.User = (getUser is not null && getUser.Status) ? getUser : null;
 
                         var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(postDTO.Id));
@@ -733,6 +782,7 @@ namespace backend.Handlers.Implementors
             foreach (var post in resultList)
             {
                 var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(post.Id));
+
                 post.User = (getUser is not null && getUser.Status) ? getUser : null;
 
                 var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(post.Id));
@@ -796,7 +846,7 @@ namespace backend.Handlers.Implementors
                 {
                     if (post.Status)
                     {
-                        
+
                         //init postDTO
                         var postDTO = _mapper.Map<PostDTO>(post);
 
@@ -804,6 +854,31 @@ namespace backend.Handlers.Implementors
                         if (!getCategories.Any(item => item.Id == onlyStudentCategory.Id))
                         {
                             var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(postDTO.Id));
+
+                            //get users follow relationship
+                            if (getUser != null)
+                            {
+                                if (getUser.Status)
+                                {
+                                    var user = _userRepository.GetUser(getUser.Id);
+                                    if (user != null)
+                                    {
+                                        if (user.Status)
+                                        {
+                                            var followRelationship = _followUserRepository.GetFollowRelationship(currentUser, user);
+                                            if (followRelationship != null)
+                                            {
+                                                if (followRelationship.Status)
+                                                {
+                                                    getUser.isFollowed = true;
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                }
+                            }
+
                             postDTO.User = (getUser is not null && getUser.Status) ? getUser : null;
 
                             postDTO.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
@@ -913,6 +988,31 @@ namespace backend.Handlers.Implementors
                         var postDTO = _mapper.Map<PostDTO>(post);
 
                         var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(postDTO.Id));
+
+                        //get users follow relationship
+                        if (getUser != null)
+                        {
+                            if (getUser.Status)
+                            {
+                                var user = _userRepository.GetUser(getUser.Id);
+                                if (user != null)
+                                {
+                                    if (user.Status)
+                                    {
+                                        var followRelationship = _followUserRepository.GetFollowRelationship(currentUser, user);
+                                        if (followRelationship != null)
+                                        {
+                                            if (followRelationship.Status)
+                                            {
+                                                getUser.isFollowed = true;
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+
                         postDTO.User = (getUser is not null && getUser.Status) ? getUser : null;
 
                         var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(postDTO.Id));
@@ -1327,6 +1427,31 @@ namespace backend.Handlers.Implementors
                         if (!getCategories.Any(item => item.Id == onlyStudentCategory.Id))
                         {
                             var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(postDTO.Id));
+
+                            //get users follow relationship
+                            if (getUser != null)
+                            {
+                                if (getUser.Status)
+                                {
+                                    var user = _userRepository.GetUser(getUser.Id);
+                                    if (user != null)
+                                    {
+                                        if (user.Status)
+                                        {
+                                            var followRelationship = _followUserRepository.GetFollowRelationship(currentUser, user);
+                                            if (followRelationship != null)
+                                            {
+                                                if (followRelationship.Status)
+                                                {
+                                                    getUser.isFollowed = true;
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                }
+                            }
+
                             postDTO.User = (getUser is not null && getUser.Status) ? getUser : null;
 
                             postDTO.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
@@ -1424,19 +1549,44 @@ namespace backend.Handlers.Implementors
             else
             {
                 var currentUser = _userRepository.GetUser(currentUserId);
-                if(currentUser == null || !currentUser.Status)
+                if (currentUser == null || !currentUser.Status)
                 {
                     return null;
                 }
                 foreach (var post in postList)
                 {
-                    
+
                     if (post.Status)
                     {
                         //init postDTO
                         var postDTO = _mapper.Map<PostDTO>(post);
 
                         var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(postDTO.Id));
+
+                        //get users follow relationship
+                        if (getUser != null)
+                        {
+                            if (getUser.Status)
+                            {
+                                var user = _userRepository.GetUser(getUser.Id);
+                                if (user != null)
+                                {
+                                    if (user.Status)
+                                    {
+                                        var followRelationship = _followUserRepository.GetFollowRelationship(currentUser, user);
+                                        if (followRelationship != null)
+                                        {
+                                            if (followRelationship.Status)
+                                            {
+                                                getUser.isFollowed = true;
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+
                         postDTO.User = (getUser is not null && getUser.Status) ? getUser : null;
 
                         var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(postDTO.Id));
@@ -1573,6 +1723,31 @@ namespace backend.Handlers.Implementors
                 if (currentUser.Status)
                 {
                     var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(existingPost.Id));
+
+                    //get users follow relationship
+                    if (getUser != null)
+                    {
+                        if (getUser.Status)
+                        {
+                            var user = _userRepository.GetUser(getUser.Id);
+                            if (user != null)
+                            {
+                                if (user.Status)
+                                {
+                                    var followRelationship = _followUserRepository.GetFollowRelationship(currentUser, user);
+                                    if (followRelationship != null)
+                                    {
+                                        if (followRelationship.Status)
+                                        {
+                                            getUser.isFollowed = true;
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+
                     existingPost.User = (getUser is not null && getUser.Status) ? getUser : null;
 
                     var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(existingPost.Id));
@@ -1773,7 +1948,8 @@ namespace backend.Handlers.Implementors
                 if (i < 5) break;
                 sortedCollection.Remove(sortedCollection[i]);
             }
-            if(sortedCollection.Count > 5) {
+            if (sortedCollection.Count > 5)
+            {
                 sortedCollection = sortedCollection.GetRange(0, 5);
             }
             return sortedCollection;
