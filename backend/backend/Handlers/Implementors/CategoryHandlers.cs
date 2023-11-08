@@ -262,8 +262,8 @@ namespace backend.Handlers.Implementors
                                 topVotePosts = votePost.Count;
                             }
                         }
-                        map.Add(category, topVotePosts);
                     }
+                    map.Add(category, topVotePosts);
                 }
             }
             var sortedMap = map.OrderByDescending(p => p.Value)
@@ -272,6 +272,10 @@ namespace backend.Handlers.Implementors
             if (keysList == null || keysList.Count == 0)
             {
                 return null;
+            }
+            if(keysList.Count > 5)
+            {
+                keysList = keysList.GetRange(0, 5);
             }
             return keysList;
         }
