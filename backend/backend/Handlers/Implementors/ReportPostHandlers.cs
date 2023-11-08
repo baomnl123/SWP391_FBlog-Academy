@@ -158,7 +158,22 @@ namespace backend.Handlers.Implementors
                 return null;
             }
 
-            return _mapper.Map<ReportPostDTO>(reportPost);
+            var reportPostDTO = _mapper.Map<ReportPostDTO>(reportPost);
+
+            var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUser(reportPost.ReporterId));
+            var getPost = _mapper.Map<PostDTO?>(_postRepository.GetPost(reportPost.PostId));
+            if ((getUser != null || getUser.Status) && (getPost != null || getPost.Status))
+            {
+                reportPostDTO.Reporter = (getUser is not null && getUser.Status) ? getUser : null;
+                reportPostDTO.Post = (getPost is not null && getPost.Status) ? getPost : null;
+                if (reportPost.AdminId != null && reportPost.AdminId != 0)
+                {
+                    var getAdmin = _mapper.Map<UserDTO?>(_userRepository.GetUser(reportPost.AdminId.HasValue ? reportPost.AdminId.Value : 0));
+                    reportPostDTO.Admin = (getAdmin is not null && getAdmin.Status) ? getAdmin : null;
+                }
+            }
+
+            return reportPostDTO;
         }
 
         public ICollection<ReportPostDTO>? GetAllPendingReportPost()
