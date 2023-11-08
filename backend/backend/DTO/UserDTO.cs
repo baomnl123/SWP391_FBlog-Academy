@@ -11,5 +11,6 @@
         public DateTime? UpdatedAt { get; set; }
         public bool Status { get; set; }
         public bool? IsAwarded { get; set; }
+        public bool isFollowed { get; set; } = false;
     }
 }

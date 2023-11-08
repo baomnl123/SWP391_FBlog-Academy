@@ -118,10 +118,10 @@ namespace backend.Controllers
         /// </summary>
         /// <param name="currentUserID"></param>
         /// <returns></returns>
-        [HttpGet("{currentUserID}/follower")]
-        public IActionResult GetAllFollower(int currentUserID)
+        [HttpGet("{userID}/follower")]
+        public IActionResult GetAllFollower(int currentUserID, int userID)
         {
-            var listFollowers = _followUserHandlers.GetAllFollowerUsers(currentUserID);
+            var listFollowers = _followUserHandlers.GetAllFollowerUsers(currentUserID,userID);
 
             if (listFollowers == null || listFollowers.Count == 0)
             {
@@ -138,9 +138,9 @@ namespace backend.Controllers
         /// <param name="currentUserID"></param>
         /// <returns></returns>
         [HttpGet("{currentUserID}/following")]
-        public IActionResult GetAllFollowing(int currentUserID)
+        public IActionResult GetAllFollowing(int currentUserID,int userID)
         {
-            var listFollowings = _followUserHandlers.GetAllFollowingUsers(currentUserID);
+            var listFollowings = _followUserHandlers.GetAllFollowingUsers(currentUserID, userID);
 
             if (listFollowings == null || listFollowings.Count == 0)
             {
