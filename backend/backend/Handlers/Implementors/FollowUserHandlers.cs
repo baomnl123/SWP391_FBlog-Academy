@@ -90,8 +90,31 @@ namespace backend.Handlers.Implementors
             {
                 return null;
             }
+
+            var newFollowRelationshipDTO = _mapper.Map<FollowUserDTO>(newRelationship);
+
+            //attach to DTO
+            var follower = _userHandlers.GetUser(currentUserID);
+            if (follower != null)
+            {
+                if (follower.Status)
+                {
+                    newFollowRelationshipDTO.Follower = follower;
+                }
+            }
+
+            //attach to DTO
+            var followed = _userHandlers.GetUser(userID);
+            if (followed != null)
+            {
+                if (followed.Status)
+                {
+                    newFollowRelationshipDTO.Followed = followed;
+                }
+            }
+
             //Return
-            return _mapper.Map<FollowUserDTO>(newRelationship);
+            return newFollowRelationshipDTO;
         }
 
         public ICollection<UserDTO>? GetAllFollowerUsers(int currentUserID, int userID)
@@ -240,7 +263,30 @@ namespace backend.Handlers.Implementors
             {
                 return null;
             }
-            return _mapper.Map<FollowUserDTO>(followRelationship);
+
+            var followRelationshipDTO = _mapper.Map<FollowUserDTO>(followRelationship);
+
+            //attach to DTO
+            var follower = _userHandlers.GetUser(currentUserID);
+            if (follower != null)
+            {
+                if (follower.Status)
+                {
+                    followRelationshipDTO.Follower = follower;
+                }
+            }
+
+            //attach to DTO
+            var followed = _userHandlers.GetUser(userID);
+            if (followed != null)
+            {
+                if (followed.Status)
+                {
+                    followRelationshipDTO.Followed = followed;
+                }
+            }
+
+            return followRelationshipDTO;
         }
     }
 }
