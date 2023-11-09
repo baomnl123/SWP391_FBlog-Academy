@@ -19,6 +19,7 @@ export default function PrivateRoute() {
     },
     {
       onError(e) {
+        signOut(() => navigate('/'))
         console.error(e)
       }
     }
