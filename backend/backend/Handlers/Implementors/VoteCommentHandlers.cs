@@ -9,6 +9,8 @@ namespace backend.Handlers.Implementors
 {
     public class VoteCommentHandlers : IVoteCommentHandlers
     {
+        private readonly ICommentHandlers _commentHandlers;
+        private readonly IUserHandlers _userHandlers;
         private readonly IVoteCommentRepository _voteCommentRepository;
         private readonly IUserRepository _userRepository;
         private readonly ICommentRepository _commentRepository;
@@ -17,12 +19,16 @@ namespace backend.Handlers.Implementors
         public VoteCommentHandlers(IVoteCommentRepository voteCommentRepository,
                                     IUserRepository userRepository,
                                     ICommentRepository commentRepository,
-                                    IMapper mapper)
+                                    IMapper mapper,
+                                    ICommentHandlers commentHandlers,
+                                    IUserHandlers userHandlers)
         {
             _voteCommentRepository = voteCommentRepository;
             _userRepository = userRepository;
             _commentRepository = commentRepository;
             _mapper = mapper;
+            _commentHandlers = commentHandlers;
+            _userHandlers = userHandlers;
         }
 
         public VoteCommentDTO? CreateVote(int currentUserId, int commentId, bool vote)
@@ -55,7 +61,16 @@ namespace backend.Handlers.Implementors
                     existedVote.CreateAt = DateTime.Now;
                 };
                 if (!_voteCommentRepository.Update(existedVote)) return null;
-                return _mapper.Map<VoteCommentDTO>(existedVote);
+
+                var existedVoteDTO = _mapper.Map<VoteCommentDTO>(existedVote);
+
+                var userDTO = _userHandlers.GetUser(currentUserId);
+                existedVoteDTO.User = userDTO;
+
+                var commentDTO = _commentHandlers.GetCommentBy(commentId);
+                existedVoteDTO.Comment = commentDTO;
+
+                return existedVoteDTO;
             }
 
             //Create new vote
@@ -80,7 +95,16 @@ namespace backend.Handlers.Implementors
 
             //Add new vote to database
             if (!_voteCommentRepository.Add(newVote)) return null;
-            return _mapper.Map<VoteCommentDTO>(newVote);
+
+            var newVoteDTO = _mapper.Map<VoteCommentDTO>(newVote);
+
+            var newUserDTO = _userHandlers.GetUser(currentUserId);
+            newVoteDTO.User = newUserDTO;
+
+            var newCommentDTO = _commentHandlers.GetCommentBy(commentId);
+            newVoteDTO.Comment = newCommentDTO;
+
+            return newVoteDTO;
         }
 
         public ICollection<UserDTO>? GetAllUsersVotedBy(int commentId)
@@ -122,7 +146,15 @@ namespace backend.Handlers.Implementors
 
             //update to databse
             if (!_voteCommentRepository.Update(existedVote)) return null;
-            return _mapper.Map<VoteCommentDTO>(existedVote);
+
+            var existedVoteDTO = _mapper.Map<VoteCommentDTO>(existedVote);
+
+            var userDTO = _userHandlers.GetUser(currentUserId);
+            existedVoteDTO.User = userDTO;
+
+            var commentDTO = _commentHandlers.GetCommentBy(commentId);
+            existedVoteDTO.Comment = commentDTO;
+            return existedVoteDTO;
         }
 
         public VoteCommentDTO? DisableVote(int currentUserId, int commentId)
@@ -144,7 +176,16 @@ namespace backend.Handlers.Implementors
 
             //update to database
             if (!_voteCommentRepository.Update(existedVote)) return null;
-            return _mapper.Map<VoteCommentDTO>(existedVote);
+
+            var existedVoteDTO = _mapper.Map<VoteCommentDTO>(existedVote);
+
+            var userDTO = _userHandlers.GetUser(currentUserId);
+            existedVoteDTO.User = userDTO;
+
+            var commentDTO = _commentHandlers.GetCommentBy(commentId);
+            existedVoteDTO.Comment = commentDTO;
+            
+            return existedVoteDTO;
         }
     }
 }
