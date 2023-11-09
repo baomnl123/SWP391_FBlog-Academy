@@ -9,17 +9,21 @@ namespace backend.Handlers.Implementors
 {
     public class VotePostHandlers : IVotePostHandlers
     {
+        private readonly IPostHandlers _postHandlers;
+        private readonly IUserHandlers _userHandlers;
         private readonly IUserRepository _userRepository;
         private readonly IPostRepository _postRepository;
         private readonly IVotePostRepository _votePostRepository;
         private readonly IMapper _mapper;
 
-        public VotePostHandlers(IUserRepository userRepository, IPostRepository postRepository, IVotePostRepository votePostRepository, IMapper mapper)
+        public VotePostHandlers(IUserRepository userRepository, IPostRepository postRepository, IVotePostRepository votePostRepository, IMapper mapper, IUserHandlers userHandlers, IPostHandlers postHandlers)
         {
             _userRepository = userRepository;
             _postRepository = postRepository;
             _votePostRepository = votePostRepository;
             _mapper = mapper;
+            _userHandlers = userHandlers;
+            _postHandlers = postHandlers;
         }
         public VotePostDTO? CreateNewVotePost(int currentUserId, int postId, bool vote)
         {
@@ -51,7 +55,16 @@ namespace backend.Handlers.Implementors
                     existedVote.CreatedAt = DateTime.Now;
                 };
                 if (!_votePostRepository.Update(existedVote)) return null;
-                return _mapper.Map<VotePostDTO>(existedVote);
+
+                var existedVoteDTO = _mapper.Map<VotePostDTO>(existedVote);
+
+                var userDTO = _userHandlers.GetUser(currentUserId);
+                existedVoteDTO.User = userDTO;
+
+                var postDTO = _postHandlers.GetPostBy(postId, currentUserId);
+                existedVoteDTO.Post = postDTO;
+
+                return existedVoteDTO;
             }
 
             //Create new vote
@@ -76,7 +89,16 @@ namespace backend.Handlers.Implementors
 
             //Add new vote to database
             if (!_votePostRepository.Add(newVote)) return null;
-            return _mapper.Map<VotePostDTO>(newVote);
+
+            var newVoteDTO = _mapper.Map<VotePostDTO>(newVote);
+
+            var newUserDTO = _userHandlers.GetUser(currentUserId);
+            newVoteDTO.User = newUserDTO;
+
+            var newPostDTO = _postHandlers.GetPostBy(postId, currentUserId);
+            newVoteDTO.Post = newPostDTO;
+
+            return newVoteDTO;
         }
 
         public VotePostDTO? DisableVotePost(int currentUserId, int postId)
@@ -99,7 +121,16 @@ namespace backend.Handlers.Implementors
 
             //update to database
             if (!_votePostRepository.Update(existedVote)) return null;
-            return _mapper.Map<VotePostDTO>(existedVote);
+
+            var existedVoteDTO = _mapper.Map<VotePostDTO>(existedVote);
+
+            var userDTO = _userHandlers.GetUser(currentUserId);
+            existedVoteDTO.User = userDTO;
+
+            var postDTO = _postHandlers.GetPostBy(postId, currentUserId);
+            existedVoteDTO.Post = postDTO;
+
+            return existedVoteDTO;
         }
 
         public ICollection<UserDTO>? GetAllUsersVotedBy(int postId)
@@ -180,7 +211,16 @@ namespace backend.Handlers.Implementors
             if (!_votePostRepository.Update(existedVote)) return null;
 
             //return VotePost object if updating is successful
-            return _mapper.Map<VotePostDTO>(existedVote);
+
+            var existedVoteDTO = _mapper.Map<VotePostDTO>(existedVote);
+
+            var userDTO = _userHandlers.GetUser(currentUserId);
+            existedVoteDTO.User = userDTO;
+
+            var postDTO = _postHandlers.GetPostBy(postId, currentUserId);
+            existedVoteDTO.Post = postDTO;
+
+            return existedVoteDTO;
         }
     }
 }
