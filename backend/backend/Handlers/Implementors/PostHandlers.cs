@@ -472,7 +472,7 @@ namespace backend.Handlers.Implementors
 
             //update info to database
             if (!_postRepository.UpdatePost(existedPost)) return null;
-            return _mapper.Map<PostDTO>(existedPost);
+            return successDisabled;
         }
 
         public ICollection<PostDTO>? GetAllPosts(int currentUserId)
