@@ -14,6 +14,7 @@ namespace backend.Handlers.Implementors
 {
     public class PostHandlers : IPostHandlers
     {
+        private readonly IFollowUserRepository _followUserRepository;
         private readonly IPostRepository _postRepository;
         private readonly IUserRepository _userRepository;
         private readonly IVideoHandlers _videoHandlers;
@@ -38,7 +39,8 @@ namespace backend.Handlers.Implementors
                             IPostCategoryRepository postCategoryRepository,
                             IVotePostRepository votePostRepository,
                             ICategoryRepository categoryRepository,
-                            IMapper mapper)
+                            IMapper mapper,
+                            IFollowUserRepository followUserRepository)
         {
             _postRepository = postRepository;
             _mapper = mapper;
@@ -53,6 +55,7 @@ namespace backend.Handlers.Implementors
             _categoryRepository = categoryRepository;
             _userRoleConstrant = new UserRoleConstrant();
             _specialCategories = new SpecialCategories();
+            _followUserRepository = followUserRepository;
         }
 
         public PostDTO? ApprovePost(int reviewerId, int postId)
@@ -483,7 +486,7 @@ namespace backend.Handlers.Implementors
             var onlyStudentCategory = _categoryRepository.GetCategoryByName(_specialCategories.GetOnlyStudent());
             var validViewer = CheckCurrentUser(currentUserId);
 
-            if(validViewer == null || !validViewer.Status)
+            if (validViewer == null || !validViewer.Status)
             {
                 foreach (var post in resultList)
                 {
@@ -525,6 +528,11 @@ namespace backend.Handlers.Implementors
 
             if (validViewer.Role.Contains(_userRoleConstrant.GetLecturerRole()))
             {
+                var currentUser = _userRepository.GetUser(currentUserId);
+                if (currentUser == null || !currentUser.Status)
+                {
+                    return null;
+                }
                 //get related data for all post
                 foreach (var post in resultList)
                 {
@@ -532,8 +540,32 @@ namespace backend.Handlers.Implementors
                     if (!getCategories.Any(item => item.Id == onlyStudentCategory.Id))
                     {
                         var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(post.Id));
-                        post.User = (getUser is not null && getUser.Status) ? getUser : null;
 
+                        //get users follow relationship
+                        if (getUser != null)
+                        {
+                            if (getUser.Status)
+                            {
+                                var user = _userRepository.GetUser(getUser.Id);
+                                if (user != null)
+                                {
+                                    if (user.Status)
+                                    {
+                                        var followRelationship = _followUserRepository.GetFollowRelationship(currentUser, user);
+                                        if (followRelationship != null)
+                                        {
+                                            if (followRelationship.Status)
+                                            {
+                                                getUser.isFollowed = true;
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+
+                        post.User = (getUser is not null && getUser.Status) ? getUser : null;
 
                         post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
 
@@ -549,16 +581,70 @@ namespace backend.Handlers.Implementors
                         var postUpvote = _votePostRepository.GetAllUsersVotedBy(post.Id);
 
                         var UsersUpvote = _mapper.Map<List<UserDTO>>(postUpvote);
+
+                        //get users follow relationship
+                        if (UsersUpvote != null)
+                        {
+                            if (UsersUpvote.Count > 0)
+                            {
+                                foreach (var userDTO in UsersUpvote)
+                                {
+                                    var user = _userRepository.GetUser(userDTO.Id);
+                                    if (user != null)
+                                    {
+                                        if (user.Status)
+                                        {
+                                            var followRelationship = _followUserRepository.GetFollowRelationship(currentUser, user);
+                                            if (followRelationship != null)
+                                            {
+                                                if (followRelationship.Status)
+                                                {
+                                                    userDTO.isFollowed = true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                         post.UsersUpvote = (UsersUpvote is not null && UsersUpvote.Count > 0) ? UsersUpvote : new List<UserDTO>();
                         post.Upvotes = (UsersUpvote == null || UsersUpvote.Count == 0) ? 0 : UsersUpvote.Count;
 
                         var postDownvote = _votePostRepository.GetAllUsersDownVotedBy(post.Id);
 
                         var UsersDownvote = _mapper.Map<List<UserDTO>>(postDownvote);
+
+                        //get users follow relationship
+                        if (UsersDownvote != null)
+                        {
+                            if (UsersDownvote.Count > 0)
+                            {
+                                foreach (var userDTO in UsersDownvote)
+                                {
+                                    var user = _userRepository.GetUser(userDTO.Id);
+                                    if (user != null)
+                                    {
+                                        if (user.Status)
+                                        {
+                                            var followRelationship = _followUserRepository.GetFollowRelationship(currentUser, user);
+                                            if (followRelationship != null)
+                                            {
+                                                if (followRelationship.Status)
+                                                {
+                                                    userDTO.isFollowed = true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                         post.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
                         post.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
 
-                        
+
                         if (validViewer != null)
                         {
                             var vote = _votePostRepository.GetVotePost(currentUserId, post.Id);
@@ -574,6 +660,11 @@ namespace backend.Handlers.Implementors
             }
             else
             {
+                var currentUser = _userRepository.GetUser(currentUserId);
+                if (currentUser == null || !currentUser.Status)
+                {
+                    return null;
+                }
                 foreach (var post in resultList)
                 {
                     if (post.Status)
@@ -581,6 +672,31 @@ namespace backend.Handlers.Implementors
                         var postDTO = _mapper.Map<PostDTO>(post);
 
                         var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(postDTO.Id));
+
+                        //get users follow relationship
+                        if (getUser != null)
+                        {
+                            if (getUser.Status)
+                            {
+                                var user = _userRepository.GetUser(getUser.Id);
+                                if (user != null)
+                                {
+                                    if (user.Status)
+                                    {
+                                        var followRelationship = _followUserRepository.GetFollowRelationship(currentUser, user);
+                                        if (followRelationship != null)
+                                        {
+                                            if (followRelationship.Status)
+                                            {
+                                                getUser.isFollowed = true;
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+
                         postDTO.User = (getUser is not null && getUser.Status) ? getUser : null;
 
                         var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(postDTO.Id));
@@ -598,12 +714,66 @@ namespace backend.Handlers.Implementors
                         var postUpvote = _votePostRepository.GetAllUsersVotedBy(postDTO.Id);
 
                         var UsersUpvote = _mapper.Map<List<UserDTO>>(postUpvote);
+
+                        //get users follow relationship
+                        if (UsersUpvote != null)
+                        {
+                            if (UsersUpvote.Count > 0)
+                            {
+                                foreach (var userDTO in UsersUpvote)
+                                {
+                                    var user = _userRepository.GetUser(userDTO.Id);
+                                    if (user != null)
+                                    {
+                                        if (user.Status)
+                                        {
+                                            var followRelationship = _followUserRepository.GetFollowRelationship(currentUser, user);
+                                            if (followRelationship != null)
+                                            {
+                                                if (followRelationship.Status)
+                                                {
+                                                    userDTO.isFollowed = true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                         postDTO.UsersUpvote = (UsersUpvote is not null && UsersUpvote.Count > 0) ? UsersUpvote : new List<UserDTO>();
                         postDTO.Upvotes = (UsersUpvote == null || UsersUpvote.Count == 0) ? 0 : UsersUpvote.Count;
 
                         var postDownvote = _votePostRepository.GetAllUsersDownVotedBy(postDTO.Id);
 
                         var UsersDownvote = _mapper.Map<List<UserDTO>>(postDownvote);
+
+                        //get users follow relationship
+                        if (UsersDownvote != null)
+                        {
+                            if (UsersDownvote.Count > 0)
+                            {
+                                foreach (var userDTO in UsersDownvote)
+                                {
+                                    var user = _userRepository.GetUser(userDTO.Id);
+                                    if (user != null)
+                                    {
+                                        if (user.Status)
+                                        {
+                                            var followRelationship = _followUserRepository.GetFollowRelationship(currentUser, user);
+                                            if (followRelationship != null)
+                                            {
+                                                if (followRelationship.Status)
+                                                {
+                                                    userDTO.isFollowed = true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                         postDTO.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
                         postDTO.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
 
@@ -618,7 +788,6 @@ namespace backend.Handlers.Implementors
                             }
                         }
                     }
-
                 }
             }
             //return posts'list
@@ -648,6 +817,7 @@ namespace backend.Handlers.Implementors
             foreach (var post in resultList)
             {
                 var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(post.Id));
+
                 post.User = (getUser is not null && getUser.Status) ? getUser : null;
 
                 var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(post.Id));
@@ -702,10 +872,16 @@ namespace backend.Handlers.Implementors
             var validViewer = CheckCurrentUser(currentUserId);
             if (validViewer.Role.Contains(_userRoleConstrant.GetLecturerRole()))
             {
+                var currentUser = _userRepository.GetUser(currentUserId);
+                if (currentUser == null || !currentUser.Status)
+                {
+                    return null;
+                }
                 foreach (var post in list)
                 {
                     if (post.Status)
                     {
+
                         //init postDTO
                         var postDTO = _mapper.Map<PostDTO>(post);
 
@@ -713,6 +889,31 @@ namespace backend.Handlers.Implementors
                         if (!getCategories.Any(item => item.Id == onlyStudentCategory.Id))
                         {
                             var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(postDTO.Id));
+
+                            //get users follow relationship
+                            if (getUser != null)
+                            {
+                                if (getUser.Status)
+                                {
+                                    var user = _userRepository.GetUser(getUser.Id);
+                                    if (user != null)
+                                    {
+                                        if (user.Status)
+                                        {
+                                            var followRelationship = _followUserRepository.GetFollowRelationship(currentUser, user);
+                                            if (followRelationship != null)
+                                            {
+                                                if (followRelationship.Status)
+                                                {
+                                                    getUser.isFollowed = true;
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                }
+                            }
+
                             postDTO.User = (getUser is not null && getUser.Status) ? getUser : null;
 
                             postDTO.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
@@ -729,12 +930,66 @@ namespace backend.Handlers.Implementors
                             var postUpvote = _votePostRepository.GetAllUsersVotedBy(postDTO.Id);
 
                             var UsersUpvote = _mapper.Map<List<UserDTO>>(postUpvote);
+
+                            //get users follow relationship
+                            if (UsersUpvote != null)
+                            {
+                                if (UsersUpvote.Count > 0)
+                                {
+                                    foreach (var userDTO in UsersUpvote)
+                                    {
+                                        var user = _userRepository.GetUser(userDTO.Id);
+                                        if (user != null)
+                                        {
+                                            if (user.Status)
+                                            {
+                                                var followRelationship = _followUserRepository.GetFollowRelationship(currentUser, user);
+                                                if (followRelationship != null)
+                                                {
+                                                    if (followRelationship.Status)
+                                                    {
+                                                        userDTO.isFollowed = true;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
                             postDTO.UsersUpvote = (UsersUpvote is not null && UsersUpvote.Count > 0) ? UsersUpvote : new List<UserDTO>();
                             postDTO.Upvotes = (UsersUpvote == null || UsersUpvote.Count == 0) ? 0 : UsersUpvote.Count;
 
                             var postDownvote = _votePostRepository.GetAllUsersDownVotedBy(postDTO.Id);
 
                             var UsersDownvote = _mapper.Map<List<UserDTO>>(postDownvote);
+
+                            //get users follow relationship
+                            if (UsersDownvote != null)
+                            {
+                                if (UsersDownvote.Count > 0)
+                                {
+                                    foreach (var userDTO in UsersDownvote)
+                                    {
+                                        var user = _userRepository.GetUser(userDTO.Id);
+                                        if (user != null)
+                                        {
+                                            if (user.Status)
+                                            {
+                                                var followRelationship = _followUserRepository.GetFollowRelationship(currentUser, user);
+                                                if (followRelationship != null)
+                                                {
+                                                    if (followRelationship.Status)
+                                                    {
+                                                        userDTO.isFollowed = true;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
                             postDTO.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
                             postDTO.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
 
@@ -756,6 +1011,11 @@ namespace backend.Handlers.Implementors
             }
             else
             {
+                var currentUser = _userRepository.GetUser(currentUserId);
+                if (currentUser == null || !currentUser.Status)
+                {
+                    return null;
+                }
                 foreach (var post in list)
                 {
                     if (post.Status)
@@ -763,6 +1023,31 @@ namespace backend.Handlers.Implementors
                         var postDTO = _mapper.Map<PostDTO>(post);
 
                         var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(postDTO.Id));
+
+                        //get users follow relationship
+                        if (getUser != null)
+                        {
+                            if (getUser.Status)
+                            {
+                                var user = _userRepository.GetUser(getUser.Id);
+                                if (user != null)
+                                {
+                                    if (user.Status)
+                                    {
+                                        var followRelationship = _followUserRepository.GetFollowRelationship(currentUser, user);
+                                        if (followRelationship != null)
+                                        {
+                                            if (followRelationship.Status)
+                                            {
+                                                getUser.isFollowed = true;
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+
                         postDTO.User = (getUser is not null && getUser.Status) ? getUser : null;
 
                         var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(postDTO.Id));
@@ -780,12 +1065,66 @@ namespace backend.Handlers.Implementors
                         var postUpvote = _votePostRepository.GetAllUsersVotedBy(postDTO.Id);
 
                         var UsersUpvote = _mapper.Map<List<UserDTO>>(postUpvote);
+
+                        //get users follow relationship
+                        if (UsersUpvote != null)
+                        {
+                            if (UsersUpvote.Count > 0)
+                            {
+                                foreach (var userDTO in UsersUpvote)
+                                {
+                                    var user = _userRepository.GetUser(userDTO.Id);
+                                    if (user != null)
+                                    {
+                                        if (user.Status)
+                                        {
+                                            var followRelationship = _followUserRepository.GetFollowRelationship(currentUser, user);
+                                            if (followRelationship != null)
+                                            {
+                                                if (followRelationship.Status)
+                                                {
+                                                    userDTO.isFollowed = true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                         postDTO.UsersUpvote = (UsersUpvote is not null && UsersUpvote.Count > 0) ? UsersUpvote : new List<UserDTO>();
                         postDTO.Upvotes = (UsersUpvote == null || UsersUpvote.Count == 0) ? 0 : UsersUpvote.Count;
 
                         var postDownvote = _votePostRepository.GetAllUsersDownVotedBy(postDTO.Id);
 
                         var UsersDownvote = _mapper.Map<List<UserDTO>>(postDownvote);
+
+                        //get users follow relationship
+                        if (UsersDownvote != null)
+                        {
+                            if (UsersDownvote.Count > 0)
+                            {
+                                foreach (var userDTO in UsersDownvote)
+                                {
+                                    var user = _userRepository.GetUser(userDTO.Id);
+                                    if (user != null)
+                                    {
+                                        if (user.Status)
+                                        {
+                                            var followRelationship = _followUserRepository.GetFollowRelationship(currentUser, user);
+                                            if (followRelationship != null)
+                                            {
+                                                if (followRelationship.Status)
+                                                {
+                                                    userDTO.isFollowed = true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                         postDTO.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
                         postDTO.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
 
@@ -805,7 +1144,7 @@ namespace backend.Handlers.Implementors
                 }
             }
             //get related data for all post
-            
+
 
             //return posts'list
             return resultList;
@@ -1057,6 +1396,7 @@ namespace backend.Handlers.Implementors
                 var postUpvote = _votePostRepository.GetAllUsersVotedBy(post.Id);
 
                 var UsersUpvote = _mapper.Map<List<UserDTO>>(postUpvote);
+
                 post.UsersUpvote = (UsersUpvote is not null && UsersUpvote.Count > 0) ? UsersUpvote : new List<UserDTO>();
                 post.Upvotes = (UsersUpvote == null || UsersUpvote.Count == 0) ? 0 : UsersUpvote.Count;
 
@@ -1106,6 +1446,11 @@ namespace backend.Handlers.Implementors
 
             if (validViewer.Role.Contains(_userRoleConstrant.GetLecturerRole()))
             {
+                var currentUser = _userRepository.GetUser(currentUserId);
+                if (currentUser == null || !currentUser.Status)
+                {
+                    return null;
+                }
                 foreach (var post in postList)
                 {
                     if (post.Status)
@@ -1117,6 +1462,31 @@ namespace backend.Handlers.Implementors
                         if (!getCategories.Any(item => item.Id == onlyStudentCategory.Id))
                         {
                             var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(postDTO.Id));
+
+                            //get users follow relationship
+                            if (getUser != null)
+                            {
+                                if (getUser.Status)
+                                {
+                                    var user = _userRepository.GetUser(getUser.Id);
+                                    if (user != null)
+                                    {
+                                        if (user.Status)
+                                        {
+                                            var followRelationship = _followUserRepository.GetFollowRelationship(currentUser, user);
+                                            if (followRelationship != null)
+                                            {
+                                                if (followRelationship.Status)
+                                                {
+                                                    getUser.isFollowed = true;
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                }
+                            }
+
                             postDTO.User = (getUser is not null && getUser.Status) ? getUser : null;
 
                             postDTO.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
@@ -1133,12 +1503,66 @@ namespace backend.Handlers.Implementors
                             var postUpvote = _votePostRepository.GetAllUsersVotedBy(postDTO.Id);
 
                             var UsersUpvote = _mapper.Map<List<UserDTO>>(postUpvote);
+
+                            //get users follow relationship
+                            if (UsersUpvote != null)
+                            {
+                                if (UsersUpvote.Count > 0)
+                                {
+                                    foreach (var userDTO in UsersUpvote)
+                                    {
+                                        var user = _userRepository.GetUser(userDTO.Id);
+                                        if (user != null)
+                                        {
+                                            if (user.Status)
+                                            {
+                                                var followRelationship = _followUserRepository.GetFollowRelationship(currentUser, user);
+                                                if (followRelationship != null)
+                                                {
+                                                    if (followRelationship.Status)
+                                                    {
+                                                        userDTO.isFollowed = true;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
                             postDTO.UsersUpvote = (UsersUpvote is not null && UsersUpvote.Count > 0) ? UsersUpvote : new List<UserDTO>();
                             postDTO.Upvotes = (UsersUpvote == null || UsersUpvote.Count == 0) ? 0 : UsersUpvote.Count;
 
                             var postDownvote = _votePostRepository.GetAllUsersDownVotedBy(postDTO.Id);
 
                             var UsersDownvote = _mapper.Map<List<UserDTO>>(postDownvote);
+
+                            //get users follow relationship
+                            if (UsersDownvote != null)
+                            {
+                                if (UsersDownvote.Count > 0)
+                                {
+                                    foreach (var userDTO in UsersDownvote)
+                                    {
+                                        var user = _userRepository.GetUser(userDTO.Id);
+                                        if (user != null)
+                                        {
+                                            if (user.Status)
+                                            {
+                                                var followRelationship = _followUserRepository.GetFollowRelationship(currentUser, user);
+                                                if (followRelationship != null)
+                                                {
+                                                    if (followRelationship.Status)
+                                                    {
+                                                        userDTO.isFollowed = true;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
                             postDTO.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
                             postDTO.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
 
@@ -1152,7 +1576,6 @@ namespace backend.Handlers.Implementors
                                     postDTO.Downvote = vote.DownVote;
                                 }
                             }
-
                             postListDTO.Add(postDTO);
                         }
                     }
@@ -1160,14 +1583,45 @@ namespace backend.Handlers.Implementors
             }
             else
             {
+                var currentUser = _userRepository.GetUser(currentUserId);
+                if (currentUser == null || !currentUser.Status)
+                {
+                    return null;
+                }
                 foreach (var post in postList)
                 {
+
                     if (post.Status)
                     {
                         //init postDTO
                         var postDTO = _mapper.Map<PostDTO>(post);
 
                         var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(postDTO.Id));
+
+                        //get users follow relationship
+                        if (getUser != null)
+                        {
+                            if (getUser.Status)
+                            {
+                                var user = _userRepository.GetUser(getUser.Id);
+                                if (user != null)
+                                {
+                                    if (user.Status)
+                                    {
+                                        var followRelationship = _followUserRepository.GetFollowRelationship(currentUser, user);
+                                        if (followRelationship != null)
+                                        {
+                                            if (followRelationship.Status)
+                                            {
+                                                getUser.isFollowed = true;
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+
                         postDTO.User = (getUser is not null && getUser.Status) ? getUser : null;
 
                         var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(postDTO.Id));
@@ -1185,15 +1639,68 @@ namespace backend.Handlers.Implementors
                         var postUpvote = _votePostRepository.GetAllUsersVotedBy(postDTO.Id);
 
                         var UsersUpvote = _mapper.Map<List<UserDTO>>(postUpvote);
+
+                        //get users follow relationship
+                        if (UsersUpvote != null)
+                        {
+                            if (UsersUpvote.Count > 0)
+                            {
+                                foreach (var userDTO in UsersUpvote)
+                                {
+                                    var user = _userRepository.GetUser(userDTO.Id);
+                                    if (user != null)
+                                    {
+                                        if (user.Status)
+                                        {
+                                            var followRelationship = _followUserRepository.GetFollowRelationship(currentUser, user);
+                                            if (followRelationship != null)
+                                            {
+                                                if (followRelationship.Status)
+                                                {
+                                                    userDTO.isFollowed = true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                         postDTO.UsersUpvote = (UsersUpvote is not null && UsersUpvote.Count > 0) ? UsersUpvote : new List<UserDTO>();
                         postDTO.Upvotes = (UsersUpvote == null || UsersUpvote.Count == 0) ? 0 : UsersUpvote.Count;
 
                         var postDownvote = _votePostRepository.GetAllUsersDownVotedBy(postDTO.Id);
 
                         var UsersDownvote = _mapper.Map<List<UserDTO>>(postDownvote);
+
+                        //get users follow relationship
+                        if (UsersDownvote != null)
+                        {
+                            if (UsersDownvote.Count > 0)
+                            {
+                                foreach (var userDTO in UsersDownvote)
+                                {
+                                    var user = _userRepository.GetUser(userDTO.Id);
+                                    if (user != null)
+                                    {
+                                        if (user.Status)
+                                        {
+                                            var followRelationship = _followUserRepository.GetFollowRelationship(currentUser, user);
+                                            if (followRelationship != null)
+                                            {
+                                                if (followRelationship.Status)
+                                                {
+                                                    userDTO.isFollowed = true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                         postDTO.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
                         postDTO.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
-
 
                         if (validViewer != null)
                         {
@@ -1245,41 +1752,127 @@ namespace backend.Handlers.Implementors
             //return null if mapping is failed
             if (existingPost is null) return null;
 
-            var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(existingPost.Id));
-            existingPost.User = (getUser is not null && getUser.Status) ? getUser : null;
-
-            var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(existingPost.Id));
-            existingPost.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
-
-            var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(existingPost.Id));
-            existingPost.Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
-
-            var getImages = _imageHandlers.GetImagesByPost(existingPost.Id);
-            existingPost.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
-
-            var getVideos = _videoHandlers.GetVideosByPost(existingPost.Id);
-            existingPost.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : new List<VideoDTO>();
-
-            var postUpvote = _votePostRepository.GetAllUsersVotedBy(existingPost.Id);
-
-            var UsersUpvote = _mapper.Map<List<UserDTO>>(postUpvote);
-            existingPost.UsersUpvote = (UsersUpvote is not null && UsersUpvote.Count > 0) ? UsersUpvote : new List<UserDTO>();
-            existingPost.Upvotes = (UsersUpvote == null || UsersUpvote.Count == 0) ? 0 : UsersUpvote.Count;
-
-            var postDownvote = _votePostRepository.GetAllUsersDownVotedBy(existingPost.Id);
-
-            var UsersDownvote = _mapper.Map<List<UserDTO>>(postDownvote);
-            existingPost.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
-            existingPost.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
-
-            var validViewer = CheckCurrentUser(currentUserId);
-            if (validViewer != null)
+            var currentUser = _userRepository.GetUser(currentUserId);
+            if (currentUser != null)
             {
-                var vote = _votePostRepository.GetVotePost(currentUserId, existingPost.Id);
-                if (vote != null)
+                if (currentUser.Status)
                 {
-                    existingPost.Upvote = vote.UpVote;
-                    existingPost.Downvote = vote.DownVote;
+                    var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(existingPost.Id));
+
+                    //get users follow relationship
+                    if (getUser != null)
+                    {
+                        if (getUser.Status)
+                        {
+                            var user = _userRepository.GetUser(getUser.Id);
+                            if (user != null)
+                            {
+                                if (user.Status)
+                                {
+                                    var followRelationship = _followUserRepository.GetFollowRelationship(currentUser, user);
+                                    if (followRelationship != null)
+                                    {
+                                        if (followRelationship.Status)
+                                        {
+                                            getUser.isFollowed = true;
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+
+                    existingPost.User = (getUser is not null && getUser.Status) ? getUser : null;
+
+                    var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(existingPost.Id));
+                    existingPost.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
+
+                    var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(existingPost.Id));
+                    existingPost.Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
+
+                    var getImages = _imageHandlers.GetImagesByPost(existingPost.Id);
+                    existingPost.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
+
+                    var getVideos = _videoHandlers.GetVideosByPost(existingPost.Id);
+                    existingPost.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : new List<VideoDTO>();
+
+                    var postUpvote = _votePostRepository.GetAllUsersVotedBy(existingPost.Id);
+
+                    var UsersUpvote = _mapper.Map<List<UserDTO>>(postUpvote);
+
+                    //get users follow relationship
+                    if (UsersUpvote != null)
+                    {
+                        if (UsersUpvote.Count > 0)
+                        {
+                            foreach (var userDTO in UsersUpvote)
+                            {
+                                var user = _userRepository.GetUser(userDTO.Id);
+                                if (user != null)
+                                {
+                                    if (user.Status)
+                                    {
+                                        var followRelationship = _followUserRepository.GetFollowRelationship(currentUser, user);
+                                        if (followRelationship != null)
+                                        {
+                                            if (followRelationship.Status)
+                                            {
+                                                userDTO.isFollowed = true;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    existingPost.UsersUpvote = (UsersUpvote is not null && UsersUpvote.Count > 0) ? UsersUpvote : new List<UserDTO>();
+                    existingPost.Upvotes = (UsersUpvote == null || UsersUpvote.Count == 0) ? 0 : UsersUpvote.Count;
+
+                    var postDownvote = _votePostRepository.GetAllUsersDownVotedBy(existingPost.Id);
+
+                    var UsersDownvote = _mapper.Map<List<UserDTO>>(postDownvote);
+
+                    //get users follow relationship
+                    if (UsersDownvote != null)
+                    {
+                        if (UsersDownvote.Count > 0)
+                        {
+                            foreach (var userDTO in UsersDownvote)
+                            {
+                                var user = _userRepository.GetUser(userDTO.Id);
+                                if (user != null)
+                                {
+                                    if (user.Status)
+                                    {
+                                        var followRelationship = _followUserRepository.GetFollowRelationship(user, currentUser);
+                                        if (followRelationship != null)
+                                        {
+                                            if (followRelationship.Status)
+                                            {
+                                                userDTO.isFollowed = true;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    existingPost.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
+                    existingPost.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
+
+                    var validViewer = CheckCurrentUser(currentUserId);
+                    if (validViewer != null)
+                    {
+                        var vote = _votePostRepository.GetVotePost(currentUserId, existingPost.Id);
+                        if (vote != null)
+                        {
+                            existingPost.Upvote = vote.UpVote;
+                            existingPost.Downvote = vote.DownVote;
+                        }
+                    }
                 }
             }
 
@@ -1380,7 +1973,7 @@ namespace backend.Handlers.Implementors
         public ICollection<PostDTO>? GetTop5VotedPost(int currentUserId)
         {
             var postList = GetAllPosts(currentUserId);
-            if(postList == null || postList.Count == 0)
+            if (postList == null || postList.Count == 0)
             {
                 return null;
             }
@@ -1389,6 +1982,10 @@ namespace backend.Handlers.Implementors
             {
                 if (i < 5) break;
                 sortedCollection.Remove(sortedCollection[i]);
+            }
+            if (sortedCollection.Count > 5)
+            {
+                sortedCollection = sortedCollection.GetRange(0, 5);
             }
             return sortedCollection;
         }

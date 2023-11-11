@@ -1,5 +1,6 @@
 ﻿using backend.DTO;
 using backend.Handlers.IHandlers;
+using backend.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
@@ -9,9 +10,11 @@ namespace backend.Controllers
     public class ReportPostController : ControllerBase
     {
         private IReportPostHandlers _reportPostHandlers;
+        private EmailSender _emailSender;
         public ReportPostController(IReportPostHandlers reportPostHandlers)
         {
             _reportPostHandlers = reportPostHandlers;
+            _emailSender = new EmailSender();
         }
         /// <summary>
         /// Get list of Report Posts. (Admin)
@@ -110,13 +113,19 @@ namespace backend.Controllers
         /// <param name="status"></param>
         /// <returns></returns>
         [HttpPut("status")]
-        public IActionResult ApproveReportPost(int adminID, int reporterID, int postID)
+        public async Task<IActionResult> ApproveReportPost(int adminID, int reporterID, int postID)
         {
             var reportPostDTO = _reportPostHandlers.ApproveReportPost(adminID, reporterID, postID);
             if (reportPostDTO == null)
             {
                 return BadRequest();
             }
+            //send email
+            var existedEmail = reportPostDTO.Reporter.Email;
+            var existedSubject = $"Your report has been completed !";
+            var existedMessage = $"The admin has reviewed your Report and completed !\n\nFaithfully,FBlog Academy";
+
+            await _emailSender.SendEmailAsync(existedEmail, existedSubject, existedMessage);
             return Ok(reportPostDTO);
         }
 
@@ -128,13 +137,19 @@ namespace backend.Controllers
         /// <param name="postID"></param>
         /// <returns></returns>
         [HttpDelete]
-        public IActionResult DisableReportPost(int adminID, int reporterID, int postID)
+        public async Task<IActionResult> DisableReportPost(int adminID, int reporterID, int postID)
         {
             var reportPost = _reportPostHandlers.DenyReportPost(adminID, reporterID, postID);
             if(reportPost == null)
             {
                 return BadRequest();
             }
+            //send email
+            var existedEmail = reportPost.Reporter.Email;
+            var existedSubject = $"Your report has been denied !";
+            var existedMessage = $"The admin has reviewed your Report and eventually deny your Report !\n\nFaithfully,FBlog Academy";
+
+            await _emailSender.SendEmailAsync(existedEmail, existedSubject, existedMessage);
             return Ok(reportPost);
         }
     }

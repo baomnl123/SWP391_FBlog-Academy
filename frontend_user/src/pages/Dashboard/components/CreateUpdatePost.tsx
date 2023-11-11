@@ -349,7 +349,7 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
             )}
           </Swiper>
         </Spin>
-        <div className='text-left'>
+        <div className='text-left flex justify-between'>
           <Button type='primary' className='relative'>
             Add Image/Video
             <input
@@ -358,12 +358,12 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
               onChange={handleChangeImage}
             ></input>
           </Button>
-        </div>
 
-        <div className='text-right'>
+          {/* <div className='text-right'> */}
           <Button onClick={form.submit} type='primary'>
             {id ? 'Update' : 'Create'}
           </Button>
+          {/* </div> */}
         </div>
       </Spin>
     </Modal>

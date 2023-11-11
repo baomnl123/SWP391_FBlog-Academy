@@ -1,6 +1,8 @@
 ﻿using backend.DTO;
 using backend.Handlers.IHandlers;
 using backend.Handlers.Implementors;
+using backend.Models;
+using backend.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
@@ -11,10 +13,12 @@ namespace backend.Controllers
     {
         private readonly IUserHandlers _userHandlers;
         private readonly IFollowUserHandlers _followUserHandlers;
+        private readonly EmailSender _emailSender;
         public UserController(IUserHandlers userHandlers, IFollowUserHandlers followUserHandlers)
         {
             _userHandlers = userHandlers;
             _followUserHandlers = followUserHandlers;
+            _emailSender = new EmailSender();
         }
 
         /// <summary>
@@ -118,10 +122,10 @@ namespace backend.Controllers
         /// </summary>
         /// <param name="currentUserID"></param>
         /// <returns></returns>
-        [HttpGet("{currentUserID}/follower")]
-        public IActionResult GetAllFollower(int currentUserID)
+        [HttpGet("{userID}/follower")]
+        public IActionResult GetAllFollower(int currentUserID, int userID)
         {
-            var listFollowers = _followUserHandlers.GetAllFollowerUsers(currentUserID);
+            var listFollowers = _followUserHandlers.GetAllFollowerUsers(currentUserID,userID);
 
             if (listFollowers == null || listFollowers.Count == 0)
             {
@@ -138,9 +142,9 @@ namespace backend.Controllers
         /// <param name="currentUserID"></param>
         /// <returns></returns>
         [HttpGet("{currentUserID}/following")]
-        public IActionResult GetAllFollowing(int currentUserID)
+        public IActionResult GetAllFollowing(int currentUserID,int userID)
         {
-            var listFollowings = _followUserHandlers.GetAllFollowingUsers(currentUserID);
+            var listFollowings = _followUserHandlers.GetAllFollowingUsers(currentUserID, userID);
 
             if (listFollowings == null || listFollowings.Count == 0)
             {
@@ -160,13 +164,19 @@ namespace backend.Controllers
         /// <param name="password"></param>
         /// <returns></returns>
         [HttpPost("student")]
-        public IActionResult CreateUser([FromForm] string name, [FromForm] string? avatarUrl, [FromForm] string email, [FromForm] string? password)
+        public async Task<IActionResult> CreateUser([FromForm] string name, [FromForm] string? avatarUrl, [FromForm] string email, [FromForm] string? password)
         {
             var user = _userHandlers.CreateUser(name, avatarUrl, email, password);
             if (user == null)
             {
                 return BadRequest();
             }
+            //send email
+            var existedEmail = user.Email;
+            var existedSubject = $"Your Account has been created !";
+            var existedMessage = $"Your Account has been created ! You will now be able to access to FBlog Academy !\nWelcome {user.Name}!\n\nFaithfully,FBlog Academy";
+
+            await _emailSender.SendEmailAsync(existedEmail, existedSubject, existedMessage);
             return Ok(user);
         }
 
@@ -179,13 +189,19 @@ namespace backend.Controllers
         /// <param name="password"></param>
         /// <returns></returns>
         [HttpPost("lecturer")]
-        public IActionResult CreateLecturer([FromForm] string name, [FromForm] string? avatarUrl, [FromForm] string email, [FromForm] string? password)
+        public async Task<IActionResult> CreateLecturer([FromForm] string name, [FromForm] string? avatarUrl, [FromForm] string email, [FromForm] string? password)
         {
             var user = _userHandlers.CreateLecturer(name, avatarUrl, email, password);
             if (user == null)
             {
                 return BadRequest();
             }
+            //send email
+            var existedEmail = user.Email;
+            var existedSubject = $"Your Account has been created !";
+            var existedMessage = $"Your Account has been created ! You will now be able to access to FBlog Academy !\nWelcome {user.Name}!\n\nFaithfully,FBlog Academy";
+
+            await _emailSender.SendEmailAsync(existedEmail, existedSubject, existedMessage);
             return Ok(user);
         }
 
@@ -196,13 +212,20 @@ namespace backend.Controllers
         /// <param name="userID"></param>
         /// <returns></returns>
         [HttpPost("follow")]
-        public IActionResult Follow(int currentUserID, int userID)
+        public async Task<IActionResult> Follow(int currentUserID, int userID)
         {
             var followRelationship = _followUserHandlers.FollowOtherUser(currentUserID, userID);
             if (followRelationship == null)
             {
                 return BadRequest();
             }
+
+            //send email
+            var existedEmail = followRelationship.Followed.Email;
+            var existedSubject = $"You have been Followed !";
+            var existedMessage = $"{followRelationship.Follower.Name} has followed you !\n\nFaithfully,FBlog Academy";
+
+            await _emailSender.SendEmailAsync(existedEmail, existedSubject, existedMessage);
             return Ok(followRelationship);
         }
 
@@ -231,13 +254,19 @@ namespace backend.Controllers
         /// <param name="userID"></param>
         /// <returns></returns>
         [HttpPut("{userID}/promote")]
-        public IActionResult PromoteStudent(int userID)
+        public async Task<IActionResult> PromoteStudent(int userID)
         {
             var user = _userHandlers.PromoteStudent(userID);
             if (user == null)
             {
                 return BadRequest();
             }
+            //send email
+            var existedEmail = user.Email;
+            var existedSubject = $"You have been promoted to Moderator !";
+            var existedMessage = $"You have been promoted to Moderator ! Congratulations\nKeep supporting FBlog ! Thank you very much !\n\nFaithfully,FBlog Academy";
+
+            await _emailSender.SendEmailAsync(existedEmail, existedSubject, existedMessage);
             return Ok(user);
         }
 
@@ -247,13 +276,20 @@ namespace backend.Controllers
         /// <param name="userID"></param>
         /// <returns></returns>
         [HttpPut("{userID}/demote")]
-        public IActionResult DemoteStudent(int userID)
+        public async Task<IActionResult> DemoteStudent(int userID)
         {
             var user = _userHandlers.DemoteStudent(userID);
             if (user == null)
             {
                 return BadRequest();
             }
+            //send email
+            var existedEmail = user.Email;
+            var existedSubject = $"You have been demoted to Student !";
+            var existedMessage = $"You have been demoted to Student !" +
+                $"\n\nFaithfully,FBlog Academy";
+
+            await _emailSender.SendEmailAsync(existedEmail, existedSubject, existedMessage);
             return Ok(user);
         }
 
@@ -263,13 +299,21 @@ namespace backend.Controllers
         /// <param name="userID"></param>
         /// <returns></returns>
         [HttpPut("{userID}/award")]
-        public IActionResult GiveAward(int userID)
+        public async Task<IActionResult> GiveAward(int userID)
         {
             var user = _userHandlers.GiveAward(userID);
             if (user == null || !user.Status)
             {
                 return BadRequest();
             }
+            //send email
+            var existedEmail = user.Email;
+            var existedSubject = $"You have been awarded !";
+            var existedMessage = $"You have been awarded ! Congratulations" +
+                $"\nYou will be able to post Blogs without censorship !\nKeep supporting FBlog ! Thank you very much !" +
+                $"\n\nFaithfully,FBlog Academy";
+
+            await _emailSender.SendEmailAsync(existedEmail, existedSubject, existedMessage);
             return Ok(user);
         }
 
@@ -279,13 +323,20 @@ namespace backend.Controllers
         /// <param name="userID"></param>
         /// <returns></returns>
         [HttpDelete("{userID}/award")]
-        public IActionResult RemoveAward(int userID)
+        public async Task<IActionResult> RemoveAward(int userID)
         {
             var user = _userHandlers.RemoveAward(userID);
             if(user == null || !user.Status)
             {
                 return BadRequest();
             }
+            //send email
+            var existedEmail = user.Email;
+            var existedSubject = $"Your award has been removed !";
+            var existedMessage = $"Your award has been removed !" +
+                $"\n\nFaithfully,FBlog Academy";
+
+            await _emailSender.SendEmailAsync(existedEmail, existedSubject, existedMessage);
             return Ok(user);
         }
 
@@ -295,13 +346,21 @@ namespace backend.Controllers
         /// <param name="userID"></param>
         /// <returns></returns>
         [HttpDelete("{userID}")]
-        public IActionResult disableUser(int userID)
+        public async Task<IActionResult> disableUser(int userID)
         {
             var user = _userHandlers.DisableUser(userID);
             if (user == null)
             {
                 return BadRequest();
             }
+            //send email
+            var existedEmail = user.Email;
+            var existedSubject = $"You have been BANNED !";
+            var existedMessage = $"You have been BANNED !" +
+                $"\nYou have made something that can not be accepted by the Admin !" +
+                $"\n\nFaithfully,FBlog Academy";
+
+            await _emailSender.SendEmailAsync(existedEmail, existedSubject, existedMessage);
             return Ok(user);
         }
 
