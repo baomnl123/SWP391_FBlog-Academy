@@ -1,6 +1,7 @@
 ﻿using backend.DTO;
 using backend.Handlers.IHandlers;
 using backend.Handlers.Implementors;
+using backend.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,10 +12,12 @@ namespace backend.Controllers
     public class CommentController : ControllerBase
     {
         private readonly ICommentHandlers _commentHandlers;
+        private readonly EmailSender _emailSender;
 
         public CommentController(ICommentHandlers commentHandlers)
         {
             _commentHandlers = commentHandlers;
+            _emailSender = new EmailSender();
         }
 
         /// <summary>
@@ -40,10 +43,19 @@ namespace backend.Controllers
         /// <param name="content"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult CreateNewComment(int userId, int postId, [FromForm] string content) 
+        public async Task<IActionResult> CreateNewComment(int userId, int postId, [FromForm] string content)
         {
             var newComment = _commentHandlers.CreateComment(userId, postId, content);
-            if (newComment != null) return Ok(newComment);
+            if (newComment != null)
+            {
+                //send email
+                var existedEmail = newComment.Post.User.Email;
+                var existedSubject = $"Someone has commented to your post.";
+                var existedMessage = $"{newComment.User.Name} has commented to {newComment.Post.Title}.\n\nFaithfully,FBlog Academy";
+
+                await _emailSender.SendEmailAsync(existedEmail, existedSubject, existedMessage);
+                return Ok(newComment);
+            }
             return BadRequest();
         }
 
@@ -57,7 +69,7 @@ namespace backend.Controllers
         [HttpPut("{commentId}")]
         public IActionResult UpdateComment(int commentId, [FromForm] string content)
         {
-            var updatedComment = _commentHandlers.UpdateComment(commentId , content);
+            var updatedComment = _commentHandlers.UpdateComment(commentId, content);
             if (updatedComment != null) return Ok(updatedComment);
             return BadRequest();
         }

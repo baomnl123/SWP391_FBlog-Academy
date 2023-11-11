@@ -1,5 +1,6 @@
 ﻿using backend.DTO;
 using backend.Handlers.IHandlers;
+using backend.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,9 +11,11 @@ namespace backend.Controllers
     public class VotePostController : ControllerBase
     {
         private readonly IVotePostHandlers _votePostHandlers;
+        private readonly EmailSender _emailSender;
         public VotePostController(IVotePostHandlers votePostHandlers) 
         {
             _votePostHandlers = votePostHandlers;
+            _emailSender = new EmailSender();
         }
 
         /// <summary>
@@ -55,7 +58,7 @@ namespace backend.Controllers
         /// <param name="vote"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult CreateNewVote(int currentUserId, int postId, [FromForm] string vote) 
+        public async Task<IActionResult> CreateNewVote(int currentUserId, int postId, [FromForm] string vote) 
         {
             var boolVote = true;
             if (vote.ToLower().Trim().Contains("true"))
@@ -71,6 +74,14 @@ namespace backend.Controllers
             }
             var createdVote = _votePostHandlers.CreateNewVotePost(currentUserId, postId, boolVote);
             if (createdVote == null) return BadRequest();
+
+            //send email
+            var existedEmail = createdVote.Post.User.Email;
+            var existedSubject = $"{createdVote.User.Name} has voted your post.";
+            var existedMessage = $"{createdVote.User.Name} has voted {createdVote.Post.Title}.\n\nFaithfully,FBlog Academy";
+
+            await _emailSender.SendEmailAsync(existedEmail, existedSubject, existedMessage);
+
             return Ok(createdVote);
         }
 
@@ -82,7 +93,7 @@ namespace backend.Controllers
         /// <param name="vote"></param>
         /// <returns></returns>
         [HttpPut]
-        public IActionResult UpdateVote(int currentUserId, int postId, [FromForm] string vote)
+        public async Task<IActionResult> UpdateVote(int currentUserId, int postId, [FromForm] string vote)
         {
             var boolVote = true;
             if (vote.ToLower().Trim().Contains("true"))
@@ -98,6 +109,16 @@ namespace backend.Controllers
             }
             var updatedVote = _votePostHandlers.UpdateVotePost(currentUserId, postId, boolVote);
             if (updatedVote == null) return BadRequest();
+
+            if (updatedVote.UpVote)
+            {
+                //send email
+                var existedEmail = updatedVote.Post.User.Email;
+                var existedSubject = $"{updatedVote.User.Name} has voted your post.";
+                var existedMessage = $"{updatedVote.User.Name} has voted {updatedVote.Post.Title}.\n\nFaithfully,FBlog Academy";
+
+                await _emailSender.SendEmailAsync(existedEmail, existedSubject, existedMessage);
+            }
             return Ok(updatedVote);
         }
 
