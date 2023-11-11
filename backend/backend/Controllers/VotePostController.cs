@@ -121,7 +121,6 @@ namespace backend.Controllers
             }
             return Ok(updatedVote);
         }
-
         /// <summary>
         /// Change to not Vote (Student | Moderator)
         /// </summary>
