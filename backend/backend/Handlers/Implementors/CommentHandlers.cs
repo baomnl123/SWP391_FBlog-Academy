@@ -15,13 +15,15 @@ namespace backend.Handlers.Implementors
         private readonly ICommentRepository _commentRepository;
         private readonly IVoteCommentRepository _voteCommentRepository;
         private readonly IPostRepository _postRepository;
+        private readonly IPostHandlers _postHandlers;
         private readonly UserRoleConstrant _userRoleConstrant;
 
         public CommentHandlers(IUserRepository userRepository,
                                 IPostRepository postRepository,
                                 ICommentRepository commentRepository,
                                 IVoteCommentRepository voteCommentRepository,
-                                IMapper mapper)
+                                IMapper mapper,
+                                IPostHandlers postHandlers)
         {
             _userRepository = userRepository;
             _mapper = mapper;
@@ -29,6 +31,7 @@ namespace backend.Handlers.Implementors
             _voteCommentRepository = voteCommentRepository;
             _postRepository = postRepository;
             _userRoleConstrant = new UserRoleConstrant();
+            _postHandlers = postHandlers;
         }
 
         public CommentDTO? CreateComment(int userId, int postId, string content)
@@ -67,6 +70,9 @@ namespace backend.Handlers.Implementors
             if (!_commentRepository.Add(newComment)) return null;
 
             var newCommentDTO = _mapper.Map<CommentDTO>(newComment);
+
+            var getPost = _mapper.Map<PostDTO?>(_postHandlers.GetPostBy(postId,userId));
+            newCommentDTO.Post = (getPost is not null && getPost.Status) ? getPost : null;
 
             var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByCommentID(newCommentDTO.Id));
             newCommentDTO.User = (getUser is not null && getUser.Status) ? getUser : null;
