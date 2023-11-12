@@ -35,7 +35,7 @@ namespace backend.Handlers.Implementors
                 //get existed user
                 var existedUser = _userRepository.GetUser(email);
                 //check if user is enable
-                if (existedUser != null && existedUser.Status)
+                if (existedUser?.Status == true)
                 {
                     return null;
                 }
