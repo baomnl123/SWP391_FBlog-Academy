@@ -1,4 +1,5 @@
 import { Form, Input, Modal, ModalProps, Space } from 'antd'
+import { useWatch } from 'antd/es/form/Form'
 
 const CreateLecture = (
   props: ModalProps & {
@@ -7,6 +8,9 @@ const CreateLecture = (
 ) => {
   const { open, onOk, onCancel, ...rest } = props
   const [form] = Form.useForm()
+  const name = useWatch('name', form)
+  const password = useWatch('password', form)
+  const email = useWatch('email', form)
 
   return (
     <Modal
@@ -21,6 +25,9 @@ const CreateLecture = (
       onCancel={(e) => {
         form.resetFields()
         onCancel?.(e)
+      }}
+      okButtonProps={{
+        disabled: !name || !password || !email
       }}
     >
       <Form<{ email: string; password: string; name: string }>

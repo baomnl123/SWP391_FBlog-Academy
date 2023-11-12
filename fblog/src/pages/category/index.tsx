@@ -162,11 +162,11 @@ export default function Category() {
           setCreateCategory(false)
           setInitValues(undefined)
         }}
-        onOk={() => {
+        onSuccess={() => {
           setCreateCategory(false)
           setInitValues(undefined)
+          refresh()
         }}
-        onSuccess={refresh}
       />
       {category && (
         <ListTag

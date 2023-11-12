@@ -1,5 +1,6 @@
 import api from '@/config/api'
 import { Form, Input, Modal, ModalProps, Select, Space, message } from 'antd'
+import { useWatch } from 'antd/es/form/Form'
 import { useCallback, useEffect } from 'react'
 
 const CreateTag = (
@@ -10,6 +11,7 @@ const CreateTag = (
 ) => {
   const { open, onOk, onCancel, initialValues, onSuccess, ...rest } = props
   const [form] = Form.useForm()
+  const tagName = useWatch('name', form)
 
   useEffect(() => {
     form.setFieldsValue({
@@ -62,6 +64,9 @@ const CreateTag = (
       onCancel={(e) => {
         form.resetFields()
         onCancel?.(e)
+      }}
+      okButtonProps={{
+        disabled: initialValues?.tag?.name === tagName || tagName === ''
       }}
     >
       <Form form={form} layout='vertical' onFinish={onFinish}>

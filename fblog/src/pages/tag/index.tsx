@@ -174,12 +174,10 @@ export default function Tag() {
           setCreateTag(false)
           setInitialValues(undefined)
         }}
-        onOk={() => {
-          setCreateTag(false)
-        }}
         onSuccess={() => {
           refresh()
           setInitialValues(undefined)
+          setCreateTag(false)
         }}
       />
       {contextHolder}
