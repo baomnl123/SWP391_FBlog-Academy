@@ -158,11 +158,7 @@ namespace backend.Handlers.Implementors
             for (int i = existedCommentsDTO.Count - 1; i >= 0; i--)
             {
                 var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByCommentID(existedCommentsDTO[i].Id));
-                if (getUser?.Status == false)
-                {
-                    existedCommentsDTO.Remove(existedCommentsDTO[i]);
-                }
-                else
+                if (getUser?.Status == true)
                 {
                     var commentUpvote = _voteCommentRepository.GetAllUserBy(existedCommentsDTO[i].Id);
                     existedCommentsDTO[i].Upvotes = (commentUpvote == null || commentUpvote.Count == 0) ? 0 : commentUpvote.Count;
@@ -179,6 +175,10 @@ namespace backend.Handlers.Implementors
                             existedCommentsDTO[i].Downvote = vote.DownVote;
                         }
                     }
+                }
+                else
+                {
+                    existedCommentsDTO.Remove(existedCommentsDTO[i]);
                 }
             }
 
