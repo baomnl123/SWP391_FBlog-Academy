@@ -71,7 +71,7 @@ namespace backend.Handlers.Implementors
 
             var newCommentDTO = _mapper.Map<CommentDTO>(newComment);
 
-            var getPost = _mapper.Map<PostDTO?>(_postHandlers.GetPostBy(postId,userId));
+            var getPost = _mapper.Map<PostDTO?>(_postHandlers.GetPostBy(postId, userId));
             newCommentDTO.Post = (getPost is not null && getPost.Status) ? getPost : null;
 
             var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByCommentID(newCommentDTO.Id));
@@ -155,22 +155,29 @@ namespace backend.Handlers.Implementors
 
             var existedCommentsDTO = _mapper.Map<List<CommentDTO>>(existedComments);
 
-            foreach (var comment in existedCommentsDTO)
+            for (int i = existedCommentsDTO.Count - 1; i >= 0; i--)
             {
-                var commentUpvote = _voteCommentRepository.GetAllUserBy(comment.Id);
-                comment.Upvotes = (commentUpvote == null || commentUpvote.Count == 0) ? 0 : commentUpvote.Count;
-
-                var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByCommentID(comment.Id));
-                comment.User = (getUser is not null && getUser.Status) ? getUser : null;
-
-                var viewer = _userRepository.GetUser(currentUserId);
-                if (viewer is not null && viewer.Status)
+                var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByCommentID(existedCommentsDTO[i].Id));
+                if (getUser?.Status == false)
                 {
-                    var vote = _voteCommentRepository.GetVoteComment(currentUserId, comment.Id);
-                    if (vote is not null)
+                    existedCommentsDTO.Remove(existedCommentsDTO[i]);
+                }
+                else
+                {
+                    var commentUpvote = _voteCommentRepository.GetAllUserBy(existedCommentsDTO[i].Id);
+                    existedCommentsDTO[i].Upvotes = (commentUpvote == null || commentUpvote.Count == 0) ? 0 : commentUpvote.Count;
+
+                    existedCommentsDTO[i].User = (getUser is not null && getUser.Status) ? getUser : null;
+
+                    var viewer = _userRepository.GetUser(currentUserId);
+                    if (viewer is not null && viewer.Status)
                     {
-                        comment.Upvote = vote.UpVote;
-                        comment.Downvote = vote.DownVote;
+                        var vote = _voteCommentRepository.GetVoteComment(currentUserId, existedCommentsDTO[i].Id);
+                        if (vote is not null)
+                        {
+                            existedCommentsDTO[i].Upvote = vote.UpVote;
+                            existedCommentsDTO[i].Downvote = vote.DownVote;
+                        }
                     }
                 }
             }
