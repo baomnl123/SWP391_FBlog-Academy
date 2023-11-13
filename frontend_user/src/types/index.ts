@@ -68,6 +68,7 @@ export type User = {
   updatedAt: Date
   status: boolean
   isAwarded: boolean
+  isFollowed: boolean
 }
 
 export type Category = {

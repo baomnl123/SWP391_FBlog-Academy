@@ -1,6 +1,7 @@
 import api from '@/api'
 import { setUser } from '@/store/reducers/user'
 import { User } from '@/types'
+import { setLocalStorage } from '@/utils/helpers'
 import { useUser } from '@clerk/clerk-react'
 import { useRequest } from 'ahooks'
 import { useCallback, useEffect } from 'react'
@@ -11,19 +12,6 @@ export default function PrivateRoute() {
   const { user } = useUser()
 
   const dispatch = useDispatch()
-  // const { data: userInfo, runAsync: getUser } = useRequest(api.getUserByEmail, {
-  //   manual: true,
-  //   onSuccess: (res) => {
-  //     console.log(res)
-  //     if (res) {
-  //       dispatch(setUser(res as unknown as User))
-  //     }
-  //   },
-  //   onError: (err) => {
-  //     // message.error('User not found')
-  //     console.log(err)
-  //   }
-  // })
 
   const registerAction = useCallback(async () => {
     const formData = new FormData()
@@ -32,12 +20,14 @@ export default function PrivateRoute() {
     formData.append('email', user?.emailAddresses?.[0].emailAddress ?? '')
     const response = await api.createNewAccount(formData)
     dispatch(setUser(response as unknown as User))
+    setLocalStorage('id', (response as unknown as User).id)
   }, [dispatch, user?.emailAddresses, user?.fullName, user?.imageUrl])
 
   const { run: register } = useRequest(
     async () => {
       const isExist = await api.getUserByEmail({ email: user?.emailAddresses?.[0].emailAddress ?? '' })
       dispatch(setUser(isExist as unknown as User))
+      setLocalStorage('id', (isExist as unknown as User).id)
     },
     {
       manual: true,
@@ -47,17 +37,11 @@ export default function PrivateRoute() {
       }
     }
   )
+
   useEffect(() => {
     register()
-  }, [register])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
-  // useEffect(() => {
-  //   if (!user) {
-  //     return
-  //   }
-  //   getUser({
-  //     email: user?.emailAddresses?.[0].emailAddress ?? ''
-  //   })
-  // }, [user, getUser])
   return <Outlet />
 }
