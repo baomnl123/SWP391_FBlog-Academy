@@ -51,7 +51,7 @@ namespace backend.Controllers
                 //send email
                 var existedEmail = newComment.Post.User.Email;
                 var existedSubject = $"Someone has commented to your post.";
-                var existedMessage = $"{newComment.User.Name} has commented to {newComment.Post.Title}.\n\nFaithfully,FBlog Academy";
+                var existedMessage = $"{newComment.User.Name} has commented \'{newComment.Content}\' to {newComment.Post.Title}.\n\nFaithfully,FBlog Academy";
 
                 await _emailSender.SendEmailAsync(existedEmail, existedSubject, existedMessage);
                 return Ok(newComment);
