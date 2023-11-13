@@ -43,10 +43,10 @@ namespace backend.Handlers.Implementors
             //                      or is removed
             //                      or does not have role SU(Student) or MOD(Moderator)
             var existedUser = _userRepository.GetUser(userId);
-            var studentRole = _userRoleConstrant.GetStudentRole();
-            var modRole = _userRoleConstrant.GetModeratorRole();
-            if (existedUser == null || existedUser.Status == false
-                || !(existedUser.Role.Contains(studentRole) || existedUser.Role.Contains(modRole))) return null;
+            //var studentRole = _userRoleConstrant.GetStudentRole();
+            //var modRole = _userRoleConstrant.GetModeratorRole();
+            //if (existedUser == null || existedUser.Status == false
+            //    || !(existedUser.Role.Contains(studentRole) || existedUser.Role.Contains(modRole))) return null;
 
             //return null if post does not exist
             //                      or is removed
