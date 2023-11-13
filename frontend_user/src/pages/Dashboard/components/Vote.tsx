@@ -4,8 +4,10 @@ import IconUpLong from '@/assets/images/svg/IconUpLong'
 import { RootState } from '@/store'
 import { useRequest } from 'ahooks'
 import { Button, Typography } from 'antd'
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux'
+import ModalUserVote from './ModalUserVote'
+import { User } from '@/types'
 
 const Vote = ({
   vote,
@@ -13,6 +15,7 @@ const Vote = ({
   postId,
   upvote,
   downvote,
+  usersVote,
   onVoteSuccess
 }: {
   vote: number
@@ -20,8 +23,10 @@ const Vote = ({
   postId?: number
   upvote?: boolean
   downvote?: boolean
+  usersVote?: User[]
   onVoteSuccess?: () => void
 }) => {
+  const [open, setOpen] = useState(false)
   const { runAsync: votePost } = useRequest(api.votePost, {
     manual: true,
     onSuccess: (res) => {
@@ -78,7 +83,9 @@ const Vote = ({
       >
         <IconUpLong width={15} height={15} color={upvote && !downvote ? 'blue' : isDarkMode ? '#fff' : '#000'} />
       </Button>
-      <Typography className='min-w-[50px]'>{vote}</Typography>
+      <Typography className='min-w-[50px] cursor-pointer' onClick={() => setOpen(true)}>
+        {vote}
+      </Typography>
       <Button
         onClick={async () => {
           if (downvote) {
@@ -102,6 +109,7 @@ const Vote = ({
       >
         <IconDownLong width={15} height={15} color={downvote && !upvote ? 'blue' : isDarkMode ? '#fff' : '#000'} />
       </Button>
+      <ModalUserVote open={open} users={usersVote ?? ([] as User[])} footer={false} onCancel={() => setOpen(false)} />
     </>
   )
 }

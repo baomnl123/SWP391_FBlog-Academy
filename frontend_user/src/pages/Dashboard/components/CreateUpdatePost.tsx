@@ -40,23 +40,39 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
   const [tagOptions, setTagOptions] = useState<SelectProps['options']>([])
   const { user } = useSelector((state: RootState) => state.userReducer)
 
-  const { data: categoriesData, loading: categoryLoading } = useRequest(async () => {
-    try {
+  const {
+    data: categoriesData,
+    loading: categoryLoading,
+    run: getAllCate
+  } = useRequest(
+    async () => {
       const res = await api.getAllCategory()
       return res
-    } catch (error) {
-      console.log(error)
+    },
+    {
+      manual: true,
+      onError(e) {
+        console.error(e)
+      }
     }
-  })
+  )
 
-  const { data: tagsData, loading: tagsLoading } = useRequest(async () => {
-    try {
+  const {
+    data: tagsData,
+    loading: tagsLoading,
+    run: getAllTag
+  } = useRequest(
+    async () => {
       const res = await api.getAllTag()
       return res
-    } catch (error) {
-      console.log(error)
+    },
+    {
+      manual: true,
+      onError(e) {
+        console.error(e)
+      }
     }
-  })
+  )
 
   const { runAsync: createPost, loading: postLoading } = useRequest(api.createPost, {
     manual: true,
@@ -67,7 +83,6 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
         setModal?.(false)
         onFinishSuccess?.()
       }
-      console.log(res)
     },
     onError: (err) => {
       message.error(err?.message)
@@ -135,34 +150,43 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
   })
 
   useEffect(() => {
-    if (!id) return
-    console.log('id', id)
-    getPostById({
-      postId: id
-    })
+    if (id) {
+      getPostById({
+        postId: id
+      })
+    }
   }, [getPostById, id])
 
   useEffect(() => {
-    if (!categoriesData) return
-    const categories: SelectProps['options'] = categoriesData.map((item) => {
-      return {
-        label: item.categoryName,
-        value: item.id
-      }
-    })
-    setCategoryOptions(categories)
+    if (categoriesData) {
+      const categories: SelectProps['options'] = categoriesData.map((item) => {
+        return {
+          label: item.categoryName,
+          value: item.id
+        }
+      })
+      setCategoryOptions(categories)
+    }
   }, [categoriesData])
 
   useEffect(() => {
-    if (!tagsData) return
-    const options: SelectProps['options'] = tagsData.map((item) => {
-      return {
-        label: item.tagName,
-        value: item.id
-      }
-    })
-    setTagOptions(options)
+    if (tagsData) {
+      const options: SelectProps['options'] = tagsData.map((item) => {
+        return {
+          label: item.tagName,
+          value: item.id
+        }
+      })
+      setTagOptions(options)
+    }
   }, [tagsData])
+
+  useEffect(() => {
+    if (isOpen) {
+      getAllCate()
+      getAllTag()
+    }
+  }, [getAllCate, getAllTag, isOpen])
 
   useEffect(() => {
     setIsModalOpen(isOpen)
@@ -349,7 +373,7 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
             )}
           </Swiper>
         </Spin>
-        <div className='text-left flex justify-between'>
+        <div className='text-left'>
           <Button type='primary' className='relative'>
             Add Image/Video
             <input
@@ -358,12 +382,12 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
               onChange={handleChangeImage}
             ></input>
           </Button>
+        </div>
 
-          {/* <div className='text-right'> */}
+        <div className='text-right'>
           <Button onClick={form.submit} type='primary'>
             {id ? 'Update' : 'Create'}
           </Button>
-          {/* </div> */}
         </div>
       </Spin>
     </Modal>

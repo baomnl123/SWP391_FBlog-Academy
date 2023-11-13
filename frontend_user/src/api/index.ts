@@ -111,14 +111,22 @@ const api = {
     return axiosClient.delete(url)
   },
 
-  followerByUserId(currentUserID: number) {
-    const url = `User/${currentUserID}/follower`
-    return axiosClient.get<unknown, User[]>(url)
+  followerByUserId(currentUserID: number, userID: number) {
+    const url = `User/${userID}/follower`
+    return axiosClient.get<unknown, User[]>(url, {
+      params: {
+        currentUserID
+      }
+    })
   },
 
-  followingByUserId(currentUserID: number) {
+  followingByUserId(currentUserID: number, userID: number) {
     const url = `User/${currentUserID}/following`
-    return axiosClient.get<unknown, User[]>(url)
+    return axiosClient.get<unknown, User[]>(url, {
+      params: {
+        userID
+      }
+    })
   },
 
   createNewAccount(payload: FormData) {
@@ -319,6 +327,41 @@ const api = {
         postId
       }
     })
+  },
+
+  follow(currentUserID: number, userID: number) {
+    const url = 'User/follow'
+    return axiosClient.post(url, null, {
+      params: {
+        currentUserID,
+        userID
+      }
+    })
+  },
+
+  unFollow(currentUserID: number, userID: number) {
+    const url = 'User/follow'
+    return axiosClient.delete(url, {
+      params: {
+        currentUserID,
+        userID
+      }
+    })
+  },
+
+  trendingTag() {
+    const url = 'Tag/top-5-voted'
+    return axiosClient.get<unknown, Tag[]>(url)
+  },
+
+  trendingPost() {
+    const url = 'Post/top-5-voted'
+    return axiosClient.get<unknown, Post[]>(url)
+  },
+
+  trendingCategory() {
+    const url = 'Category/top-5-voted'
+    return axiosClient.get<unknown, Category[]>(url)
   }
 }
 

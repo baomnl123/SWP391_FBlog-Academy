@@ -18,7 +18,9 @@ export default function Card({
   title,
   content,
   onClickAvatar,
-  className
+  className,
+  showFollow = false,
+  onFollow
 }: {
   footer?: ReactNode[]
   slideContent?: ReactNode[]
@@ -26,12 +28,15 @@ export default function Card({
   user: {
     username: string
     avatar?: string
+    isFollow?: boolean
   }
   createDate?: string
   title: string
   content: string
   onClickAvatar?: () => void
   className?: string
+  showFollow?: boolean
+  onFollow?: () => void
 }) {
   return (
     <AntCard className={`max-w-[1200px] p-5 ${className}`} actions={footer}>
@@ -39,7 +44,19 @@ export default function Card({
         <Space size={10} onClick={() => onClickAvatar?.()} className='cursor-pointer'>
           <Avatar size={64} src={user?.avatar} />
           <Space direction='vertical'>
-            <Typography.Title level={5}>{user?.username}</Typography.Title>
+            <Space size={10} align='center'>
+              <Typography.Text className='font-semibold text-lg'>{user?.username}</Typography.Text>
+              {showFollow && (
+                <Typography.Link
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onFollow?.()
+                  }}
+                >
+                  {user.isFollow ? 'Unfollow' : 'Follow'}
+                </Typography.Link>
+              )}
+            </Space>
             <Typography.Text>{createDate ?? dayjs().format('DD/MM/YYYY')}</Typography.Text>
           </Space>
         </Space>
