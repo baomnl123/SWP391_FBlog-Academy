@@ -296,8 +296,11 @@ namespace backend.Handlers.Implementors
             //add new post to database
             if (!_postRepository.CreateNewPost(newPost)) return null;
 
+            var moderatorRole = _userRoleConstrant.GetModeratorRole();
+            var lecturerRole = _userRoleConstrant.GetLecturerRole();
+
             //approve post if post's owner is award
-            if (existedUser.IsAwarded == true)
+            if (existedUser.IsAwarded == true || existedUser.Role.Contains(moderatorRole) || existedUser.Role.Contains(lecturerRole))
             {
                 //update info of createdPost
                 newPost.IsApproved = true;
