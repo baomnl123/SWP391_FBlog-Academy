@@ -1,9 +1,9 @@
-import { Avatar, Button, Card, Checkbox, Flex, Space } from 'antd'
+import { Avatar, Card, Checkbox, Flex } from 'antd'
 import { CheckboxChangeEvent } from 'antd/es/checkbox'
 import { CardProps } from 'antd/lib'
 import dayjs from 'dayjs'
-import { ReactNode, useEffect, useState } from 'react'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import { ReactNode, useEffect, useState } from 'react'
 dayjs.extend(relativeTime)
 
 import { Swiper, SwiperSlide } from 'swiper/react'
@@ -39,8 +39,6 @@ const PostDetail = ({
   handleChangeStatus,
   checked,
   slideContent,
-  onApprove,
-  onDeny,
   reportDate,
   reporterName,
   reporterAvt,
@@ -73,14 +71,6 @@ const PostDetail = ({
             </div>
           </div>
         </div>
-        <Space direction='vertical' size={10}>
-          <Button block onClick={() => onApprove?.()}>
-            Approve
-          </Button>
-          <Button block danger onClick={() => onDeny?.()}>
-            Deny
-          </Button>
-        </Space>
       </Flex>
       <p className='my-3'>{reportContent}</p>
       <Card {...props}>
@@ -95,7 +85,7 @@ const PostDetail = ({
         </div>
         <div className='mt-4'>
           <p className='text-base'>
-            <div className='mt-3'>{description && <div dangerouslySetInnerHTML={{ __html: title }} />}</div>
+            <div className='mt-3'>{title && <div dangerouslySetInnerHTML={{ __html: title }} />}</div>
           </p>
           <div className='my-3'>{description && <div dangerouslySetInnerHTML={{ __html: description }} />}</div>
           <Swiper

@@ -1,5 +1,6 @@
 import api from '@/config/api'
 import { Form, Input, Modal, ModalProps, Space, message } from 'antd'
+import { useWatch } from 'antd/es/form/Form'
 import { useEffect } from 'react'
 
 const CreateTag = (
@@ -15,6 +16,7 @@ const CreateTag = (
 ) => {
   const { open, onOk, onCancel, initialValues, onSuccess, ...rest } = props
   const [form] = Form.useForm()
+  const tagName = useWatch('name', form)
 
   // const { data } = useRequest(
   //   async () => {
@@ -65,13 +67,15 @@ const CreateTag = (
         form.resetFields()
         onCancel?.(e)
       }}
+      okButtonProps={{
+        disabled: initialValues?.tag?.name === tagName || tagName === ''
+      }}
     >
       <Form
         form={form}
         layout='vertical'
         onFinish={async (value) => {
           try {
-            console.log(value)
             const adminId = localStorage.getItem('id') ?? ''
             const formData = new FormData()
             if (initialValues?.tag?.id) {
