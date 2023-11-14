@@ -20,6 +20,10 @@ interface SiderDashboardProps {
 
 export type FilterType = 'image' | 'video'
 
+const handleClick = () => {
+  window.location.href = 'https://youtube.com';
+}
+
 const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: SiderDashboardProps) => {
   const navigate = useNavigate()
   const [filter, setFilter] = useState<FilterType | null>(null)
@@ -193,7 +197,7 @@ const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: Si
             Create Post
           </Button>
         ) : (
-          <Button size='large' className='w-full text-left'>
+          <Button size='large' className='w-full text-left' onClick={() => handleClick()}>
             Go to admin
           </Button>
         )}

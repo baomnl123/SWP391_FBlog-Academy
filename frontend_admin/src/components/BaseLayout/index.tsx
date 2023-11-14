@@ -124,7 +124,7 @@ const BaseLayout = ({ children }: PropsWithChildren) => {
                 alt=''
                 width={collapsed ? 20 : 100}
               />
-            </Link>
+            </Link> 
           </div>
           <Menu
             theme={isDarkMode ? 'dark' : 'light'}
