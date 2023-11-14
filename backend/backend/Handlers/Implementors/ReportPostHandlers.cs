@@ -62,13 +62,19 @@ namespace backend.Handlers.Implementors
             {
                 var reportPost = _reportPostRepository.GetReportPostByIDs(reporterID, postID);
                 var disableStatus = _reportStatusConstrant.GetDisableStatus();
+                var declineStatus = _reportStatusConstrant.GetDeclinedStatus();
                 var pendingStatus = _reportStatusConstrant.GetPendingStatus();
                 //If it is available then return null
-                if (!reportPost.Status.Contains(disableStatus))
+                if (!reportPost.Status.Contains(disableStatus) && !reportPost.Status.Contains(declineStatus))
                 {
                     return null;
                 }
                 reportPost.AdminId = null;
+                if (content == null)
+                {
+                    content = string.Empty;
+                }
+                reportedPost.Content = content;
                 reportPost.Status = pendingStatus;
                 if (!_reportPostRepository.UpdateReportPost(reportPost))
                 {
@@ -89,6 +95,7 @@ namespace backend.Handlers.Implementors
                         reportPostDTO.Admin = (getAdmin is not null && getAdmin.Status) ? getAdmin : null;
                     }
                 }
+                return reportPostDTO;
             }
             //Ensure that content is not null
             if (content == null)
