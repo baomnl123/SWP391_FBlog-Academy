@@ -20,7 +20,7 @@ interface SiderDashboardProps {
 
 export type FilterType = 'image' | 'video'
 
-const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: SiderDashboardProps) => {
+const SubSide = () => {
   const navigate = useNavigate()
   const [filter, setFilter] = useState<FilterType | null>(null)
   // const [categoryOptions, setCategoryOptions] = useState<SelectProps['options']>([])
@@ -56,90 +56,8 @@ const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: Si
     }
   })
 
-  // useEffect(() => {
-  //   if (!categoriesData) return
-  //   const categories: SelectProps['options'] = categoriesData.map((item) => {
-  //     return {
-  //       label: item.categoryName,
-  //       value: item.id
-  //     }
-  //   })
-  //   setCategoryOptions(categories)
-  // }, [categoriesData])
-
-  // useEffect(() => {
-  //   if (!tagsData) return
-  //   const options: SelectProps['options'] = tagsData.map((item) => {
-  //     return {
-  //       label: item.tagName,
-  //       value: item.id
-  //     }
-  //   })
-  //   setTagOptions(options)
-  // }, [tagsData])
-
   return (
     <div>
-      <div className='mb-6'>
-        <SelectLabel
-          label='Tag'
-          placeHolder='Select Tag'
-          optionData={tagsData}
-          onChange={(value) => {
-            onGetTags?.(value)
-          }}
-        />
-      </div>
-      <div className='mb-6'>
-        <SelectLabel
-          label='Category'
-          placeHolder='Select Category'
-          optionData={categoriesData}
-          onChange={(value) => {
-            onGetCategories?.(value)
-          }}
-        />
-      </div>
-      <Flex
-        align='center'
-        className={`mb-8 mt-8 w-full cursor-pointer 
-        ${filter === 'image' && !isDarkMode ? 'bg-[#C7DCF0]' : ''} 
-        ${filter === 'image' && isDarkMode ? 'bg-[#0F2438]' : ''} 
-        py-2 px-4 rounded-md`}
-        gap={10}
-        onClick={() => {
-          if (filter !== 'image') {
-            setFilter('image')
-            onFilter?.('image')
-            return
-          }
-          setFilter(null)
-          onFilter?.(null)
-        }}
-      >
-        <IconPicture color={isDarkMode ? '#468CCE' : '#3178B9'} width={30} height={30} />
-        <Typography.Text>Image</Typography.Text>
-      </Flex>
-      <Flex
-        align='center'
-        className={`mb-8 mt-8 w-full cursor-pointer 
-        ${filter === 'video' && !isDarkMode ? 'bg-[#C7DCF0]' : ''} 
-        ${filter === 'video' && isDarkMode ? 'bg-[#0F2438]' : ''} 
-        py-2 px-4 rounded-md`}
-        gap={10}
-        onClick={() => {
-          if (filter !== 'video') {
-            setFilter('video')
-            onFilter?.('video')
-            return
-          }
-          setFilter(null)
-          onFilter?.(null)
-        }}
-      >
-        <IconPhotoFilm color={isDarkMode ? '#468CCE' : '#3178B9'} width={30} height={30} />
-        <Typography.Text>Video</Typography.Text>
-      </Flex>
       <div className='mb-8'>
         {(userInfo as User)?.role === 'LT' && (
           <Button
@@ -183,23 +101,9 @@ const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: Si
             </Button>
           </>
         )}
-        {(userInfo as User)?.role !== 'AD' ? (
-          <Button
-            size='large'
-            icon={<FileAddOutlined className={isDarkMode ? 'text-[#468CCE]' : 'text-[#3178B9]'} />}
-            className='w-full text-left'
-            onClick={() => createPost?.()}
-          >
-            Create Post
-          </Button>
-        ) : (
-          <Button size='large' className='w-full text-left'>
-            Go to admin
-          </Button>
-        )}
       </div>
     </div>
   )
 }
 
-export default SiderDashboard
+export default SubSide

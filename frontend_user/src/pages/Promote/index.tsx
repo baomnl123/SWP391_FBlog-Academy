@@ -4,10 +4,19 @@ import { useRequest } from 'ahooks'
 import { Avatar, Button, Card, Flex, Space, Spin, Typography, message } from 'antd'
 import { useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import SubSide, { FilterType } from '../Dashboard/components/SubSide'
+import { PendingPost } from '@/types'
 
 export default function Promote() {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
+  const [idPost, setIdPost] = useState<number | undefined>()
+  const [openPost, setOpenPost] = useState(false)
+  const [categories, setCategories] = useState<string | string[] | number | number[] | null>([])
+  const [tag, setTags] = useState<string | string[] | number | number[]>([])
+  const [filter, setFilter] = useState<FilterType | null>(null)
+  const [postFilter, setPostFilter] = useState<PendingPost[] | null>(null)
+
   const { data, refresh } = useRequest(
     async () => {
       const response = await api.getStudentAndModerator()
@@ -59,15 +68,7 @@ export default function Promote() {
   )
 
   return (
-    <BaseLayout
-      sider={
-        <div>
-          {/* <Button block type='primary' onClick={() => navigate('/')}>
-            Dashboard
-          </Button> */}
-        </div>
-      }
-    >
+    <BaseLayout sider={<SubSide />}>
       <Spin spinning={loading}>
         <div className='w-full'>
           <Card className='max-w-[800px] mx-auto'>

@@ -35,3 +35,6 @@
 .custom-bar::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+.h-full {
+  overflow-y: scroll;
+} 

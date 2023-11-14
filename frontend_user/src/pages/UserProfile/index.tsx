@@ -24,6 +24,7 @@ export default function UserProfile() {
   const [users, setUsers] = useState<User[]>([])
   const [modal, contextHolder] = Modal.useModal()
   const [openPost, setOpenPost] = useState(false)
+  const user = useSelector((state: RootState) => state.userReducer.user)
   const [categories, setCategories] = useState<string | string[] | number | number[] | null>([])
   const [tag, setTags] = useState<string | string[] | number | number[]>([])
   const [filter, setFilter] = useState<FilterType | null>(null)
@@ -118,51 +119,28 @@ export default function UserProfile() {
       }
     }
   )
-
-  // const { data: isFollow, refresh: checkIsFollow } = useRequest(
-  //   async () => {
-  //     const response = await api.followingByUserId(Number(currentId ?? getLocalStorage('id')))
-  //     if (response.find((user) => user.id === Number(id))) {
-  //       return true
-  //     }
-  //     return false
-  //   },
-  //   {
-  //     onError(e) {
-  //       console.error(e)
-  //     }
-  //   }
-  // )
-
-  // const optionsTag: SelectProps['options'] = [
-  //   {
-  //     label: 'Option 1',
-  //     value: 1
-  //   },
-  //   {
-  //     label: 'Option 2',
-  //     value: 2
-  //   },
-  //   {
-  //     label: 'Option 3',
-  //     value: 3
-  //   }
-  // ]
-
-  // const optionsCategory: SelectProps['options'] = [
-  //   {
-  //     label: 'Category 1',
-  //     value: 1
-  //   },
-  //   {
-  //     label: 'Category 2',
-  //     value: 2
-  //   },
-  //   {
-  //     label: 'Category 3',
-  //     value: 3
-  //   }
-  // ]
+  const {
+    data: postData,
+    loading: postLoading,
+    run: getPost,
+    refresh
+  } = useRequest(
+    async ({ categoryID, tagID, searchValue }: { categoryID?: number[]; tagID?: number[]; searchValue?: string }) => {
+      const res = await api.postCategoryTag({
+        categoryID,
+        tagID,
+        currentUserId: Number(user?.id ?? 0),
+        searchValue
+      })
+      return res
+    },
+    {
+      manual: true,
+      onError(e) {
+        console.error(e)
+      }
+    }
+  )
 
   const onDelete = useCallback(async (id: number) => {
     try {

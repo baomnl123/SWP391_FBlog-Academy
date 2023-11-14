@@ -8,6 +8,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import ModalCreateSaveList from './ModalCreateSaveList'
+import SubSide, { FilterType } from '../Dashboard/components/SubSide'
+import { PendingPost } from '@/types'
 
 export default function SaveList() {
   const navigate = useNavigate()
@@ -15,6 +17,13 @@ export default function SaveList() {
   const [modal, contextHolder] = Modal.useModal()
   const [open, setOpen] = useState(false)
   const [saveList, setSaveList] = useState<{ id: number; name: string } | undefined>()
+  const [idPost, setIdPost] = useState<number | undefined>()
+  const [openPost, setOpenPost] = useState(false)
+  const [categories, setCategories] = useState<string | string[] | number | number[] | null>([])
+  const [tag, setTags] = useState<string | string[] | number | number[]>([])
+  const [filter, setFilter] = useState<FilterType | null>(null)
+  const [postFilter, setPostFilter] = useState<PendingPost[] | null>(null)
+  const user = useSelector((state: RootState) => state.userReducer.user)
 
   const {
     data,
@@ -56,20 +65,7 @@ export default function SaveList() {
     <BaseLayout
       sider={
         <Flex justify='space-between' align='center' vertical className='h-full w-full'>
-          <div className='w-full'>
-            {/* <SelectLabel
-            placeHolder='Sorted By'
-            optionData={options}
-            onChange={(value) => {
-              console.log(value)
-            }}
-            mode={undefined}
-            className='w-full'
-          />
-          <Button block type='primary' onClick={() => navigate('/')}>
-            Dashboard
-          </Button> */}
-          </div>
+          <SubSide />
           <Button size='large' block type='primary' onClick={() => setOpen(true)}>
             Create Save List
           </Button>

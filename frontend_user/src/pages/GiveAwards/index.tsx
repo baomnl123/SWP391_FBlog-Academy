@@ -6,12 +6,20 @@ import { Avatar, Button, Card, Flex, Space, Spin, Typography, message } from 'an
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import CreateUpdatePost from '../Dashboard/components/CreateUpdatePost'
-
+import SubSide from '../Dashboard/components/SubSide'
+import { PendingPost } from '@/types'
+import { FilterType } from '../Dashboard/components/SubSide'
 export default function GiveAwards() {
   const [loading, setLoading] = useState(false)
 
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
+  const [idPost, setIdPost] = useState<number | undefined>()
+  const [openPost, setOpenPost] = useState(false)
+  const [categories, setCategories] = useState<string | string[] | number | number[] | null>([])
+  const [tag, setTags] = useState<string | string[] | number | number[]>([])
+  const [filter, setFilter] = useState<FilterType | null>(null)
+  const [postFilter, setPostFilter] = useState<PendingPost[] | null>(null)
 
   // const options: SelectProps['options'] = [
   //   {
@@ -94,26 +102,7 @@ export default function GiveAwards() {
     <BaseLayout
       sider={
         <Flex justify='space-between' align='center' vertical className='h-full w-full'>
-          <div className='w-full'>
-            {/* <SelectLabel
-              placeHolder='Sorted By'
-              optionData={options}
-              onChange={(value) => {
-                console.log(value)
-              }}
-              mode={undefined}
-              className='w-full'
-            />
-            <Button block type='primary' onClick={() => navigate('/')}>
-              Dashboard
-            </Button> */}
-          </div>
-          <Button size='large' block type='primary' onClick={() => setOpen(true)}>
-            <Flex justify='space-between' align='center'>
-              <Typography.Text className='text-white'>Create Post</Typography.Text>
-              <PlusOutlined />
-            </Flex>
-          </Button>
+          <SubSide />
         </Flex>
       }
     >

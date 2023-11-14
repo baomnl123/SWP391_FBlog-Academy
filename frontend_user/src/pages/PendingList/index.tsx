@@ -8,9 +8,17 @@ import dayjs from 'dayjs'
 import { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import SubSide, { FilterType } from '../Dashboard/components/SubSide'
+import { PendingPost } from '@/types'
 
 export default function PendingList() {
   const [loading, setLoading] = useState(false)
+  const [idPost, setIdPost] = useState<number | undefined>()
+  const [openPost, setOpenPost] = useState(false)
+  const [categories, setCategories] = useState<string | string[] | number | number[] | null>([])
+  const [tag, setTags] = useState<string | string[] | number | number[]>([])
+  const [filter, setFilter] = useState<FilterType | null>(null)
+  const [postFilter, setPostFilter] = useState<PendingPost[] | null>(null)
 
   const navigate = useNavigate()
   const reviewerId = useSelector((state: RootState) => state.userReducer.user?.id)
@@ -98,51 +106,21 @@ export default function PendingList() {
   return (
     <BaseLayout
       sider={
-        <div>
-          {/* <div className='mb-6'>
-            <SelectLabel
-              label='Tag'
-              placeHolder='Select Tag'
-              optionData={tags}
-              onChange={(value) => {
-                console.log(value)
-              }}
-            />
-          </div>
-          <div className='mb-6'>
-            <SelectLabel
-              label='Category'
-              placeHolder='Select Category'
-              optionData={categories}
-              onChange={(value) => {
-                console.log(value)
-              }}
-            />
-          </div>
-          <Space
-            className={`mt-8 w-full cursor-pointer ${filter === 'image' ? 'bg-blue-600' : ''} py-2 px-10 rounded-md`}
-            size={10}
-            onClick={() => {
-              setFilter('image')
-            }}
-          >
-            <IconPicture color={isDarkMode ? '#fff' : '#000'} width={30} height={30} />
-            <Typography.Text>Image</Typography.Text>
-          </Space>
-          <Space
-            className={`mt-8 w-full cursor-pointer ${filter === 'video' ? 'bg-blue-600' : ''} py-2 px-10 rounded-md`}
-            size={10}
-            onClick={() => {
-              setFilter('video')
-            }}
-          >
-            <IconPhotoFilm color={isDarkMode ? '#fff' : '#000'} width={30} height={30} />
-            <Typography.Text>Video</Typography.Text>
-          </Space> */}
-          {/* <Button type='primary' onClick={() => navigate('/')}>
-            Dashboard
-          </Button> */}
-        </div>
+        <SubSide
+          onGetCategories={(data) => {
+            setCategories(data)
+          }}
+          onGetTags={(data) => {
+            setTags(data)
+          }}
+          createPost={() => {
+            setOpenPost(true)
+            setIdPost(undefined)
+          }}
+          onFilter={(data) => {
+            setFilter(data)
+          }}
+        />
       }
     >
       <Spin spinning={loading}>
