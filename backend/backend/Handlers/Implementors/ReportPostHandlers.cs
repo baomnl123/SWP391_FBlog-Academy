@@ -74,7 +74,7 @@ namespace backend.Handlers.Implementors
                 {
                     content = string.Empty;
                 }
-                reportedPost.Content = content;
+                reportPost.Content = content;
                 reportPost.Status = pendingStatus;
                 if (!_reportPostRepository.UpdateReportPost(reportPost))
                 {
