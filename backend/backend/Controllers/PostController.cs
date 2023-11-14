@@ -257,12 +257,6 @@ namespace backend.Controllers
             var deniedPost = _postHandlers.DenyPost(reviewerId, postId);
             if (deniedPost != null)
             {
-                //send email
-                var existedEmail = deniedPost.User.Email;
-                var existedSubject = $"Your post has been denied !";
-                var existedMessage = $"The \"{deniedPost.Title}\" post has been denied by the Reviewer.\n\nFaithfully, FBLog";
-
-                await _emailSender.SendEmailAsync(existedEmail, existedSubject, existedMessage);
                 return Ok(deniedPost);
             }
             return BadRequest();
