@@ -41,6 +41,8 @@ namespace backend.Handlers.Implementors
                 }
                 //if user is disable then update the user into enable status
                 existedUser.Name = name;
+                existedUser.Role = lectureRole;
+                existedUser.IsAwarded = false;
                 //check if password is null
                 if (password != null)
                 {
@@ -114,6 +116,8 @@ namespace backend.Handlers.Implementors
                     return null;
                 }
                 //if user is disable then update the user into enable status
+                existedUser.Role = studentRole;
+                existedUser.IsAwarded = false;
                 existedUser.Name = name;
                 if (password != null)
                 {
