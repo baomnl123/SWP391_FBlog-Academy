@@ -220,7 +220,7 @@ namespace backend.Controllers
                 return Ok(deletedPost);
             }
             return BadRequest();
-        }
+        } 
 
         /// <summary>
         /// Approve selected Post. (Moderator | Lecturer)
