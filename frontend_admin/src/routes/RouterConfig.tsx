@@ -65,10 +65,10 @@ export const Routes = createBrowserRouter([
         }
       },
       {
-        path: '/post',
+        path: '/report',
         element: <Post />,
         handle: {
-          crumb: () => 'Post'
+          crumb: () => 'Report'
         }
       },
       {

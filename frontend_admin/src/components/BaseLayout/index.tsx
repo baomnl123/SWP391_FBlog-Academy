@@ -36,7 +36,7 @@ const items: MenuItem[] = [
   getItem(<Link to='/tag'>Tag</Link>, '/tag', <TagsOutlined />),
   getItem(<Link to='/lecturer'>Lecturer</Link>, '/lecturer', <UserOutlined />),
   getItem(<Link to='/student'>Student</Link>, '/student', <TeamOutlined />),
-  getItem(<Link to='/post'>Post</Link>, '/post', <FileOutlined />)
+  getItem(<Link to='/report'>Report</Link>, '/report', <FileOutlined />)
 ]
 
 const BaseLayout = ({ children }: PropsWithChildren) => {
