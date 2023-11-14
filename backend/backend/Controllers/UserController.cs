@@ -4,6 +4,12 @@ using backend.Handlers.Implementors;
 using backend.Models;
 using backend.Utils;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Net.Http;
+using System.Security.Policy;
+using System.Text;
+using System.Web;
 
 namespace backend.Controllers
 {
@@ -11,9 +17,12 @@ namespace backend.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+        private readonly string url = "https://api.clerk.com/v1/users";
+        private readonly string token = "sk_test_fc0dJDbMQTnTPbWYVy9c4v0LdhDSKNMH1U2YFukB3d";
         private readonly IUserHandlers _userHandlers;
         private readonly IFollowUserHandlers _followUserHandlers;
         private readonly EmailSender _emailSender;
+        private readonly HttpClient _httpClient = new();
         public UserController(IUserHandlers userHandlers, IFollowUserHandlers followUserHandlers)
         {
             _userHandlers = userHandlers;
@@ -125,7 +134,7 @@ namespace backend.Controllers
         [HttpGet("{userID}/follower")]
         public IActionResult GetAllFollower(int currentUserID, int userID)
         {
-            var listFollowers = _followUserHandlers.GetAllFollowerUsers(currentUserID,userID);
+            var listFollowers = _followUserHandlers.GetAllFollowerUsers(currentUserID, userID);
 
             if (listFollowers == null || listFollowers.Count == 0)
             {
@@ -142,7 +151,7 @@ namespace backend.Controllers
         /// <param name="currentUserID"></param>
         /// <returns></returns>
         [HttpGet("{currentUserID}/following")]
-        public IActionResult GetAllFollowing(int currentUserID,int userID)
+        public IActionResult GetAllFollowing(int currentUserID, int userID)
         {
             var listFollowings = _followUserHandlers.GetAllFollowingUsers(currentUserID, userID);
 
@@ -191,11 +200,28 @@ namespace backend.Controllers
         [HttpPost("lecturer")]
         public async Task<IActionResult> CreateLecturer([FromForm] string name, [FromForm] string? avatarUrl, [FromForm] string email, [FromForm] string? password)
         {
+            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {this.token}");
+
+            var content = new StringContent(JsonConvert.SerializeObject(new
+            {
+                first_name = name,
+                email_address = new[] { email },
+                password = password,
+                skip_password_check = "true"
+            }), Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await _httpClient.PostAsync(this.url, content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return BadRequest(response.Content);
+            }
             var user = _userHandlers.CreateLecturer(name, avatarUrl, email, password);
             if (user == null)
             {
                 return BadRequest();
             }
+
             //send email
             var existedEmail = user.Email;
             var existedSubject = $"Your Account has been created !";
@@ -326,10 +352,11 @@ namespace backend.Controllers
         public async Task<IActionResult> RemoveAward(int userID)
         {
             var user = _userHandlers.RemoveAward(userID);
-            if(user == null || !user.Status)
+            if (user == null || !user.Status)
             {
                 return BadRequest();
             }
+
             //send email
             var existedEmail = user.Email;
             var existedSubject = $"Your award has been removed !";
@@ -345,9 +372,56 @@ namespace backend.Controllers
         /// </summary>
         /// <param name="userID"></param>
         /// <returns></returns>
-        [HttpDelete("{userID}")]
-        public async Task<IActionResult> disableUser(int userID)
+        [HttpPost("{userID}/ban")]
+        public async Task<IActionResult> banUser(int userID)
         {
+            var getUser = _userHandlers.GetUser(userID);
+            if (getUser == null || !getUser.Status)
+            {
+                return BadRequest();
+            }
+            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {this.token}");
+
+            HttpResponseMessage response = await _httpClient.GetAsync($"{this.url}?limit=10&offset=0&email_address={HttpUtility.UrlEncode(getUser.Email)}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return BadRequest(response.Content);
+            }
+
+            string jsonContent = await response.Content.ReadAsStringAsync();
+
+            // Deserialize the JSON into a dynamic object or JObject
+            // Instead of JObject.Parse, use JArray.Parse if the response can be an array.
+            JArray jsonArray = JArray.Parse(jsonContent);
+
+            string clerkUserID = string.Empty;
+            // Now you can iterate through the array or access elements as needed.
+            foreach (JObject obj in jsonArray)
+            {
+                if (obj.TryGetValue("id", out JToken idToken))
+                {
+                    // 'id' property found, you can access its value
+                    clerkUserID = idToken.Value<string>();
+                }
+            }
+
+            if (clerkUserID.Equals(string.Empty))
+            {
+                return BadRequest();
+            }
+
+            var content = new StringContent(JsonConvert.SerializeObject(new
+            {
+            }), Encoding.UTF8, "application/json");
+
+            response = await _httpClient.PostAsync($"{this.url}/{clerkUserID}/ban",content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return BadRequest(response.Content);
+            }
+
             var user = _userHandlers.DisableUser(userID);
             if (user == null)
             {
@@ -357,6 +431,73 @@ namespace backend.Controllers
             var existedEmail = user.Email;
             var existedSubject = $"You have been BANNED !";
             var existedMessage = $"You have been BANNED !" +
+                $"\nYou have made something that can not be accepted by the Admin !" +
+                $"\n\nFaithfully,FBlog Academy";
+
+            await _emailSender.SendEmailAsync(existedEmail, existedSubject, existedMessage);
+            return Ok(user);
+        }
+
+        /// <summary>
+        /// Delete selected User. (Admin)
+        /// </summary>
+        /// <param name="userID"></param>
+        /// <returns></returns>
+        [HttpDelete("{userID}")]
+        public async Task<IActionResult> deleteUser(int userID)
+        {
+            var getUser = _userHandlers.GetUser(userID);
+            if (getUser == null || !getUser.Status)
+            {
+                return BadRequest();
+            }
+            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {this.token}");
+
+            HttpResponseMessage response = await _httpClient.GetAsync($"{this.url}?limit=10&offset=0&email_address={HttpUtility.UrlEncode(getUser.Email)}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return BadRequest(response.Content);
+            }
+
+            string jsonContent = await response.Content.ReadAsStringAsync();
+
+            // Deserialize the JSON into a dynamic object or JObject
+            // Instead of JObject.Parse, use JArray.Parse if the response can be an array.
+            JArray jsonArray = JArray.Parse(jsonContent);
+
+            string clerkUserID = string.Empty;
+            // Now you can iterate through the array or access elements as needed.
+            foreach (JObject obj in jsonArray)
+            {
+                if (obj.TryGetValue("id", out JToken idToken))
+                {
+                    // 'id' property found, you can access its value
+                    clerkUserID = idToken.Value<string>();
+                }
+            }
+
+            if (clerkUserID.Equals(string.Empty))
+            {
+                return BadRequest();
+            }
+
+            response = await _httpClient.DeleteAsync($"{this.url}/{clerkUserID}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return BadRequest(response.Content);
+            }
+
+            var user = _userHandlers.DisableUser(userID);
+            if (user == null)
+            {
+                return BadRequest();
+            }
+            //send email
+            var existedEmail = user.Email;
+            var existedSubject = $"You have been DELETED !";
+            var existedMessage = $"You have been DELETED !" +
                 $"\nYou have made something that can not be accepted by the Admin !" +
                 $"\n\nFaithfully,FBlog Academy";
 

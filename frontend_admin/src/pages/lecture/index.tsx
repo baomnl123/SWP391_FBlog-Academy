@@ -1,10 +1,10 @@
+import api from '@/config/api'
+import { Lecturers } from '@/types'
 import { useAntdTable, useRequest } from 'ahooks'
 import { Button, ConfigProvider, Flex, Form, Input, Modal, Space, Table, Typography, message } from 'antd'
 import { ColumnsType } from 'antd/es/table'
-import { useState, useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import CreateLecture from './components/CreateLecture'
-import { Lecturers } from '@/types'
-import api from '@/config/api'
 
 type DataType = {
   id: number
@@ -66,19 +66,25 @@ export default function Lecture() {
 
   const { submit } = search
 
-  const { runAsync: createLectures } = useRequest(api.createLectures, {
-    manual: true,
-    onSuccess: (res) => {
-      if (res) {
-        message.success('Create lectures success')
-        submit()
-        setCreateLecture(false)
-      }
+  const { runAsync: createLectures } = useRequest(
+    async (value) => {
+      const res = await api.createLectures(value)
+      return res
     },
-    onError: (err) => {
-      console.log(err)
+    {
+      manual: true,
+      onSuccess: (res) => {
+        if (res) {
+          message.success('Create lectures success')
+          submit()
+          setCreateLecture(false)
+        }
+      },
+      onError: (err) => {
+        console.log(err)
+      }
     }
-  })
+  )
 
   const { runAsync: deleteLectures } = useRequest(api.deleteLectures, {
     manual: true,

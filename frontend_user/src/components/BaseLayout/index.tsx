@@ -55,6 +55,11 @@ const BaseLayout = ({
     <ConfigProvider
       theme={{
         algorithm: isDarkMode ? darkAlgorithm : defaultAlgorithm,
+        token: {
+          colorPrimary: isDarkMode ? '#1f93ff' : '#0074e0',
+          colorBgBase: isDarkMode ? '#000' : '#fff',
+          colorTextBase: isDarkMode ? '#d7e6f4' : '#0b1a28'
+        },
         components: {
           Layout: {
             siderBg: '#141414',
@@ -74,9 +79,14 @@ const BaseLayout = ({
     >
       <Layout style={{ minHeight: '100vh' }} className={isDarkMode ? 'dark' : ''}>
         <Header style={{ padding: 0, background: isDarkMode ? '#141414' : '#fff' }} className='fixed w-full z-50'>
-          <Flex align='center' className='w-full px-5 shadow-md' gap={190}>
+          <Flex
+            align='center'
+            className='w-full px-5 shadow-md'
+            gap={190}
+            style={{ background: isDarkMode ? '#141414' : '#fff' }}
+          >
             <div className='cursor-pointer' onClick={() => navigate('/')}>
-              <Typography.Title level={1}>Logo</Typography.Title>
+              <img src='/public/logo.png' width={70} height={70} />
             </div>
             {showSearch && (
               <Input
@@ -91,7 +101,7 @@ const BaseLayout = ({
         </Header>
         <Layout>
           <Sider width={300} theme={isDarkMode ? 'dark' : 'light'} className='shadow-md fixed-sidebar'>
-            <Flex justify='space-between' vertical className='h-full w-full pb-5'>
+            <Flex justify='space-between' vertical className='h-full w-full pb-5 pt-5'>
               <Flex gap={10} vertical className='w-full px-5 grow mb-5'>
                 {sider}
               </Flex>
@@ -115,7 +125,7 @@ const BaseLayout = ({
             <Content style={{ margin: '0 16px' }}>{children}</Content>
           </Layout>
           {rightSider && (
-            <Sider width={300} theme={isDarkMode ? 'dark' : 'light'} className='shadow-md'>
+            <Sider width={300} theme={isDarkMode ? 'dark' : 'light'} className='shadow-md  mt-5'>
               {rightSider}
             </Sider>
           )}

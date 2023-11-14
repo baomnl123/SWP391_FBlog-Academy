@@ -1,5 +1,6 @@
 import api from '@/config/api'
 import { Form, Input, Modal, ModalProps, message } from 'antd'
+import { useWatch } from 'antd/es/form/Form'
 import { useCallback, useEffect } from 'react'
 
 const CreateCategory = (
@@ -7,6 +8,7 @@ const CreateCategory = (
 ) => {
   const { open, onOk, onCancel, initialValues, onSuccess, ...rest } = props
   const [form] = Form.useForm()
+  const categoryName = useWatch('name', form)
 
   useEffect(() => {
     form.setFieldsValue(initialValues)
@@ -17,27 +19,30 @@ const CreateCategory = (
       try {
         const payload = new FormData()
         if (initialValues) {
-          payload.append('newCategoryName', value.name)
-          await api.updateCategory(initialValues.id, payload)
-          message.success('Update category successfully')
+          if (initialValues.name !== value.name) {
+            payload.append('newCategoryName', value.name)
+            await api.updateCategory(initialValues.id, payload)
+            message.success('Update category successfully')
+          }
         } else {
           const id = Number(localStorage.getItem('id'))
           payload.append('categoryName', value.name)
           await api.createCategory(id, payload)
           message.success('Create category successfully')
         }
+        form.resetFields()
         onSuccess?.()
       } catch (e) {
         console.error(e)
       }
     },
-    [initialValues, onSuccess]
+    [initialValues, onSuccess, form]
   )
 
   return (
     <Modal
       {...rest}
-      title={initialValues ? 'Update Category':'Create Category'}
+      title={initialValues ? 'Update Category' : 'Create Category'}
       destroyOnClose
       open={open}
       onOk={(e) => {
@@ -47,6 +52,9 @@ const CreateCategory = (
       onCancel={(e) => {
         form.resetFields()
         onCancel?.(e)
+      }}
+      okButtonProps={{
+        disabled: initialValues?.name === categoryName || categoryName === ''
       }}
     >
       <Form<{ name: string }> form={form} layout='vertical' onFinish={onFinish}>

@@ -4,18 +4,10 @@ import IconPicture from '@/assets/images/svg/IconPicture'
 import SelectLabel from '@/components/SelectLabel'
 import { RootState } from '@/store'
 import { User } from '@/types'
-import {
-  AuditOutlined,
-  FileAddOutlined,
-  FileDoneOutlined,
-  FileImageOutlined,
-  FileSyncOutlined,
-  GiftOutlined,
-  VideoCameraOutlined
-} from '@ant-design/icons'
+import { AuditOutlined, FileAddOutlined, FileDoneOutlined, FileSyncOutlined, GiftOutlined } from '@ant-design/icons'
 import { useRequest } from 'ahooks'
-import { Button, Flex, SelectProps, Typography } from 'antd'
-import { useEffect, useState } from 'react'
+import { Button, Flex, Typography } from 'antd'
+import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 
@@ -31,14 +23,20 @@ export type FilterType = 'image' | 'video'
 const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: SiderDashboardProps) => {
   const navigate = useNavigate()
   const [filter, setFilter] = useState<FilterType | null>(null)
-  const [categoryOptions, setCategoryOptions] = useState<SelectProps['options']>([])
-  const [tagOptions, setTagOptions] = useState<SelectProps['options']>([])
+  // const [categoryOptions, setCategoryOptions] = useState<SelectProps['options']>([])
+  // const [tagOptions, setTagOptions] = useState<SelectProps['options']>([])
   const userInfo = useSelector<RootState>((state) => state.userReducer.user)
+  const isDarkMode = useSelector((state: RootState) => state.themeReducer.darkMode)
 
   const { data: categoriesData } = useRequest(async () => {
     try {
       const res = await api.getAllCategory()
-      return res
+      return res.map((item) => {
+        return {
+          label: item.categoryName,
+          value: item.id
+        }
+      })
     } catch (error) {
       console.log(error)
     }
@@ -47,42 +45,46 @@ const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: Si
   const { data: tagsData } = useRequest(async () => {
     try {
       const res = await api.getAllTag()
-      return res
+      return res.map((item) => {
+        return {
+          label: item.tagName,
+          value: item.id
+        }
+      })
     } catch (error) {
       console.log(error)
     }
   })
 
-  useEffect(() => {
-    if (!categoriesData) return
-    const categories: SelectProps['options'] = categoriesData.map((item) => {
-      return {
-        label: item.categoryName,
-        value: item.id
-      }
-    })
-    setCategoryOptions(categories)
-  }, [categoriesData])
+  // useEffect(() => {
+  //   if (!categoriesData) return
+  //   const categories: SelectProps['options'] = categoriesData.map((item) => {
+  //     return {
+  //       label: item.categoryName,
+  //       value: item.id
+  //     }
+  //   })
+  //   setCategoryOptions(categories)
+  // }, [categoriesData])
 
-  useEffect(() => {
-    if (!tagsData) return
-    const options: SelectProps['options'] = tagsData.map((item) => {
-      return {
-        label: item.tagName,
-        value: item.id
-      }
-    })
-    setTagOptions(options)
-  }, [tagsData])
+  // useEffect(() => {
+  //   if (!tagsData) return
+  //   const options: SelectProps['options'] = tagsData.map((item) => {
+  //     return {
+  //       label: item.tagName,
+  //       value: item.id
+  //     }
+  //   })
+  //   setTagOptions(options)
+  // }, [tagsData])
 
-  const isDarkMode = useSelector((state: RootState) => state.themeReducer.darkMode)
   return (
     <div>
       <div className='mb-6'>
         <SelectLabel
           label='Tag'
           placeHolder='Select Tag'
-          optionData={tagOptions}
+          optionData={tagsData}
           onChange={(value) => {
             onGetTags?.(value)
           }}
@@ -92,53 +94,56 @@ const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: Si
         <SelectLabel
           label='Category'
           placeHolder='Select Category'
-          optionData={categoryOptions}
+          optionData={categoriesData}
           onChange={(value) => {
             onGetCategories?.(value)
           }}
         />
       </div>
-
+      <Flex
+        align='center'
+        className={`mb-8 mt-8 w-full cursor-pointer 
+        ${filter === 'image' && !isDarkMode ? 'bg-[#C7DCF0]' : ''} 
+        ${filter === 'image' && isDarkMode ? 'bg-[#0F2438]' : ''} 
+        py-2 px-4 rounded-md`}
+        gap={10}
+        onClick={() => {
+          if (filter !== 'image') {
+            setFilter('image')
+            onFilter?.('image')
+            return
+          }
+          setFilter(null)
+          onFilter?.(null)
+        }}
+      >
+        <IconPicture color={isDarkMode ? '#468CCE' : '#3178B9'} width={30} height={30} />
+        <Typography.Text>Image</Typography.Text>
+      </Flex>
+      <Flex
+        align='center'
+        className={`mb-8 mt-8 w-full cursor-pointer 
+        ${filter === 'video' && !isDarkMode ? 'bg-[#C7DCF0]' : ''} 
+        ${filter === 'video' && isDarkMode ? 'bg-[#0F2438]' : ''} 
+        py-2 px-4 rounded-md`}
+        gap={10}
+        onClick={() => {
+          if (filter !== 'video') {
+            setFilter('video')
+            onFilter?.('video')
+            return
+          }
+          setFilter(null)
+          onFilter?.(null)
+        }}
+      >
+        <IconPhotoFilm color={isDarkMode ? '#468CCE' : '#3178B9'} width={30} height={30} />
+        <Typography.Text>Video</Typography.Text>
+      </Flex>
       <div className='mb-8'>
-        {
-          <Button
-            icon={<FileImageOutlined />}
-            size='large'
-            className={`w-full text-left mb-4 ${filter === 'image' ? 'bg-blue-600' : ''}`}
-            onClick={() => {
-              if (filter !== 'image') {
-                setFilter('image')
-                onFilter?.('image')
-                return
-              }
-              setFilter(null)
-              onFilter?.(null)
-            }}
-          >
-            Post have Image
-          </Button>
-        }
-        {
-          <Button
-            icon={<VideoCameraOutlined />}
-            size='large'
-            className={`w-full text-left mb-4 ${filter === 'video' ? 'bg-blue-600' : ''}`}
-            onClick={() => {
-              if (filter !== 'video') {
-                setFilter('video')
-                onFilter?.('video')
-                return
-              }
-              setFilter(null)
-              onFilter?.(null)
-            }}
-          >
-            Post have Video
-          </Button>
-        }
         {(userInfo as User)?.role === 'LT' && (
           <Button
-            icon={<AuditOutlined />}
+            icon={<AuditOutlined className={isDarkMode ? 'text-[#468CCE]' : 'text-[#3178B9]'} />}
             size='large'
             className='w-full text-left mb-4'
             onClick={() => navigate('/promote')}
@@ -150,7 +155,7 @@ const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: Si
           (userInfo as User)?.role === 'MD' ||
           (userInfo as User)?.role === 'SU') && (
           <Button
-            icon={<FileDoneOutlined />}
+            icon={<FileDoneOutlined className={isDarkMode ? 'text-[#468CCE]' : 'text-[#3178B9]'} />}
             size='large'
             className='w-full text-left mb-4'
             onClick={() => navigate('/save-list')}
@@ -162,7 +167,7 @@ const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: Si
           <>
             <Button
               className='w-full text-left mb-4'
-              icon={<FileSyncOutlined />}
+              icon={<FileSyncOutlined className={isDarkMode ? 'text-[#468CCE]' : 'text-[#3178B9]'} />}
               size='large'
               onClick={() => navigate('/view-pending-list')}
             >
@@ -171,7 +176,7 @@ const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: Si
             <Button
               size='large'
               className='w-full text-left mb-4'
-              icon={<GiftOutlined />}
+              icon={<GiftOutlined className={isDarkMode ? 'text-[#468CCE]' : 'text-[#3178B9]'} />}
               onClick={() => navigate('/give-awards')}
             >
               Give awards
@@ -179,7 +184,12 @@ const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: Si
           </>
         )}
         {(userInfo as User)?.role !== 'AD' ? (
-          <Button size='large' icon={<FileAddOutlined />} className='w-full text-left' onClick={() => createPost?.()}>
+          <Button
+            size='large'
+            icon={<FileAddOutlined className={isDarkMode ? 'text-[#468CCE]' : 'text-[#3178B9]'} />}
+            className='w-full text-left'
+            onClick={() => createPost?.()}
+          >
             Create Post
           </Button>
         ) : (

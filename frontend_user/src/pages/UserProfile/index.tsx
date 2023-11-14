@@ -2,19 +2,23 @@ import api from '@/api'
 import BaseLayout from '@/components/BaseLayout'
 import Card from '@/components/Card'
 import { RootState } from '@/store'
+import { getLocalStorage } from '@/utils/helpers'
 import { CheckCircleFilled, MoreOutlined } from '@ant-design/icons'
 import { useRequest } from 'ahooks'
-import { Avatar, Button, Dropdown, Flex, Image, MenuProps, Modal, Spin, Typography, message } from 'antd'
+import { Avatar, Button, Dropdown, Flex, Image, MenuProps, Modal, Space, Spin, Typography, message } from 'antd'
 import dayjs from 'dayjs'
 import { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import CreateUpdatePost from '../Dashboard/components/CreateUpdatePost'
+import ModalListUsers from './components/ModalListUsers'
+import { User } from '@/types'
 
 export default function UserProfile() {
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
   const [idPost, setIdPost] = useState<number | undefined>()
+  const [titleModal, setTitleModal] = useState('Followers')
+  const [users, setUsers] = useState<User[]>([])
   const [modal, contextHolder] = Modal.useModal()
   // const navigate = useNavigate()
   const { id } = useParams()
@@ -23,10 +27,12 @@ export default function UserProfile() {
   // const isDarkMode = useSelector((state: RootState) => state.themeReducer.darkMode)
   // const [filter, setFilter] = useState('')
 
-  const { data: userInfo } = useRequest(
+  const { data: userInfo, refresh: getUserById } = useRequest(
     async () => {
       const response = await api.getUserById(Number(id ?? 0))
-      return response
+      const follow = await runAsyncFollower()
+      const isFollowed = !!follow.find((user) => user.id === Number(currentId ?? getLocalStorage('id')))
+      return { ...response, isFollowed }
     },
     {
       onBefore() {
@@ -59,9 +65,14 @@ export default function UserProfile() {
     }
   )
 
-  const { data: follower } = useRequest(
+  const {
+    data: follower,
+    refresh: getFollower,
+    runAsync: runAsyncFollower
+  } = useRequest(
     async () => {
-      const response = await api.followerByUserId(Number(id ?? 0))
+      const response = await api.followerByUserId(Number(currentId ?? getLocalStorage('id')), Number(id ?? 0))
+      setUsers(response)
       return response
     },
     {
@@ -77,9 +88,14 @@ export default function UserProfile() {
     }
   )
 
-  const { data: following } = useRequest(
+  const {
+    data: following,
+    refresh: getFollowing,
+    runAsync: runAsyncFollowing
+  } = useRequest(
     async () => {
-      const response = await api.followingByUserId(Number(id ?? 0))
+      const response = await api.followingByUserId(Number(currentId ?? getLocalStorage('id')), Number(id ?? 0))
+      setUsers(response)
       return response
     },
     {
@@ -94,6 +110,21 @@ export default function UserProfile() {
       }
     }
   )
+
+  // const { data: isFollow, refresh: checkIsFollow } = useRequest(
+  //   async () => {
+  //     const response = await api.followingByUserId(Number(currentId ?? getLocalStorage('id')))
+  //     if (response.find((user) => user.id === Number(id))) {
+  //       return true
+  //     }
+  //     return false
+  //   },
+  //   {
+  //     onError(e) {
+  //       console.error(e)
+  //     }
+  //   }
+  // )
 
   // const optionsTag: SelectProps['options'] = [
   //   {
@@ -133,6 +164,26 @@ export default function UserProfile() {
       console.error(error)
     }
   }, [])
+
+  const follow = useCallback(async () => {
+    try {
+      await api.follow(currentId ?? getLocalStorage('id'), Number(id))
+      getUserById()
+      getFollower()
+    } catch (e) {
+      console.error(e)
+    }
+  }, [currentId, id, getUserById, getFollower])
+
+  const unFollow = useCallback(async () => {
+    try {
+      await api.unFollow(currentId ?? getLocalStorage('id'), Number(id))
+      getUserById()
+      getFollower()
+    } catch (e) {
+      console.error(e)
+    }
+  }, [currentId, id, getUserById, getFollower])
 
   const items: MenuProps['items'] = [
     {
@@ -230,19 +281,51 @@ export default function UserProfile() {
             <Avatar className='flex-none' size={128} src={userInfo?.avatarUrl} />
             <div className='grow'>
               <Flex vertical justify='space-around' align='start' className='h-full'>
-                <Typography.Title level={3}>
-                  {userInfo?.name} {userInfo?.isAwarded && <CheckCircleFilled className='w-[20px] text-blue-600' />}
-                </Typography.Title>
+                <Space size={10} align='center'>
+                  <Typography.Text className='text-2xl font-semibold'>{userInfo?.name}</Typography.Text>
+                  {userInfo?.isAwarded && <CheckCircleFilled className='w-[20px] text-blue-600' />}
+                  {Number(currentId ?? getLocalStorage('id')) !== Number(id) && (
+                    <Typography.Link
+                      className='text-lg flex justify-center items-center'
+                      onClick={async () => {
+                        userInfo?.isFollowed ? unFollow() : follow()
+                      }}
+                    >
+                      {userInfo?.isFollowed ? 'Unfollow' : 'Follow'}
+                    </Typography.Link>
+                  )}
+                </Space>
                 <Flex gap={100} align='center'>
                   <Typography.Text>{posts?.length ?? 0} Posts</Typography.Text>
-                  <Typography.Text>{follower?.length ?? 0} Followers</Typography.Text>
-                  <Typography.Text>{following?.length ?? 0} Following</Typography.Text>
+                  <Typography.Text
+                    className='cursor-pointer'
+                    onClick={async () => {
+                      setOpen(true)
+                      setTitleModal('Followers')
+                      const response = await runAsyncFollower()
+                      setUsers(response ?? [])
+                    }}
+                  >
+                    {follower?.length ?? 0} Followers
+                  </Typography.Text>
+                  <Typography.Text
+                    className='cursor-pointer'
+                    onClick={async () => {
+                      setOpen(true)
+                      setTitleModal('Following')
+                      const response = await runAsyncFollowing()
+                      setUsers(response ?? [])
+                    }}
+                  >
+                    {following?.length ?? 0} Following
+                  </Typography.Text>
                 </Flex>
               </Flex>
             </div>
           </div>
           {posts?.map((post) => (
             <Card
+              className='mb-5'
               key={post.id}
               action={
                 id === currentId
@@ -278,16 +361,19 @@ export default function UserProfile() {
             />
           ))}
         </div>
-        <CreateUpdatePost
-          isOpen={open}
-          id={idPost}
-          setModal={(value) => {
-            setOpen(value)
-            setIdPost(undefined)
+        <ModalListUsers
+          open={open}
+          title={<p className='text-center'>{titleModal}</p>}
+          onCancel={() => {
+            setOpen(false)
+          }}
+          footer={false}
+          users={users}
+          onToggleFollow={() => {
+            titleModal === 'Followers' ? getFollower() : getFollowing()
           }}
         />
       </Spin>
-
       {contextHolder}
     </BaseLayout>
   )

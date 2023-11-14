@@ -3,6 +3,8 @@ import DashBoardCard, { CardType } from './components/DashBoardCard'
 import TableDashboard from './components/TableDashboard'
 import { useRequest } from 'ahooks'
 import api from '@/config/api'
+import PostDetail from './components/PostDetail'
+import { Image } from 'antd'
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState<CardType | null>(null)
@@ -72,7 +74,43 @@ const Dashboard = () => {
         />
       </div>
       <div>
-        <TableDashboard cardType={activeTab} />
+        {activeTab === 'post' ? (
+          post?.map((item) => {
+            const { id, createdAt, title, content, user, images, videos } = item.post
+            return (
+              <PostDetail
+                key={id}
+                reporterAvt={item?.reporter?.avatarUrl}
+                reporterName={item?.reporter?.name}
+                reportDate={item?.reporter?.createdAt}
+                time={createdAt}
+                reportContent={item?.content}
+                title={title}
+                description={content}
+                avatar={user?.avatarUrl ?? ''}
+                author={user?.name}
+                className='max-w-[750px] mx-auto mt-10 mb-8'
+                slideContent={[
+                  ...(images ?? []).map((image) => (
+                    <Image
+                      key={image.id}
+                      src={image.url}
+                      className='w-[1194px] h-[620px]'
+                      placeholder='https://i0.wp.com/thinkfirstcommunication.com/wp-content/uploads/2022/05/placeholder-1-1.png?w=1200&ssl=1'
+                    />
+                  )),
+                  ...(videos ?? []).map((video) => (
+                    <video controls className='w-full'>
+                      <source src={video.url} type='video/mp4' className='object-contain' />
+                    </video>
+                  ))
+                ]}
+              />
+            )
+          })
+        ) : (
+          <TableDashboard cardType={activeTab} />
+        )}
       </div>
     </>
   )

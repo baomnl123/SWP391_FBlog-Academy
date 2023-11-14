@@ -8,7 +8,7 @@ import { MoreOutlined } from '@ant-design/icons'
 import { useRequest } from 'ahooks'
 import { Button, Dropdown, Image, Modal, Spin, Typography, message } from 'antd'
 import dayjs from 'dayjs'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import CreateUpdatePost from './components/CreateUpdatePost'
@@ -18,6 +18,7 @@ import ModalSave from './components/ModalSave'
 import RightSiderDashboard from './components/RightSiderDashboard'
 import SiderDashboard, { FilterType } from './components/SiderDashboard'
 import Vote from './components/Vote'
+import { getLocalStorage } from '@/utils/helpers'
 
 export default function Dashboard() {
   const [modal, contextHolder] = Modal.useModal()
@@ -41,7 +42,6 @@ export default function Dashboard() {
         message.success('Delete post success')
         getPost({})
       }
-      console.log(res)
     },
     onError: (err) => {
       console.log(err)
@@ -119,6 +119,29 @@ export default function Dashboard() {
     }
   })
 
+  const {
+    data: postData,
+    loading: postLoading,
+    run: getPost,
+    refresh
+  } = useRequest(
+    async ({ categoryID, tagID, searchValue }: { categoryID?: number[]; tagID?: number[]; searchValue?: string }) => {
+      const res = await api.postCategoryTag({
+        categoryID,
+        tagID,
+        currentUserId: Number(user?.id ?? 0),
+        searchValue
+      })
+      return res
+    },
+    {
+      manual: true,
+      onError(e) {
+        console.error(e)
+      }
+    }
+  )
+
   useEffect(() => {
     if (!filter) {
       setPostFilter(null)
@@ -130,38 +153,43 @@ export default function Dashboard() {
   }, [filter, getAllPostHasImages, getAllPostHasVideos, user])
 
   useEffect(() => {
-    getPost({
-      categoryID: !categories ? undefined : (categories as unknown as number[]),
-      tagID: !tag ? undefined : (tag as unknown as number[])
-    })
-  }, [categories, tag])
-
-  const {
-    data: postData,
-    loading: postLoading,
-    run: getPost,
-    refresh
-  } = useRequest(
-    async ({ categoryID, tagID, searchValue }: { categoryID?: number[]; tagID?: number[]; searchValue?: string }) => {
-      try {
-        const res = await api.postCategoryTag({
-          categoryID,
-          tagID,
-          currentUserId: Number(user?.id ?? 0),
-          searchValue
-        })
-        return res
-      } catch (error) {
-        console.log(error)
-      }
+    if (user) {
+      getPost({
+        categoryID: !categories ? undefined : (categories as unknown as number[]),
+        tagID: !tag ? undefined : (tag as unknown as number[])
+      })
     }
+  }, [categories, getPost, tag, user])
+
+  const follow = useCallback(
+    async (id: number) => {
+      try {
+        await api.follow(user?.id ?? getLocalStorage('id'), id)
+        getPost({
+          categoryID: !categories ? undefined : (categories as unknown as number[]),
+          tagID: !tag ? undefined : (tag as unknown as number[])
+        })
+      } catch (e) {
+        console.error(e)
+      }
+    },
+    [categories, getPost, tag, user?.id]
   )
 
-  useEffect(() => {
-    if (!user) return
-    getPost({})
-  }, [user])
-
+  const unFollow = useCallback(
+    async (id: number) => {
+      try {
+        await api.unFollow(user?.id ?? getLocalStorage('id'), id)
+        getPost({
+          categoryID: !categories ? undefined : (categories as unknown as number[]),
+          tagID: !tag ? undefined : (tag as unknown as number[])
+        })
+      } catch (e) {
+        console.error(e)
+      }
+    },
+    [categories, getPost, tag, user?.id]
+  )
   const data = !postFilter ? postData : postFilter
 
   return (
@@ -170,7 +198,19 @@ export default function Dashboard() {
       onChangeSearch={(value) => {
         getPost({ searchValue: value })
       }}
-      rightSider={<RightSiderDashboard />}
+      rightSider={
+        <RightSiderDashboard
+          onCategoryChange={(value) => {
+            setCategories(value as string | number | number[] | string[])
+          }}
+          onTagChange={(value) => {
+            setTags(value as string | number | number[] | string[])
+          }}
+          onPostChange={(value) => {
+            setPostFilter(value ? ([value] as unknown as PendingPost[]) : null)
+          }}
+        />
+      }
       sider={
         <SiderDashboard
           onGetCategories={(data) => {
@@ -205,11 +245,16 @@ export default function Dashboard() {
           return (
             <div key={post?.id} className='mb-10'>
               <Card
+                onFollow={() => {
+                  post.user.isFollowed ? unFollow(post.user.id) : follow(post.user.id)
+                }}
+                showFollow
                 className='mx-auto'
                 onClickAvatar={() => navigate(`/profile/${post?.user?.id}`)}
                 user={{
                   username: post?.user?.name,
-                  avatar: post?.user?.avatarUrl
+                  avatar: post?.user?.avatarUrl,
+                  isFollow: post?.user?.isFollowed
                 }}
                 action={[
                   <div>
@@ -250,7 +295,7 @@ export default function Dashboard() {
                     : [
                         <div key={1} className='flex items-center'>
                           <Vote
-                            vote={Number(post?.upvotes ?? 0) - Number(post?.downvote ?? 0)}
+                            vote={Number(post?.upvotes ?? 0)}
                             postId={post.id}
                             userId={user?.id}
                             downvote={post.downvote}
@@ -258,6 +303,8 @@ export default function Dashboard() {
                             onVoteSuccess={() => {
                               refresh()
                             }}
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            usersVote={(post as any)?.usersUpvote}
                           />
                         </div>,
                         <div key={2} className='cursor-pointer'>
@@ -288,7 +335,7 @@ export default function Dashboard() {
                               setIdPost(post?.id)
                             }}
                           >
-                            <IconReport color={isDarkMode ? '#c78243' : '#bc7838'} />
+                            <IconReport color={isDarkMode ? '#fff' : '#000'} />
                           </div>
                         </div>
                       ]
