@@ -138,12 +138,23 @@ export default function GiveAwards() {
                       danger
                       size='large'
                       className='w-[150px]'
-                      onClick={() => removeAward(user.id)}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        removeAward(user.id)
+                      }}
                     >
                       Remove Award
                     </Button>
                   ) : (
-                    <Button type='primary' size='large' className='w-[150px]' onClick={() => giveAward(user.id)}>
+                    <Button
+                      type='primary'
+                      size='large'
+                      className='w-[150px]'
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        giveAward(user.id)
+                      }}
+                    >
                       Give Award
                     </Button>
                   )}
