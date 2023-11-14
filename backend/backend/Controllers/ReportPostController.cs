@@ -144,12 +144,6 @@ namespace backend.Controllers
             {
                 return BadRequest();
             }
-            //send email
-            var existedEmail = reportPost.Reporter.Email;
-            var existedSubject = $"Your report has been denied !";
-            var existedMessage = $"The admin has reviewed your Report and eventually deny your Report !\n\nFaithfully,FBlog Academy";
-
-            await _emailSender.SendEmailAsync(existedEmail, existedSubject, existedMessage);
             return Ok(reportPost);
         }
     }
