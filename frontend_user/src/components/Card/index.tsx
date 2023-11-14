@@ -62,7 +62,7 @@ export default function Card({
         </Space>
         <Space direction='vertical' size={5}>
           {action}
-        </Space>
+        </Space> 
       </Flex>
       <Space className='w-full my-5' direction='vertical' size={10}>
         <div>
