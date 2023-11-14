@@ -85,12 +85,29 @@ export default function Promote() {
                       <Typography.Text>{user.name}</Typography.Text>
                     </Space>
                     {user.role === 'MD' && (
-                      <Button type='primary' danger size='large' className='w-[150px]' onClick={() => demote(user.id)}>
+                      <Button
+                        type='primary'
+                        danger
+                        size='large'
+                        className='w-[150px]'
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          demote(user.id)
+                        }}
+                      >
                         Demote
                       </Button>
                     )}
                     {user.role === 'SU' && (
-                      <Button type='primary' size='large' className='w-[150px]' onClick={() => promote(user.id)}>
+                      <Button
+                        type='primary'
+                        size='large'
+                        className='w-[150px]'
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          promote(user.id)
+                        }}
+                      >
                         Promote
                       </Button>
                     )}
