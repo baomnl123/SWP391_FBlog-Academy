@@ -262,7 +262,13 @@ namespace backend.Handlers.Implementors
                 //map if user status is true
                 if (user.Status)
                 {
-                    listDTO.Add(_mapper.Map<UserDTO>(user));
+                    var userDTO = _mapper.Map<UserDTO>(user);
+                    var getReports = _reportPostRepository.GetApprovedReportsAbout(userDTO.Id);
+                    if (getReports != null)
+                    {
+                        userDTO.successReportedTimes = getReports.Count();
+                    }
+                    listDTO.Add(userDTO);
                 }
             }
             //return
