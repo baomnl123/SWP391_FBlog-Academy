@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace backend.Migrations
 {
-    public partial class FBlogAcademy : Migration
+    public partial class InitialDB : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -15,9 +15,9 @@ namespace backend.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     avatar_url = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    email = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     password = table.Column<string>(type: "varchar(65)", unicode: false, maxLength: 65, nullable: true),
-                    role = table.Column<string>(type: "varchar(2)", unicode: false, fixedLength: true, maxLength: 2, nullable: false),
+                    role = table.Column<string>(type: "char(2)", unicode: false, fixedLength: true, maxLength: 2, nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime", nullable: false),
                     updated_at = table.Column<DateTime>(type: "datetime", nullable: true),
                     status = table.Column<bool>(type: "bit", nullable: false),
@@ -35,7 +35,7 @@ namespace backend.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     admin_id = table.Column<int>(type: "int", nullable: false),
-                    category_name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    category_name = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime", nullable: false),
                     updated_at = table.Column<DateTime>(type: "datetime", nullable: true),
                     status = table.Column<bool>(type: "bit", nullable: false)
@@ -156,6 +156,31 @@ namespace backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserCategory",
+                columns: table => new
+                {
+                    user_id = table.Column<int>(type: "int", nullable: false),
+                    category_id = table.Column<int>(type: "int", nullable: false),
+                    status = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__UserCate__638369FD4FBDCD1A", x => new { x.user_id, x.category_id });
+                    table.ForeignKey(
+                        name: "FKUserCatego136719",
+                        column: x => x.category_id,
+                        principalTable: "Category",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FKUserCatego519402",
+                        column: x => x.user_id,
+                        principalTable: "User",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Comment",
                 columns: table => new
                 {
@@ -192,7 +217,7 @@ namespace backend.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     post_id = table.Column<int>(type: "int", nullable: false),
-                    url = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    url = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime", nullable: false),
                     status = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -273,7 +298,7 @@ namespace backend.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     post_id = table.Column<int>(type: "int", nullable: false),
-                    url = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    url = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime", nullable: false),
                     status = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -321,7 +346,7 @@ namespace backend.Migrations
                 {
                     save_list_id = table.Column<int>(type: "int", nullable: false),
                     save_post_id = table.Column<int>(type: "int", nullable: false),
-                    created_at = table.Column<DateTime>(type: "datetime", nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
                     status = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -387,6 +412,31 @@ namespace backend.Migrations
                         name: "FKPostTag716835",
                         column: x => x.post_id,
                         principalTable: "Post",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserTag",
+                columns: table => new
+                {
+                    user_id = table.Column<int>(type: "int", nullable: false),
+                    tag_id = table.Column<int>(type: "int", nullable: false),
+                    status = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__UserTag__638369FD4FBDCD1A", x => new { x.user_id, x.tag_id });
+                    table.ForeignKey(
+                        name: "FKUserTag136719",
+                        column: x => x.tag_id,
+                        principalTable: "Tag",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FKUserTag519402",
+                        column: x => x.user_id,
+                        principalTable: "User",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -512,6 +562,16 @@ namespace backend.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserCategory_category_id",
+                table: "UserCategory",
+                column: "category_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserTag_tag_id",
+                table: "UserTag",
+                column: "tag_id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Video_post_id",
                 table: "Video",
                 column: "post_id");
@@ -551,6 +611,12 @@ namespace backend.Migrations
                 name: "ReportPost");
 
             migrationBuilder.DropTable(
+                name: "UserCategory");
+
+            migrationBuilder.DropTable(
+                name: "UserTag");
+
+            migrationBuilder.DropTable(
                 name: "Video");
 
             migrationBuilder.DropTable(
@@ -560,10 +626,10 @@ namespace backend.Migrations
                 name: "VotePost");
 
             migrationBuilder.DropTable(
-                name: "Category");
+                name: "SaveList");
 
             migrationBuilder.DropTable(
-                name: "SaveList");
+                name: "Category");
 
             migrationBuilder.DropTable(
                 name: "Tag");

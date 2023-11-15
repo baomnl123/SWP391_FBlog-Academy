@@ -10,8 +10,8 @@ using backend.Models;
 namespace backend.Migrations
 {
     [DbContext(typeof(FBlogAcademyContext))]
-    [Migration("20231021040233_FBlogAcademy")]
-    partial class FBlogAcademy
+    [Migration("20231115151439_InitialDB")]
+    partial class InitialDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -269,8 +269,8 @@ namespace backend.Migrations
                         .HasColumnType("int")
                         .HasColumnName("save_post_id");
 
-                    b.Property<bool>("CreatedAt")
-                        .HasColumnType("bit")
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
                         .HasColumnName("created_at");
 
                     b.Property<bool>("Status")
@@ -433,6 +433,11 @@ namespace backend.Migrations
                         .HasColumnName("id")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("AvatarUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("avatar_url");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime")
                         .HasColumnName("created_at");
@@ -481,6 +486,50 @@ namespace backend.Migrations
                         .IsUnique();
 
                     b.ToTable("User");
+                });
+
+            modelBuilder.Entity("backend.Models.UserCategory", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int")
+                        .HasColumnName("user_id");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int")
+                        .HasColumnName("category_id");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit")
+                        .HasColumnName("status");
+
+                    b.HasKey("UserId", "CategoryId")
+                        .HasName("PK__UserCate__638369FD4FBDCD1A");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("UserCategory");
+                });
+
+            modelBuilder.Entity("backend.Models.UserTag", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int")
+                        .HasColumnName("user_id");
+
+                    b.Property<int>("TagId")
+                        .HasColumnType("int")
+                        .HasColumnName("tag_id");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit")
+                        .HasColumnName("status");
+
+                    b.HasKey("UserId", "TagId")
+                        .HasName("PK__UserTag__638369FD4FBDCD1A");
+
+                    b.HasIndex("TagId");
+
+                    b.ToTable("UserTag");
                 });
 
             modelBuilder.Entity("backend.Models.Video", b =>
@@ -778,6 +827,44 @@ namespace backend.Migrations
                     b.Navigation("Admin");
                 });
 
+            modelBuilder.Entity("backend.Models.UserCategory", b =>
+                {
+                    b.HasOne("backend.Models.Category", "Category")
+                        .WithMany("UserCategories")
+                        .HasForeignKey("CategoryId")
+                        .HasConstraintName("FKUserCatego136719")
+                        .IsRequired();
+
+                    b.HasOne("backend.Models.User", "User")
+                        .WithMany("UserCategories")
+                        .HasForeignKey("UserId")
+                        .HasConstraintName("FKUserCatego519402")
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("backend.Models.UserTag", b =>
+                {
+                    b.HasOne("backend.Models.Tag", "Tag")
+                        .WithMany("UserTags")
+                        .HasForeignKey("TagId")
+                        .HasConstraintName("FKUserTag136719")
+                        .IsRequired();
+
+                    b.HasOne("backend.Models.User", "User")
+                        .WithMany("UserTags")
+                        .HasForeignKey("UserId")
+                        .HasConstraintName("FKUserTag519402")
+                        .IsRequired();
+
+                    b.Navigation("Tag");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("backend.Models.Video", b =>
                 {
                     b.HasOne("backend.Models.Post", "Post")
@@ -832,6 +919,8 @@ namespace backend.Migrations
                     b.Navigation("CategoryTags");
 
                     b.Navigation("PostCategories");
+
+                    b.Navigation("UserCategories");
                 });
 
             modelBuilder.Entity("backend.Models.Comment", b =>
@@ -868,6 +957,8 @@ namespace backend.Migrations
                     b.Navigation("CategoryTags");
 
                     b.Navigation("PostTags");
+
+                    b.Navigation("UserTags");
                 });
 
             modelBuilder.Entity("backend.Models.User", b =>
@@ -891,6 +982,10 @@ namespace backend.Migrations
                     b.Navigation("SaveLists");
 
                     b.Navigation("Tags");
+
+                    b.Navigation("UserCategories");
+
+                    b.Navigation("UserTags");
 
                     b.Navigation("VoteComments");
 

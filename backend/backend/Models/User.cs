@@ -10,6 +10,7 @@ namespace backend.Models
         public User()
         {
             Categories = new HashSet<Category>();
+            UserCategories = new HashSet<UserCategory>();
             Comments = new HashSet<Comment>();
             FollowUserFolloweds = new HashSet<FollowUser>();
             FollowUserFollowers = new HashSet<FollowUser>();
@@ -19,6 +20,7 @@ namespace backend.Models
             ReportPostReporters = new HashSet<ReportPost>();
             SaveLists = new HashSet<SaveList>();
             Tags = new HashSet<Tag>();
+            UserTags = new HashSet<UserTag>();
             VoteComments = new HashSet<VoteComment>();
             VotePosts = new HashSet<VotePost>();
         }
@@ -35,6 +37,7 @@ namespace backend.Models
         public bool IsAwarded { get; set; }
 
         public virtual ICollection<Category> Categories { get; set; }
+        public virtual ICollection<UserCategory> UserCategories { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<FollowUser> FollowUserFolloweds { get; set; }
         public virtual ICollection<FollowUser> FollowUserFollowers { get; set; }
@@ -44,6 +47,7 @@ namespace backend.Models
         public virtual ICollection<ReportPost> ReportPostReporters { get; set; }
         public virtual ICollection<SaveList> SaveLists { get; set; }
         public virtual ICollection<Tag> Tags { get; set; }
+        public virtual ICollection<UserTag> UserTags { get; set; }
         public virtual ICollection<VoteComment> VoteComments { get; set; }
         public virtual ICollection<VotePost> VotePosts { get; set; }
     }
