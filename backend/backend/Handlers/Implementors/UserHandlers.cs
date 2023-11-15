@@ -418,5 +418,26 @@ namespace backend.Handlers.Implementors
             }
             return _mapper.Map<UserDTO>(existedUser);
         }
+
+        public UserDTO? UnbanUser(int userID)
+        {
+            var getUser = _userRepository.GetUser(userID);
+            if(getUser == null)
+            {
+                return null;
+            }
+            if (getUser.Status)
+            {
+                return null;
+            }
+            getUser.Status = true;
+            getUser.UpdatedAt = DateTime.Now;
+            if (!_userRepository.UpdateUser(getUser))
+            {
+                return null;
+            }
+            var userDTO = _mapper.Map<UserDTO>(getUser);
+            return userDTO;
+        }
     }
 }

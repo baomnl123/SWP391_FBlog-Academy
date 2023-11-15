@@ -258,6 +258,68 @@ namespace backend.Controllers
             return Ok(followRelationship);
         }
 
+        [HttpPost("{userID}/unban")]
+        public async Task<IActionResult> UnbanUser(int userID)
+        {
+            var getUser = _userHandlers.GetUser(userID);
+            if (getUser == null || !getUser.Status)
+            {
+                return BadRequest("User is invalid in DB !");
+            }
+            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {this.token}");
+
+            HttpResponseMessage response = await _httpClient.GetAsync($"{this.url}?limit=10&offset=0&email_address={HttpUtility.UrlEncode(getUser.Email)}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return BadRequest("Don't have info in CLERK\n" + response.Content);
+            }
+
+            string jsonContent = await response.Content.ReadAsStringAsync();
+
+            JArray jsonArray = JArray.Parse(jsonContent);
+
+            string clerkUserID = string.Empty;
+            foreach (JObject obj in jsonArray)
+            {
+                if (obj.TryGetValue("id", out JToken idToken))
+                {
+                    // 'id' property found, you can access its value
+                    clerkUserID = idToken.Value<string>();
+                }
+            }
+
+            if (clerkUserID.Equals(string.Empty))
+            {
+                return BadRequest("Don't have info in CLERK");
+            }
+
+            var content = new StringContent(JsonConvert.SerializeObject(new
+            {
+            }), Encoding.UTF8, "application/json");
+
+            response = await _httpClient.PostAsync($"{this.url}/{clerkUserID}/unban",content);
+            if (!response.IsSuccessStatusCode)
+            {
+                return BadRequest("Failed to unban\n" + response.Content);
+            }
+
+            var getUserDTO = _userHandlers.UnbanUser(userID);
+            if(getUserDTO == null)
+            {
+                return BadRequest("DB Update Failed !");
+            }
+
+            //send email
+            var existedEmail = getUserDTO.Email;
+            var existedSubject = $"Your Account has been unbanned !";
+            var existedMessage = $"Your Account has been unbanned !" +
+                $"\n\nFaithfully,FBlog Academy";
+            await _emailSender.SendEmailAsync(existedEmail, existedSubject, existedMessage);
+
+            return Ok(getUserDTO);
+        }
+
         /// <summary>
         /// Update selected User.
         /// </summary>
