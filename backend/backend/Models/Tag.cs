@@ -9,6 +9,7 @@ namespace backend.Models
     {
         public Tag()
         {
+            UserTags = new HashSet<UserTag>();
             CategoryTags = new HashSet<CategoryTag>();
             PostTags = new HashSet<PostTag>();
         }
@@ -21,6 +22,7 @@ namespace backend.Models
         public bool Status { get; set; }
 
         public virtual User Admin { get; set; }
+        public virtual ICollection<UserTag> UserTags { get; set; }
         public virtual ICollection<CategoryTag> CategoryTags { get; set; }
         public virtual ICollection<PostTag> PostTags { get; set; }
     }

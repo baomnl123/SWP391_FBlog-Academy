@@ -9,6 +9,7 @@ namespace backend.Models
     {
         public Category()
         {
+            UserCategories = new HashSet<UserCategory>();
             CategoryTags = new HashSet<CategoryTag>();
             PostCategories = new HashSet<PostCategory>();
         }
@@ -21,6 +22,7 @@ namespace backend.Models
         public bool Status { get; set; }
 
         public virtual User Admin { get; set; }
+        public virtual ICollection<UserCategory> UserCategories { get; set; }
         public virtual ICollection<CategoryTag> CategoryTags { get; set; }
         public virtual ICollection<PostCategory> PostCategories { get; set; }
     }

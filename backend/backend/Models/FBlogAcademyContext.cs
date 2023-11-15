@@ -30,6 +30,8 @@ namespace backend.Models
         public virtual DbSet<SaveList> SaveLists { get; set; }
         public virtual DbSet<Tag> Tags { get; set; }
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<UserCategory> UserCategories { get; set; }
+        public virtual DbSet<UserTag> UserTags{ get; set; }
         public virtual DbSet<Video> Videos { get; set; }
         public virtual DbSet<VoteComment> VoteComments { get; set; }
         public virtual DbSet<VotePost> VotePosts { get; set; }
@@ -491,6 +493,58 @@ namespace backend.Models
                 entity.Property(e => e.UpdatedAt)
                     .HasColumnType("datetime")
                     .HasColumnName("updated_at");
+            });
+
+            modelBuilder.Entity<UserCategory>(entity =>
+            {
+                entity.HasKey(e => new { e.UserId, e.CategoryId })
+                    .HasName("PK__UserCate__638369FD4FBDCD1A");
+
+                entity.ToTable("UserCategory");
+
+                entity.Property(e => e.UserId).HasColumnName("user_id");
+
+                entity.Property(e => e.CategoryId).HasColumnName("category_id");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.HasOne(d => d.Category)
+                    .WithMany(p => p.UserCategories)
+                    .HasForeignKey(d => d.CategoryId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FKUserCatego136719");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.UserCategories)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FKUserCatego519402");
+            });
+
+            modelBuilder.Entity<UserTag>(entity =>
+            {
+                entity.HasKey(e => new { e.UserId, e.TagId })
+                    .HasName("PK__UserTag__638369FD4FBDCD1A");
+
+                entity.ToTable("UserTag");
+
+                entity.Property(e => e.UserId).HasColumnName("user_id");
+
+                entity.Property(e => e.TagId).HasColumnName("tag_id");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.HasOne(d => d.Tag)
+                    .WithMany(p => p.UserTags)
+                    .HasForeignKey(d => d.TagId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FKUserTag136719");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.UserTags)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FKUserTag519402");
             });
 
             modelBuilder.Entity<Video>(entity =>
