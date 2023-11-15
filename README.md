@@ -49,7 +49,7 @@ npm run start
 
 ### For the backend
 
-First, you need to replace the connection string in appsettings.json to connect to your local database
+First, you need to replace the connection string in ```appsettings.json``` to connect to your local database
 
 Install dotnet-ef for CLI
 
