@@ -154,8 +154,10 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
       getPostById({
         postId: id
       })
+    } else {
+      form.resetFields()
     }
-  }, [getPostById, id])
+  }, [form, getPostById, id])
 
   useEffect(() => {
     if (categoriesData) {
