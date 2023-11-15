@@ -15,6 +15,7 @@ namespace backend.Repositories.IRepositories
         public ICollection<User>? GetStudentsAndModerators();
         public User? GetUserByPostID(int postID);
         public User? GetUserByCommentID(int commentID);
+        public ICollection<User>? GetBannedUser();
         //CRUD Users
         public bool CreateUser(User user);
         public bool UpdateUser(User user);

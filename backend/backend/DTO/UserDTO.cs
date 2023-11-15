@@ -7,6 +7,7 @@
         public string Email { get; set; }
         public string AvatarUrl { get; set; }
         public string Role { get; set; }
+        public int successReportedTimes { get; set; } = 0;
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public bool Status { get; set; }
