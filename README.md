@@ -36,18 +36,14 @@ Go to the frontend_admin folder
 ```bash
 cd frontend_admin
 npm install
+npm run start
 ```
 
-Or go to the frontend_admin folder
+Or go to the frontend_user folder
 
 ```bash
 cd frontend_user
 npm install
-```
-
-Start the server
-
-```bash
 npm run start
 ```
 
