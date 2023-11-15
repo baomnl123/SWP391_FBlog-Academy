@@ -1,4 +1,5 @@
-﻿using backend.DTO;
+﻿using Azure;
+using backend.DTO;
 using backend.Handlers.IHandlers;
 using backend.Handlers.Implementors;
 using backend.Models;
@@ -19,6 +20,7 @@ namespace backend.Controllers
     {
         private readonly string url = "https://api.clerk.com/v1/users";
         private readonly string token = "sk_test_fc0dJDbMQTnTPbWYVy9c4v0LdhDSKNMH1U2YFukB3d";
+        private readonly UserRoleConstrant _userRoleConstrant;
         private readonly IUserHandlers _userHandlers;
         private readonly IFollowUserHandlers _followUserHandlers;
         private readonly EmailSender _emailSender;
@@ -28,6 +30,7 @@ namespace backend.Controllers
             _userHandlers = userHandlers;
             _followUserHandlers = followUserHandlers;
             _emailSender = new EmailSender();
+            _userRoleConstrant = new();
         }
 
         /// <summary>
@@ -255,6 +258,68 @@ namespace backend.Controllers
             return Ok(followRelationship);
         }
 
+        [HttpPost("{userID}/unban")]
+        public async Task<IActionResult> UnbanUser(int userID)
+        {
+            var getUser = _userHandlers.GetUser(userID);
+            if (getUser == null || !getUser.Status)
+            {
+                return BadRequest("User is invalid in DB !");
+            }
+            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {this.token}");
+
+            HttpResponseMessage response = await _httpClient.GetAsync($"{this.url}?limit=10&offset=0&email_address={HttpUtility.UrlEncode(getUser.Email)}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return BadRequest("Don't have info in CLERK\n" + response.Content);
+            }
+
+            string jsonContent = await response.Content.ReadAsStringAsync();
+
+            JArray jsonArray = JArray.Parse(jsonContent);
+
+            string clerkUserID = string.Empty;
+            foreach (JObject obj in jsonArray)
+            {
+                if (obj.TryGetValue("id", out JToken idToken))
+                {
+                    // 'id' property found, you can access its value
+                    clerkUserID = idToken.Value<string>();
+                }
+            }
+
+            if (clerkUserID.Equals(string.Empty))
+            {
+                return BadRequest("Don't have info in CLERK");
+            }
+
+            var content = new StringContent(JsonConvert.SerializeObject(new
+            {
+            }), Encoding.UTF8, "application/json");
+
+            response = await _httpClient.PostAsync($"{this.url}/{clerkUserID}/unban",content);
+            if (!response.IsSuccessStatusCode)
+            {
+                return BadRequest("Failed to unban\n" + response.Content);
+            }
+
+            var getUserDTO = _userHandlers.UnbanUser(userID);
+            if(getUserDTO == null)
+            {
+                return BadRequest("DB Update Failed !");
+            }
+
+            //send email
+            var existedEmail = getUserDTO.Email;
+            var existedSubject = $"Your Account has been unbanned !";
+            var existedMessage = $"Your Account has been unbanned !" +
+                $"\n\nFaithfully,FBlog Academy";
+            await _emailSender.SendEmailAsync(existedEmail, existedSubject, existedMessage);
+
+            return Ok(getUserDTO);
+        }
+
         /// <summary>
         /// Update selected User.
         /// </summary>
@@ -368,78 +433,7 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Ban selected User. (Admin)
-        /// </summary>
-        /// <param name="userID"></param>
-        /// <returns></returns>
-        [HttpPost("{userID}/ban")]
-        public async Task<IActionResult> banUser(int userID)
-        {
-            var getUser = _userHandlers.GetUser(userID);
-            if (getUser == null || !getUser.Status)
-            {
-                return BadRequest();
-            }
-            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {this.token}");
-
-            HttpResponseMessage response = await _httpClient.GetAsync($"{this.url}?limit=10&offset=0&email_address={HttpUtility.UrlEncode(getUser.Email)}");
-
-            if (!response.IsSuccessStatusCode)
-            {
-                return BadRequest(response.Content);
-            }
-
-            string jsonContent = await response.Content.ReadAsStringAsync();
-
-            // Deserialize the JSON into a dynamic object or JObject
-            // Instead of JObject.Parse, use JArray.Parse if the response can be an array.
-            JArray jsonArray = JArray.Parse(jsonContent);
-
-            string clerkUserID = string.Empty;
-            // Now you can iterate through the array or access elements as needed.
-            foreach (JObject obj in jsonArray)
-            {
-                if (obj.TryGetValue("id", out JToken idToken))
-                {
-                    // 'id' property found, you can access its value
-                    clerkUserID = idToken.Value<string>();
-                }
-            }
-
-            if (clerkUserID.Equals(string.Empty))
-            {
-                return BadRequest();
-            }
-
-            var content = new StringContent(JsonConvert.SerializeObject(new
-            {
-            }), Encoding.UTF8, "application/json");
-
-            response = await _httpClient.PostAsync($"{this.url}/{clerkUserID}/ban",content);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                return BadRequest(response.Content);
-            }
-
-            var user = _userHandlers.DisableUser(userID);
-            if (user == null)
-            {
-                return BadRequest();
-            }
-            //send email
-            var existedEmail = user.Email;
-            var existedSubject = $"You have been BANNED !";
-            var existedMessage = $"You have been BANNED !" +
-                $"\nYou have made something that can not be accepted by the Admin !" +
-                $"\n\nFaithfully,FBlog Academy";
-
-            await _emailSender.SendEmailAsync(existedEmail, existedSubject, existedMessage);
-            return Ok(user);
-        }
-
-        /// <summary>
-        /// Delete selected User. (Admin)
+        /// Delete/Ban selected User. (Admin)
         /// </summary>
         /// <param name="userID"></param>
         /// <returns></returns>
@@ -462,12 +456,9 @@ namespace backend.Controllers
 
             string jsonContent = await response.Content.ReadAsStringAsync();
 
-            // Deserialize the JSON into a dynamic object or JObject
-            // Instead of JObject.Parse, use JArray.Parse if the response can be an array.
             JArray jsonArray = JArray.Parse(jsonContent);
 
             string clerkUserID = string.Empty;
-            // Now you can iterate through the array or access elements as needed.
             foreach (JObject obj in jsonArray)
             {
                 if (obj.TryGetValue("id", out JToken idToken))
@@ -482,11 +473,27 @@ namespace backend.Controllers
                 return BadRequest();
             }
 
-            response = await _httpClient.DeleteAsync($"{this.url}/{clerkUserID}");
-
-            if (!response.IsSuccessStatusCode)
+            if (getUser.Role.Equals(_userRoleConstrant.GetLecturerRole()))
             {
-                return BadRequest(response.Content);
+                response = await _httpClient.DeleteAsync($"{this.url}/{clerkUserID}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return BadRequest(response.Content);
+                }
+            }
+            else
+            {
+                var content = new StringContent(JsonConvert.SerializeObject(new
+                {
+                }), Encoding.UTF8, "application/json");
+
+                response = await _httpClient.PostAsync($"{this.url}/{clerkUserID}/ban", content);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return BadRequest(response.Content);
+                }
             }
 
             var user = _userHandlers.DisableUser(userID);
@@ -496,11 +503,9 @@ namespace backend.Controllers
             }
             //send email
             var existedEmail = user.Email;
-            var existedSubject = $"You have been DELETED !";
-            var existedMessage = $"You have been DELETED !" +
-                $"\nYou have made something that can not be accepted by the Admin !" +
+            var existedSubject = $"Your Account have been DELETED !";
+            var existedMessage = $"Your Account have been DELETED !" +
                 $"\n\nFaithfully,FBlog Academy";
-
             await _emailSender.SendEmailAsync(existedEmail, existedSubject, existedMessage);
             return Ok(user);
         }

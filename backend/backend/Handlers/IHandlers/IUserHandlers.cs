@@ -16,6 +16,7 @@ namespace backend.Handlers.IHandlers
         public UserDTO? CreateLecturer(string name, string avatarURL, string email, string password);
         public UserDTO? UpdateUser(int userID, string name, string avatarURL, string password);
         public UserDTO? DisableUser(int userID);
+        public UserDTO? UnbanUser(int userID);
         //public UserDTO? UpdateLecturer(int userID);
         //public UserDTO? DisableLecturer(int userID);
         //Promote/Demote
