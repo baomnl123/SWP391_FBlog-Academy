@@ -6,7 +6,7 @@ import { Avatar, Button, Card, Flex, Space, Spin, Typography, message } from 'an
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import CreateUpdatePost from '../Dashboard/components/CreateUpdatePost'
-
+import SubSide from '../Dashboard/components/SubSide'
 export default function GiveAwards() {
   const [loading, setLoading] = useState(false)
 
@@ -94,20 +94,7 @@ export default function GiveAwards() {
     <BaseLayout
       sider={
         <Flex justify='space-between' align='center' vertical className='h-full w-full'>
-          <div className='w-full'>
-            {/* <SelectLabel
-              placeHolder='Sorted By'
-              optionData={options}
-              onChange={(value) => {
-                console.log(value)
-              }}
-              mode={undefined}
-              className='w-full'
-            />
-            <Button block type='primary' onClick={() => navigate('/')}>
-              Dashboard
-            </Button> */}
-          </div>
+          <SubSide />
           <Button size='large' block type='primary' onClick={() => setOpen(true)}>
             <Flex justify='space-between' align='center'>
               <Typography.Text className='text-white'>Create Post</Typography.Text>
