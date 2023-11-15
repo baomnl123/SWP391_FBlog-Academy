@@ -4,6 +4,7 @@ import { useRequest } from 'ahooks'
 import { Avatar, Button, Card, Flex, Space, Spin, Typography, message } from 'antd'
 import { useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import SubSide from '../Dashboard/components/SubSide'
 
 export default function Promote() {
   const navigate = useNavigate()
@@ -59,15 +60,7 @@ export default function Promote() {
   )
 
   return (
-    <BaseLayout
-      sider={
-        <div>
-          {/* <Button block type='primary' onClick={() => navigate('/')}>
-            Dashboard
-          </Button> */}
-        </div>
-      }
-    >
+    <BaseLayout sider={<SubSide />}>
       <Spin spinning={loading}>
         <div className='w-full'>
           <Card className='max-w-[800px] mx-auto'>

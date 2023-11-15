@@ -21,7 +21,7 @@ interface SiderDashboardProps {
 export type FilterType = 'image' | 'video'
 
 const handleClick = () => {
-  window.location.href = 'http://fblogadmin.netlify.app';
+  window.location.href = 'http://fblogadmin.netlify.app'
 }
 
 const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: SiderDashboardProps) => {
