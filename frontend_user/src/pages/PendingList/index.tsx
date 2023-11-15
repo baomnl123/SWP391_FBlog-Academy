@@ -8,6 +8,7 @@ import dayjs from 'dayjs'
 import { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import SubSide from '../Dashboard/components/SubSide'
 
 export default function PendingList() {
   const [loading, setLoading] = useState(false)
@@ -96,55 +97,7 @@ export default function PendingList() {
   // )
 
   return (
-    <BaseLayout
-      sider={
-        <div>
-          {/* <div className='mb-6'>
-            <SelectLabel
-              label='Tag'
-              placeHolder='Select Tag'
-              optionData={tags}
-              onChange={(value) => {
-                console.log(value)
-              }}
-            />
-          </div>
-          <div className='mb-6'>
-            <SelectLabel
-              label='Category'
-              placeHolder='Select Category'
-              optionData={categories}
-              onChange={(value) => {
-                console.log(value)
-              }}
-            />
-          </div>
-          <Space
-            className={`mt-8 w-full cursor-pointer ${filter === 'image' ? 'bg-blue-600' : ''} py-2 px-10 rounded-md`}
-            size={10}
-            onClick={() => {
-              setFilter('image')
-            }}
-          >
-            <IconPicture color={isDarkMode ? '#fff' : '#000'} width={30} height={30} />
-            <Typography.Text>Image</Typography.Text>
-          </Space>
-          <Space
-            className={`mt-8 w-full cursor-pointer ${filter === 'video' ? 'bg-blue-600' : ''} py-2 px-10 rounded-md`}
-            size={10}
-            onClick={() => {
-              setFilter('video')
-            }}
-          >
-            <IconPhotoFilm color={isDarkMode ? '#fff' : '#000'} width={30} height={30} />
-            <Typography.Text>Video</Typography.Text>
-          </Space> */}
-          {/* <Button type='primary' onClick={() => navigate('/')}>
-            Dashboard
-          </Button> */}
-        </div>
-      }
-    >
+    <BaseLayout sider={<SubSide />}>
       <Spin spinning={loading}>
         <div className='max-w-[1200px] mx-auto'>
           <Space size={20} className='w-full' direction='vertical'>

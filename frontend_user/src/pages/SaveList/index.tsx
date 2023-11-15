@@ -8,6 +8,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import ModalCreateSaveList from './ModalCreateSaveList'
+import SubSide from '../Dashboard/components/SubSide'
 
 export default function SaveList() {
   const navigate = useNavigate()
@@ -56,20 +57,7 @@ export default function SaveList() {
     <BaseLayout
       sider={
         <Flex justify='space-between' align='center' vertical className='h-full w-full'>
-          <div className='w-full'>
-            {/* <SelectLabel
-            placeHolder='Sorted By'
-            optionData={options}
-            onChange={(value) => {
-              console.log(value)
-            }}
-            mode={undefined}
-            className='w-full'
-          />
-          <Button block type='primary' onClick={() => navigate('/')}>
-            Dashboard
-          </Button> */}
-          </div>
+          <SubSide />
           <Button size='large' block type='primary' onClick={() => setOpen(true)}>
             Create Save List
           </Button>
