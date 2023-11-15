@@ -476,11 +476,6 @@ namespace backend.Controllers
             if (getUser.Role.Equals(_userRoleConstrant.GetLecturerRole()))
             {
                 response = await _httpClient.DeleteAsync($"{this.url}/{clerkUserID}");
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    return BadRequest(response.Content);
-                }
             }
             else
             {
@@ -489,11 +484,10 @@ namespace backend.Controllers
                 }), Encoding.UTF8, "application/json");
 
                 response = await _httpClient.PostAsync($"{this.url}/{clerkUserID}/ban", content);
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    return BadRequest(response.Content);
-                }
+            }
+            if (!response.IsSuccessStatusCode)
+            {
+                return BadRequest("Call API FAILED !" + response.Content);
             }
 
             var user = _userHandlers.DisableUser(userID);
