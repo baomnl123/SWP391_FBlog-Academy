@@ -221,7 +221,11 @@ const api = {
 
   getPostById({ postId }: { postId: number }) {
     const url = 'Post/' + postId
-    return axiosClient.get<unknown, Post>(url)
+    return axiosClient.get<unknown, Post>(url, {
+      params: {
+        currentUserId: localStorage.getItem('id')
+      }
+    })
   },
 
   updatePost({
