@@ -235,10 +235,13 @@ namespace backend.Handlers.Implementors
             foreach (var user in list)
             {
                 //check user status then map to dto
-                if (user.Status)
+                var userDTO = _mapper.Map<UserDTO>(user);
+                var getReports = _reportPostRepository.GetApprovedReportsAbout(userDTO.Id);
+                if (getReports != null)
                 {
-                    listDTO.Add(_mapper.Map<UserDTO>(user));
+                    userDTO.successReportedTimes = getReports.Count();
                 }
+                listDTO.Add(userDTO);
             }
             //return
             return listDTO;
@@ -262,7 +265,13 @@ namespace backend.Handlers.Implementors
                 //map if user status is true
                 if (user.Status)
                 {
-                    listDTO.Add(_mapper.Map<UserDTO>(user));
+                    var userDTO = _mapper.Map<UserDTO>(user);
+                    var getReports = _reportPostRepository.GetApprovedReportsAbout(userDTO.Id);
+                    if (getReports != null)
+                    {
+                        userDTO.successReportedTimes = getReports.Count();
+                    }
+                    listDTO.Add(userDTO);
                 }
             }
             //return
