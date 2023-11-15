@@ -10,9 +10,10 @@ interface ModalReportProps {
   isOpen: boolean
   setModal?: (value: boolean) => void
   idPost?: number | null
+  onSuccess?: () => void
 }
 
-const ModalReport = ({ isOpen, setModal, idPost }: ModalReportProps) => {
+const ModalReport = ({ isOpen, setModal, idPost, onSuccess }: ModalReportProps) => {
   const [isModalOpen, setIsModalOpen] = useState(isOpen)
   const [form] = Form.useForm()
   const { user } = useSelector((state: RootState) => state.userReducer)
@@ -22,6 +23,8 @@ const ModalReport = ({ isOpen, setModal, idPost }: ModalReportProps) => {
     onSuccess: (res) => {
       if (res) {
         message.success('Send report success')
+        onSuccess?.()
+        form.resetFields()
         setIsModalOpen(false)
         setModal?.(false)
       }
@@ -41,6 +44,7 @@ const ModalReport = ({ isOpen, setModal, idPost }: ModalReportProps) => {
 
   const handleCancel = () => {
     form.resetFields()
+    onSuccess?.()
     setIsModalOpen(false)
     setModal?.(false)
   }

@@ -120,12 +120,6 @@ namespace backend.Controllers
             {
                 return BadRequest();
             }
-            //send email
-            var existedEmail = reportPostDTO.Reporter.Email;
-            var existedSubject = $"Your report has been completed !";
-            var existedMessage = $"The admin has reviewed your Report and completed !\n\nFaithfully,FBlog Academy";
-
-            await _emailSender.SendEmailAsync(existedEmail, existedSubject, existedMessage);
             return Ok(reportPostDTO);
         }
 

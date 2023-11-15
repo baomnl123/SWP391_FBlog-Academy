@@ -119,12 +119,12 @@ const BaseLayout = ({ children }: PropsWithChildren) => {
           <div className='flex justify-center items-center'>
             <Link to='/dashboard'>
               <img
-                src={`/public/${collapsed ? 'sm-logo.png' : 'logo.png'}`}
+                src={`/${collapsed ? 'sm-logo.png' : 'logo.png'}`}
                 className={`${collapsed && 'py-5'}`}
                 alt=''
                 width={collapsed ? 20 : 100}
               />
-            </Link>
+            </Link> 
           </div>
           <Menu
             theme={isDarkMode ? 'dark' : 'light'}

@@ -44,10 +44,10 @@ namespace backend.Handlers.Implementors
             var studentRole = _userRoleConstrant.GetStudentRole();
             var moderatorRole = _userRoleConstrant.GetModeratorRole();
             //check reporter is student or moderator
-            if (!reporter.Role.Contains(studentRole) && !reporter.Role.Contains(moderatorRole))
-            {
-                return null;
-            }
+            //if (!reporter.Role.Contains(studentRole) && !reporter.Role.Contains(moderatorRole))
+            //{
+            //    return null;
+            //}
             //var reported post 
             var reportedPost = _postRepository.GetPost(postID);
             if (reportedPost == null || !reportedPost.Status)
@@ -62,13 +62,19 @@ namespace backend.Handlers.Implementors
             {
                 var reportPost = _reportPostRepository.GetReportPostByIDs(reporterID, postID);
                 var disableStatus = _reportStatusConstrant.GetDisableStatus();
+                var declineStatus = _reportStatusConstrant.GetDeclinedStatus();
                 var pendingStatus = _reportStatusConstrant.GetPendingStatus();
                 //If it is available then return null
-                if (!reportPost.Status.Contains(disableStatus))
+                if (!reportPost.Status.Contains(disableStatus) && !reportPost.Status.Contains(declineStatus))
                 {
                     return null;
                 }
                 reportPost.AdminId = null;
+                if (content == null)
+                {
+                    content = string.Empty;
+                }
+                reportPost.Content = content;
                 reportPost.Status = pendingStatus;
                 if (!_reportPostRepository.UpdateReportPost(reportPost))
                 {
@@ -89,6 +95,7 @@ namespace backend.Handlers.Implementors
                         reportPostDTO.Admin = (getAdmin is not null && getAdmin.Status) ? getAdmin : null;
                     }
                 }
+                return reportPostDTO;
             }
             //Ensure that content is not null
             if (content == null)
@@ -385,6 +392,15 @@ namespace backend.Handlers.Implementors
             var reportPost = _reportPostRepository.GetReportPostByIDs(reporterID, postID);
             //Check Null
             if (reportPost == null || reportPost.Status.Contains(disableStatus))
+            {
+                return null;
+            }
+            var postDTO = _postHandlers.GetPostBy(postID, reporterID);
+            if (postDTO == null || !postDTO.Status)
+            {
+                return null;
+            }
+            if(_postHandlers.DisablePost(postDTO.Id) == null)
             {
                 return null;
             }

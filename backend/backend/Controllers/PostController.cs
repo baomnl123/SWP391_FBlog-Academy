@@ -217,16 +217,10 @@ namespace backend.Controllers
             var deletedPost = _postHandlers.DisablePost(postId);
             if (deletedPost != null)
             {
-                //send email
-                var existedEmail = deletedPost.User.Email;
-                var existedSubject = $"Your post has been banned !";
-                var existedMessage = $"The \"{deletedPost.Title}\" post has been banned by the Admin.\nYour post will be not displayed on the blog.\n\nFaithfully, FBLog";
-
-                await _emailSender.SendEmailAsync(existedEmail, existedSubject, existedMessage);
                 return Ok(deletedPost);
             }
             return BadRequest();
-        }
+        } 
 
         /// <summary>
         /// Approve selected Post. (Moderator | Lecturer)
@@ -263,12 +257,6 @@ namespace backend.Controllers
             var deniedPost = _postHandlers.DenyPost(reviewerId, postId);
             if (deniedPost != null)
             {
-                //send email
-                var existedEmail = deniedPost.User.Email;
-                var existedSubject = $"Your post has been denied !";
-                var existedMessage = $"The \"{deniedPost.Title}\" post has been denied by the Reviewer.\n\nFaithfully, FBLog";
-
-                await _emailSender.SendEmailAsync(existedEmail, existedSubject, existedMessage);
                 return Ok(deniedPost);
             }
             return BadRequest();
