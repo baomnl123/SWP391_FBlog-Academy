@@ -5,6 +5,13 @@ This system was created to support students of the F University, serving as a pl
 
 This is my [Project's Requirement](https://docs.google.com/spreadsheets/d/1QgbaDYhJ-orJ3kNxQvgAo9OHS8cuK-RVBKNzox8sdGY/edit?usp=sharing)
 
+## System Design
+### Use Case Diagram
+![UseCaseDiagram](/diagram/FBlog-Academy_UseCaseDiagram.png)
+### Entity Relationship Diagram
+![ERD](/diagram/FBlog-Academy_ERD.png)
+### Database
+![Database](/diagram/FBlog-Academy_Database.png)
 
 ## Directory
 
