@@ -249,5 +249,13 @@ namespace backend.Repositories.Implementors
                 return null;
             }
         }
+
+        public ICollection<User>? GetBannedUser()
+        {
+            var studentRole = _userRoleConstrant.GetStudentRole();
+            var moderatorRole = _userRoleConstrant.GetModeratorRole();
+            var userList = _fBlogAcademyContext.Users.Where(u => u.Status == false && (u.Role.Trim().Contains(studentRole) || u.Role.Trim().Contains(moderatorRole))).ToList();
+            return userList;
+        }
     }
 }

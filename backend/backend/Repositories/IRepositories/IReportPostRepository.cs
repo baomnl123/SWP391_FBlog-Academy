@@ -10,6 +10,7 @@ namespace backend.Repositories.IRepositories
         public ICollection<ReportPost>? GetReportPostsByContent(string content);
         //public ReportPost? GetReportPostByID(int postID);
         public ReportPost? GetReportPostByIDs(int reporterID, int postID);
+        public ICollection<ReportPost>? GetApprovedReportsAbout(int reportedID);
         //CRUD Report Post
         public bool AddReportPost(ReportPost reportpost);
         public bool UpdateReportPost(ReportPost reportpost);

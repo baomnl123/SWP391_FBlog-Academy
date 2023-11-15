@@ -91,12 +91,25 @@ namespace backend.Controllers
             var list = _userHandlers.GetLecturers();
             if (list == null)
             {
-                var emptyList = new List<UserDTO>();
-                return Ok(emptyList);
+                return Ok(new List<UserDTO>());
             }
             return Ok(list);
         }
 
+        /// <summary>
+        /// Get all banned Users
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("banned")]
+        public async Task<IActionResult> GetBannedResult()
+        {
+            var getUsers = _userHandlers.GetBannedUsers();
+            if(getUsers == null || getUsers.Count == 0)
+            {
+                return Ok(new List<UserDTO>());
+            }
+            return Ok(getUsers);
+        }
         /// <summary>
         /// Get selected User by his/her ID.
         /// </summary>

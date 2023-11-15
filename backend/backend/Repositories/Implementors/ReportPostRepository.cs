@@ -173,5 +173,12 @@ namespace backend.Repositories.Implementors
                 return null;
             }
         }
+
+        public ICollection<ReportPost>? GetApprovedReportsAbout(int reportedID)
+        {
+            var approvedStatus = _reportStatusConstrant.GetApprovedStatus();
+            var reportList = _fblogAcademyContext.ReportPosts.Where(r => r.Post.UserId.Equals(reportedID) && r.Status.Trim().Contains(approvedStatus)).ToList();
+            return reportList;
+        }
     }
 }

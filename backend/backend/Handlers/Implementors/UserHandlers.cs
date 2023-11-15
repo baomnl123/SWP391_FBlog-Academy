@@ -2,6 +2,7 @@
 using backend.DTO;
 using backend.Handlers.IHandlers;
 using backend.Models;
+using backend.Repositories.Implementors;
 using backend.Repositories.IRepositories;
 using backend.Utils;
 
@@ -12,11 +13,13 @@ namespace backend.Handlers.Implementors
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         private readonly UserRoleConstrant _userRoleConstrant;
+        private readonly IReportPostRepository _reportPostRepository;
         private HashingString _hashingString;
-        public UserHandlers(IUserRepository userRepository, IMapper mapper)
+        public UserHandlers(IUserRepository userRepository, IMapper mapper, IReportPostRepository reportPostRepository)
         {
             _userRepository = userRepository;
             _mapper = mapper;
+            _reportPostRepository = reportPostRepository;
             _userRoleConstrant = new();
             _hashingString = new();
         }
@@ -282,7 +285,13 @@ namespace backend.Handlers.Implementors
                 //map if user status is true
                 if (user.Status)
                 {
-                    listDTO.Add(_mapper.Map<UserDTO>(user));
+                    var userDTO = _mapper.Map<UserDTO>(user);
+                    var getReports = _reportPostRepository.GetApprovedReportsAbout(userDTO.Id);
+                    if (getReports != null)
+                    {
+                        userDTO.successReportedTimes = getReports.Count;
+                    }
+                    listDTO.Add(userDTO);
                 }
             }
             if (listDTO.Count == 0)
@@ -438,6 +447,26 @@ namespace backend.Handlers.Implementors
             }
             var userDTO = _mapper.Map<UserDTO>(getUser);
             return userDTO;
+        }
+
+        public ICollection<UserDTO>? GetBannedUsers()
+        {
+            var getUsers = _userRepository.GetBannedUser();
+            if(getUsers == null || getUsers.Count == 0)
+            {
+                return null;
+            }
+            var listDTO = new List<UserDTO>();
+            foreach (var user in getUsers)
+            {
+                var userDTO = _mapper.Map<UserDTO>(user);
+                var getReports = _reportPostRepository.GetApprovedReportsAbout(userDTO.Id);
+                if(getReports != null) { 
+                    userDTO.successReportedTimes = getReports.Count();
+                }
+                listDTO.Add(userDTO);
+            }
+            return listDTO;
         }
     }
 }
