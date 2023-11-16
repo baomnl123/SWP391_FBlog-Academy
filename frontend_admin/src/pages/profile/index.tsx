@@ -4,7 +4,8 @@ import React from 'react';
 export default function Profile() {
   const textStyle: React.CSSProperties = {
     fontSize: '20px', 
-    color: '#333',    
+    color: '#333', 
+    border: '0.1px solid #333', 
     
   };
   return (
