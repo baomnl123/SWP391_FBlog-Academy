@@ -5,29 +5,29 @@ using System.Data;
 
 namespace backend.Repositories.Implementors
 {
-    public class TagRepository : ITagRepository
+    public class SubjectRepository : ISubjectRepository
     {
         private readonly FBlogAcademyContext _context;
 
-        public TagRepository()
+        public SubjectRepository()
         {
             _context = new();
         }
 
-        public bool CreateTag(Tag tag)
+        public bool CreateSubject(Subject tag)
         {
             _context.Add(tag);
             return Save();
         }
 
-        public bool DisableTag(Tag tag)
+        public bool DisableSubject(Subject tag)
         {
-            var postTags = _context.PostTags.Where(c => c.TagId == tag.Id).ToList();
+            var postSubjects = _context.PostSubjects.Where(c => c.SubjectId == tag.Id).ToList();
 
-            foreach (var postTag in postTags)
+            foreach (var postSubject in postSubjects)
             {
-                postTag.Status = false;
-                _context.Update(postTag);
+                postSubject.Status = false;
+                _context.Update(postSubject);
             }
 
             tag.Status = false;
@@ -35,14 +35,14 @@ namespace backend.Repositories.Implementors
             return Save();
         }
 
-        public bool EnableTag(Tag tag)
+        public bool EnableSubject(Subject tag)
         {
-            var postTags = _context.PostTags.Where(c => c.TagId == tag.Id).ToList();
+            var postSubjects = _context.PostSubjects.Where(c => c.SubjectId == tag.Id).ToList();
 
-            foreach (var postTag in postTags)
+            foreach (var postSubject in postSubjects)
             {
-                postTag.Status = true;
-                _context.Update(postTag);
+                postSubject.Status = true;
+                _context.Update(postSubject);
             }
 
             tag.Status = true;
@@ -50,41 +50,41 @@ namespace backend.Repositories.Implementors
             return Save();
         }
 
-        public ICollection<Tag> GetAllTags()
+        public ICollection<Subject> GetAllSubjects()
         {
-            return _context.Tags.Where(c => c.Status == true).ToList();
+            return _context.Subjects.Where(c => c.Status == true).ToList();
         }
 
-        public ICollection<Tag> GetDisableTags()
+        public ICollection<Subject> GetDisableSubjects()
         {
-            return _context.Tags.Where(c => c.Status == false).ToList();
+            return _context.Subjects.Where(c => c.Status == false).ToList();
         }
 
-        public Tag? GetTagById(int tagId)
+        public Subject? GetSubjectById(int tagId)
         {
-            return _context.Tags.FirstOrDefault(c => c.Id == tagId);
+            return _context.Subjects.FirstOrDefault(c => c.Id == tagId);
         }
 
-        public Tag? GetTagByName(string tagName)
+        public Subject? GetSubjectByName(string tagName)
         {
-            return _context.Tags.FirstOrDefault(c => c.TagName.Trim().ToUpper() == tagName.Trim().ToUpper());
+            return _context.Subjects.FirstOrDefault(c => c.SubjectName.Trim().ToUpper() == tagName.Trim().ToUpper());
         }
 
-        public ICollection<Post> GetPostsByTag(int tagId)
+        public ICollection<Post> GetPostsBySubject(int tagId)
         {
-            return _context.PostTags.Where(e => e.TagId == tagId && e.Status == true)
+            return _context.PostSubjects.Where(e => e.SubjectId == tagId && e.Status == true)
                                     .Select(e => e.Post)
                                     .Where(c => c.Status == true).ToList();
         }
 
-        public ICollection<Category> GetCategoriesByTag(int tagId)
+        public ICollection<Major> GetMajorsBySubject(int tagId)
         {
-            return _context.CategoryTags.Where(e => e.TagId == tagId && e.Status == true)
-                                        .Select(e => e.Category)
+            return _context.MajorSubjects.Where(e => e.SubjectId == tagId && e.Status == true)
+                                        .Select(e => e.Major)
                                         .Where(c => c.Status == true).ToList();
         }
 
-        public bool UpdateTag(Tag tag)
+        public bool UpdateSubject(Subject tag)
         {
             _context.Update(tag);
             return Save();

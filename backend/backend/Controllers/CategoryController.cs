@@ -11,32 +11,32 @@ namespace backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoryController : Controller
+    public class MajorController : Controller
     {
-        private readonly ICategoryHandlers _categoryHandlers;
+        private readonly IMajorHandlers _majorHandlers;
         private readonly IUserHandlers _userHandlers;
         private readonly UserRoleConstrant _userRoleConstrant;
 
-        public CategoryController(ICategoryHandlers categoryHandlers, IUserHandlers userHandlers)
+        public MajorController(IMajorHandlers majorHandlers, IUserHandlers userHandlers)
         {
-            _categoryHandlers = categoryHandlers;
+            _majorHandlers = majorHandlers;
             _userHandlers = userHandlers;
             _userRoleConstrant = new();
         }
 
         /// <summary>
-        /// Get all the Categories that are available. (Admin) 
+        /// Get all the Majors that are available. (Admin) 
         /// </summary>
         /// <returns></returns>
         [HttpGet("all")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
-        public IActionResult GetCategories()
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Major>))]
+        public IActionResult GetMajors()
         {
-            var categories = _categoryHandlers.GetCategories();
+            var categories = _majorHandlers.GetMajors();
 
             if (categories == null)
             {
-                var emptyList = new List<CategoryDTO>();
+                var emptyList = new List<MajorDTO>();
                 return Ok(emptyList);
             }
 
@@ -44,18 +44,18 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Get all the Categories that are disable. (Admin)
+        /// Get all the Majors that are disable. (Admin)
         /// </summary>
         /// <returns></returns>
         [HttpGet("disable")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
-        public IActionResult GetDisableCategories()
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Major>))]
+        public IActionResult GetDisableMajors()
         {
-            var categories = _categoryHandlers.GetDisableCategories();
+            var categories = _majorHandlers.GetDisableMajors();
 
             if (categories == null)
             {
-                var emptyList = new List<CategoryDTO>();
+                var emptyList = new List<MajorDTO>();
                 return Ok(emptyList);
             }
 
@@ -63,32 +63,32 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Get Category with selected CategoryID. 
+        /// Get Major with selected MajorID. 
         /// </summary>
-        /// <param name="categoryId"></param>
+        /// <param name="majorId"></param>
         /// <returns></returns>
-        [HttpGet("{categoryId}")]
-        [ProducesResponseType(200, Type = typeof(Category))]
+        [HttpGet("{majorId}")]
+        [ProducesResponseType(200, Type = typeof(Major))]
         [ProducesResponseType(400)]
-        public IActionResult GetCategory(int categoryId)
+        public IActionResult GetMajor(int majorId)
         {
-            var category = _categoryHandlers.GetCategoryById(categoryId);
-            if (category == null || category.Status == false) return NotFound();
+            var major = _majorHandlers.GetMajorById(majorId);
+            if (major == null || major.Status == false) return NotFound();
 
-            return Ok(category);
+            return Ok(major);
         }
 
         /// <summary>
-        /// Get all Posts that have the selected Category. (Admin)
+        /// Get all Posts that have the selected Major. (Admin)
         /// </summary>
-        /// <param name="categoryId"></param>
+        /// <param name="majorId"></param>
         /// <returns></returns>
-        [HttpGet("{categoryId}/posts")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
+        [HttpGet("{majorId}/posts")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Major>))]
         [ProducesResponseType(400)]
-        public IActionResult GetPostsByCategory(int categoryId)
+        public IActionResult GetPostsByMajor(int majorId)
         {
-            var posts = _categoryHandlers.GetPostsByCategory(categoryId);
+            var posts = _majorHandlers.GetPostsByMajor(majorId);
             if (posts == null)
             {
                 var emptyList = new List<PostDTO>();
@@ -99,144 +99,144 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Get all Tags that have the selected Category. 
+        /// Get all Subjects that have the selected Major. 
         /// </summary>
-        /// <param name="categoryId"></param>
+        /// <param name="majorId"></param>
         /// <returns></returns>
-        [HttpGet("{categoryId}/tags")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
+        [HttpGet("{majorId}/subjects")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Major>))]
         [ProducesResponseType(400)]
-        public IActionResult GetTagsByCategory(int categoryId)
+        public IActionResult GetSubjectsByMajor(int majorId)
         {
-            var tags = _categoryHandlers.GetTagsByCategory(categoryId);
-            if (tags == null)
+            var subjects = _majorHandlers.GetSubjectsByMajor(majorId);
+            if (subjects == null)
             {
-                var emptyList = new List<TagDTO>();
+                var emptyList = new List<SubjectDTO>();
                 return Ok(emptyList);
             }
 
-            return Ok(tags);
+            return Ok(subjects);
         }
 
         /// <summary>
-        /// Create a new Category. (Admin)
+        /// Create a new Major. (Admin)
         /// </summary>
         /// <param name="adminId"></param>
-        /// <param name="categoryName"></param>
+        /// <param name="majorName"></param>
         /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(422)]
-        public IActionResult CreateCategory(int adminId, [FromForm] string categoryName)
+        public IActionResult CreateMajor(int adminId, [FromForm] string majorName)
         {
             var admin = _userHandlers.GetUser(adminId);
             var adminRole = _userRoleConstrant.GetAdminRole();
             if (admin == null || admin.Role != adminRole)
                 return NotFound("Admin does not exists!");
 
-            var category = _categoryHandlers.GetCategoryByName(categoryName);
-            if (category != null)
+            var major = _majorHandlers.GetMajorByName(majorName);
+            if (major != null)
             {
-                // If category already exists, and status is true, then return 
-                if (category.Status) return StatusCode(422, $"\"{category.CategoryName}\" aldready exists!");
+                // If major already exists, and status is true, then return 
+                if (major.Status) return StatusCode(422, $"\"{major.MajorName}\" aldready exists!");
 
-                // If category already exists, but was disabled, then enable it
-                return Ok(_categoryHandlers.EnableCategory(category.Id));
+                // If major already exists, but was disabled, then enable it
+                return Ok(_majorHandlers.EnableMajor(major.Id));
             }
 
-            var createCategory = _categoryHandlers.CreateCategory(adminId, categoryName);
-            if (createCategory == null) return BadRequest(ModelState);
+            var createMajor = _majorHandlers.CreateMajor(adminId, majorName);
+            if (createMajor == null) return BadRequest(ModelState);
 
-            return Ok(createCategory);
+            return Ok(createMajor);
         }
 
         /// <summary>
-        /// Update the selected Category. (Admin)
+        /// Update the selected Major. (Admin)
         /// </summary>
-        /// <param name="newCategoryName"></param>
-        /// <param name="currentCategoryId"></param>
+        /// <param name="newMajorName"></param>
+        /// <param name="currentMajorId"></param>
         /// <returns></returns>
-        [HttpPut("{currentCategoryId}")]
+        [HttpPut("{currentMajorId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateCategory([FromForm] string newCategoryName, int currentCategoryId)
+        public IActionResult UpdateMajor([FromForm] string newMajorName, int currentMajorId)
         {
-            // If category does not exists for updating, return Not found
-            var currentCategory = _categoryHandlers.GetCategoryById(currentCategoryId);
-            if (currentCategory == null) return NotFound("Category does not exists!");
+            // If major does not exists for updating, return Not found
+            var currentMajor = _majorHandlers.GetMajorById(currentMajorId);
+            if (currentMajor == null) return NotFound("Major does not exists!");
 
-            // Check the new category name already exists in DB
-            var isCategoryExists = _categoryHandlers.GetCategoryByName(newCategoryName);
-            if (isCategoryExists != null && isCategoryExists.Status)
-                return StatusCode(422, $"\"{isCategoryExists.CategoryName}\" aldready exists!");
+            // Check the new major name already exists in DB
+            var isMajorExists = _majorHandlers.GetMajorByName(newMajorName);
+            if (isMajorExists != null && isMajorExists.Status)
+                return StatusCode(422, $"\"{isMajorExists.MajorName}\" aldready exists!");
 
-            // If category already exists, but was disabled, then enable it
-            if (isCategoryExists != null && !isCategoryExists.Status)
+            // If major already exists, but was disabled, then enable it
+            if (isMajorExists != null && !isMajorExists.Status)
             {
-                _categoryHandlers.EnableCategory(isCategoryExists.Id);
-                return StatusCode(422, $"\"{isCategoryExists.CategoryName}\" aldready exists!");
+                _majorHandlers.EnableMajor(isMajorExists.Id);
+                return StatusCode(422, $"\"{isMajorExists.MajorName}\" aldready exists!");
             }
 
-            // If the new name does not exists, then update to the current category    
-            var updateCategory = _categoryHandlers.UpdateCategory(currentCategoryId, newCategoryName);
-            if (updateCategory == null) return BadRequest();
+            // If the new name does not exists, then update to the current major    
+            var updateMajor = _majorHandlers.UpdateMajor(currentMajorId, newMajorName);
+            if (updateMajor == null) return BadRequest();
 
-            return Ok(updateCategory);
+            return Ok(updateMajor);
         }
 
         /// <summary>
-        /// Enable the selected "disabled" Category. (Admin)
+        /// Enable the selected "disabled" Major. (Admin)
         /// </summary>
-        /// <param name="categoryId"></param>
+        /// <param name="majorId"></param>
         /// <returns></returns>
-        [HttpPut("enable/{categoryId}")]
+        [HttpPut("enable/{majorId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult EnableCategory(int categoryId)
+        public IActionResult EnableMajor(int majorId)
         {
-            var category = _categoryHandlers.GetCategoryById(categoryId);
-            if (category == null) return NotFound("Category does not exists!");
+            var major = _majorHandlers.GetMajorById(majorId);
+            if (major == null) return NotFound("Major does not exists!");
 
-            var enableCategory = _categoryHandlers.EnableCategory(categoryId);
-            if (enableCategory == null)
-                ModelState.AddModelError("", "Something went wrong enable category");
+            var enableMajor = _majorHandlers.EnableMajor(majorId);
+            if (enableMajor == null)
+                ModelState.AddModelError("", "Something went wrong enable major");
 
-            return Ok(enableCategory);
+            return Ok(enableMajor);
         }
 
         /// <summary>
-        /// Delete the selected Category. (Admin)
+        /// Delete the selected Major. (Admin)
         /// </summary>
-        /// <param name="categoryId"></param>
+        /// <param name="majorId"></param>
         /// <returns></returns>
-        [HttpDelete("{categoryId}")]
+        [HttpDelete("{majorId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult DeleteCategory(int categoryId)
+        public IActionResult DeleteMajor(int majorId)
         {
-            var category = _categoryHandlers.GetCategoryById(categoryId);
-            if (category == null) return NotFound("Category does not exists!");
+            var major = _majorHandlers.GetMajorById(majorId);
+            if (major == null) return NotFound("Major does not exists!");
 
-            var deleteCategory = _categoryHandlers.DisableCategory(categoryId);
-            if (deleteCategory == null)
-                ModelState.AddModelError("", "Something went wrong deleting category");
+            var deleteMajor = _majorHandlers.DisableMajor(majorId);
+            if (deleteMajor == null)
+                ModelState.AddModelError("", "Something went wrong deleting major");
 
-            return Ok(deleteCategory);
+            return Ok(deleteMajor);
         }
 
         /// <summary>
-        /// Get top 5 voted Categories
+        /// Get top 5 voted Majors
         /// </summary>
         /// <returns></returns>
         [HttpGet("top-5-voted")]
         public IActionResult GetTop5VotedPost()
         {
-            var posts = _categoryHandlers.GetTop5Categories();
+            var posts = _majorHandlers.GetTop5Majors();
             if (posts is null || posts.Count == 0)
             {
-                posts = new List<CategoryDTO>();
+                posts = new List<MajorDTO>();
             }
             return Ok(posts);
         }

@@ -13,8 +13,8 @@
         public ICollection<UserDTO>? UsersDownvote { get; set; } = new List<UserDTO>();
         public ICollection<VideoDTO>? Videos { get; set; }
         public ICollection<ImageDTO>? Images { get; set; }
-        public ICollection<CategoryDTO>? Categories { get; set; }
-        public ICollection<TagDTO>? Tags { get; set; }
+        public ICollection<MajorDTO>? Majors { get; set; }
+        public ICollection<SubjectDTO>? Subjects { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public int Vote { get; set; } = 0;

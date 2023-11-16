@@ -5,60 +5,60 @@ using System.Data;
 
 namespace backend.Repositories.Implementors
 {
-    public class CategoryTagRepository : ICategoryTagRepository
+    public class MajorSubjectRepository : IMajorSubjectRepository
     {
         private readonly FBlogAcademyContext _context;
 
-        public CategoryTagRepository()
+        public MajorSubjectRepository()
         {
             _context = new();
         }
 
-        public bool CreateCategoryTag(CategoryTag categoryTag)
+        public bool CreateMajorSubject(MajorSubject categorySubject)
         {
-            _context.Add(categoryTag);
+            _context.Add(categorySubject);
             return Save();
         }
 
-        public bool DisableCategoryTag(CategoryTag categoryTag)
+        public bool DisableMajorSubject(MajorSubject categorySubject)
         {
-            categoryTag.Status = false;
-            _context.Update(categoryTag);
+            categorySubject.Status = false;
+            _context.Update(categorySubject);
             return Save();
         }
 
-        public bool EnableCategoryTag(CategoryTag categoryTag)
+        public bool EnableMajorSubject(MajorSubject categorySubject)
         {
-            categoryTag.Status = true;
-            _context.Update(categoryTag);
+            categorySubject.Status = true;
+            _context.Update(categorySubject);
             return Save();
         }
 
-        public bool UpdateCategoryTag(CategoryTag categoryTag)
+        public bool UpdateMajorSubject(MajorSubject categorySubject)
         {
-            _context.Update(categoryTag);
+            _context.Update(categorySubject);
             return Save();
         }
 
-        public CategoryTag? GetCategoryTag(int tagId, int categoryId)
+        public MajorSubject? GetMajorSubject(int tagId, int categoryId)
         {
-            return _context.CategoryTags.FirstOrDefault(c => c.TagId == tagId && c.CategoryId == categoryId);
+            return _context.MajorSubjects.FirstOrDefault(c => c.SubjectId == tagId && c.MajorId == categoryId);
         }
 
-        public ICollection<CategoryTag> GetCategoryTagsByCategoryId(int categoryId)
+        public ICollection<MajorSubject> GetMajorSubjectsByMajorId(int categoryId)
         {
-            return _context.CategoryTags.Where(c => c.CategoryId == categoryId).ToList();
+            return _context.MajorSubjects.Where(c => c.MajorId == categoryId).ToList();
         }
 
-        public ICollection<CategoryTag> GetCategoryTagsByTagId(int tagId)
+        public ICollection<MajorSubject> GetMajorSubjectsBySubjectId(int tagId)
         {
-            return _context.CategoryTags.Where(c => c.TagId == tagId).ToList();
+            return _context.MajorSubjects.Where(c => c.SubjectId == tagId).ToList();
         }
 
-        public ICollection<Category>? GetCategoriesOf(int tagId)
+        public ICollection<Major>? GetMajorsOf(int tagId)
         {
-            List<Category> categories = new();
-            var list = _context.CategoryTags.Where(c => c.TagId == tagId && c.Status).Select(c => c.Category).ToList();
+            List<Major> categories = new();
+            var list = _context.MajorSubjects.Where(c => c.SubjectId == tagId && c.Status).Select(c => c.Major).ToList();
             if (list is null || list.Count == 0) return null;
             foreach (var item in list)
             {

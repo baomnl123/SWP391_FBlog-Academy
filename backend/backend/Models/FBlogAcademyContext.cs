@@ -17,21 +17,21 @@ namespace backend.Models
         {
         }
 
-        public virtual DbSet<Category> Categories { get; set; }
-        public virtual DbSet<CategoryTag> CategoryTags { get; set; }
+        public virtual DbSet<Major> Majors { get; set; }
+        public virtual DbSet<MajorSubject> MajorSubjects { get; set; }
         public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<FollowUser> FollowUsers { get; set; }
         public virtual DbSet<Image> Images { get; set; }
         public virtual DbSet<Post> Posts { get; set; }
-        public virtual DbSet<PostCategory> PostCategories { get; set; }
+        public virtual DbSet<PostMajor> PostMajors { get; set; }
         public virtual DbSet<PostList> PostLists { get; set; }
-        public virtual DbSet<PostTag> PostTags { get; set; }
+        public virtual DbSet<PostSubject> PostSubjects { get; set; }
         public virtual DbSet<ReportPost> ReportPosts { get; set; }
         public virtual DbSet<SaveList> SaveLists { get; set; }
-        public virtual DbSet<Tag> Tags { get; set; }
+        public virtual DbSet<Subject> Subjects { get; set; }
         public virtual DbSet<User> Users { get; set; }
-        public virtual DbSet<UserCategory> UserCategories { get; set; }
-        public virtual DbSet<UserTag> UserTags{ get; set; }
+        public virtual DbSet<UserMajor> UserMajors { get; set; }
+        public virtual DbSet<UserSubject> UserSubjects{ get; set; }
         public virtual DbSet<Video> Videos { get; set; }
         public virtual DbSet<VoteComment> VoteComments { get; set; }
         public virtual DbSet<VotePost> VotePosts { get; set; }
@@ -59,18 +59,18 @@ namespace backend.Models
         {
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
 
-            modelBuilder.Entity<Category>(entity =>
+            modelBuilder.Entity<Major>(entity =>
             {
-                entity.ToTable("Category");
+                entity.ToTable("Major");
 
-                entity.HasIndex(e => e.CategoryName)
+                entity.HasIndex(e => e.MajorName)
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.AdminId).HasColumnName("admin_id");
 
-                entity.Property(e => e.CategoryName)
+                entity.Property(e => e.MajorName)
                     .IsRequired()
                     .HasMaxLength(25)
                     .HasColumnName("category_name");
@@ -86,36 +86,36 @@ namespace backend.Models
                     .HasColumnName("updated_at");
 
                 entity.HasOne(d => d.Admin)
-                    .WithMany(p => p.Categories)
+                    .WithMany(p => p.Majors)
                     .HasForeignKey(d => d.AdminId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FKCategory311908");
+                    .HasConstraintName("FKMajor311908");
             });
 
-            modelBuilder.Entity<CategoryTag>(entity =>
+            modelBuilder.Entity<MajorSubject>(entity =>
             {
-                entity.HasKey(e => new { e.TagId, e.CategoryId })
-                    .HasName("PK__Category__1FC24C2D619EB0CA");
+                entity.HasKey(e => new { e.SubjectId, e.MajorId })
+                    .HasName("PK__Major__1FC24C2D619EB0CA");
 
-                entity.ToTable("CategoryTag");
+                entity.ToTable("MajorSubject");
 
-                entity.Property(e => e.TagId).HasColumnName("tag_id");
+                entity.Property(e => e.SubjectId).HasColumnName("tag_id");
 
-                entity.Property(e => e.CategoryId).HasColumnName("category_id");
+                entity.Property(e => e.MajorId).HasColumnName("category_id");
 
                 entity.Property(e => e.Status).HasColumnName("status");
 
-                entity.HasOne(d => d.Category)
-                    .WithMany(p => p.CategoryTags)
-                    .HasForeignKey(d => d.CategoryId)
+                entity.HasOne(d => d.Major)
+                    .WithMany(p => p.MajorSubjects)
+                    .HasForeignKey(d => d.MajorId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FKCategoryTa611140");
+                    .HasConstraintName("FKMajorTa611140");
 
-                entity.HasOne(d => d.Tag)
-                    .WithMany(p => p.CategoryTags)
-                    .HasForeignKey(d => d.TagId)
+                entity.HasOne(d => d.Subject)
+                    .WithMany(p => p.MajorSubjects)
+                    .HasForeignKey(d => d.SubjectId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FKCategoryTa484641");
+                    .HasConstraintName("FKMajorTa484641");
             });
 
             modelBuilder.Entity<Comment>(entity =>
@@ -257,27 +257,27 @@ namespace backend.Models
                     .HasConstraintName("FKPost990072");
             });
 
-            modelBuilder.Entity<PostCategory>(entity =>
+            modelBuilder.Entity<PostMajor>(entity =>
             {
-                entity.HasKey(e => new { e.PostId, e.CategoryId })
+                entity.HasKey(e => new { e.PostId, e.MajorId })
                     .HasName("PK__PostCate__638369FD4FBDCD1A");
 
-                entity.ToTable("PostCategory");
+                entity.ToTable("PostMajor");
 
                 entity.Property(e => e.PostId).HasColumnName("post_id");
 
-                entity.Property(e => e.CategoryId).HasColumnName("category_id");
+                entity.Property(e => e.MajorId).HasColumnName("category_id");
 
                 entity.Property(e => e.Status).HasColumnName("status");
 
-                entity.HasOne(d => d.Category)
-                    .WithMany(p => p.PostCategories)
-                    .HasForeignKey(d => d.CategoryId)
+                entity.HasOne(d => d.Major)
+                    .WithMany(p => p.PostMajors)
+                    .HasForeignKey(d => d.MajorId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FKPostCatego136719");
 
                 entity.HasOne(d => d.Post)
-                    .WithMany(p => p.PostCategories)
+                    .WithMany(p => p.PostMajors)
                     .HasForeignKey(d => d.PostId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FKPostCatego519402");
@@ -311,30 +311,30 @@ namespace backend.Models
                     .HasConstraintName("FKPostList86128");
             });
 
-            modelBuilder.Entity<PostTag>(entity =>
+            modelBuilder.Entity<PostSubject>(entity =>
             {
-                entity.HasKey(e => new { e.PostId, e.TagId })
-                    .HasName("PK__PostTag__4AFEED4D0915C090");
+                entity.HasKey(e => new { e.PostId, e.SubjectId })
+                    .HasName("PK__PostSubject__4AFEED4D0915C090");
 
-                entity.ToTable("PostTag");
+                entity.ToTable("PostSubject");
 
                 entity.Property(e => e.PostId).HasColumnName("post_id");
 
-                entity.Property(e => e.TagId).HasColumnName("tag_id");
+                entity.Property(e => e.SubjectId).HasColumnName("tag_id");
 
                 entity.Property(e => e.Status).HasColumnName("status");
 
                 entity.HasOne(d => d.Post)
-                    .WithMany(p => p.PostTags)
+                    .WithMany(p => p.PostSubjects)
                     .HasForeignKey(d => d.PostId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FKPostTag716835");
+                    .HasConstraintName("FKPostSubject716835");
 
-                entity.HasOne(d => d.Tag)
-                    .WithMany(p => p.PostTags)
-                    .HasForeignKey(d => d.TagId)
+                entity.HasOne(d => d.Subject)
+                    .WithMany(p => p.PostSubjects)
+                    .HasForeignKey(d => d.SubjectId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FKPostTag277175");
+                    .HasConstraintName("FKPostSubject277175");
             });
 
             modelBuilder.Entity<ReportPost>(entity =>
@@ -413,11 +413,11 @@ namespace backend.Models
                     .HasConstraintName("FKSaveList283598");
             });
 
-            modelBuilder.Entity<Tag>(entity =>
+            modelBuilder.Entity<Subject>(entity =>
             {
-                entity.ToTable("Tag");
+                entity.ToTable("Subject");
 
-                entity.HasIndex(e => e.TagName)
+                entity.HasIndex(e => e.SubjectName)
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("id");
@@ -430,7 +430,7 @@ namespace backend.Models
 
                 entity.Property(e => e.Status).HasColumnName("status");
 
-                entity.Property(e => e.TagName)
+                entity.Property(e => e.SubjectName)
                     .IsRequired()
                     .HasMaxLength(20)
                     .HasColumnName("tag_name");
@@ -440,10 +440,10 @@ namespace backend.Models
                     .HasColumnName("updated_at");
 
                 entity.HasOne(d => d.Admin)
-                    .WithMany(p => p.Tags)
+                    .WithMany(p => p.Subjects)
                     .HasForeignKey(d => d.AdminId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FKTag383419");
+                    .HasConstraintName("FKSubject383419");
             });
 
             modelBuilder.Entity<User>(entity =>
@@ -495,56 +495,56 @@ namespace backend.Models
                     .HasColumnName("updated_at");
             });
 
-            modelBuilder.Entity<UserCategory>(entity =>
+            modelBuilder.Entity<UserMajor>(entity =>
             {
-                entity.HasKey(e => new { e.UserId, e.CategoryId })
+                entity.HasKey(e => new { e.UserId, e.MajorId })
                     .HasName("PK__UserCate__638369FD4FBDCD1A");
 
-                entity.ToTable("UserCategory");
+                entity.ToTable("UserMajor");
 
                 entity.Property(e => e.UserId).HasColumnName("user_id");
 
-                entity.Property(e => e.CategoryId).HasColumnName("category_id");
+                entity.Property(e => e.MajorId).HasColumnName("category_id");
 
                 entity.Property(e => e.Status).HasColumnName("status");
 
-                entity.HasOne(d => d.Category)
-                    .WithMany(p => p.UserCategories)
-                    .HasForeignKey(d => d.CategoryId)
+                entity.HasOne(d => d.Major)
+                    .WithMany(p => p.UserMajors)
+                    .HasForeignKey(d => d.MajorId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FKUserCatego136719");
 
                 entity.HasOne(d => d.User)
-                    .WithMany(p => p.UserCategories)
+                    .WithMany(p => p.UserMajors)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FKUserCatego519402");
             });
 
-            modelBuilder.Entity<UserTag>(entity =>
+            modelBuilder.Entity<UserSubject>(entity =>
             {
-                entity.HasKey(e => new { e.UserId, e.TagId })
-                    .HasName("PK__UserTag__638369FD4FBDCD1A");
+                entity.HasKey(e => new { e.UserId, e.SubjectId })
+                    .HasName("PK__UserSubject__638369FD4FBDCD1A");
 
-                entity.ToTable("UserTag");
+                entity.ToTable("UserSubject");
 
                 entity.Property(e => e.UserId).HasColumnName("user_id");
 
-                entity.Property(e => e.TagId).HasColumnName("tag_id");
+                entity.Property(e => e.SubjectId).HasColumnName("tag_id");
 
                 entity.Property(e => e.Status).HasColumnName("status");
 
-                entity.HasOne(d => d.Tag)
-                    .WithMany(p => p.UserTags)
-                    .HasForeignKey(d => d.TagId)
+                entity.HasOne(d => d.Subject)
+                    .WithMany(p => p.UserSubjects)
+                    .HasForeignKey(d => d.SubjectId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FKUserTag136719");
+                    .HasConstraintName("FKUserSubject136719");
 
                 entity.HasOne(d => d.User)
-                    .WithMany(p => p.UserTags)
+                    .WithMany(p => p.UserSubjects)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FKUserTag519402");
+                    .HasConstraintName("FKUserSubject519402");
             });
 
             modelBuilder.Entity<Video>(entity =>

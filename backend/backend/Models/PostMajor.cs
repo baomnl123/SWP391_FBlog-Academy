@@ -5,13 +5,13 @@ using System.Collections.Generic;
 
 namespace backend.Models
 {
-    public partial class PostCategory
+    public partial class PostMajor
     {
         public int PostId { get; set; }
-        public int CategoryId { get; set; }
+        public int MajorId { get; set; }
         public bool Status { get; set; }
 
-        public virtual Category Category { get; set; }
+        public virtual Major Major { get; set; }
         public virtual Post Post { get; set; }
     }
 }

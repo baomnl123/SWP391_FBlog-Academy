@@ -16,8 +16,8 @@ namespace backend.Handlers.IHandlers
         //View pending posts' list of particular user
         public ICollection<PostDTO>? ViewPendingPostListOf(int userId);
         public ICollection<PostDTO>? ViewDeletedPostOf(int userId);
-        //Get posts by both categories and tags
-        public ICollection<PostDTO>? GetAllPosts(int[] categoryIDs, int[] tagIDs,string searchValue, int currentUserId);
+        //Get posts by both majors and subjects
+        public ICollection<PostDTO>? GetAllPosts(int[] majorIDs, int[] subjectIDs,string searchValue, int currentUserId);
         //Get post by post id and currentUserId
         public PostDTO? GetPostBy(int postId, int currentUserId);
         //Get post by post id
@@ -31,15 +31,15 @@ namespace backend.Handlers.IHandlers
         public ICollection<PostDTO>? GetTop5VotedPost(int currentUserId);
         //Create post
         public PostDTO? CreatePost(int userId, string title, string content, 
-                                                    int[]? tagIds, int[]? categoryIds, 
+                                                    int[]? subjectIds, int[]? majorIds, 
                                                     string[]? videoURLs, string[]? imageURLs);
         public PostDTO? CreatePost(int userId, string title, string content);
-        public ICollection<TagDTO>? AttachTagsForPost(PostDTO createdPost, int[] tagIds);
-        public ICollection<CategoryDTO>? AttachCategoriesForPost(PostDTO createdPost, int[] categoryIds);
+        public ICollection<SubjectDTO>? AttachSubjectsForPost(PostDTO createdPost, int[] subjectIds);
+        public ICollection<MajorDTO>? AttachMajorsForPost(PostDTO createdPost, int[] majorIds);
         
         //Update post
         public PostDTO? UpdatePost(int postId, string title, string content,
-                                                int[] tagIds, int[] categoryIds,
+                                                int[] subjectIds, int[] majorIds,
                                                 string[] videoURLs, string[] imageURLs);
         public ICollection<VideoDTO>? UpdateVideosOfPost(int postId, string[] videoURLs);
         public ICollection<ImageDTO>? UpdateImagesOfPost(int postId, string[] imageURLs);

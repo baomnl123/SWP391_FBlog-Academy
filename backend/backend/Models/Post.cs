@@ -10,9 +10,9 @@ namespace backend.Models
         public Post()
         {
             Comments = new HashSet<Comment>();
-            PostCategories = new HashSet<PostCategory>();
+            PostMajors = new HashSet<PostMajor>();
             PostLists = new HashSet<PostList>();
-            PostTags = new HashSet<PostTag>();
+            PostSubjects = new HashSet<PostSubject>();
             ReportPosts = new HashSet<ReportPost>();
             VotePosts = new HashSet<VotePost>();
         }
@@ -32,9 +32,9 @@ namespace backend.Models
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<Image> ImagePosts { get; set; }
         public virtual ICollection<Video> VideoPosts { get; set; }
-        public virtual ICollection<PostCategory> PostCategories { get; set; }
+        public virtual ICollection<PostMajor> PostMajors { get; set; }
         public virtual ICollection<PostList> PostLists { get; set; }
-        public virtual ICollection<PostTag> PostTags { get; set; }
+        public virtual ICollection<PostSubject> PostSubjects { get; set; }
         public virtual ICollection<ReportPost> ReportPosts { get; set; }
         public virtual ICollection<VotePost> VotePosts { get; set; }
     }

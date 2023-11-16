@@ -11,82 +11,82 @@ namespace backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TagController : Controller
+    public class SubjectController : Controller
     {
-        private readonly ITagHandlers _tagHandlers;
-        private readonly ICategoryHandlers _categoryHandlers;
+        private readonly ISubjectHandlers _subjectHandlers;
+        private readonly IMajorHandlers _majorHandlers;
         private readonly IUserHandlers _userHandlers;
         private readonly UserRoleConstrant _userRoleConstrant;
 
-        public TagController(ITagHandlers tagHandlers, ICategoryHandlers categoryHandlers, IUserHandlers userHandlers)
+        public SubjectController(ISubjectHandlers subjectHandlers, IMajorHandlers majorHandlers, IUserHandlers userHandlers)
         {
-            _tagHandlers = tagHandlers;
-            _categoryHandlers = categoryHandlers;
+            _subjectHandlers = subjectHandlers;
+            _majorHandlers = majorHandlers;
             _userHandlers = userHandlers;
             _userRoleConstrant = new();
         }
 
         /// <summary>
-        /// Get list of enable Tags. (Admin)
+        /// Get list of enable Subjects. (Admin)
         /// </summary>
         /// <returns></returns>
         [HttpGet("all")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Tag>))]
-        public IActionResult GetTags()
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Subject>))]
+        public IActionResult GetSubjects()
         {
-            var tags = _tagHandlers.GetTags();
+            var subjects = _subjectHandlers.GetSubjects();
 
-            if (tags == null)
+            if (subjects == null)
             {
-                var emptyList = new List<TagDTO>();
+                var emptyList = new List<SubjectDTO>();
                 return Ok(emptyList);
             }
 
-            return Ok(tags);
+            return Ok(subjects);
         }
 
         /// <summary>
-        /// Get list of enable Tags. (Admin)
+        /// Get list of enable Subjects. (Admin)
         /// </summary>
         /// <returns></returns>
         [HttpGet("disable")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Tag>))]
-        public IActionResult GetDisableTags()
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Subject>))]
+        public IActionResult GetDisableSubjects()
         {
-            var tags = _tagHandlers.GetDisableTags();
+            var subjects = _subjectHandlers.GetDisableSubjects();
 
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            return Ok(tags);
+            return Ok(subjects);
         }
 
         /// <summary>
-        /// Get selected Tag by ID.
+        /// Get selected Subject by ID.
         /// </summary>
-        /// <param name="tagId"></param>
+        /// <param name="subjectId"></param>
         /// <returns></returns>
-        [HttpGet("{tagId}")]
-        [ProducesResponseType(200, Type = typeof(Tag))]
+        [HttpGet("{subjectId}")]
+        [ProducesResponseType(200, Type = typeof(Subject))]
         [ProducesResponseType(400)]
-        public IActionResult GetTag(int tagId)
+        public IActionResult GetSubject(int subjectId)
         {
-            var tag = _tagHandlers.GetTagById(tagId);
-            if (tag == null || tag.Status == false) return NotFound();
+            var subject = _subjectHandlers.GetSubjectById(subjectId);
+            if (subject == null || subject.Status == false) return NotFound();
 
-            return Ok(tag);
+            return Ok(subject);
         }
 
         /// <summary>
-        /// Get list of Posts that contains selected Tag. (Admin)
+        /// Get list of Posts that contains selected Subject. (Admin)
         /// </summary>
-        /// <param name="tagId"></param>
+        /// <param name="subjectId"></param>
         /// <returns></returns>
-        [HttpGet("{tagId}/posts")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Tag>))]
+        [HttpGet("{subjectId}/posts")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Subject>))]
         [ProducesResponseType(400)]
-        public IActionResult GetPostsByTag(int tagId)
+        public IActionResult GetPostsBySubject(int subjectId)
         {
-            var posts = _tagHandlers.GetPostsByTag(tagId);
+            var posts = _subjectHandlers.GetPostsBySubject(subjectId);
             if (posts == null)
             {
                 var emptyList = new List<PostDTO>();
@@ -97,36 +97,36 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Get list of categories that contains selected Tag.
+        /// Get list of majors that contains selected Subject.
         /// </summary>
-        /// <param name="tagId"></param>
+        /// <param name="subjectId"></param>
         /// <returns></returns>
-        [HttpGet("{tagId}/categories")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Tag>))]
+        [HttpGet("{subjectId}/majors")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Subject>))]
         [ProducesResponseType(400)]
-        public IActionResult GetCategoriesByTag(int tagId)
+        public IActionResult GetMajorsBySubject(int subjectId)
         {
-            var categories = _tagHandlers.GetCategoriesByTag(tagId);
-            if (categories == null)
+            var majors = _subjectHandlers.GetMajorsBySubject(subjectId);
+            if (majors == null)
             {
-                var emptyList = new List<CategoryDTO>();
+                var emptyList = new List<MajorDTO>();
                 return Ok(emptyList);
             }
 
-            return Ok(categories);
+            return Ok(majors);
         }
 
         /// <summary>
-        /// Create a new Tag. (Admin)
+        /// Create a new Subject. (Admin)
         /// </summary>
         /// <param name="adminId"></param>
-        /// <param name="categoryId"></param>
-        /// <param name="tagName"></param>
+        /// <param name="majorId"></param>
+        /// <param name="subjectName"></param>
         /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(422)]
-        public IActionResult CreateTag(int adminId, int categoryId, [FromForm] string tagName)
+        public IActionResult CreateSubject(int adminId, int majorId, [FromForm] string subjectName)
         {
             // Check if admin exists
             var admin = _userHandlers.GetUser(adminId);
@@ -134,135 +134,135 @@ namespace backend.Controllers
             if (admin == null || admin.Role != adminRole)
                 return NotFound("Admin does not exists!");
 
-            // Check if category does not exists
-            var category = _categoryHandlers.GetCategoryById(categoryId);
-            if (category == null || !category.Status) return NotFound("Category does not exists!");
+            // Check if major does not exists
+            var major = _majorHandlers.GetMajorById(majorId);
+            if (major == null || !major.Status) return NotFound("Major does not exists!");
 
-            var isTagExists = _tagHandlers.GetTagByName(tagName);
-            if (isTagExists != null && isTagExists.Status)
+            var isSubjectExists = _subjectHandlers.GetSubjectByName(subjectName);
+            if (isSubjectExists != null && isSubjectExists.Status)
             {
-                if (_tagHandlers.CreateCategoryTag(isTagExists, category) != null)
-                    return Ok(isTagExists);
+                if (_subjectHandlers.CreateMajorSubject(isSubjectExists, major) != null)
+                    return Ok(isSubjectExists);
 
-                return StatusCode(422, $"\"{isTagExists.TagName}\" already exists!");
+                return StatusCode(422, $"\"{isSubjectExists.SubjectName}\" already exists!");
             }
 
-            if (isTagExists != null && !isTagExists.Status)
+            if (isSubjectExists != null && !isSubjectExists.Status)
             {
-                // If the tag was disabled, enable it then create relationship with Category
-                _tagHandlers.EnableTag(isTagExists.Id);
-                if (_tagHandlers.CreateCategoryTag(isTagExists, category) != null)
-                    return Ok(isTagExists);
+                // If the subject was disabled, enable it then create relationship with Major
+                _subjectHandlers.EnableSubject(isSubjectExists.Id);
+                if (_subjectHandlers.CreateMajorSubject(isSubjectExists, major) != null)
+                    return Ok(isSubjectExists);
 
-                return StatusCode(422, $"\"{isTagExists.TagName}\" already exists!");
+                return StatusCode(422, $"\"{isSubjectExists.SubjectName}\" already exists!");
             }
 
-            // If tag is null, then create new tag
-            var createTag = _tagHandlers.CreateTag(adminId, categoryId, tagName);
-            if (createTag == null) return BadRequest(ModelState);
+            // If subject is null, then create new subject
+            var createSubject = _subjectHandlers.CreateSubject(adminId, majorId, subjectName);
+            if (createSubject == null) return BadRequest(ModelState);
 
             // If create succeed, then create relationship
-            _tagHandlers.CreateCategoryTag(createTag, category);
+            _subjectHandlers.CreateMajorSubject(createSubject, major);
 
-            return Ok(createTag);
+            return Ok(createSubject);
         }
 
         /// <summary>
-        /// Update selected Tag. (Admin)
+        /// Update selected Subject. (Admin)
         /// </summary>
-        /// <param name="newTagName"></param>
-        /// <param name="currentTagId"></param>
+        /// <param name="newSubjectName"></param>
+        /// <param name="currentSubjectId"></param>
         /// <returns></returns>
-        [HttpPut("{currentTagId}")]
+        [HttpPut("{currentSubjectId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateTag([FromForm] string newTagName, int currentTagId)
+        public IActionResult UpdateSubject([FromForm] string newSubjectName, int currentSubjectId)
         {
-            // If tag does not exists for updating, return Not found
-            var currentTag = _tagHandlers.GetTagById(currentTagId);
-            if (currentTag == null || !currentTag.Status) return NotFound("Tag does not exists!");
+            // If subject does not exists for updating, return Not found
+            var currentSubject = _subjectHandlers.GetSubjectById(currentSubjectId);
+            if (currentSubject == null || !currentSubject.Status) return NotFound("Subject does not exists!");
 
-            // Check the new tag name already exists in DB
-            var isTagExists = _tagHandlers.GetTagByName(newTagName);
-            if (isTagExists != null && isTagExists.Status)
-                return StatusCode(422, $"\"{isTagExists.TagName}\" aldready exists!");
+            // Check the new subject name already exists in DB
+            var isSubjectExists = _subjectHandlers.GetSubjectByName(newSubjectName);
+            if (isSubjectExists != null && isSubjectExists.Status)
+                return StatusCode(422, $"\"{isSubjectExists.SubjectName}\" aldready exists!");
 
-            // If tag already exists, but was disabled, then enable it
-            if (isTagExists != null && !isTagExists.Status)
+            // If subject already exists, but was disabled, then enable it
+            if (isSubjectExists != null && !isSubjectExists.Status)
             {
-                _tagHandlers.EnableTag(isTagExists.Id);
-                return StatusCode(422, $"\"{isTagExists.TagName}\" aldready exists!");
+                _subjectHandlers.EnableSubject(isSubjectExists.Id);
+                return StatusCode(422, $"\"{isSubjectExists.SubjectName}\" aldready exists!");
             }
 
-            // If the new name does not exists, then update to the current tag
-            var updateTage = _tagHandlers.UpdateTag(currentTagId, newTagName);
-            if (updateTage == null) return BadRequest();
+            // If the new name does not exists, then update to the current subject
+            var updateSubjecte = _subjectHandlers.UpdateSubject(currentSubjectId, newSubjectName);
+            if (updateSubjecte == null) return BadRequest();
 
-            return Ok(updateTage);
+            return Ok(updateSubjecte);
         }
 
         /// <summary>
-        /// Enable selected Tag. (Admin)
+        /// Enable selected Subject. (Admin)
         /// </summary>
-        /// <param name="tagId"></param>
+        /// <param name="subjectId"></param>
         /// <returns></returns>
-        [HttpPut("enable/{tagId}")]
+        [HttpPut("enable/{subjectId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult EnableTag(int tagId)
+        public IActionResult EnableSubject(int subjectId)
         {
-            var enableTag = _tagHandlers.EnableTag(tagId);
-            if (enableTag == null) ModelState.AddModelError("", "Something went wrong enable tag");
+            var enableSubject = _subjectHandlers.EnableSubject(subjectId);
+            if (enableSubject == null) ModelState.AddModelError("", "Something went wrong enable subject");
 
-            return Ok(enableTag);
+            return Ok(enableSubject);
         }
 
         /// <summary>
-        /// Delete selected Tag. (Admin)
+        /// Delete selected Subject. (Admin)
         /// </summary>
-        /// <param name="tagId"></param>
+        /// <param name="subjectId"></param>
         /// <returns></returns>
-        [HttpDelete("{tagId}")]
+        [HttpDelete("{subjectId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult DeleteTag(int tagId)
+        public IActionResult DeleteSubject(int subjectId)
         {
-            var deleteTag = _tagHandlers.DisableTag(tagId);
-            if (deleteTag == null) ModelState.AddModelError("", "Something went wrong delete tag");
+            var deleteSubject = _subjectHandlers.DisableSubject(subjectId);
+            if (deleteSubject == null) ModelState.AddModelError("", "Something went wrong delete subject");
 
-            return Ok(deleteTag);
+            return Ok(deleteSubject);
         }
 
         /// <summary>
-        /// Remove selected Tag from selected Category. (Admin)
+        /// Remove selected Subject from selected Major. (Admin)
         /// </summary>
-        /// <param name="categoryId"></param>
-        /// <param name="tagId"></param>
+        /// <param name="majorId"></param>
+        /// <param name="subjectId"></param>
         /// <returns></returns>
-        [HttpDelete("{categoryId}/{tagId}")]
+        [HttpDelete("{majorId}/{subjectId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult DeleteRelationship(int categoryId, int tagId)
+        public IActionResult DeleteRelationship(int majorId, int subjectId)
         {
-            var deleteRelationship = _tagHandlers.DisableCategoryTag(tagId, categoryId);
+            var deleteRelationship = _subjectHandlers.DisableMajorSubject(subjectId, majorId);
             if (deleteRelationship == null) ModelState.AddModelError("", "Something went wrong delete relationship");
 
             return Ok(deleteRelationship);
         }
 
         /// <summary>
-        /// Get top 5 voted Tags
+        /// Get top 5 voted Subjects
         /// </summary>
         /// <returns></returns>
         [HttpGet("top-5-voted")]
-        public IActionResult GetTop5VotedTag()
+        public IActionResult GetTop5VotedSubject()
         {
-            var posts = _tagHandlers.GetTop5Tags();
+            var posts = _subjectHandlers.GetTop5Subjects();
             if (posts is null || posts.Count == 0)
             {
-                posts = new List<TagDTO>();
+                posts = new List<SubjectDTO>();
             }
             return Ok(posts);
         }

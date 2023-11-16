@@ -19,26 +19,26 @@ namespace backend.Handlers.Implementors
         private readonly IUserRepository _userRepository;
         private readonly IVideoHandlers _videoHandlers;
         private readonly IImageHandlers _imageHandlers;
-        private readonly ITagHandlers _tagHandlers;
-        private readonly ICategoryHandlers _categoryHandlers;
-        private readonly IPostTagRepository _postTagRepository;
-        private readonly IPostCategoryRepository _postCategoryRepository;
+        private readonly ISubjectHandlers _subjectHandlers;
+        private readonly IMajorHandlers _majorHandlers;
+        private readonly IPostSubjectRepository _postSubjectRepository;
+        private readonly IPostMajorRepository _postMajorRepository;
         private readonly IVotePostRepository _votePostRepository;
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly IMajorRepository _majorRepository;
         private readonly IMapper _mapper;
         private readonly UserRoleConstrant _userRoleConstrant;
-        private readonly SpecialCategories _specialCategories;
+        private readonly SpecialMajors _specialMajors;
 
         public PostHandlers(IPostRepository postRepository,
                             IUserRepository userRepository,
                             IVideoHandlers videoHandlers,
                             IImageHandlers imageHandlers,
-                            ITagHandlers tagHandlers,
-                            ICategoryHandlers categoryHandlers,
-                            IPostTagRepository postTagRepository,
-                            IPostCategoryRepository postCategoryRepository,
+                            ISubjectHandlers subjectHandlers,
+                            IMajorHandlers majorHandlers,
+                            IPostSubjectRepository postSubjectRepository,
+                            IPostMajorRepository postMajorRepository,
                             IVotePostRepository votePostRepository,
-                            ICategoryRepository categoryRepository,
+                            IMajorRepository majorRepository,
                             IMapper mapper,
                             IFollowUserRepository followUserRepository)
         {
@@ -47,14 +47,14 @@ namespace backend.Handlers.Implementors
             _userRepository = userRepository;
             _videoHandlers = videoHandlers;
             _imageHandlers = imageHandlers;
-            _tagHandlers = tagHandlers;
-            _categoryHandlers = categoryHandlers;
-            _postTagRepository = postTagRepository;
-            _postCategoryRepository = postCategoryRepository;
+            _subjectHandlers = subjectHandlers;
+            _majorHandlers = majorHandlers;
+            _postSubjectRepository = postSubjectRepository;
+            _postMajorRepository = postMajorRepository;
             _votePostRepository = votePostRepository;
-            _categoryRepository = categoryRepository;
+            _majorRepository = majorRepository;
             _userRoleConstrant = new UserRoleConstrant();
-            _specialCategories = new SpecialCategories();
+            _specialMajors = new SpecialMajors();
             _followUserRepository = followUserRepository;
         }
 
@@ -84,7 +84,7 @@ namespace backend.Handlers.Implementors
                 existedPost.IsApproved = true;
                 existedPost.UpdatedAt = DateTime.Now;
 
-                //Mapping existedPost to data type PostDTO which have more fields (videos, images, tags, categories)
+                //Mapping existedPost to data type PostDTO which have more fields (videos, images, subjects, majors)
                 var approvingPost = _mapper.Map<PostDTO>(existedPost);
                 //return null if mapping is failed
                 if (approvingPost is null) return null;
@@ -93,11 +93,11 @@ namespace backend.Handlers.Implementors
                 if (user == null || !user.Status) return null;
                 approvingPost.User = _mapper.Map<UserDTO>(user);
 
-                var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(approvingPost.Id));
-                approvingPost.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
+                var getMajors = _mapper.Map<ICollection<MajorDTO>?>(_postMajorRepository.GetMajorsOf(approvingPost.Id));
+                approvingPost.Majors = (getMajors is not null && getMajors.Count > 0) ? getMajors : new List<MajorDTO>();
 
-                var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(approvingPost.Id));
-                approvingPost.Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
+                var getSubjects = _mapper.Map<ICollection<SubjectDTO>?>(_postSubjectRepository.GetSubjectsOf(approvingPost.Id));
+                approvingPost.Subjects = (getSubjects is not null && getSubjects.Count > 0) ? getSubjects : new List<SubjectDTO>();
 
                 var getImages = _imageHandlers.GetImagesByPost(approvingPost.Id);
                 approvingPost.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
@@ -127,7 +127,7 @@ namespace backend.Handlers.Implementors
         }
 
         public PostDTO? CreatePost(int userId, string title, string content,
-                                                    int[]? tagIds, int[]? categoryIds,
+                                                    int[]? subjectIds, int[]? majorIds,
                                                     string[]? videoURLs, string[]? imageURLs)
         {
             //return null if creating post is failed
@@ -166,23 +166,23 @@ namespace backend.Handlers.Implementors
             }
             else createdPost.Images = new List<ImageDTO>();
 
-            //add categories for post if it is necessary
-            if (categoryIds is not null && categoryIds.Length > 0)
+            //add majors for post if it is necessary
+            if (majorIds is not null && majorIds.Length > 0)
             {
-                var categories = AttachCategoriesForPost(createdPost, categoryIds);
-                if (categories is null || categories.Count == 0) return null;
-                createdPost.Categories = categories;
+                var majors = AttachMajorsForPost(createdPost, majorIds);
+                if (majors is null || majors.Count == 0) return null;
+                createdPost.Majors = majors;
             }
-            else createdPost.Categories = new List<CategoryDTO>();
+            else createdPost.Majors = new List<MajorDTO>();
 
-            //add tags for post if it is successful, return null otherwise
-            if (tagIds is not null && tagIds.Length > 0)
+            //add subjects for post if it is successful, return null otherwise
+            if (subjectIds is not null && subjectIds.Length > 0)
             {
-                var tags = AttachTagsForPost(createdPost, tagIds);
-                if (tags is null || tags.Count == 0) return null;
-                createdPost.Tags = tags;
+                var subjects = AttachSubjectsForPost(createdPost, subjectIds);
+                if (subjects is null || subjects.Count == 0) return null;
+                createdPost.Subjects = subjects;
             }
-            else createdPost.Tags = new List<TagDTO>();
+            else createdPost.Subjects = new List<SubjectDTO>();
 
             var postUpvote = _votePostRepository.GetAllUsersVotedBy(createdPost.Id);
 
@@ -199,63 +199,63 @@ namespace backend.Handlers.Implementors
             return createdPost;
         }
 
-        public ICollection<TagDTO>? AttachTagsForPost(PostDTO createdPost, int[] tagIds)
+        public ICollection<SubjectDTO>? AttachSubjectsForPost(PostDTO createdPost, int[] subjectIds)
         {
-            //create a tags' list to return
-            List<TagDTO> tags = new();
+            //create a subjects' list to return
+            List<SubjectDTO> subjects = new();
 
-            foreach (var tagId in tagIds)
+            foreach (var subjectId in subjectIds)
             {
-                //Undo creating post and return null if tag does not exist or is removed
-                var tag = _tagHandlers.GetTagById(tagId);
-                if (tag is null || !tag.Status)
+                //Undo creating post and return null if subject does not exist or is removed
+                var subject = _subjectHandlers.GetSubjectById(subjectId);
+                if (subject is null || !subject.Status)
                 {
                     Delete(createdPost.Id);
                     return null;
                 };
 
-                //Undo creating post and return null if relationship of post and tag does not exist or is removed
-                var addedTag = _tagHandlers.CreatePostTag(createdPost, tag);
-                if (addedTag is null || !addedTag.Status)
+                //Undo creating post and return null if relationship of post and subject does not exist or is removed
+                var addedSubject = _subjectHandlers.CreatePostSubject(createdPost, subject);
+                if (addedSubject is null || !addedSubject.Status)
                 {
                     Delete(createdPost.Id);
                     return null;
                 }
 
-                //add tag to tags' list if creating reltionship is successful
-                tags.Add(addedTag);
+                //add subject to subjects' list if creating reltionship is successful
+                subjects.Add(addedSubject);
             }
 
-            return tags;
+            return subjects;
         }
 
-        public ICollection<CategoryDTO>? AttachCategoriesForPost(PostDTO createdPost, int[] categoryIds)
+        public ICollection<MajorDTO>? AttachMajorsForPost(PostDTO createdPost, int[] majorIds)
         {
-            //create a categories' list to return
-            List<CategoryDTO> categories = new();
-            foreach (var categoryId in categoryIds)
+            //create a majors' list to return
+            List<MajorDTO> majors = new();
+            foreach (var majorId in majorIds)
             {
-                //Undo creating post and return null if category does not exist or is removed
-                var category = _categoryHandlers.GetCategoryById(categoryId);
-                if (category is null || !category.Status)
+                //Undo creating post and return null if major does not exist or is removed
+                var major = _majorHandlers.GetMajorById(majorId);
+                if (major is null || !major.Status)
                 {
                     Delete(createdPost.Id);
                     return null;
                 };
 
-                //Undo creating post and return null if relationship of post and category does not exist or is removed
-                var addedCategory = _categoryHandlers.CreatePostCategory(createdPost, category);
-                if (addedCategory is null || !addedCategory.Status)
+                //Undo creating post and return null if relationship of post and major does not exist or is removed
+                var addedMajor = _majorHandlers.CreatePostMajor(createdPost, major);
+                if (addedMajor is null || !addedMajor.Status)
                 {
                     Delete(createdPost.Id);
                     return null;
                 }
 
-                //add category to categories' list if creating reltionship is successful
-                categories.Add(addedCategory);
+                //add major to majors' list if creating reltionship is successful
+                majors.Add(addedMajor);
             }
 
-            return categories;
+            return majors;
         }
         public UserDTO? AttachUserForPost(PostDTO createdPost, int userID)
         {
@@ -309,7 +309,7 @@ namespace backend.Handlers.Implementors
                 if (!_postRepository.UpdatePost(newPost)) return null;
             }
 
-            //add newPostTag ralationship to database
+            //add newPostSubject ralationship to database
             return _mapper.Map<PostDTO>(newPost);
         }
 
@@ -340,7 +340,7 @@ namespace backend.Handlers.Implementors
             deletedPost.Status = false;
             deletedPost.UpdatedAt = DateTime.Now;
 
-            //Mapping deletedPost to data type PostDTO which have more fields (videos, images, tags, categories)
+            //Mapping deletedPost to data type PostDTO which have more fields (videos, images, subjects, majors)
             var deletingPost = _mapper.Map<PostDTO>(deletedPost);
             //return null if mapping is failed
             if (deletingPost is null) return null;
@@ -399,23 +399,23 @@ namespace backend.Handlers.Implementors
             }
             deletingPost.Images = new List<ImageDTO>();
 
-            //disable tags of post if post has tags
-            var tagsOfPost = _postTagRepository.GetPostTagsByPostId(deletingPost.Id);
-            foreach (var tag in tagsOfPost)
+            //disable subjects of post if post has subjects
+            var subjectsOfPost = _postSubjectRepository.GetPostSubjectsByPostId(deletingPost.Id);
+            foreach (var subject in subjectsOfPost)
             {
-                var disabledTag = _tagHandlers.DisablePostTag(deletingPost.Id, tag.TagId);
-                if (disabledTag is null) return null;
+                var disabledSubject = _subjectHandlers.DisablePostSubject(deletingPost.Id, subject.SubjectId);
+                if (disabledSubject is null) return null;
             }
-            deletingPost.Tags = new List<TagDTO>();
+            deletingPost.Subjects = new List<SubjectDTO>();
 
-            //disable categories of post if post has categories
-            var categoriesOfPost = _postCategoryRepository.GetPostCategoriesByPostId(deletingPost.Id);
-            foreach (var category in categoriesOfPost)
+            //disable majors of post if post has majors
+            var majorsOfPost = _postMajorRepository.GetPostMajorsByPostId(deletingPost.Id);
+            foreach (var major in majorsOfPost)
             {
-                var disabledCategory = _categoryHandlers.DisablePostCategory(deletingPost.Id, category.CategoryId);
-                if (disabledCategory is null) return null;
+                var disabledMajor = _majorHandlers.DisablePostMajor(deletingPost.Id, major.MajorId);
+                if (disabledMajor is null) return null;
             }
-            deletingPost.Categories = new List<CategoryDTO>();
+            deletingPost.Majors = new List<MajorDTO>();
 
             return deletingPost;
         }
@@ -445,7 +445,7 @@ namespace backend.Handlers.Implementors
             existedPost.Status = false;
             existedPost.UpdatedAt = DateTime.Now;
 
-            //Mapping existedPost to data type PostDTO which have more fields (videos, images, tags, categories)
+            //Mapping existedPost to data type PostDTO which have more fields (videos, images, subjects, majors)
             var disablingPost = _mapper.Map<PostDTO>(existedPost);
             //return null if mapping is failed
             if (disablingPost is null) return null;
@@ -486,7 +486,7 @@ namespace backend.Handlers.Implementors
 
             //map to list DTO
             List<PostDTO> resultList = _mapper.Map<List<PostDTO>>(existed);
-            var onlyStudentCategory = _categoryRepository.GetCategoryByName(_specialCategories.GetOnlyStudent());
+            var onlyStudentMajor = _majorRepository.GetMajorByName(_specialMajors.GetOnlyStudent());
             var validViewer = CheckCurrentUser(currentUserId);
 
             if (validViewer == null || !validViewer.Status)
@@ -500,11 +500,11 @@ namespace backend.Handlers.Implementors
                         var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(postDTO.Id));
                         postDTO.User = (getUser is not null && getUser.Status) ? getUser : null;
 
-                        var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(postDTO.Id));
-                        postDTO.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
+                        var getMajors = _mapper.Map<ICollection<MajorDTO>?>(_postMajorRepository.GetMajorsOf(postDTO.Id));
+                        postDTO.Majors = (getMajors is not null && getMajors.Count > 0) ? getMajors : new List<MajorDTO>();
 
-                        var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(postDTO.Id));
-                        postDTO.Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
+                        var getSubjects = _mapper.Map<ICollection<SubjectDTO>?>(_postSubjectRepository.GetSubjectsOf(postDTO.Id));
+                        postDTO.Subjects = (getSubjects is not null && getSubjects.Count > 0) ? getSubjects : new List<SubjectDTO>();
 
                         var getImages = _imageHandlers.GetImagesByPost(postDTO.Id);
                         postDTO.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
@@ -541,8 +541,8 @@ namespace backend.Handlers.Implementors
                 {
                     if (resultList[i].Status)
                     {
-                        var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(resultList[i].Id));
-                        if (!getCategories.Any(item => item.Id == onlyStudentCategory.Id))
+                        var getMajors = _mapper.Map<ICollection<MajorDTO>?>(_postMajorRepository.GetMajorsOf(resultList[i].Id));
+                        if (!getMajors.Any(item => item.Id == onlyStudentMajor.Id))
                         {
                             var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(resultList[i].Id));
 
@@ -566,10 +566,10 @@ namespace backend.Handlers.Implementors
                                             }
                                             resultList[i].User = (getUser is not null && getUser.Status) ? getUser : null;
 
-                                            resultList[i].Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
+                                            resultList[i].Majors = (getMajors is not null && getMajors.Count > 0) ? getMajors : new List<MajorDTO>();
 
-                                            var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(resultList[i].Id));
-                                            resultList[i].Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
+                                            var getSubjects = _mapper.Map<ICollection<SubjectDTO>?>(_postSubjectRepository.GetSubjectsOf(resultList[i].Id));
+                                            resultList[i].Subjects = (getSubjects is not null && getSubjects.Count > 0) ? getSubjects : new List<SubjectDTO>();
 
                                             var getImages = _imageHandlers.GetImagesByPost(resultList[i].Id);
                                             resultList[i].Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
@@ -718,11 +718,11 @@ namespace backend.Handlers.Implementors
                                         }
                                         postDTO.User = (getUser is not null && getUser.Status) ? getUser : null;
 
-                                        var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(postDTO.Id));
-                                        postDTO.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
+                                        var getMajors = _mapper.Map<ICollection<MajorDTO>?>(_postMajorRepository.GetMajorsOf(postDTO.Id));
+                                        postDTO.Majors = (getMajors is not null && getMajors.Count > 0) ? getMajors : new List<MajorDTO>();
 
-                                        var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(postDTO.Id));
-                                        postDTO.Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
+                                        var getSubjects = _mapper.Map<ICollection<SubjectDTO>?>(_postSubjectRepository.GetSubjectsOf(postDTO.Id));
+                                        postDTO.Subjects = (getSubjects is not null && getSubjects.Count > 0) ? getSubjects : new List<SubjectDTO>();
 
                                         var getImages = _imageHandlers.GetImagesByPost(postDTO.Id);
                                         postDTO.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
@@ -865,11 +865,11 @@ namespace backend.Handlers.Implementors
                     {
                         resultList[i].User = (getUser is not null && getUser.Status) ? getUser : null;
 
-                        var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(resultList[i].Id));
-                        resultList[i].Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
+                        var getMajors = _mapper.Map<ICollection<MajorDTO>?>(_postMajorRepository.GetMajorsOf(resultList[i].Id));
+                        resultList[i].Majors = (getMajors is not null && getMajors.Count > 0) ? getMajors : new List<MajorDTO>();
 
-                        var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(resultList[i].Id));
-                        resultList[i].Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
+                        var getSubjects = _mapper.Map<ICollection<SubjectDTO>?>(_postSubjectRepository.GetSubjectsOf(resultList[i].Id));
+                        resultList[i].Subjects = (getSubjects is not null && getSubjects.Count > 0) ? getSubjects : new List<SubjectDTO>();
 
                         var getImages = _imageHandlers.GetImagesByPost(resultList[i].Id);
                         resultList[i].Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
@@ -921,7 +921,7 @@ namespace backend.Handlers.Implementors
 
             //map to list DTO
             var resultList = new List<PostDTO>();
-            var onlyStudentCategory = _categoryRepository.GetCategoryByName(_specialCategories.GetOnlyStudent());
+            var onlyStudentMajor = _majorRepository.GetMajorByName(_specialMajors.GetOnlyStudent());
             var validViewer = CheckCurrentUser(currentUserId);
             if (validViewer.Role.Contains(_userRoleConstrant.GetLecturerRole()))
             {
@@ -938,8 +938,8 @@ namespace backend.Handlers.Implementors
                         //init postDTO
                         var postDTO = _mapper.Map<PostDTO>(post);
 
-                        var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(postDTO.Id));
-                        if (!getCategories.Any(item => item.Id == onlyStudentCategory.Id))
+                        var getMajors = _mapper.Map<ICollection<MajorDTO>?>(_postMajorRepository.GetMajorsOf(postDTO.Id));
+                        if (!getMajors.Any(item => item.Id == onlyStudentMajor.Id))
                         {
                             var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(postDTO.Id));
 
@@ -963,10 +963,10 @@ namespace backend.Handlers.Implementors
                                             }
                                             postDTO.User = (getUser is not null && getUser.Status) ? getUser : null;
 
-                                            postDTO.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
+                                            postDTO.Majors = (getMajors is not null && getMajors.Count > 0) ? getMajors : new List<MajorDTO>();
 
-                                            var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(postDTO.Id));
-                                            postDTO.Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
+                                            var getSubjects = _mapper.Map<ICollection<SubjectDTO>?>(_postSubjectRepository.GetSubjectsOf(postDTO.Id));
+                                            postDTO.Subjects = (getSubjects is not null && getSubjects.Count > 0) ? getSubjects : new List<SubjectDTO>();
 
                                             var getImages = _imageHandlers.GetImagesByPost(postDTO.Id);
                                             postDTO.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
@@ -1092,11 +1092,11 @@ namespace backend.Handlers.Implementors
                                         }
                                         postDTO.User = (getUser is not null && getUser.Status) ? getUser : null;
 
-                                        var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(postDTO.Id));
-                                        postDTO.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
+                                        var getMajors = _mapper.Map<ICollection<MajorDTO>?>(_postMajorRepository.GetMajorsOf(postDTO.Id));
+                                        postDTO.Majors = (getMajors is not null && getMajors.Count > 0) ? getMajors : new List<MajorDTO>();
 
-                                        var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(postDTO.Id));
-                                        postDTO.Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
+                                        var getSubjects = _mapper.Map<ICollection<SubjectDTO>?>(_postSubjectRepository.GetSubjectsOf(postDTO.Id));
+                                        postDTO.Subjects = (getSubjects is not null && getSubjects.Count > 0) ? getSubjects : new List<SubjectDTO>();
 
                                         var getImages = _imageHandlers.GetImagesByPost(postDTO.Id);
                                         postDTO.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
@@ -1196,7 +1196,7 @@ namespace backend.Handlers.Implementors
         }
 
         public PostDTO? UpdatePost(int postId, string title, string content,
-                                                int[]? tagIds, int[]? categoryIds,
+                                                int[]? subjectIds, int[]? majorIds,
                                                 string[]? videoURLs, string[]? imageURLs)
         {
             //check post is existed
@@ -1208,7 +1208,7 @@ namespace backend.Handlers.Implementors
             existedPost.Content = content;
             existedPost.UpdatedAt = DateTime.Now;
 
-            //Mapping existedPost to data type PostDTO which have more fields (videos, images, tags, categories)
+            //Mapping existedPost to data type PostDTO which have more fields (videos, images, subjects, majors)
             var updatingPost = _mapper.Map<PostDTO>(existedPost);
             //return null if mapping is failed
             if (updatingPost is null) return null;
@@ -1235,39 +1235,39 @@ namespace backend.Handlers.Implementors
             }
             else updatingPost.Images = new List<ImageDTO>();
 
-            if (tagIds is not null && tagIds.Length > 0)
+            if (subjectIds is not null && subjectIds.Length > 0)
             {
-                //Disable all relationship of post and tags to update new
-                var tagsOfPost = _postTagRepository.GetPostTagsByPostId(postId);
-                foreach (var tag in tagsOfPost)
+                //Disable all relationship of post and subjects to update new
+                var subjectsOfPost = _postSubjectRepository.GetPostSubjectsByPostId(postId);
+                foreach (var subject in subjectsOfPost)
                 {
-                    var disabledTag = _tagHandlers.DisablePostTag(postId, tag.TagId);
-                    if (disabledTag is null) return null;
+                    var disabledSubject = _subjectHandlers.DisablePostSubject(postId, subject.SubjectId);
+                    if (disabledSubject is null) return null;
                 }
 
-                //update tags for post if it is successful, return null otherwise
-                var tags = AttachTagsForPost(updatingPost, tagIds);
-                if (tags is null || tags.Count == 0) return null;
-                updatingPost.Tags = tags;
+                //update subjects for post if it is successful, return null otherwise
+                var subjects = AttachSubjectsForPost(updatingPost, subjectIds);
+                if (subjects is null || subjects.Count == 0) return null;
+                updatingPost.Subjects = subjects;
             }
-            else updatingPost.Tags = new List<TagDTO>();
+            else updatingPost.Subjects = new List<SubjectDTO>();
 
-            if (categoryIds is not null && categoryIds.Length > 0)
+            if (majorIds is not null && majorIds.Length > 0)
             {
-                //Disable all relationship of post and categories to update new
-                var categoriesOfPost = _postCategoryRepository.GetPostCategoriesByPostId(postId);
-                foreach (var category in categoriesOfPost)
+                //Disable all relationship of post and majors to update new
+                var majorsOfPost = _postMajorRepository.GetPostMajorsByPostId(postId);
+                foreach (var major in majorsOfPost)
                 {
-                    var disabledCategory = _categoryHandlers.DisablePostCategory(postId, category.CategoryId);
-                    if (disabledCategory is null) return null;
+                    var disabledMajor = _majorHandlers.DisablePostMajor(postId, major.MajorId);
+                    if (disabledMajor is null) return null;
                 }
 
-                //update categories for post if it is successful, return null otherwise
-                var categories = AttachCategoriesForPost(updatingPost, categoryIds);
-                if (categories is null || categories.Count == 0) return null;
-                updatingPost.Categories = categories;
+                //update majors for post if it is successful, return null otherwise
+                var majors = AttachMajorsForPost(updatingPost, majorIds);
+                if (majors is null || majors.Count == 0) return null;
+                updatingPost.Majors = majors;
             }
-            else updatingPost.Categories = new List<CategoryDTO>();
+            else updatingPost.Majors = new List<MajorDTO>();
 
             var postUpvote = _votePostRepository.GetAllUsersVotedBy(updatingPost.Id);
 
@@ -1343,11 +1343,11 @@ namespace backend.Handlers.Implementors
                     {
                         resultList[i].User = (getUser is not null && getUser.Status) ? getUser : null;
 
-                        var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(resultList[i].Id));
-                        resultList[i].Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
+                        var getMajors = _mapper.Map<ICollection<MajorDTO>?>(_postMajorRepository.GetMajorsOf(resultList[i].Id));
+                        resultList[i].Majors = (getMajors is not null && getMajors.Count > 0) ? getMajors : new List<MajorDTO>();
 
-                        var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(resultList[i].Id));
-                        resultList[i].Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
+                        var getSubjects = _mapper.Map<ICollection<SubjectDTO>?>(_postSubjectRepository.GetSubjectsOf(resultList[i].Id));
+                        resultList[i].Subjects = (getSubjects is not null && getSubjects.Count > 0) ? getSubjects : new List<SubjectDTO>();
 
                         var getImages = _imageHandlers.GetImagesByPost(resultList[i].Id);
                         resultList[i].Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
@@ -1401,11 +1401,11 @@ namespace backend.Handlers.Implementors
                     {
                         resultList[i].User = (getUser is not null && getUser.Status) ? getUser : null;
 
-                        var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(resultList[i].Id));
-                        resultList[i].Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
+                        var getMajors = _mapper.Map<ICollection<MajorDTO>?>(_postMajorRepository.GetMajorsOf(resultList[i].Id));
+                        resultList[i].Majors = (getMajors is not null && getMajors.Count > 0) ? getMajors : new List<MajorDTO>();
 
-                        var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(resultList[i].Id));
-                        resultList[i].Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
+                        var getSubjects = _mapper.Map<ICollection<SubjectDTO>?>(_postSubjectRepository.GetSubjectsOf(resultList[i].Id));
+                        resultList[i].Subjects = (getSubjects is not null && getSubjects.Count > 0) ? getSubjects : new List<SubjectDTO>();
 
                         var getImages = _imageHandlers.GetImagesByPost(resultList[i].Id);
                         resultList[i].Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
@@ -1455,11 +1455,11 @@ namespace backend.Handlers.Implementors
                 var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(post.Id));
                 post.User = (getUser is not null && getUser.Status) ? getUser : null;
 
-                var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(post.Id));
-                post.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
+                var getMajors = _mapper.Map<ICollection<MajorDTO>?>(_postMajorRepository.GetMajorsOf(post.Id));
+                post.Majors = (getMajors is not null && getMajors.Count > 0) ? getMajors : new List<MajorDTO>();
 
-                var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(post.Id));
-                post.Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
+                var getSubjects = _mapper.Map<ICollection<SubjectDTO>?>(_postSubjectRepository.GetSubjectsOf(post.Id));
+                post.Subjects = (getSubjects is not null && getSubjects.Count > 0) ? getSubjects : new List<SubjectDTO>();
 
                 var getImages = _imageHandlers.GetImagesByPost(post.Id);
                 post.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
@@ -1485,23 +1485,23 @@ namespace backend.Handlers.Implementors
             return resultList;
         }
 
-        public ICollection<PostDTO>? GetAllPosts(int[] categoryIDs, int[] tagIDs, string searchValue, int currentUserId)
+        public ICollection<PostDTO>? GetAllPosts(int[] majorIDs, int[] subjectIDs, string searchValue, int currentUserId)
         {
-            //if both categories and tags are empty getallposts.
-            if ((categoryIDs == null || categoryIDs.Length == 0) && (tagIDs == null || tagIDs.Length == 0) && (searchValue == null || searchValue.Equals(string.Empty)) && (currentUserId == null || currentUserId == 0))
+            //if both majors and subjects are empty getallposts.
+            if ((majorIDs == null || majorIDs.Length == 0) && (subjectIDs == null || subjectIDs.Length == 0) && (searchValue == null || searchValue.Equals(string.Empty)) && (currentUserId == null || currentUserId == 0))
             {
                 return null;
             }
-            if ((categoryIDs == null || categoryIDs.Length == 0) && (tagIDs == null || tagIDs.Length == 0) && (searchValue == null || searchValue.Equals(string.Empty)))
+            if ((majorIDs == null || majorIDs.Length == 0) && (subjectIDs == null || subjectIDs.Length == 0) && (searchValue == null || searchValue.Equals(string.Empty)))
             {
                 return GetAllPosts(currentUserId);
             }
-            if ((categoryIDs == null || categoryIDs.Length == 0) && (tagIDs == null || tagIDs.Length == 0))
+            if ((majorIDs == null || majorIDs.Length == 0) && (subjectIDs == null || subjectIDs.Length == 0))
             {
                 return SearchPostsByTitle(searchValue, currentUserId);
             }
-            //get post list based on categoryiesIDs and tagIDs
-            var postList = _postRepository.GetPost(categoryIDs, tagIDs);
+            //get post list based on majoriesIDs and subjectIDs
+            var postList = _postRepository.GetPost(majorIDs, subjectIDs);
             //check if null
             if (postList == null || postList.Count == 0)
             {
@@ -1510,7 +1510,7 @@ namespace backend.Handlers.Implementors
             //init new List
             var postListDTO = new List<PostDTO>();
 
-            var onlyStudentCategory = _categoryRepository.GetCategoryByName(_specialCategories.GetOnlyStudent());
+            var onlyStudentMajor = _majorRepository.GetMajorByName(_specialMajors.GetOnlyStudent());
             var validViewer = CheckCurrentUser(currentUserId);
 
             if (validViewer == null || !validViewer.Status)
@@ -1532,8 +1532,8 @@ namespace backend.Handlers.Implementors
                         //init postDTO
                         var postDTO = _mapper.Map<PostDTO>(post);
 
-                        var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(postDTO.Id));
-                        if (!getCategories.Any(item => item.Id == onlyStudentCategory.Id))
+                        var getMajors = _mapper.Map<ICollection<MajorDTO>?>(_postMajorRepository.GetMajorsOf(postDTO.Id));
+                        if (!getMajors.Any(item => item.Id == onlyStudentMajor.Id))
                         {
                             var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(postDTO.Id));
 
@@ -1557,10 +1557,10 @@ namespace backend.Handlers.Implementors
                                             }
                                             postDTO.User = (getUser is not null && getUser.Status) ? getUser : null;
 
-                                            postDTO.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
+                                            postDTO.Majors = (getMajors is not null && getMajors.Count > 0) ? getMajors : new List<MajorDTO>();
 
-                                            var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(postDTO.Id));
-                                            postDTO.Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
+                                            var getSubjects = _mapper.Map<ICollection<SubjectDTO>?>(_postSubjectRepository.GetSubjectsOf(postDTO.Id));
+                                            postDTO.Subjects = (getSubjects is not null && getSubjects.Count > 0) ? getSubjects : new List<SubjectDTO>();
 
                                             var getImages = _imageHandlers.GetImagesByPost(postDTO.Id);
                                             postDTO.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
@@ -1689,11 +1689,11 @@ namespace backend.Handlers.Implementors
                                         }
                                         postDTO.User = (getUser is not null && getUser.Status) ? getUser : null;
 
-                                        var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(postDTO.Id));
-                                        postDTO.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
+                                        var getMajors = _mapper.Map<ICollection<MajorDTO>?>(_postMajorRepository.GetMajorsOf(postDTO.Id));
+                                        postDTO.Majors = (getMajors is not null && getMajors.Count > 0) ? getMajors : new List<MajorDTO>();
 
-                                        var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(postDTO.Id));
-                                        postDTO.Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
+                                        var getSubjects = _mapper.Map<ICollection<SubjectDTO>?>(_postSubjectRepository.GetSubjectsOf(postDTO.Id));
+                                        postDTO.Subjects = (getSubjects is not null && getSubjects.Count > 0) ? getSubjects : new List<SubjectDTO>();
 
                                         var getImages = _imageHandlers.GetImagesByPost(postDTO.Id);
                                         postDTO.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
@@ -1814,7 +1814,7 @@ namespace backend.Handlers.Implementors
             var existedPost = _postRepository.GetPost(postId);
             if (existedPost == null || !existedPost.Status || !existedPost.IsApproved) return null;
 
-            //Mapping existedPost to data type PostDTO which have more fields (videos, images, tags, categories)
+            //Mapping existedPost to data type PostDTO which have more fields (videos, images, subjects, majors)
             var existingPost = _mapper.Map<PostDTO>(existedPost);
             //return null if mapping is failed
             if (existingPost is null) return null;
@@ -1846,11 +1846,11 @@ namespace backend.Handlers.Implementors
                                     }
                                     existingPost.User = (getUser is not null && getUser.Status) ? getUser : null;
 
-                                    var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(existingPost.Id));
-                                    existingPost.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
+                                    var getMajors = _mapper.Map<ICollection<MajorDTO>?>(_postMajorRepository.GetMajorsOf(existingPost.Id));
+                                    existingPost.Majors = (getMajors is not null && getMajors.Count > 0) ? getMajors : new List<MajorDTO>();
 
-                                    var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(existingPost.Id));
-                                    existingPost.Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
+                                    var getSubjects = _mapper.Map<ICollection<SubjectDTO>?>(_postSubjectRepository.GetSubjectsOf(existingPost.Id));
+                                    existingPost.Subjects = (getSubjects is not null && getSubjects.Count > 0) ? getSubjects : new List<SubjectDTO>();
 
                                     var getImages = _imageHandlers.GetImagesByPost(existingPost.Id);
                                     existingPost.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
@@ -1949,7 +1949,7 @@ namespace backend.Handlers.Implementors
             var existedPost = _postRepository.GetPost(postId);
             if (existedPost == null || !existedPost.Status || !existedPost.IsApproved) return null;
 
-            //Mapping existedPost to data type PostDTO which have more fields (videos, images, tags, categories)
+            //Mapping existedPost to data type PostDTO which have more fields (videos, images, subjects, majors)
             var existingPost = _mapper.Map<PostDTO>(existedPost);
             //return null if mapping is failed
             if (existingPost is null) return null;
@@ -1957,11 +1957,11 @@ namespace backend.Handlers.Implementors
             var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(existingPost.Id));
             existingPost.User = (getUser is not null && getUser.Status) ? getUser : null;
 
-            var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_postCategoryRepository.GetCategoriesOf(existingPost.Id));
-            existingPost.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
+            var getMajors = _mapper.Map<ICollection<MajorDTO>?>(_postMajorRepository.GetMajorsOf(existingPost.Id));
+            existingPost.Majors = (getMajors is not null && getMajors.Count > 0) ? getMajors : new List<MajorDTO>();
 
-            var getTags = _mapper.Map<ICollection<TagDTO>?>(_postTagRepository.GetTagsOf(existingPost.Id));
-            existingPost.Tags = (getTags is not null && getTags.Count > 0) ? getTags : new List<TagDTO>();
+            var getSubjects = _mapper.Map<ICollection<SubjectDTO>?>(_postSubjectRepository.GetSubjectsOf(existingPost.Id));
+            existingPost.Subjects = (getSubjects is not null && getSubjects.Count > 0) ? getSubjects : new List<SubjectDTO>();
 
             var getImages = _imageHandlers.GetImagesByPost(existingPost.Id);
             existingPost.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
