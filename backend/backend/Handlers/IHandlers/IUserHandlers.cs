@@ -11,6 +11,7 @@ namespace backend.Handlers.IHandlers
         public ICollection<UserDTO>? GetLecturers();
         public ICollection<UserDTO>? GetAllDisableUsers(); 
         public UserDTO? GetUser(int userID);
+        public ICollection<UserDTO>? GetStudents();
         public ICollection<UserDTO>? GetBannedUsers();
         //Modify User
         public UserDTO? CreateUser(string name,string avatarURL, string email, string password);
