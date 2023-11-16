@@ -18,9 +18,13 @@ namespace backend.Models
 
         [NotNull]
         [Key]
-        [ForeignKey("")]
+        [ForeignKey("SavePost")]
         public int SavePostId { get; set; }
+
+        [NotNull]
         public DateTime CreatedAt { get; set; }
+
+        [NotNull]
         public bool Status { get; set; }
 
         public virtual SaveList SaveList { get; set; }
