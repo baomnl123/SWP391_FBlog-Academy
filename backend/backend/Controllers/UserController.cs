@@ -275,9 +275,13 @@ namespace backend.Controllers
         public async Task<IActionResult> UnbanUser(int userID)
         {
             var getUser = _userHandlers.GetUser(userID);
-            if (getUser == null || !getUser.Status)
+            if (getUser == null)
             {
                 return BadRequest("User is invalid in DB !");
+            }
+            if (getUser.Status)
+            {
+                return BadRequest("User is currently active !");
             }
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {this.token}");
 
