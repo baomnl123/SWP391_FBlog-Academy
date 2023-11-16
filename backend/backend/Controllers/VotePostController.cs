@@ -58,21 +58,11 @@ namespace backend.Controllers
         /// <param name="vote"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> CreateNewVote(int currentUserId, int postId, [FromForm] string vote) 
+        public async Task<IActionResult> CreateNewVote(int currentUserId, int postId, [FromForm] int vote) 
         {
-            var boolVote = true;
-            if (vote.ToLower().Trim().Contains("true"))
-            {
-            }
-            else if (vote.ToLower().Trim().Contains("false"))
-            {
-                boolVote = false;
-            }
-            else
-            {
-                return BadRequest();
-            }
-            var createdVote = _votePostHandlers.CreateNewVotePost(currentUserId, postId, boolVote);
+            if (vote < 1 && vote > 2) return BadRequest();
+            
+            var createdVote = _votePostHandlers.CreateNewVotePost(currentUserId, postId, vote);
             if (createdVote == null) return BadRequest();
 
             //send email
@@ -93,21 +83,11 @@ namespace backend.Controllers
         /// <param name="vote"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<IActionResult> UpdateVote(int currentUserId, int postId, [FromForm] string vote)
+        public async Task<IActionResult> UpdateVote(int currentUserId, int postId, [FromForm] int vote)
         {
-            var boolVote = true;
-            if (vote.ToLower().Trim().Contains("true"))
-            {
-            }
-            else if (vote.ToLower().Trim().Contains("false"))
-            {
-                boolVote = false;
-            }
-            else
-            {
-                return BadRequest();
-            }
-            var updatedVote = _votePostHandlers.UpdateVotePost(currentUserId, postId, boolVote);
+            if (vote < 1 && vote > 2) return BadRequest();
+
+            var updatedVote = _votePostHandlers.UpdateVotePost(currentUserId, postId, vote);
             if (updatedVote == null) return BadRequest();
 
             if (updatedVote.UpVote)

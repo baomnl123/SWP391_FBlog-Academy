@@ -33,10 +33,9 @@ namespace backend.Repositories.Implementors
                 var voteList = _fBlogAcademyContext.VotePosts.Where(v => v.PostId == post.Id).ToList();
                 foreach (var vote in voteList)
                 {
-                    if (vote.UpVote || vote.DownVote)
+                    if (vote.Vote == 1 || vote.Vote == 2)
                     {
-                        vote.UpVote = false;
-                        vote.DownVote = false;
+                        vote.Vote = 0;
                     }
                 }
                 return true;
@@ -49,14 +48,14 @@ namespace backend.Repositories.Implementors
 
         public ICollection<User>? GetAllUsersVotedBy(int postId)
         {
-            return _fBlogAcademyContext.VotePosts.Where(v => v.PostId == postId 
-                                                            && (v.UpVote && !v.DownVote)).Select(v => v.User).Where(v => v.Status).ToList();
+            return _fBlogAcademyContext.VotePosts.Where(v => v.PostId == postId && v.Vote == 1)
+                                                 .Select(v => v.User).Where(v => v.Status).ToList();
         }
 
         public ICollection<User>? GetAllUsersDownVotedBy(int postId)
         {
-            return _fBlogAcademyContext.VotePosts.Where(v => v.PostId == postId
-                                                            && (!v.UpVote && v.DownVote)).Select(v => v.User).Where(v => v.Status).ToList();
+            return _fBlogAcademyContext.VotePosts.Where(v => v.PostId == postId && v.Vote == 2)
+                                                 .Select(v => v.User).Where(v => v.Status).ToList();
         }
 
         public VotePost? GetVotePost(int currentUserId, int postId)

@@ -607,13 +607,9 @@ namespace backend.Migrations
                         .HasColumnType("datetime")
                         .HasColumnName("created_at");
 
-                    b.Property<bool>("DownVote")
-                        .HasColumnType("bit")
-                        .HasColumnName("down_vote");
-
-                    b.Property<bool>("UpVote")
-                        .HasColumnType("bit")
-                        .HasColumnName("up_vote");
+                    b.Property<int>("Vote")
+                        .HasColumnType("int")
+                        .HasColumnName("vote");
 
                     b.HasKey("UserId", "PostId")
                         .HasName("PK__VotePost__CA534F79E6329B08");

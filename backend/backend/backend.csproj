@@ -8,9 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Enumerables\**" />
     <Compile Remove="Migrates\**" />
+    <Content Remove="Enumerables\**" />
     <Content Remove="Migrates\**" />
+    <EmbeddedResource Remove="Enumerables\**" />
     <EmbeddedResource Remove="Migrates\**" />
+    <None Remove="Enumerables\**" />
     <None Remove="Migrates\**" />
   </ItemGroup>
 
@@ -35,10 +39,6 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="RestSharp" Version="106.15.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Enumerables\" />
   </ItemGroup>
 
 </Project>
