@@ -9,6 +9,7 @@ import Post from '@/pages/post'
 import Profile from '@/pages/profile'
 import Student from '@/pages/student'
 import Tag from '@/pages/tag'
+
 import { RedirectToSignIn, SignedIn, SignedOut } from '@clerk/clerk-react'
 
 export const Routes = createBrowserRouter([
@@ -72,12 +73,13 @@ export const Routes = createBrowserRouter([
         }
       },
       {
-        path: '/profile',
+        path: '/policies',
         element: <Profile />,
         handle: {
-          crumb: () => 'Profile'
+          crumb: () => 'Policies'
         }
       },
+      
       {
         path: '*',
         element: <Navigate to='/' />

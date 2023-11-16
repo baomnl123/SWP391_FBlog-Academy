@@ -9,7 +9,8 @@ import {
   MenuUnfoldOutlined,
   TagsOutlined,
   TeamOutlined,
-  UserOutlined
+  UserOutlined,
+  SafetyOutlined
 } from '@ant-design/icons'
 import { UserButton } from '@clerk/clerk-react'
 import type { MenuProps } from 'antd'
@@ -36,7 +37,10 @@ const items: MenuItem[] = [
   getItem(<Link to='/tag'>Tag</Link>, '/tag', <TagsOutlined />),
   getItem(<Link to='/lecturer'>Lecturer</Link>, '/lecturer', <UserOutlined />),
   getItem(<Link to='/student'>Student</Link>, '/student', <TeamOutlined />),
-  getItem(<Link to='/report'>Report</Link>, '/report', <FileOutlined />)
+  getItem(<Link to='/report'>Report</Link>, '/report', <FileOutlined />),
+  getItem(<Link to='/policies'>Policies</Link>, '/policies', <SafetyOutlined />),
+  
+
 ]
 
 const BaseLayout = ({ children }: PropsWithChildren) => {
