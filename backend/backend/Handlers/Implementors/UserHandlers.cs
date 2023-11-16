@@ -555,5 +555,5 @@ namespace backend.Handlers.Implementors
             listDTO.OrderByDescending(u => u.followerNumber).ThenByDescending(u => u.postNumber);
             return listDTO;
         }
-    }
+    } 
 }
