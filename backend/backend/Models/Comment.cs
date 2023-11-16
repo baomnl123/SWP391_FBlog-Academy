@@ -36,7 +36,6 @@ namespace backend.Models
         [NotNull]
         public DateTime CreatedAt { get; set; }
 
-        [NotNull]
         public DateTime? UpdatedAt { get; set; }
 
         [NotNull]

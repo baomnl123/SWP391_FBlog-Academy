@@ -34,10 +34,9 @@ namespace backend.Repositories.Implementors
                 var listVote = _fBlogAcademyContext.VoteComments.Where(v => v.CommentId == comment.Id).ToList();
                 foreach (var vote in listVote)
                 {
-                    if (vote.UpVote || vote.DownVote)
+                    if (vote.Vote != 0)
                     {
-                        vote.UpVote = false;
-                        vote.DownVote = false;
+                        vote.Vote = 0;
                         Update(vote);
                     }
                 }
@@ -52,7 +51,7 @@ namespace backend.Repositories.Implementors
         public ICollection<User>? GetAllUserBy(int commentId)
         {
             return _fBlogAcademyContext.VoteComments.Where(v => v.CommentId == commentId 
-                                                            && ((v.UpVote && !v.DownVote))).Select(v => v.User).Where(v => v.Status).ToList();
+                                                            && v.Vote == 1).Select(v => v.User).Where(v => v.Status).ToList();
         }
 
         public VoteComment? GetVoteComment(int userId, int commentId)

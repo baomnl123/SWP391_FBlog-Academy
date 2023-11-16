@@ -23,21 +23,10 @@ namespace backend.Controllers
         /// <param name="vote"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult VoteComment(int currentUserId, int commentId, [FromForm] string vote)
+        public IActionResult VoteComment(int currentUserId, int commentId, int vote)
         {
-            var boolVote = true;
-            if (vote.ToLower().Trim().Contains("true"))
-            {
-            }
-            else if(vote.ToLower().Trim().Contains("false"))
-            {
-                boolVote = false;
-            }
-            else
-            {
-                return BadRequest();
-            }
-            var successVote = _voteCommentHandlers.CreateVote(currentUserId, commentId, boolVote);
+            if (vote < 1 || vote > 2) return BadRequest("Invalid input!");
+            var successVote = _voteCommentHandlers.CreateVote(currentUserId, commentId, vote);
             if (successVote == null) return BadRequest();
             return Ok(successVote);
         }
@@ -50,21 +39,10 @@ namespace backend.Controllers
         /// <param name="vote"></param>
         /// <returns></returns>
         [HttpPut]
-        public IActionResult DisableUpVoteComment(int currentUserId, int commentId, [FromForm] string vote) 
+        public IActionResult DisableUpVoteComment(int currentUserId, int commentId, int vote) 
         {
-            var boolVote = true;
-            if (vote.ToLower().Trim().Contains("true"))
-            {
-            }
-            else if (vote.ToLower().Trim().Contains("false"))
-            {
-                boolVote = false;
-            }
-            else
-            {
-                return BadRequest();
-            }
-            var UpdatedVote = _voteCommentHandlers.UpdateVote(currentUserId, commentId, boolVote);
+            if (vote < 1 || vote > 2) return BadRequest("Invalid input!");
+            var UpdatedVote = _voteCommentHandlers.UpdateVote(currentUserId, commentId, vote);
             if (UpdatedVote == null) return BadRequest();
             return Ok(UpdatedVote);
         }

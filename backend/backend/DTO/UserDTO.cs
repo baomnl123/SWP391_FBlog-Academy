@@ -9,9 +9,9 @@
         public string Role { get; set; }
         public int successReportedTimes { get; set; } = 0;
         public int followerNumber { get; set; } = 0;
-        public ICollection<UserDTO>? followersList { get; set; }
+        public ICollection<UserDTO>? followersList { get; set; } = new List<UserDTO>();
         public int postNumber { get; set; } = 0;
-        public ICollection<PostDTO>? postsList { get; set; }
+        public ICollection<PostDTO>? postsList { get; set; } = new List<PostDTO>();
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public bool Status { get; set; }

@@ -12,12 +12,11 @@ namespace backend.Models
     public partial class VotePost
     {
         [NotNull]
-        [Key]
         [ForeignKey("User")]
         public int UserId { get; set; }
 
         [NotNull]
-        [Key]
+        [ForeignKey("Post")]
         public int PostId { get; set; }
 
         [NotNull]
