@@ -266,7 +266,7 @@ namespace backend.Handlers.Implementors
 
                 listDTO.Add(userDTO);
             }
-            listDTO.OrderByDescending(u => u.followerNumber).ThenByDescending(u.postNumber);
+            listDTO.OrderByDescending(u => u.followerNumber).ThenByDescending(u => u.postNumber);
             //return
             return listDTO;
         }
@@ -349,7 +349,7 @@ namespace backend.Handlers.Implementors
             {
                 return null;
             }
-            listDTO.OrderByDescending(u => u.followerNumber).ThenByDescending(u.postNumber);
+            listDTO.OrderByDescending(u => u.followerNumber).ThenByDescending(u => u.postNumber);
             //return
             return listDTO;
         }
@@ -563,7 +563,7 @@ namespace backend.Handlers.Implementors
             {
                 return null;
             }
-            listDTO.OrderByDescending(u => u.followerNumber).ThenByDescending(u.postNumber);
+            listDTO.OrderByDescending(u => u.followerNumber).ThenByDescending(u => u.postNumber);
             return listDTO;
         }
     }
