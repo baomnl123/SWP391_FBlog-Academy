@@ -12,6 +12,7 @@ namespace backend.Repositories.IRepositories
         public User? GetUser(string email);
         public ICollection<User>? GetUsersByUsername(string username);
         public ICollection<User>? GetUsersByRole(string role);
+        public ICollection<User>? GetStudents();
         public ICollection<User>? GetStudentsAndModerators();
         public User? GetUserByPostID(int postID);
         public User? GetUserByCommentID(int commentID);

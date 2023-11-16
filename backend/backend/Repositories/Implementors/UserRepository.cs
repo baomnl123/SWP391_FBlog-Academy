@@ -252,10 +252,35 @@ namespace backend.Repositories.Implementors
 
         public ICollection<User>? GetBannedUser()
         {
-            var studentRole = _userRoleConstrant.GetStudentRole();
-            var moderatorRole = _userRoleConstrant.GetModeratorRole();
-            var userList = _fBlogAcademyContext.Users.Where(u => u.Status == false && (u.Role.Trim().Contains(studentRole) || u.Role.Trim().Contains(moderatorRole))).ToList();
-            return userList;
+            try
+            {
+                var studentRole = _userRoleConstrant.GetStudentRole();
+                var moderatorRole = _userRoleConstrant.GetModeratorRole();
+                var userList = _fBlogAcademyContext.Users.Where(u => u.Status == false && (u.Role.Trim().Contains(studentRole) || u.Role.Trim().Contains(moderatorRole))).ToList();
+                return userList;
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
+            }
+        }
+
+        public ICollection<User>? GetStudents()
+        {
+            try
+            {
+                var studentRole = _userRoleConstrant.GetStudentRole();
+                var list = _fBlogAcademyContext.Users.Where(e => e.Role.Equals(studentRole)).OrderBy(e => e.Name).ToList();
+                if (list == null || list.Count == 0)
+                {
+                    return null;
+                }
+                return list;
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
+            }
         }
     }
 }
