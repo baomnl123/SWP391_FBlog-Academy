@@ -16,8 +16,7 @@ namespace backend.Handlers.Implementors
     {
         private readonly IPostRepository _postRepository;
         private readonly IUserRepository _userRepository;
-        private readonly IVideoHandlers _videoHandlers;
-        private readonly IImageHandlers _imageHandlers;
+        private readonly IMediaHandlers _mediaHandlers;
         private readonly IMajorRepository _categoryRepository;
         private readonly IMajorSubjectRepository _categorySubjectRepository;
         private readonly IPostMajorRepository _postMajorRepository;
@@ -26,8 +25,7 @@ namespace backend.Handlers.Implementors
         private readonly IMapper _mapper;
 
         public MajorHandlers(IUserRepository userRepository,
-                                IVideoHandlers videoHandlers,
-                                IImageHandlers imageHandlers,
+                                IMediaHandlers mediaHandlers,
                                 IMajorRepository categoryRepository,
                                 IMajorSubjectRepository categorySubjectRepository,
                                 IPostMajorRepository postMajorRepository,
@@ -37,8 +35,7 @@ namespace backend.Handlers.Implementors
                                 IPostRepository postRepository)
         {
             _userRepository = userRepository;
-            _videoHandlers = videoHandlers;
-            _imageHandlers = imageHandlers;
+            _mediaHandlers = mediaHandlers;
             _categoryRepository = categoryRepository;
             _categorySubjectRepository = categorySubjectRepository;
             _postMajorRepository = postMajorRepository;
@@ -99,11 +96,8 @@ namespace backend.Handlers.Implementors
                 var getSubjects = _mapper.Map<ICollection<SubjectDTO>?>(_postSubjectRepository.GetSubjectsOf(post.Id));
                 post.Subjects = (getSubjects is not null && getSubjects.Count > 0) ? getSubjects : new List<SubjectDTO>();
 
-                var getImages = _imageHandlers.GetImagesByPost(post.Id);
-                post.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
-
-                var getVideos = _videoHandlers.GetVideosByPost(post.Id);
-                post.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : new List<VideoDTO>();
+                var getmedias = _mediaHandlers.GetMediasByPost(post.Id);
+                post.Medias = (getmedias is not null && getmedias.Count > 0) ? getmedias : new List<MediaDTO>();
 
                 var postUpvote = _votePostRepository.GetAllUsersVotedBy(post.Id);
                 post.Upvotes = (postUpvote == null || postUpvote.Count == 0) ? 0 : postUpvote.Count;
@@ -129,7 +123,6 @@ namespace backend.Handlers.Implementors
             // Create a new tacategory object 
             var category = new Major()
             {
-                AdminId = adminId,
                 MajorName = categoryName,
                 CreatedAt = DateTime.Now,
                 Status = true,

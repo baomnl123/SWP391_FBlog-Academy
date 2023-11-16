@@ -14,8 +14,7 @@ namespace backend.Utils
             CreateMap<FollowUser, FollowUserDTO>();
             CreateMap<Major, MajorDTO>();
             CreateMap<Subject, SubjectDTO>();
-            CreateMap<Image, ImageDTO>();
-            CreateMap<Video, VideoDTO>();
+            CreateMap<Media, MediaDTO>();
             CreateMap<Comment, CommentDTO>();
             CreateMap<VoteComment, VoteCommentDTO>();
             CreateMap<VotePost, VotePostDTO>();

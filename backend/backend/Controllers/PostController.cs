@@ -158,8 +158,8 @@ namespace backend.Controllers
         /// <param name="content"></param>
         /// <param name="tagIds"></param>
         /// <param name="categoryIds"></param>
-        /// <param name="videoURLs"></param>
-        /// <param name="imageURLs"></param>
+        /// <param name="MediaURLs"></param>
+        /// <param name="mediaURLs"></param>
         /// <returns></returns>
         [HttpPost]
         public IActionResult CreatePost(int userId,
@@ -167,10 +167,10 @@ namespace backend.Controllers
                                         [FromForm] string content,
                                         [FromQuery] int[]? tagIds,
                                         [FromQuery] int[]? categoryIds,
-                                        [FromQuery] string[]? videoURLs,
-                                        [FromQuery] string[]? imageURLs)
+                                        [FromQuery] string[]? MediaURLs,
+                                        [FromQuery] string[]? mediaURLs)
         {
-            var newPost = _postHandlers.CreatePost(userId, title, content, tagIds, categoryIds, videoURLs, imageURLs);
+            var newPost = _postHandlers.CreatePost(userId, title, content, tagIds, categoryIds, MediaURLs);
             if (newPost != null)
             {
                 return Ok(newPost);
@@ -186,8 +186,8 @@ namespace backend.Controllers
         /// <param name="content"></param>
         /// <param name="tagIds"></param>
         /// <param name="categoryIds"></param>
-        /// <param name="videoURLs"></param>
-        /// <param name="imageURLs"></param>
+        /// <param name="MediaURLs"></param>
+        /// <param name="mediaURLs"></param>
         /// <returns></returns>
         [HttpPut]
         public IActionResult UpdatePost(int postId,
@@ -195,10 +195,10 @@ namespace backend.Controllers
                                         [FromForm] string content,
                                         [FromQuery] int[] tagIds,
                                         [FromQuery] int[] categoryIds,
-                                        [FromQuery] string[] videoURLs,
-                                        [FromQuery] string[] imageURLs)
+                                        [FromQuery] string[] MediaURLs,
+                                        [FromQuery] string[] mediaURLs)
         {
-            var updatedPost = _postHandlers.UpdatePost(postId, title, content, tagIds, categoryIds, videoURLs, imageURLs);
+            var updatedPost = _postHandlers.UpdatePost(postId, title, content, tagIds, categoryIds, MediaURLs);
             if (updatedPost != null)
             {
                 return Ok(updatedPost);
@@ -290,13 +290,13 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Get Posts which have image
+        /// Get Posts which have media
         /// </summary>
         /// <returns></returns>
-        [HttpGet("all-post-has-image")]
-        public IActionResult GetPostsHaveImage(int currentUserId)
+        [HttpGet("all-post-has-media")]
+        public IActionResult GetPostsHavemedia(int currentUserId)
         {
-            var posts = _postHandlers.GetPostsHaveImage(currentUserId);
+            var posts = _postHandlers.GetPostsHaveMedia(currentUserId);
             if (posts is null || posts.Count == 0)
             {
                 posts = new List<PostDTO>();
@@ -305,13 +305,13 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Get Posts which have video
+        /// Get Posts which have Media
         /// </summary>
         /// <returns></returns>
-        [HttpGet("all-post-has-video")]
-        public IActionResult GetPostsHaveVideo(int currentUserId)
+        [HttpGet("all-post-has-Media")]
+        public IActionResult GetPostsHaveMedia(int currentUserId)
         {
-            var posts = _postHandlers.GetPostsHaveVideo(currentUserId);
+            var posts = _postHandlers.GetPostsHaveMedia(currentUserId);
             if (posts is null || posts.Count == 0)
             {
                 posts = new List<PostDTO>();

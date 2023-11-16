@@ -15,72 +15,9 @@ namespace backend.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.17")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("backend.Models.Category", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("AdminId")
-                        .HasColumnType("int")
-                        .HasColumnName("admin_id");
-
-                    b.Property<string>("CategoryName")
-                        .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)")
-                        .HasColumnName("category_name");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime")
-                        .HasColumnName("created_at");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit")
-                        .HasColumnName("status");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AdminId");
-
-                    b.HasIndex("CategoryName")
-                        .IsUnique();
-
-                    b.ToTable("Category");
-                });
-
-            modelBuilder.Entity("backend.Models.CategoryTag", b =>
-                {
-                    b.Property<int>("TagId")
-                        .HasColumnType("int")
-                        .HasColumnName("tag_id");
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int")
-                        .HasColumnName("category_id");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit")
-                        .HasColumnName("status");
-
-                    b.HasKey("TagId", "CategoryId")
-                        .HasName("PK__Category__1FC24C2D619EB0CA");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("CategoryTag");
-                });
 
             modelBuilder.Entity("backend.Models.Comment", b =>
                 {
@@ -142,15 +79,69 @@ namespace backend.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("status");
 
-                    b.HasKey("FollowerId", "FollowedId")
-                        .HasName("PK__FollowUs__838707A38FAF7E83");
+                    b.HasKey("FollowerId", "FollowedId");
 
                     b.HasIndex("FollowedId");
 
                     b.ToTable("FollowUser");
                 });
 
-            modelBuilder.Entity("backend.Models.Image", b =>
+            modelBuilder.Entity("backend.Models.Major", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("MajorName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("major_name");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit")
+                        .HasColumnName("status");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MajorName")
+                        .IsUnique();
+
+                    b.ToTable("Major");
+                });
+
+            modelBuilder.Entity("backend.Models.MajorSubject", b =>
+                {
+                    b.Property<int>("SubjectId")
+                        .HasColumnType("int")
+                        .HasColumnName("subject_id");
+
+                    b.Property<int>("MajorId")
+                        .HasColumnType("int")
+                        .HasColumnName("major_id");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit")
+                        .HasColumnName("status");
+
+                    b.HasKey("SubjectId", "MajorId");
+
+                    b.HasIndex("MajorId");
+
+                    b.ToTable("MajorSubject");
+                });
+
+            modelBuilder.Entity("backend.Models.Media", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -170,17 +161,22 @@ namespace backend.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("status");
 
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)")
+                        .HasColumnName("type");
+
                     b.Property<string>("Url")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("url");
 
                     b.HasKey("Id");
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("Image");
+                    b.ToTable("Media");
                 });
 
             modelBuilder.Entity("backend.Models.Post", b =>
@@ -235,28 +231,6 @@ namespace backend.Migrations
                     b.ToTable("Post");
                 });
 
-            modelBuilder.Entity("backend.Models.PostCategory", b =>
-                {
-                    b.Property<int>("PostId")
-                        .HasColumnType("int")
-                        .HasColumnName("post_id");
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int")
-                        .HasColumnName("category_id");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit")
-                        .HasColumnName("status");
-
-                    b.HasKey("PostId", "CategoryId")
-                        .HasName("PK__PostCate__638369FD4FBDCD1A");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("PostCategory");
-                });
-
             modelBuilder.Entity("backend.Models.PostList", b =>
                 {
                     b.Property<int>("SaveListId")
@@ -275,34 +249,53 @@ namespace backend.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("status");
 
-                    b.HasKey("SaveListId", "SavePostId")
-                        .HasName("PK__PostList__859A5D1BB3774C7B");
+                    b.HasKey("SaveListId", "SavePostId");
 
                     b.HasIndex("SavePostId");
 
                     b.ToTable("PostList");
                 });
 
-            modelBuilder.Entity("backend.Models.PostTag", b =>
+            modelBuilder.Entity("backend.Models.PostMajor", b =>
                 {
                     b.Property<int>("PostId")
                         .HasColumnType("int")
                         .HasColumnName("post_id");
 
-                    b.Property<int>("TagId")
+                    b.Property<int>("MajorId")
                         .HasColumnType("int")
-                        .HasColumnName("tag_id");
+                        .HasColumnName("major_id");
 
                     b.Property<bool>("Status")
                         .HasColumnType("bit")
                         .HasColumnName("status");
 
-                    b.HasKey("PostId", "TagId")
-                        .HasName("PK__PostTag__4AFEED4D0915C090");
+                    b.HasKey("PostId", "MajorId");
 
-                    b.HasIndex("TagId");
+                    b.HasIndex("MajorId");
 
-                    b.ToTable("PostTag");
+                    b.ToTable("PostMajor");
+                });
+
+            modelBuilder.Entity("backend.Models.PostSubject", b =>
+                {
+                    b.Property<int>("PostId")
+                        .HasColumnType("int")
+                        .HasColumnName("post_id");
+
+                    b.Property<int>("SubjectId")
+                        .HasColumnType("int")
+                        .HasColumnName("subject_id");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit")
+                        .HasColumnName("status");
+
+                    b.HasKey("PostId", "SubjectId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("PostSubject");
                 });
 
             modelBuilder.Entity("backend.Models.ReportPost", b =>
@@ -320,6 +313,7 @@ namespace backend.Migrations
                         .HasColumnName("admin_id");
 
                     b.Property<string>("Content")
+                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("content");
@@ -331,13 +325,10 @@ namespace backend.Migrations
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(10)
-                        .IsUnicode(false)
-                        .HasColumnType("char(10)")
-                        .HasColumnName("status")
-                        .IsFixedLength(true);
+                        .HasColumnType("nvarchar(10)")
+                        .HasColumnName("status");
 
-                    b.HasKey("ReporterId", "PostId")
-                        .HasName("PK__ReportPo__39154D75DD3D3CC7");
+                    b.HasKey("ReporterId", "PostId");
 
                     b.HasIndex("AdminId");
 
@@ -360,8 +351,7 @@ namespace backend.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("name");
 
                     b.Property<bool>("Status")
@@ -383,17 +373,13 @@ namespace backend.Migrations
                     b.ToTable("SaveList");
                 });
 
-            modelBuilder.Entity("backend.Models.Tag", b =>
+            modelBuilder.Entity("backend.Models.Subject", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("id")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("AdminId")
-                        .HasColumnType("int")
-                        .HasColumnName("admin_id");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime")
@@ -403,11 +389,11 @@ namespace backend.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("status");
 
-                    b.Property<string>("TagName")
+                    b.Property<string>("SubjectName")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
-                        .HasColumnName("tag_name");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("subject_name");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime")
@@ -415,12 +401,10 @@ namespace backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AdminId");
-
-                    b.HasIndex("TagName")
+                    b.HasIndex("SubjectName")
                         .IsUnique();
 
-                    b.ToTable("Tag");
+                    b.ToTable("Subject");
                 });
 
             modelBuilder.Entity("backend.Models.User", b =>
@@ -442,8 +426,8 @@ namespace backend.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
                         .HasColumnName("email");
 
                     b.Property<bool>("IsAwarded")
@@ -457,18 +441,16 @@ namespace backend.Migrations
                         .HasColumnName("name");
 
                     b.Property<string>("Password")
+                        .IsRequired()
                         .HasMaxLength(65)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(65)")
+                        .HasColumnType("nvarchar(65)")
                         .HasColumnName("password");
 
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasMaxLength(2)
-                        .IsUnicode(false)
-                        .HasColumnType("char(2)")
-                        .HasColumnName("role")
-                        .IsFixedLength(true);
+                        .HasColumnType("nvarchar(2)")
+                        .HasColumnName("role");
 
                     b.Property<bool>("Status")
                         .HasColumnType("bit")
@@ -486,81 +468,46 @@ namespace backend.Migrations
                     b.ToTable("User");
                 });
 
-            modelBuilder.Entity("backend.Models.UserCategory", b =>
+            modelBuilder.Entity("backend.Models.UserMajor", b =>
                 {
                     b.Property<int>("UserId")
                         .HasColumnType("int")
                         .HasColumnName("user_id");
 
-                    b.Property<int>("CategoryId")
+                    b.Property<int>("MajorId")
                         .HasColumnType("int")
-                        .HasColumnName("category_id");
+                        .HasColumnName("major_id");
 
                     b.Property<bool>("Status")
                         .HasColumnType("bit")
                         .HasColumnName("status");
 
-                    b.HasKey("UserId", "CategoryId")
-                        .HasName("PK__UserCate__638369FD4FBDCD1A");
+                    b.HasKey("UserId", "MajorId");
 
-                    b.HasIndex("CategoryId");
+                    b.HasIndex("MajorId");
 
-                    b.ToTable("UserCategory");
+                    b.ToTable("UserMajor");
                 });
 
-            modelBuilder.Entity("backend.Models.UserTag", b =>
+            modelBuilder.Entity("backend.Models.UserSubject", b =>
                 {
                     b.Property<int>("UserId")
                         .HasColumnType("int")
                         .HasColumnName("user_id");
 
-                    b.Property<int>("TagId")
+                    b.Property<int>("SubjectId")
                         .HasColumnType("int")
-                        .HasColumnName("tag_id");
+                        .HasColumnName("subject_id");
 
                     b.Property<bool>("Status")
                         .HasColumnType("bit")
                         .HasColumnName("status");
 
-                    b.HasKey("UserId", "TagId")
-                        .HasName("PK__UserTag__638369FD4FBDCD1A");
+                    b.HasKey("UserId", "SubjectId");
 
-                    b.HasIndex("TagId");
+                    b.HasIndex("SubjectId");
 
-                    b.ToTable("UserTag");
-                });
-
-            modelBuilder.Entity("backend.Models.Video", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime")
-                        .HasColumnName("created_at");
-
-                    b.Property<int>("PostId")
-                        .HasColumnType("int")
-                        .HasColumnName("post_id");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit")
-                        .HasColumnName("status");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
-                        .HasColumnName("url");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PostId");
-
-                    b.ToTable("Video");
+                    b.ToTable("UserSubject");
                 });
 
             modelBuilder.Entity("backend.Models.VoteComment", b =>
@@ -577,16 +524,11 @@ namespace backend.Migrations
                         .HasColumnType("datetime")
                         .HasColumnName("create_at");
 
-                    b.Property<bool>("DownVote")
-                        .HasColumnType("bit")
-                        .HasColumnName("down_vote");
+                    b.Property<int>("Vote")
+                        .HasColumnType("int")
+                        .HasColumnName("vote");
 
-                    b.Property<bool>("UpVote")
-                        .HasColumnType("bit")
-                        .HasColumnName("up_vote");
-
-                    b.HasKey("UserId", "CommentId")
-                        .HasName("PK__VoteComm__D7C76067C06255A7");
+                    b.HasKey("UserId", "CommentId");
 
                     b.HasIndex("CommentId");
 
@@ -611,42 +553,11 @@ namespace backend.Migrations
                         .HasColumnType("int")
                         .HasColumnName("vote");
 
-                    b.HasKey("UserId", "PostId")
-                        .HasName("PK__VotePost__CA534F79E6329B08");
+                    b.HasKey("UserId", "PostId");
 
                     b.HasIndex("PostId");
 
                     b.ToTable("VotePost");
-                });
-
-            modelBuilder.Entity("backend.Models.Category", b =>
-                {
-                    b.HasOne("backend.Models.User", "Admin")
-                        .WithMany("Categories")
-                        .HasForeignKey("AdminId")
-                        .HasConstraintName("FKCategory311908")
-                        .IsRequired();
-
-                    b.Navigation("Admin");
-                });
-
-            modelBuilder.Entity("backend.Models.CategoryTag", b =>
-                {
-                    b.HasOne("backend.Models.Category", "Category")
-                        .WithMany("CategoryTags")
-                        .HasForeignKey("CategoryId")
-                        .HasConstraintName("FKCategoryTa611140")
-                        .IsRequired();
-
-                    b.HasOne("backend.Models.Tag", "Tag")
-                        .WithMany("CategoryTags")
-                        .HasForeignKey("TagId")
-                        .HasConstraintName("FKCategoryTa484641")
-                        .IsRequired();
-
-                    b.Navigation("Category");
-
-                    b.Navigation("Tag");
                 });
 
             modelBuilder.Entity("backend.Models.Comment", b =>
@@ -687,12 +598,31 @@ namespace backend.Migrations
                     b.Navigation("Follower");
                 });
 
-            modelBuilder.Entity("backend.Models.Image", b =>
+            modelBuilder.Entity("backend.Models.MajorSubject", b =>
+                {
+                    b.HasOne("backend.Models.Major", "Major")
+                        .WithMany("MajorSubjects")
+                        .HasForeignKey("MajorId")
+                        .HasConstraintName("FKMajorSu611140")
+                        .IsRequired();
+
+                    b.HasOne("backend.Models.Subject", "Subject")
+                        .WithMany("MajorSubjects")
+                        .HasForeignKey("SubjectId")
+                        .HasConstraintName("FKMajorSu484641")
+                        .IsRequired();
+
+                    b.Navigation("Major");
+
+                    b.Navigation("Subject");
+                });
+
+            modelBuilder.Entity("backend.Models.Media", b =>
                 {
                     b.HasOne("backend.Models.Post", "Post")
-                        .WithMany("ImagePosts")
+                        .WithMany("MediaPosts")
                         .HasForeignKey("PostId")
-                        .HasConstraintName("FKImage400844")
+                        .HasConstraintName("FKMedia400844")
                         .IsRequired();
 
                     b.Navigation("Post");
@@ -716,25 +646,6 @@ namespace backend.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("backend.Models.PostCategory", b =>
-                {
-                    b.HasOne("backend.Models.Category", "Category")
-                        .WithMany("PostCategories")
-                        .HasForeignKey("CategoryId")
-                        .HasConstraintName("FKPostCatego136719")
-                        .IsRequired();
-
-                    b.HasOne("backend.Models.Post", "Post")
-                        .WithMany("PostCategories")
-                        .HasForeignKey("PostId")
-                        .HasConstraintName("FKPostCatego519402")
-                        .IsRequired();
-
-                    b.Navigation("Category");
-
-                    b.Navigation("Post");
-                });
-
             modelBuilder.Entity("backend.Models.PostList", b =>
                 {
                     b.HasOne("backend.Models.SaveList", "SaveList")
@@ -754,23 +665,42 @@ namespace backend.Migrations
                     b.Navigation("SavePost");
                 });
 
-            modelBuilder.Entity("backend.Models.PostTag", b =>
+            modelBuilder.Entity("backend.Models.PostMajor", b =>
                 {
-                    b.HasOne("backend.Models.Post", "Post")
-                        .WithMany("PostTags")
-                        .HasForeignKey("PostId")
-                        .HasConstraintName("FKPostTag716835")
+                    b.HasOne("backend.Models.Major", "Major")
+                        .WithMany("PostMajors")
+                        .HasForeignKey("MajorId")
+                        .HasConstraintName("FKPostCatego136719")
                         .IsRequired();
 
-                    b.HasOne("backend.Models.Tag", "Tag")
-                        .WithMany("PostTags")
-                        .HasForeignKey("TagId")
-                        .HasConstraintName("FKPostTag277175")
+                    b.HasOne("backend.Models.Post", "Post")
+                        .WithMany("PostMajors")
+                        .HasForeignKey("PostId")
+                        .HasConstraintName("FKPostCatego519402")
+                        .IsRequired();
+
+                    b.Navigation("Major");
+
+                    b.Navigation("Post");
+                });
+
+            modelBuilder.Entity("backend.Models.PostSubject", b =>
+                {
+                    b.HasOne("backend.Models.Post", "Post")
+                        .WithMany("PostSubjects")
+                        .HasForeignKey("PostId")
+                        .HasConstraintName("FKPostSubject716835")
+                        .IsRequired();
+
+                    b.HasOne("backend.Models.Subject", "Subject")
+                        .WithMany("PostSubjects")
+                        .HasForeignKey("SubjectId")
+                        .HasConstraintName("FKPostSubject277175")
                         .IsRequired();
 
                     b.Navigation("Post");
 
-                    b.Navigation("Tag");
+                    b.Navigation("Subject");
                 });
 
             modelBuilder.Entity("backend.Models.ReportPost", b =>
@@ -810,64 +740,42 @@ namespace backend.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("backend.Models.Tag", b =>
+            modelBuilder.Entity("backend.Models.UserMajor", b =>
                 {
-                    b.HasOne("backend.Models.User", "Admin")
-                        .WithMany("Tags")
-                        .HasForeignKey("AdminId")
-                        .HasConstraintName("FKTag383419")
-                        .IsRequired();
-
-                    b.Navigation("Admin");
-                });
-
-            modelBuilder.Entity("backend.Models.UserCategory", b =>
-                {
-                    b.HasOne("backend.Models.Category", "Category")
-                        .WithMany("UserCategories")
-                        .HasForeignKey("CategoryId")
+                    b.HasOne("backend.Models.Major", "Major")
+                        .WithMany("UserMajors")
+                        .HasForeignKey("MajorId")
                         .HasConstraintName("FKUserCatego136719")
                         .IsRequired();
 
                     b.HasOne("backend.Models.User", "User")
-                        .WithMany("UserCategories")
+                        .WithMany("UserMajors")
                         .HasForeignKey("UserId")
                         .HasConstraintName("FKUserCatego519402")
                         .IsRequired();
 
-                    b.Navigation("Category");
+                    b.Navigation("Major");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("backend.Models.UserTag", b =>
+            modelBuilder.Entity("backend.Models.UserSubject", b =>
                 {
-                    b.HasOne("backend.Models.Tag", "Tag")
-                        .WithMany("UserTags")
-                        .HasForeignKey("TagId")
-                        .HasConstraintName("FKUserTag136719")
+                    b.HasOne("backend.Models.Subject", "Subject")
+                        .WithMany("UserSubjects")
+                        .HasForeignKey("SubjectId")
+                        .HasConstraintName("FKUserSubject136719")
                         .IsRequired();
 
                     b.HasOne("backend.Models.User", "User")
-                        .WithMany("UserTags")
+                        .WithMany("UserSubjects")
                         .HasForeignKey("UserId")
-                        .HasConstraintName("FKUserTag519402")
+                        .HasConstraintName("FKUserSubject519402")
                         .IsRequired();
 
-                    b.Navigation("Tag");
+                    b.Navigation("Subject");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("backend.Models.Video", b =>
-                {
-                    b.HasOne("backend.Models.Post", "Post")
-                        .WithMany("VideoPosts")
-                        .HasForeignKey("PostId")
-                        .HasConstraintName("FKVideo280203")
-                        .IsRequired();
-
-                    b.Navigation("Post");
                 });
 
             modelBuilder.Entity("backend.Models.VoteComment", b =>
@@ -908,35 +816,33 @@ namespace backend.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("backend.Models.Category", b =>
-                {
-                    b.Navigation("CategoryTags");
-
-                    b.Navigation("PostCategories");
-
-                    b.Navigation("UserCategories");
-                });
-
             modelBuilder.Entity("backend.Models.Comment", b =>
                 {
                     b.Navigation("VoteComments");
+                });
+
+            modelBuilder.Entity("backend.Models.Major", b =>
+                {
+                    b.Navigation("MajorSubjects");
+
+                    b.Navigation("PostMajors");
+
+                    b.Navigation("UserMajors");
                 });
 
             modelBuilder.Entity("backend.Models.Post", b =>
                 {
                     b.Navigation("Comments");
 
-                    b.Navigation("ImagePosts");
-
-                    b.Navigation("PostCategories");
+                    b.Navigation("MediaPosts");
 
                     b.Navigation("PostLists");
 
-                    b.Navigation("PostTags");
+                    b.Navigation("PostMajors");
+
+                    b.Navigation("PostSubjects");
 
                     b.Navigation("ReportPosts");
-
-                    b.Navigation("VideoPosts");
 
                     b.Navigation("VotePosts");
                 });
@@ -946,19 +852,17 @@ namespace backend.Migrations
                     b.Navigation("PostLists");
                 });
 
-            modelBuilder.Entity("backend.Models.Tag", b =>
+            modelBuilder.Entity("backend.Models.Subject", b =>
                 {
-                    b.Navigation("CategoryTags");
+                    b.Navigation("MajorSubjects");
 
-                    b.Navigation("PostTags");
+                    b.Navigation("PostSubjects");
 
-                    b.Navigation("UserTags");
+                    b.Navigation("UserSubjects");
                 });
 
             modelBuilder.Entity("backend.Models.User", b =>
                 {
-                    b.Navigation("Categories");
-
                     b.Navigation("Comments");
 
                     b.Navigation("FollowUserFolloweds");
@@ -975,11 +879,9 @@ namespace backend.Migrations
 
                     b.Navigation("SaveLists");
 
-                    b.Navigation("Tags");
+                    b.Navigation("UserMajors");
 
-                    b.Navigation("UserCategories");
-
-                    b.Navigation("UserTags");
+                    b.Navigation("UserSubjects");
 
                     b.Navigation("VoteComments");
 

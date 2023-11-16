@@ -5,53 +5,53 @@ using System.Data;
 
 namespace backend.Repositories.Implementors
 {
-    public class ImageRepository : IImageRepository
+    public class MediaRepository : IMediaRepository
     {
         private readonly FBlogAcademyContext _context;
 
-        public ImageRepository()
+        public MediaRepository()
         {
             _context = new();
         }
 
-        public Image? GetImageById(int imageId)
+        public Media? GetMediaById(int MediaId)
         {
-            return _context.Images.FirstOrDefault(c => c.Id == imageId);
+            return _context.Medias.FirstOrDefault(c => c.Id == MediaId);
         }
 
-        public Image? GetImageByURL(string imageURL)
+        public Media? GetMediaByURL(string MediaURL)
         {
-            return _context.Images.FirstOrDefault(c => c.Url == imageURL);
+            return _context.Medias.FirstOrDefault(c => c.Url == MediaURL);
         }
 
-        public ICollection<Image>? GetImagesByPost(int postId)
+        public ICollection<Media>? GetMediasByPost(int postId)
         {
-            return _context.Images.Where(e => e.PostId == postId && e.Status == true).ToList();
+            return _context.Medias.Where(e => e.PostId == postId && e.Status == true).ToList();
         }
 
-        public bool CreateImage(Image image)
+        public bool CreateMedia(Media Media)
         {
-            _context.Add(image);
+            _context.Add(Media);
             return Save();
         }
 
-        public bool UpdateImage(int postId, Image image)
+        public bool UpdateMedia(int postId, Media Media)
         {
-            _context.Update(image);
+            _context.Update(Media);
             return Save();
         }
 
-        public bool DisableImage(Image image)
+        public bool DisableMedia(Media Media)
         {
-            image.Status = false;
-            _context.Remove(image);
+            Media.Status = false;
+            _context.Remove(Media);
             return Save();
         }
 
-        public bool EnableImage(Image image)
+        public bool EnableMedia(Media Media)
         {
-            image.Status = true;
-            _context.Update(image);
+            Media.Status = true;
+            _context.Update(Media);
             return Save();
         }
 

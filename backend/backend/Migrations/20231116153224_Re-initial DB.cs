@@ -3,10 +3,42 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace backend.Migrations
 {
-    public partial class InitialDB : Migration
+    public partial class ReinitialDB : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Major",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    major_name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime", nullable: true),
+                    status = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Major", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Subject",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    subject_name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime", nullable: true),
+                    status = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Subject", x => x.id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "User",
                 columns: table => new
@@ -15,9 +47,9 @@ namespace backend.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     avatar_url = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    email = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    password = table.Column<string>(type: "varchar(65)", unicode: false, maxLength: 65, nullable: true),
-                    role = table.Column<string>(type: "char(2)", unicode: false, fixedLength: true, maxLength: 2, nullable: false),
+                    email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    password = table.Column<string>(type: "nvarchar(65)", maxLength: 65, nullable: false),
+                    role = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime", nullable: false),
                     updated_at = table.Column<DateTime>(type: "datetime", nullable: true),
                     status = table.Column<bool>(type: "bit", nullable: false),
@@ -29,24 +61,26 @@ namespace backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Category",
+                name: "MajorSubject",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    admin_id = table.Column<int>(type: "int", nullable: false),
-                    category_name = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
-                    created_at = table.Column<DateTime>(type: "datetime", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "datetime", nullable: true),
+                    subject_id = table.Column<int>(type: "int", nullable: false),
+                    major_id = table.Column<int>(type: "int", nullable: false),
                     status = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Category", x => x.id);
+                    table.PrimaryKey("PK_MajorSubject", x => new { x.subject_id, x.major_id });
                     table.ForeignKey(
-                        name: "FKCategory311908",
-                        column: x => x.admin_id,
-                        principalTable: "User",
+                        name: "FKMajorSu484641",
+                        column: x => x.subject_id,
+                        principalTable: "Subject",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FKMajorSu611140",
+                        column: x => x.major_id,
+                        principalTable: "Major",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -62,7 +96,7 @@ namespace backend.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__FollowUs__838707A38FAF7E83", x => new { x.follower_id, x.followed_id });
+                    table.PrimaryKey("PK_FollowUser", x => new { x.follower_id, x.followed_id });
                     table.ForeignKey(
                         name: "FKFollowUser200833",
                         column: x => x.follower_id,
@@ -116,7 +150,7 @@ namespace backend.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     user_id = table.Column<int>(type: "int", nullable: false),
-                    name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime", nullable: false),
                     update_at = table.Column<DateTime>(type: "datetime", nullable: true),
                     status = table.Column<bool>(type: "bit", nullable: false)
@@ -133,47 +167,49 @@ namespace backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Tag",
+                name: "UserMajor",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    admin_id = table.Column<int>(type: "int", nullable: false),
-                    tag_name = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    created_at = table.Column<DateTime>(type: "datetime", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "datetime", nullable: true),
+                    user_id = table.Column<int>(type: "int", nullable: false),
+                    major_id = table.Column<int>(type: "int", nullable: false),
                     status = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tag", x => x.id);
+                    table.PrimaryKey("PK_UserMajor", x => new { x.user_id, x.major_id });
                     table.ForeignKey(
-                        name: "FKTag383419",
-                        column: x => x.admin_id,
+                        name: "FKUserCatego136719",
+                        column: x => x.major_id,
+                        principalTable: "Major",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FKUserCatego519402",
+                        column: x => x.user_id,
                         principalTable: "User",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserCategory",
+                name: "UserSubject",
                 columns: table => new
                 {
                     user_id = table.Column<int>(type: "int", nullable: false),
-                    category_id = table.Column<int>(type: "int", nullable: false),
+                    subject_id = table.Column<int>(type: "int", nullable: false),
                     status = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__UserCate__638369FD4FBDCD1A", x => new { x.user_id, x.category_id });
+                    table.PrimaryKey("PK_UserSubject", x => new { x.user_id, x.subject_id });
                     table.ForeignKey(
-                        name: "FKUserCatego136719",
-                        column: x => x.category_id,
-                        principalTable: "Category",
+                        name: "FKUserSubject136719",
+                        column: x => x.subject_id,
+                        principalTable: "Subject",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FKUserCatego519402",
+                        name: "FKUserSubject519402",
                         column: x => x.user_id,
                         principalTable: "User",
                         principalColumn: "id",
@@ -211,21 +247,22 @@ namespace backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Image",
+                name: "Media",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     post_id = table.Column<int>(type: "int", nullable: false),
-                    url = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    type = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
+                    url = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime", nullable: false),
                     status = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Image", x => x.id);
+                    table.PrimaryKey("PK_Media", x => x.id);
                     table.ForeignKey(
-                        name: "FKImage400844",
+                        name: "FKMedia400844",
                         column: x => x.post_id,
                         principalTable: "Post",
                         principalColumn: "id",
@@ -233,24 +270,49 @@ namespace backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PostCategory",
+                name: "PostMajor",
                 columns: table => new
                 {
                     post_id = table.Column<int>(type: "int", nullable: false),
-                    category_id = table.Column<int>(type: "int", nullable: false),
+                    major_id = table.Column<int>(type: "int", nullable: false),
                     status = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__PostCate__638369FD4FBDCD1A", x => new { x.post_id, x.category_id });
+                    table.PrimaryKey("PK_PostMajor", x => new { x.post_id, x.major_id });
                     table.ForeignKey(
                         name: "FKPostCatego136719",
-                        column: x => x.category_id,
-                        principalTable: "Category",
+                        column: x => x.major_id,
+                        principalTable: "Major",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FKPostCatego519402",
+                        column: x => x.post_id,
+                        principalTable: "Post",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PostSubject",
+                columns: table => new
+                {
+                    post_id = table.Column<int>(type: "int", nullable: false),
+                    subject_id = table.Column<int>(type: "int", nullable: false),
+                    status = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PostSubject", x => new { x.post_id, x.subject_id });
+                    table.ForeignKey(
+                        name: "FKPostSubject277175",
+                        column: x => x.subject_id,
+                        principalTable: "Subject",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FKPostSubject716835",
                         column: x => x.post_id,
                         principalTable: "Post",
                         principalColumn: "id",
@@ -264,13 +326,13 @@ namespace backend.Migrations
                     reporter_id = table.Column<int>(type: "int", nullable: false),
                     post_id = table.Column<int>(type: "int", nullable: false),
                     admin_id = table.Column<int>(type: "int", nullable: true),
-                    content = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    content = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime", nullable: false),
-                    status = table.Column<string>(type: "char(10)", unicode: false, fixedLength: true, maxLength: 10, nullable: false)
+                    status = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__ReportPo__39154D75DD3D3CC7", x => new { x.reporter_id, x.post_id });
+                    table.PrimaryKey("PK_ReportPost", x => new { x.reporter_id, x.post_id });
                     table.ForeignKey(
                         name: "FKReportPost680973",
                         column: x => x.reporter_id,
@@ -292,28 +354,6 @@ namespace backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Video",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    post_id = table.Column<int>(type: "int", nullable: false),
-                    url = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    created_at = table.Column<DateTime>(type: "datetime", nullable: false),
-                    status = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Video", x => x.id);
-                    table.ForeignKey(
-                        name: "FKVideo280203",
-                        column: x => x.post_id,
-                        principalTable: "Post",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "VotePost",
                 columns: table => new
                 {
@@ -324,7 +364,7 @@ namespace backend.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__VotePost__CA534F79E6329B08", x => new { x.user_id, x.post_id });
+                    table.PrimaryKey("PK_VotePost", x => new { x.user_id, x.post_id });
                     table.ForeignKey(
                         name: "FKVotePost207593",
                         column: x => x.user_id,
@@ -350,7 +390,7 @@ namespace backend.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__PostList__859A5D1BB3774C7B", x => new { x.save_list_id, x.save_post_id });
+                    table.PrimaryKey("PK_PostList", x => new { x.save_list_id, x.save_post_id });
                     table.ForeignKey(
                         name: "FKPostList365782",
                         column: x => x.save_list_id,
@@ -366,93 +406,17 @@ namespace backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CategoryTag",
-                columns: table => new
-                {
-                    tag_id = table.Column<int>(type: "int", nullable: false),
-                    category_id = table.Column<int>(type: "int", nullable: false),
-                    status = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK__Category__1FC24C2D619EB0CA", x => new { x.tag_id, x.category_id });
-                    table.ForeignKey(
-                        name: "FKCategoryTa484641",
-                        column: x => x.tag_id,
-                        principalTable: "Tag",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FKCategoryTa611140",
-                        column: x => x.category_id,
-                        principalTable: "Category",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PostTag",
-                columns: table => new
-                {
-                    post_id = table.Column<int>(type: "int", nullable: false),
-                    tag_id = table.Column<int>(type: "int", nullable: false),
-                    status = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK__PostTag__4AFEED4D0915C090", x => new { x.post_id, x.tag_id });
-                    table.ForeignKey(
-                        name: "FKPostTag277175",
-                        column: x => x.tag_id,
-                        principalTable: "Tag",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FKPostTag716835",
-                        column: x => x.post_id,
-                        principalTable: "Post",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserTag",
-                columns: table => new
-                {
-                    user_id = table.Column<int>(type: "int", nullable: false),
-                    tag_id = table.Column<int>(type: "int", nullable: false),
-                    status = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK__UserTag__638369FD4FBDCD1A", x => new { x.user_id, x.tag_id });
-                    table.ForeignKey(
-                        name: "FKUserTag136719",
-                        column: x => x.tag_id,
-                        principalTable: "Tag",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FKUserTag519402",
-                        column: x => x.user_id,
-                        principalTable: "User",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "VoteComment",
                 columns: table => new
                 {
                     user_id = table.Column<int>(type: "int", nullable: false),
                     comment_id = table.Column<int>(type: "int", nullable: false),
-                    up_vote = table.Column<bool>(type: "bit", nullable: false),
-                    down_vote = table.Column<bool>(type: "bit", nullable: false),
+                    vote = table.Column<int>(type: "int", nullable: false),
                     create_at = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__VoteComm__D7C76067C06255A7", x => new { x.user_id, x.comment_id });
+                    table.PrimaryKey("PK_VoteComment", x => new { x.user_id, x.comment_id });
                     table.ForeignKey(
                         name: "FKVoteCommen692680",
                         column: x => x.user_id,
@@ -466,22 +430,6 @@ namespace backend.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Category_admin_id",
-                table: "Category",
-                column: "admin_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Category_category_name",
-                table: "Category",
-                column: "category_name",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CategoryTag_category_id",
-                table: "CategoryTag",
-                column: "category_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comment_post_id",
@@ -499,8 +447,19 @@ namespace backend.Migrations
                 column: "followed_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Image_post_id",
-                table: "Image",
+                name: "IX_Major_major_name",
+                table: "Major",
+                column: "major_name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MajorSubject_major_id",
+                table: "MajorSubject",
+                column: "major_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Media_post_id",
+                table: "Media",
                 column: "post_id");
 
             migrationBuilder.CreateIndex(
@@ -514,19 +473,19 @@ namespace backend.Migrations
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PostCategory_category_id",
-                table: "PostCategory",
-                column: "category_id");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_PostList_save_post_id",
                 table: "PostList",
                 column: "save_post_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PostTag_tag_id",
-                table: "PostTag",
-                column: "tag_id");
+                name: "IX_PostMajor_major_id",
+                table: "PostMajor",
+                column: "major_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PostSubject_subject_id",
+                table: "PostSubject",
+                column: "subject_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ReportPost_admin_id",
@@ -544,14 +503,9 @@ namespace backend.Migrations
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tag_admin_id",
-                table: "Tag",
-                column: "admin_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Tag_tag_name",
-                table: "Tag",
-                column: "tag_name",
+                name: "IX_Subject_subject_name",
+                table: "Subject",
+                column: "subject_name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -561,19 +515,14 @@ namespace backend.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserCategory_category_id",
-                table: "UserCategory",
-                column: "category_id");
+                name: "IX_UserMajor_major_id",
+                table: "UserMajor",
+                column: "major_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserTag_tag_id",
-                table: "UserTag",
-                column: "tag_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Video_post_id",
-                table: "Video",
-                column: "post_id");
+                name: "IX_UserSubject_subject_id",
+                table: "UserSubject",
+                column: "subject_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_VoteComment_comment_id",
@@ -589,34 +538,31 @@ namespace backend.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "CategoryTag");
-
-            migrationBuilder.DropTable(
                 name: "FollowUser");
 
             migrationBuilder.DropTable(
-                name: "Image");
+                name: "MajorSubject");
 
             migrationBuilder.DropTable(
-                name: "PostCategory");
+                name: "Media");
 
             migrationBuilder.DropTable(
                 name: "PostList");
 
             migrationBuilder.DropTable(
-                name: "PostTag");
+                name: "PostMajor");
+
+            migrationBuilder.DropTable(
+                name: "PostSubject");
 
             migrationBuilder.DropTable(
                 name: "ReportPost");
 
             migrationBuilder.DropTable(
-                name: "UserCategory");
+                name: "UserMajor");
 
             migrationBuilder.DropTable(
-                name: "UserTag");
-
-            migrationBuilder.DropTable(
-                name: "Video");
+                name: "UserSubject");
 
             migrationBuilder.DropTable(
                 name: "VoteComment");
@@ -628,10 +574,10 @@ namespace backend.Migrations
                 name: "SaveList");
 
             migrationBuilder.DropTable(
-                name: "Category");
+                name: "Major");
 
             migrationBuilder.DropTable(
-                name: "Tag");
+                name: "Subject");
 
             migrationBuilder.DropTable(
                 name: "Comment");

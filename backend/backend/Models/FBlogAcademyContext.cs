@@ -21,7 +21,7 @@ namespace backend.Models
         public virtual DbSet<MajorSubject> MajorSubjects { get; set; }
         public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<FollowUser> FollowUsers { get; set; }
-        public virtual DbSet<Image> Images { get; set; }
+        public virtual DbSet<Media> Medias { get; set; }
         public virtual DbSet<Post> Posts { get; set; }
         public virtual DbSet<PostMajor> PostMajors { get; set; }
         public virtual DbSet<PostList> PostLists { get; set; }
@@ -31,8 +31,7 @@ namespace backend.Models
         public virtual DbSet<Subject> Subjects { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<UserMajor> UserMajors { get; set; }
-        public virtual DbSet<UserSubject> UserSubjects{ get; set; }
-        public virtual DbSet<Video> Videos { get; set; }
+        public virtual DbSet<UserSubject> UserSubjects { get; set; }
         public virtual DbSet<VoteComment> VoteComments { get; set; }
         public virtual DbSet<VotePost> VotePosts { get; set; }
 
@@ -57,70 +56,67 @@ namespace backend.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
+            // modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
 
             modelBuilder.Entity<Major>(entity =>
             {
-                entity.ToTable("Major");
-
                 entity.HasIndex(e => e.MajorName)
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.AdminId).HasColumnName("admin_id");
-
                 entity.Property(e => e.MajorName)
                     .IsRequired()
-                    .HasMaxLength(25)
-                    .HasColumnName("category_name");
+                    .HasColumnName("major_name");
 
                 entity.Property(e => e.CreatedAt)
+                    .IsRequired()
                     .HasColumnType("datetime")
                     .HasColumnName("created_at");
 
-                entity.Property(e => e.Status).HasColumnName("status");
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasColumnName("status");
 
                 entity.Property(e => e.UpdatedAt)
                     .HasColumnType("datetime")
                     .HasColumnName("updated_at");
-
-                entity.HasOne(d => d.Admin)
-                    .WithMany(p => p.Majors)
-                    .HasForeignKey(d => d.AdminId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FKMajor311908");
             });
 
             modelBuilder.Entity<MajorSubject>(entity =>
             {
-                entity.HasKey(e => new { e.SubjectId, e.MajorId })
-                    .HasName("PK__Major__1FC24C2D619EB0CA");
+                entity.HasKey(e => new { e.SubjectId, e.MajorId });
 
-                entity.ToTable("MajorSubject");
+                /*entity.ToTable("MajorSubject");*/
 
-                entity.Property(e => e.SubjectId).HasColumnName("tag_id");
+                entity.Property(e => e.SubjectId)
+                    .IsRequired()
+                    .HasColumnName("subject_id");
 
-                entity.Property(e => e.MajorId).HasColumnName("category_id");
+                entity.Property(e => e.MajorId)
+                    .IsRequired()
+                    .HasColumnName("major_id");
 
-                entity.Property(e => e.Status).HasColumnName("status");
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasColumnName("status");
 
                 entity.HasOne(d => d.Major)
                     .WithMany(p => p.MajorSubjects)
                     .HasForeignKey(d => d.MajorId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FKMajorTa611140");
+                    .HasConstraintName("FKMajorSu611140");
 
                 entity.HasOne(d => d.Subject)
                     .WithMany(p => p.MajorSubjects)
                     .HasForeignKey(d => d.SubjectId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FKMajorTa484641");
+                    .HasConstraintName("FKMajorSu484641");
             });
 
             modelBuilder.Entity<Comment>(entity =>
             {
-                entity.ToTable("Comment");
+                //entity.ToTable("Comment");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
@@ -129,18 +125,25 @@ namespace backend.Models
                     .HasColumnName("content");
 
                 entity.Property(e => e.CreatedAt)
+                    .IsRequired()
                     .HasColumnType("datetime")
                     .HasColumnName("created_at");
 
-                entity.Property(e => e.PostId).HasColumnName("post_id");
+                entity.Property(e => e.PostId)
+                    .IsRequired()
+                    .HasColumnName("post_id");
 
-                entity.Property(e => e.Status).HasColumnName("status");
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasColumnName("status");
 
                 entity.Property(e => e.UpdatedAt)
                     .HasColumnType("datetime")
                     .HasColumnName("updated_at");
 
-                entity.Property(e => e.UserId).HasColumnName("user_id");
+                entity.Property(e => e.UserId)
+                    .IsRequired()
+                    .HasColumnName("user_id");
 
                 entity.HasOne(d => d.Post)
                     .WithMany(p => p.Comments)
@@ -157,20 +160,26 @@ namespace backend.Models
 
             modelBuilder.Entity<FollowUser>(entity =>
             {
-                entity.HasKey(e => new { e.FollowerId, e.FollowedId })
-                    .HasName("PK__FollowUs__838707A38FAF7E83");
+                entity.HasKey(e => new { e.FollowerId, e.FollowedId });
 
-                entity.ToTable("FollowUser");
+                //entity.ToTable("FollowUser");
 
-                entity.Property(e => e.FollowerId).HasColumnName("follower_id");
+                entity.Property(e => e.FollowerId)
+                    .IsRequired()
+                    .HasColumnName("follower_id");
 
-                entity.Property(e => e.FollowedId).HasColumnName("followed_id");
+                entity.Property(e => e.FollowedId)
+                    .IsRequired()
+                    .HasColumnName("followed_id");
 
                 entity.Property(e => e.CreatedAt)
+                    .IsRequired()
                     .HasColumnType("datetime")
                     .HasColumnName("created_at");
 
-                entity.Property(e => e.Status).HasColumnName("status");
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasColumnName("status");
 
                 entity.HasOne(d => d.Followed)
                     .WithMany(p => p.FollowUserFolloweds)
@@ -185,9 +194,9 @@ namespace backend.Models
                     .HasConstraintName("FKFollowUser200833");
             });
 
-            modelBuilder.Entity<Image>(entity =>
+            modelBuilder.Entity<Media>(entity =>
             {
-                entity.ToTable("Image");
+                //entity.ToTable("Media");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
@@ -195,27 +204,33 @@ namespace backend.Models
                      .IsRequired()
                      .HasColumnName("post_id");
 
+                entity.Property(e => e.Type)
+                    .IsRequired()
+                    .HasColumnName("type");
+
                 entity.Property(e => e.CreatedAt)
+                    .IsRequired()
                     .HasColumnType("datetime")
                     .HasColumnName("created_at");
 
-                entity.Property(e => e.Status).HasColumnName("status");
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasColumnName("status");
 
                 entity.Property(e => e.Url)
                     .IsRequired()
-                    .HasMaxLength(255)
                     .HasColumnName("url");
 
                 entity.HasOne(d => d.Post)
-                    .WithMany(p => p.ImagePosts)
+                    .WithMany(p => p.MediaPosts)
                     .HasForeignKey(d => d.PostId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FKImage400844");
+                    .HasConstraintName("FKMedia400844");
             });
 
             modelBuilder.Entity<Post>(entity =>
             {
-                entity.ToTable("Post");
+                //entity.ToTable("Post");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id");
@@ -225,25 +240,31 @@ namespace backend.Models
                     .HasColumnName("content");
 
                 entity.Property(e => e.CreatedAt)
+                    .IsRequired()
                     .HasColumnType("datetime")
                     .HasColumnName("created_at");
 
-                entity.Property(e => e.IsApproved).HasColumnName("is_approved");
+                entity.Property(e => e.IsApproved)
+                    .IsRequired()
+                    .HasColumnName("is_approved");
 
                 entity.Property(e => e.ReviewerId).HasColumnName("reviewer_id");
 
-                entity.Property(e => e.Status).HasColumnName("status");
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasColumnName("status");
 
                 entity.Property(e => e.Title)
                     .IsRequired()
-                    .HasMaxLength(100)
                     .HasColumnName("title");
 
                 entity.Property(e => e.UpdatedAt)
                     .HasColumnType("datetime")
                     .HasColumnName("updated_at");
 
-                entity.Property(e => e.UserId).HasColumnName("user_id");
+                entity.Property(e => e.UserId)
+                    .IsRequired()
+                    .HasColumnName("user_id");
 
                 entity.HasOne(d => d.Reviewer)
                     .WithMany(p => p.PostReviewers)
@@ -259,16 +280,21 @@ namespace backend.Models
 
             modelBuilder.Entity<PostMajor>(entity =>
             {
-                entity.HasKey(e => new { e.PostId, e.MajorId })
-                    .HasName("PK__PostCate__638369FD4FBDCD1A");
+                entity.HasKey(e => new { e.PostId, e.MajorId });
 
-                entity.ToTable("PostMajor");
+                /*entity.ToTable("PostMajor");*/
 
-                entity.Property(e => e.PostId).HasColumnName("post_id");
+                entity.Property(e => e.PostId)
+                    .IsRequired()
+                    .HasColumnName("post_id");
 
-                entity.Property(e => e.MajorId).HasColumnName("category_id");
+                entity.Property(e => e.MajorId)
+                    .IsRequired()
+                    .HasColumnName("major_id");
 
-                entity.Property(e => e.Status).HasColumnName("status");
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasColumnName("status");
 
                 entity.HasOne(d => d.Major)
                     .WithMany(p => p.PostMajors)
@@ -285,18 +311,25 @@ namespace backend.Models
 
             modelBuilder.Entity<PostList>(entity =>
             {
-                entity.HasKey(e => new { e.SaveListId, e.SavePostId })
-                    .HasName("PK__PostList__859A5D1BB3774C7B");
+                entity.HasKey(e => new { e.SaveListId, e.SavePostId });
 
-                entity.ToTable("PostList");
+                /*entity.ToTable("PostList");*/
 
-                entity.Property(e => e.SaveListId).HasColumnName("save_list_id");
+                entity.Property(e => e.SaveListId)
+                    .IsRequired()
+                    .HasColumnName("save_list_id");
 
-                entity.Property(e => e.SavePostId).HasColumnName("save_post_id");
+                entity.Property(e => e.SavePostId)
+                    .IsRequired()
+                    .HasColumnName("save_post_id");
 
-                entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+                entity.Property(e => e.CreatedAt)
+                    .IsRequired()
+                    .HasColumnName("created_at");
 
-                entity.Property(e => e.Status).HasColumnName("status");
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasColumnName("status");
 
                 entity.HasOne(d => d.SaveList)
                     .WithMany(p => p.PostLists)
@@ -313,16 +346,21 @@ namespace backend.Models
 
             modelBuilder.Entity<PostSubject>(entity =>
             {
-                entity.HasKey(e => new { e.PostId, e.SubjectId })
-                    .HasName("PK__PostSubject__4AFEED4D0915C090");
+                entity.HasKey(e => new { e.PostId, e.SubjectId });
 
-                entity.ToTable("PostSubject");
+                /*entity.ToTable("PostSubject");*/
 
-                entity.Property(e => e.PostId).HasColumnName("post_id");
+                entity.Property(e => e.PostId)
+                    .IsRequired()
+                    .HasColumnName("post_id");
 
-                entity.Property(e => e.SubjectId).HasColumnName("tag_id");
+                entity.Property(e => e.SubjectId)
+                    .IsRequired()
+                    .HasColumnName("subject_id");
 
-                entity.Property(e => e.Status).HasColumnName("status");
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasColumnName("status");
 
                 entity.HasOne(d => d.Post)
                     .WithMany(p => p.PostSubjects)
@@ -339,31 +377,32 @@ namespace backend.Models
 
             modelBuilder.Entity<ReportPost>(entity =>
             {
-                entity.HasKey(e => new { e.ReporterId, e.PostId })
-                    .HasName("PK__ReportPo__39154D75DD3D3CC7");
+                entity.HasKey(e => new { e.ReporterId, e.PostId });
 
-                entity.ToTable("ReportPost");
+                /*entity.ToTable("ReportPost");*/
 
-                entity.Property(e => e.ReporterId).HasColumnName("reporter_id");
+                entity.Property(e => e.ReporterId)
+                    .IsRequired()
+                    .HasColumnName("reporter_id");
 
-                entity.Property(e => e.PostId).HasColumnName("post_id");
+                entity.Property(e => e.PostId)
+                    .IsRequired()
+                    .HasColumnName("post_id");
 
                 entity.Property(e => e.AdminId).HasColumnName("admin_id");
 
                 entity.Property(e => e.Content)
-                    .HasMaxLength(255)
+                    .IsRequired()
                     .HasColumnName("content");
 
                 entity.Property(e => e.CreatedAt)
+                    .IsRequired()
                     .HasColumnType("datetime")
                     .HasColumnName("created_at");
 
                 entity.Property(e => e.Status)
                     .IsRequired()
-                    .HasMaxLength(10)
-                    .IsUnicode(false)
-                    .HasColumnName("status")
-                    .IsFixedLength(true);
+                    .HasColumnName("status");
 
                 entity.HasOne(d => d.Admin)
                     .WithMany(p => p.ReportPostAdmins)
@@ -385,26 +424,32 @@ namespace backend.Models
 
             modelBuilder.Entity<SaveList>(entity =>
             {
-                entity.ToTable("SaveList");
+                //entity.ToTable("SaveList");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id)
+                    .IsRequired()
+                    .HasColumnName("id");
 
                 entity.Property(e => e.CreatedAt)
+                    .IsRequired()
                     .HasColumnType("datetime")
                     .HasColumnName("created_at");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(50)
                     .HasColumnName("name");
 
-                entity.Property(e => e.Status).HasColumnName("status");
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasColumnName("status");
 
                 entity.Property(e => e.UpdateAt)
                     .HasColumnType("datetime")
                     .HasColumnName("update_at");
 
-                entity.Property(e => e.UserId).HasColumnName("user_id");
+                entity.Property(e => e.UserId)
+                    .IsRequired()
+                    .HasColumnName("user_id");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.SaveLists)
@@ -415,45 +460,42 @@ namespace backend.Models
 
             modelBuilder.Entity<Subject>(entity =>
             {
-                entity.ToTable("Subject");
+                //entity.ToTable("Subject");
 
                 entity.HasIndex(e => e.SubjectName)
                     .IsUnique();
 
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.AdminId).HasColumnName("admin_id");
+                entity.Property(e => e.Id)
+                    .IsRequired()
+                    .HasColumnName("id");
 
                 entity.Property(e => e.CreatedAt)
+                    .IsRequired()
                     .HasColumnType("datetime")
                     .HasColumnName("created_at");
 
-                entity.Property(e => e.Status).HasColumnName("status");
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasColumnName("status");
 
                 entity.Property(e => e.SubjectName)
                     .IsRequired()
-                    .HasMaxLength(20)
-                    .HasColumnName("tag_name");
+                    .HasColumnName("subject_name");
 
                 entity.Property(e => e.UpdatedAt)
                     .HasColumnType("datetime")
                     .HasColumnName("updated_at");
-
-                entity.HasOne(d => d.Admin)
-                    .WithMany(p => p.Subjects)
-                    .HasForeignKey(d => d.AdminId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FKSubject383419");
             });
 
             modelBuilder.Entity<User>(entity =>
             {
-                entity.ToTable("User");
+                //entity.ToTable("User");
 
                 entity.HasIndex(e => e.Email, "UQ__User__AB6E6164D120EBFA")
                     .IsUnique();
 
                 entity.Property(e => e.Id)
+                    .IsRequired()
                     .HasColumnName("id");
 
                 entity.Property(e => e.AvatarUrl)
@@ -461,34 +503,33 @@ namespace backend.Models
                     .IsRequired();
 
                 entity.Property(e => e.CreatedAt)
+                    .IsRequired()
                     .HasColumnType("datetime")
                     .HasColumnName("created_at");
 
                 entity.Property(e => e.Email)
                     .IsRequired()
-                    .HasMaxLength(20)
                     .HasColumnName("email");
 
-                entity.Property(e => e.IsAwarded).HasColumnName("is_awarded");
+                entity.Property(e => e.IsAwarded)
+                    .IsRequired()
+                    .HasColumnName("is_awarded");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(50)
                     .HasColumnName("name");
 
                 entity.Property(e => e.Password)
-                    .HasMaxLength(65)
-                    .IsUnicode(false)
+                    .IsRequired()
                     .HasColumnName("password");
 
                 entity.Property(e => e.Role)
                     .IsRequired()
-                    .HasMaxLength(2)
-                    .IsUnicode(false)
-                    .HasColumnName("role")
-                    .IsFixedLength(true);
+                    .HasColumnName("role");
 
-                entity.Property(e => e.Status).HasColumnName("status");
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasColumnName("status");
 
                 entity.Property(e => e.UpdatedAt)
                     .HasColumnType("datetime")
@@ -497,16 +538,21 @@ namespace backend.Models
 
             modelBuilder.Entity<UserMajor>(entity =>
             {
-                entity.HasKey(e => new { e.UserId, e.MajorId })
-                    .HasName("PK__UserCate__638369FD4FBDCD1A");
+                entity.HasKey(e => new { e.UserId, e.MajorId });
 
-                entity.ToTable("UserMajor");
+                /*entity.ToTable("UserMajor");*/
 
-                entity.Property(e => e.UserId).HasColumnName("user_id");
+                entity.Property(e => e.UserId)
+                    .IsRequired()
+                    .HasColumnName("user_id");
 
-                entity.Property(e => e.MajorId).HasColumnName("category_id");
+                entity.Property(e => e.MajorId)
+                    .IsRequired()
+                    .HasColumnName("major_id");
 
-                entity.Property(e => e.Status).HasColumnName("status");
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasColumnName("status");
 
                 entity.HasOne(d => d.Major)
                     .WithMany(p => p.UserMajors)
@@ -523,16 +569,21 @@ namespace backend.Models
 
             modelBuilder.Entity<UserSubject>(entity =>
             {
-                entity.HasKey(e => new { e.UserId, e.SubjectId })
-                    .HasName("PK__UserSubject__638369FD4FBDCD1A");
+                entity.HasKey(e => new { e.UserId, e.SubjectId });
 
-                entity.ToTable("UserSubject");
+                /*entity.ToTable("UserSubject");*/
 
-                entity.Property(e => e.UserId).HasColumnName("user_id");
+                entity.Property(e => e.UserId)
+                    .IsRequired()
+                    .HasColumnName("user_id");
 
-                entity.Property(e => e.SubjectId).HasColumnName("tag_id");
+                entity.Property(e => e.SubjectId)
+                    .IsRequired()
+                    .HasColumnName("subject_id");
 
-                entity.Property(e => e.Status).HasColumnName("status");
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasColumnName("status");
 
                 entity.HasOne(d => d.Subject)
                     .WithMany(p => p.UserSubjects)
@@ -547,52 +598,28 @@ namespace backend.Models
                     .HasConstraintName("FKUserSubject519402");
             });
 
-            modelBuilder.Entity<Video>(entity =>
-            {
-                entity.ToTable("Video");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.PostId)
-                    .IsRequired()
-                    .HasColumnName("post_id");
-
-                entity.Property(e => e.CreatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("created_at");
-
-                entity.Property(e => e.Status).HasColumnName("status");
-
-                entity.Property(e => e.Url)
-                    .IsRequired()
-                    .HasMaxLength(255)
-                    .HasColumnName("url");
-
-                entity.HasOne(d => d.Post)
-                    .WithMany(p => p.VideoPosts)
-                    .HasForeignKey(d => d.PostId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FKVideo280203");
-            });
-
             modelBuilder.Entity<VoteComment>(entity =>
             {
-                entity.HasKey(e => new { e.UserId, e.CommentId })
-                    .HasName("PK__VoteComm__D7C76067C06255A7");
+                entity.HasKey(e => new { e.UserId, e.CommentId });
 
-                entity.ToTable("VoteComment");
+                /*entity.ToTable("VoteComment");*/
 
-                entity.Property(e => e.UserId).HasColumnName("user_id");
+                entity.Property(e => e.UserId)
+                    .IsRequired()
+                    .HasColumnName("user_id");
 
-                entity.Property(e => e.CommentId).HasColumnName("comment_id");
+                entity.Property(e => e.CommentId)
+                    .IsRequired()
+                    .HasColumnName("comment_id");
 
                 entity.Property(e => e.CreateAt)
+                    .IsRequired()
                     .HasColumnType("datetime")
                     .HasColumnName("create_at");
 
-                entity.Property(e => e.DownVote).HasColumnName("down_vote");
-
-                entity.Property(e => e.UpVote).HasColumnName("up_vote");
+                entity.Property(e => e.Vote)
+                    .IsRequired()
+                    .HasColumnName("vote");
 
                 entity.HasOne(d => d.Comment)
                     .WithMany(p => p.VoteComments)
@@ -609,20 +636,26 @@ namespace backend.Models
 
             modelBuilder.Entity<VotePost>(entity =>
             {
-                entity.HasKey(e => new { e.UserId, e.PostId })
-                    .HasName("PK__VotePost__CA534F79E6329B08");
+                entity.HasKey(e => new { e.UserId, e.PostId });
 
-                entity.ToTable("VotePost");
+                /*entity.ToTable("VotePost");*/
 
-                entity.Property(e => e.UserId).HasColumnName("user_id");
+                entity.Property(e => e.UserId)
+                    .IsRequired()
+                    .HasColumnName("user_id");
 
-                entity.Property(e => e.PostId).HasColumnName("post_id");
+                entity.Property(e => e.PostId)
+                    .IsRequired()
+                    .HasColumnName("post_id");
 
                 entity.Property(e => e.CreatedAt)
+                    .IsRequired()
                     .HasColumnType("datetime")
                     .HasColumnName("created_at");
 
-                entity.Property(e => e.Vote).HasColumnName("vote");
+                entity.Property(e => e.Vote)
+                    .IsRequired()
+                    .HasColumnName("vote");
 
                 entity.HasOne(d => d.Post)
                     .WithMany(p => p.VotePosts)

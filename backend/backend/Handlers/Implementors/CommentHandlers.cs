@@ -171,8 +171,7 @@ namespace backend.Handlers.Implementors
                         var vote = _voteCommentRepository.GetVoteComment(currentUserId, existedCommentsDTO[i].Id);
                         if (vote is not null)
                         {
-                            existedCommentsDTO[i].Upvote = vote.UpVote;
-                            existedCommentsDTO[i].Downvote = vote.DownVote;
+                            existedCommentsDTO[i].vote = vote.Vote;
                         }
                     }
                 }

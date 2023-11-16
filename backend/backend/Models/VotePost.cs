@@ -1,18 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 #nullable disable
 
 namespace backend.Models
 {
+    [Table("VotePost")]
     public partial class VotePost
     {
+        [NotNull]
+        [ForeignKey("User")]
         public int UserId { get; set; }
+
+        [NotNull]
+        [ForeignKey("Post")]
         public int PostId { get; set; }
-        [Required]
+
+        [NotNull]
         [Range(0, 2)]
         public int Vote { get; set; }
+
+        [NotNull]
         public DateTime CreatedAt { get; set; }
 
         public virtual Post Post { get; set; }

@@ -31,7 +31,7 @@ namespace backend.Handlers.Implementors
             _userHandlers = userHandlers;
         }
 
-        public VoteCommentDTO? CreateVote(int currentUserId, int commentId, bool vote)
+        public VoteCommentDTO? CreateVote(int currentUserId, int commentId, int vote)
         {
             //return null if currentUser and comment do not exist
             //                                          or are removed
@@ -45,21 +45,11 @@ namespace backend.Handlers.Implementors
             if (existedVote != null)
             {
                 //return null if that vote is set
-                if (existedVote.UpVote || existedVote.DownVote) return null;
+                if (existedVote.Vote != 0) return null;
 
-                //
-                if (vote)
-                {
-                    existedVote.UpVote = true;
-                    existedVote.DownVote = false;
-                    existedVote.CreateAt = DateTime.Now;
-                }
-                else
-                {
-                    existedVote.UpVote = false;
-                    existedVote.DownVote = true;
-                    existedVote.CreateAt = DateTime.Now;
-                };
+                existedVote.Vote = vote;
+                existedVote.CreateAt = DateTime.Now;
+
                 if (!_voteCommentRepository.Update(existedVote)) return null;
 
                 var existedVoteDTO = _mapper.Map<VoteCommentDTO>(existedVote);
@@ -80,18 +70,9 @@ namespace backend.Handlers.Implementors
                 CommentId = commentId,
                 CreateAt = DateTime.Now,
             };
-            if (vote)
-            {
-                newVote.UpVote = true;
-                newVote.DownVote = false;
-                newVote.CreateAt = DateTime.Now;
-            }
-            else
-            {
-                newVote.UpVote = false;
-                newVote.DownVote = true;
-                newVote.CreateAt = DateTime.Now;
-            };
+
+            newVote.Vote = vote;
+            newVote.CreateAt = DateTime.Now;
 
             //Add new vote to database
             if (!_voteCommentRepository.Add(newVote)) return null;
@@ -119,7 +100,7 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<List<UserDTO>>(userList);
         }
 
-        public VoteCommentDTO? UpdateVote(int currentUserId, int commentId, bool vote)
+        public VoteCommentDTO? UpdateVote(int currentUserId, int commentId, int vote)
         {
             //return null if currentUser and comment do not exist
             //                                          or are removed
@@ -133,16 +114,7 @@ namespace backend.Handlers.Implementors
             if (existedVote == null) return null;
 
             //set vote
-            if (vote)
-            {
-                existedVote.UpVote = true;
-                existedVote.DownVote = false;
-            }
-            else
-            {
-                existedVote.UpVote = false;
-                existedVote.DownVote = true;
-            };
+            existedVote.Vote = vote;
 
             //update to databse
             if (!_voteCommentRepository.Update(existedVote)) return null;
@@ -168,11 +140,10 @@ namespace backend.Handlers.Implementors
 
             //return null if vote does not exist or is disabled
             var existedVote = _voteCommentRepository.GetVoteComment(currentUserId, commentId);
-            if (existedVote == null || (!existedVote.UpVote && !existedVote.DownVote)) return null;
+            if (existedVote == null || existedVote.Vote == 0) return null;
 
             //update vote
-            existedVote.UpVote = false;
-            existedVote.DownVote = false;
+            existedVote.Vote = 0;
 
             //update to database
             if (!_voteCommentRepository.Update(existedVote)) return null;
@@ -184,7 +155,7 @@ namespace backend.Handlers.Implementors
 
             var commentDTO = _commentHandlers.GetCommentBy(commentId);
             existedVoteDTO.Comment = commentDTO;
-            
+
             return existedVoteDTO;
         }
     }

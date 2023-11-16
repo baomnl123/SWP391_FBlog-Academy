@@ -8,21 +8,36 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace backend.Models
 {
-    [Table("PostMajor")]
-    public partial class PostMajor
+    [Table("Media")]
+    public partial class Media
     {
+        public Media()
+        {
+        }
+
+        [NotNull]
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+
         [NotNull]
         [ForeignKey("Post")]
         public int PostId { get; set; }
 
         [NotNull]
-        [ForeignKey("Major")]
-        public int MajorId { get; set; }
+        [MaxLength(5)]
+        public string Type { get; set; }
+
+        [NotNull]
+        [MaxLength]
+        public string Url { get; set; }
+
+        [NotNull]
+        public DateTime CreatedAt { get; set; }
 
         [NotNull]
         public bool Status { get; set; }
 
-        public virtual Major Major { get; set; }
         public virtual Post Post { get; set; }
     }
 }
