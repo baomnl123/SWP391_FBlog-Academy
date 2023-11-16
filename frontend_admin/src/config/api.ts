@@ -77,8 +77,8 @@ const api = {
   },
 
   banStudent(id: number) {
-    const url = 'User/' + id + '/ban'
-    return axiosClient.post(url)
+    const url = 'User/' + id
+    return axiosClient.delete(url)
   },
 
   unbanStudent(id: number) {
