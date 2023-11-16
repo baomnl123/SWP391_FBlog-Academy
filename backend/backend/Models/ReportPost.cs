@@ -12,17 +12,14 @@ namespace backend.Models
     public partial class ReportPost
     {
         [NotNull]
-        [Key]
-        [ForeignKey("User")]
+        [ForeignKey("Reporter")]
         public int ReporterId { get; set; }
 
         [NotNull]
-        [Key]
         [ForeignKey("Post")]
         public int PostId { get; set; }
 
-        [NotNull]
-        [ForeignKey("User")]
+        [ForeignKey("Admin")]
         public int? AdminId { get; set; }
 
         [NotNull]

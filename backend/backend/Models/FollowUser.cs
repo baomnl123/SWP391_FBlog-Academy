@@ -12,13 +12,11 @@ namespace backend.Models
     public partial class FollowUser
     {
         [NotNull]
-        [Key]
-        [ForeignKey("User")]
+        [ForeignKey("Follower")]
         public int FollowerId { get; set; }
 
         [NotNull]
-        [Key]
-        [ForeignKey("User")]
+        [ForeignKey("Followed")]
         public int FollowedId { get; set; }
 
         [NotNull]

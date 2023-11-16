@@ -13,7 +13,6 @@ namespace backend.Models
     {
         public User()
         {
-            Majors = new HashSet<Major>();
             UserMajors = new HashSet<UserMajor>();
             Comments = new HashSet<Comment>();
             FollowUserFolloweds = new HashSet<FollowUser>();
@@ -23,7 +22,6 @@ namespace backend.Models
             ReportPostAdmins = new HashSet<ReportPost>();
             ReportPostReporters = new HashSet<ReportPost>();
             SaveLists = new HashSet<SaveList>();
-            Subjects = new HashSet<Subject>();
             UserSubjects = new HashSet<UserSubject>();
             VoteComments = new HashSet<VoteComment>();
             VotePosts = new HashSet<VotePost>();
@@ -57,7 +55,6 @@ namespace backend.Models
         [NotNull]
         public DateTime CreatedAt { get; set; }
 
-        [NotNull]
         public DateTime? UpdatedAt { get; set; }
 
         [NotNull]
@@ -66,7 +63,6 @@ namespace backend.Models
         [NotNull]
         public bool IsAwarded { get; set; }
 
-        public virtual ICollection<Major> Majors { get; set; }
         public virtual ICollection<UserMajor> UserMajors { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<FollowUser> FollowUserFolloweds { get; set; }
@@ -76,7 +72,6 @@ namespace backend.Models
         public virtual ICollection<ReportPost> ReportPostAdmins { get; set; }
         public virtual ICollection<ReportPost> ReportPostReporters { get; set; }
         public virtual ICollection<SaveList> SaveLists { get; set; }
-        public virtual ICollection<Subject> Subjects { get; set; }
         public virtual ICollection<UserSubject> UserSubjects { get; set; }
         public virtual ICollection<VoteComment> VoteComments { get; set; }
         public virtual ICollection<VotePost> VotePosts { get; set; }

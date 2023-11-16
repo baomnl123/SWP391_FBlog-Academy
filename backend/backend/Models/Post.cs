@@ -27,11 +27,11 @@ namespace backend.Models
         public int Id { get; set; }
 
         [NotNull]
-        [ForeignKey("User")]
+        [ForeignKey("Owner")]
         public int UserId { get; set; }
 
         [NotNull]
-        [ForeignKey("User")]
+        [ForeignKey("Reviewer")]
         public int? ReviewerId { get; set; }
 
         [NotNull]
@@ -45,7 +45,6 @@ namespace backend.Models
         [NotNull]
         public DateTime CreatedAt { get; set; }
 
-        [NotNull]
         public DateTime? UpdatedAt { get; set; }
 
         [NotNull]
@@ -57,8 +56,7 @@ namespace backend.Models
         public virtual User Reviewer { get; set; }
         public virtual User User { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
-        public virtual ICollection<Image> ImagePosts { get; set; }
-        public virtual ICollection<Video> VideoPosts { get; set; }
+        public virtual ICollection<Media> MediaPosts { get; set; }
         public virtual ICollection<PostMajor> PostMajors { get; set; }
         public virtual ICollection<PostList> PostLists { get; set; }
         public virtual ICollection<PostSubject> PostSubjects { get; set; }

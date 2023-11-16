@@ -12,12 +12,10 @@ namespace backend.Models
     public partial class PostList
     {
         [NotNull]
-        [Key]
         [ForeignKey("SaveList")]
         public int SaveListId { get; set; }
 
         [NotNull]
-        [Key]
         [ForeignKey("SavePost")]
         public int SavePostId { get; set; }
 
