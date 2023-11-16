@@ -648,8 +648,7 @@ namespace backend.Handlers.Implementors
                                                 var vote = _votePostRepository.GetVotePost(currentUserId, resultList[i].Id);
                                                 if (vote != null)
                                                 {
-                                                    resultList[i].Upvote = vote.UpVote;
-                                                    resultList[i].Downvote = vote.DownVote;
+                                                    resultList[i].Vote = vote.Vote;
                                                 }
                                             }
                                         }
@@ -803,8 +802,7 @@ namespace backend.Handlers.Implementors
                                             var vote = _votePostRepository.GetVotePost(currentUserId, postDTO.Id);
                                             if (vote != null)
                                             {
-                                                postDTO.Upvote = vote.UpVote;
-                                                postDTO.Downvote = vote.DownVote;
+                                                postDTO.Vote = vote.Vote;
                                             }
                                         }
                                     }
@@ -863,7 +861,7 @@ namespace backend.Handlers.Implementors
                 if (resultList[i].Status)
                 {
                     var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(resultList[i].Id));
-                    if(getUser?.Status == true)
+                    if (getUser?.Status == true)
                     {
                         resultList[i].User = (getUser is not null && getUser.Status) ? getUser : null;
 
@@ -897,8 +895,7 @@ namespace backend.Handlers.Implementors
                             var vote = _votePostRepository.GetVotePost(userId, resultList[i].Id);
                             if (vote != null)
                             {
-                                resultList[i].Upvote = vote.UpVote;
-                                resultList[i].Downvote = vote.DownVote;
+                                resultList[i].Vote = vote.Vote;
                             }
                         }
                     }
@@ -1048,8 +1045,7 @@ namespace backend.Handlers.Implementors
                                                 var vote = _votePostRepository.GetVotePost(currentUserId, postDTO.Id);
                                                 if (vote != null)
                                                 {
-                                                    postDTO.Upvote = vote.UpVote;
-                                                    postDTO.Downvote = vote.DownVote;
+                                                    postDTO.Vote = vote.Vote;
                                                 }
                                             }
                                             resultList.Add(postDTO);
@@ -1180,8 +1176,7 @@ namespace backend.Handlers.Implementors
                                             var vote = _votePostRepository.GetVotePost(currentUserId, postDTO.Id);
                                             if (vote != null)
                                             {
-                                                postDTO.Upvote = vote.UpVote;
-                                                postDTO.Downvote = vote.DownVote;
+                                                postDTO.Vote = vote.Vote;
                                             }
                                         }
                                         resultList.Add(postDTO);
@@ -1444,6 +1439,7 @@ namespace backend.Handlers.Implementors
             //return posts'list
             return resultList;
         }
+
         public ICollection<PostDTO>? ViewDeletedPostOf(int userId)
         {
             //return null if get pending posts' list is failed
@@ -1643,8 +1639,7 @@ namespace backend.Handlers.Implementors
                                                 var vote = _votePostRepository.GetVotePost(currentUserId, postDTO.Id);
                                                 if (vote != null)
                                                 {
-                                                    postDTO.Upvote = vote.UpVote;
-                                                    postDTO.Downvote = vote.DownVote;
+                                                    postDTO.Vote = vote.Vote;
                                                 }
                                             }
                                             postListDTO.Add(postDTO);
@@ -1777,8 +1772,7 @@ namespace backend.Handlers.Implementors
                                             var vote = _votePostRepository.GetVotePost(currentUserId, postDTO.Id);
                                             if (vote != null)
                                             {
-                                                postDTO.Upvote = vote.UpVote;
-                                                postDTO.Downvote = vote.DownVote;
+                                                postDTO.Vote = vote.Vote;
                                             }
                                         }
                                         postListDTO.Add(postDTO);
@@ -1936,8 +1930,7 @@ namespace backend.Handlers.Implementors
                                         var vote = _votePostRepository.GetVotePost(currentUserId, existingPost.Id);
                                         if (vote != null)
                                         {
-                                            existingPost.Upvote = vote.UpVote;
-                                            existingPost.Downvote = vote.DownVote;
+                                            existingPost.Vote = vote.Vote;
                                         }
                                     }
                                 }
@@ -1993,44 +1986,16 @@ namespace backend.Handlers.Implementors
 
         public ICollection<PostDTO>? GetPostsHaveVideo(int currentUserId)
         {
-            //get all posts
-            var initPosts = GetAllPosts(currentUserId);
-            if (initPosts is null || initPosts.Count == 0) return new List<PostDTO>();
+            var posts = GetAllPosts(currentUserId);
 
-            //instantiate return list
-            var result = new List<PostDTO>();
-
-            //add post to result list if post has at least 1 video
-            foreach (var post in initPosts)
-            {
-                if (post.Videos is not null && post.Videos.Count > 0)
-                {
-                    result.Add(post);
-                }
-            }
-
-            return result;
+            return posts?.Where(p => p.Videos?.Any() == true).ToList();
         }
 
         public ICollection<PostDTO>? GetPostsHaveImage(int currentUserId)
         {
-            //get all posts
-            var initPosts = GetAllPosts(currentUserId);
-            if (initPosts is null || initPosts.Count == 0) return new List<PostDTO>();
+            var posts = GetAllPosts(currentUserId);
 
-            //instantiate return list
-            var result = new List<PostDTO>();
-
-            //add post to result list if post has at least 1 image
-            foreach (var post in initPosts)
-            {
-                if (post.Images is not null && post.Images.Count > 0)
-                {
-                    result.Add(post);
-                }
-            }
-
-            return result;
+            return posts?.Where(p => p.Images?.Any() == true).ToList();
         }
 
         public UserDTO? CheckCurrentUser(int currentUserId)
@@ -2048,17 +2013,11 @@ namespace backend.Handlers.Implementors
             {
                 return null;
             }
-            var sortedCollection = postList.OrderByDescending(obj => obj.Upvotes).ToList();
-            for (int i = sortedCollection.Count - 1; i >= 0; i--)
-            {
-                if (i < 5) break;
-                sortedCollection.Remove(sortedCollection[i]);
-            }
-            if (sortedCollection.Count > 5)
-            {
-                sortedCollection = sortedCollection.GetRange(0, 5);
-            }
-            return sortedCollection;
+
+            return postList
+              .OrderByDescending(p => p.Upvotes)
+              .Take(5)
+              .ToList();
         }
     }
 }

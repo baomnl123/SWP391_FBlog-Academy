@@ -25,7 +25,7 @@ namespace backend.Handlers.Implementors
             _userHandlers = userHandlers;
             _postHandlers = postHandlers;
         }
-        public VotePostDTO? CreateNewVotePost(int currentUserId, int postId, bool vote)
+        public VotePostDTO? CreateNewVotePost(int currentUserId, int postId, int vote)
         {
             //return null if currentUser and post do not exist
             //                                          or are removed
@@ -37,32 +37,22 @@ namespace backend.Handlers.Implementors
 
             //update info of vote if that vote existed
             var existedVote = _votePostRepository.GetVotePost(currentUserId, postId);
+
             if (existedVote != null)
             {
-                //return null if Upvote or Downvote is set
-                if (existedVote.UpVote || existedVote.DownVote) return null;
+                if (existedVote.Vote != 0) return null;
 
-                if (vote)
+                if (vote != 0)
                 {
-                    existedVote.UpVote = true;
-                    existedVote.DownVote = false;
+                    existedVote.Vote = vote;
                     existedVote.CreatedAt = DateTime.Now;
                 }
-                else
-                {
-                    existedVote.UpVote = false;
-                    existedVote.DownVote = true;
-                    existedVote.CreatedAt = DateTime.Now;
-                };
+
                 if (!_votePostRepository.Update(existedVote)) return null;
 
                 var existedVoteDTO = _mapper.Map<VotePostDTO>(existedVote);
-
-                var userDTO = _userHandlers.GetUser(currentUserId);
-                existedVoteDTO.User = userDTO;
-
-                var postDTO = _postHandlers.GetPostBy(postId, currentUserId);
-                existedVoteDTO.Post = postDTO;
+                existedVoteDTO.User = _mapper.Map<UserDTO>(existedUser);
+                existedVoteDTO.Post = _mapper.Map<PostDTO>(existedPost);
 
                 return existedVoteDTO;
             }
@@ -72,20 +62,10 @@ namespace backend.Handlers.Implementors
             {
                 UserId = currentUserId,
                 PostId = postId,
+                Vote = vote,
                 CreatedAt = DateTime.Now,
             };
-            if (vote)
-            {
-                newVote.UpVote = true;
-                newVote.DownVote = false;
-                newVote.CreatedAt = DateTime.Now;
-            }
-            else
-            {
-                newVote.UpVote = false;
-                newVote.DownVote = true;
-                newVote.CreatedAt = DateTime.Now;
-            };
+
 
             //Add new vote to database
             if (!_votePostRepository.Add(newVote)) return null;
@@ -113,11 +93,10 @@ namespace backend.Handlers.Implementors
 
             //return null if that vote does not exist or is disabled
             var existedVote = _votePostRepository.GetVotePost(currentUserId, postId);
-            if (existedVote == null || (!existedVote.UpVote && !existedVote.DownVote)) return null;
+            if (existedVote == null || existedVote.Vote == 0) return null;
 
             //set vote to be disabled
-            existedVote.UpVote = false;
-            existedVote.DownVote = false;
+            existedVote.Vote = 0;
 
             //update to database
             if (!_votePostRepository.Update(existedVote)) return null;
@@ -181,7 +160,7 @@ namespace backend.Handlers.Implementors
             return _mapper.Map<List<UserDTO>>(result);
         }
 
-        public VotePostDTO? UpdateVotePost(int currentUserId, int postId, bool vote)
+        public VotePostDTO? UpdateVotePost(int currentUserId, int postId, int vote)
         {
             //return null if currentUser and post do not exist
             //                                          or are removed
@@ -196,16 +175,7 @@ namespace backend.Handlers.Implementors
             if (existedVote == null) return null;
 
             //Update info of existed vote
-            if (vote)
-            {
-                existedVote.UpVote = true;
-                existedVote.DownVote = false;
-            }
-            else
-            {
-                existedVote.UpVote = false;
-                existedVote.DownVote = true;
-            };
+            existedVote.Vote = vote;
 
             //return null if updating info to database is false
             if (!_votePostRepository.Update(existedVote)) return null;

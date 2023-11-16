@@ -50,7 +50,7 @@ namespace backend.Handlers.Implementors
             List<TagDTO> result = _mapper.Map<List<TagDTO>>(tags);
 
             //get related data for all tag
-            foreach ( var tag in result )
+            foreach (var tag in result)
             {
                 var getCategories = _mapper.Map<ICollection<CategoryDTO>?>(_categoryTagRepository.GetCategoriesOf(tag.Id));
                 tag.Categories = (getCategories is not null && getCategories.Count > 0) ? getCategories : new List<CategoryDTO>();
@@ -273,68 +273,24 @@ namespace backend.Handlers.Implementors
 
             return null;
         }
+
         public ICollection<TagDTO>? GetTop5Tags()
         {
 
-            var tagList = GetTags();
-            if (tagList == null || tagList.Count == 0)
-            {
-                return null;
-            }
-            var map = new Dictionary<TagDTO, int>();
-            foreach (var tag in tagList)
-            {
-                if (tag.Status)
-                {
-                    int topVotePosts = 0;
-                    var postList = _tagRepository.GetPostsByTag(tag.Id);
-                    if (postList == null || postList.Count == 0)
-                    {
+            var tags = GetTags().Where(c => c.Status).ToList();
 
-                    }
-                    else
-                    {
-                        foreach (var post in postList)
-                        {
-                            var votePost = _votePostRepository.GetAllUsersVotedBy(post.Id);
-                            if (votePost == null)
-                            {
-                            }
-                            if (votePost.Count > topVotePosts)
-                            {
-                                topVotePosts = votePost.Count;
-                            }
-                        }
-                        map.Add(tag, topVotePosts);
-                    }
-                }
-            }
-            var sortedMap = map.OrderByDescending(p => p.Value)
-                           .ToDictionary(pair => pair.Key, pair => pair.Value);
-            List<TagDTO> keysList = new List<TagDTO>(sortedMap.Keys);
-            if (keysList == null || keysList.Count == 0)
-            {
-                return null;
-            }
-            foreach(var tag in keysList)
-            {
-                if (tag.Status)
+            var topTags = tags
+                .Select(c => new
                 {
-                    var categories = GetCategoriesByTag(tag.Id);
-                    if(categories == null || categories.Count == 0)
-                    {
-                    }
-                    else
-                    {
-                        tag.Categories = categories;
-                    }
-                }
-            }
-            if (keysList.Count > 5)
-            {
-                keysList = keysList.GetRange(0, 5);
-            }
-            return keysList;
+                    Tag = c,
+                    VoteCount = _votePostRepository.GetAllUsersVotedBy(c.Id).Count
+                })
+                .OrderByDescending(x => x.VoteCount)
+                .Take(5)
+                .Select(x => x.Tag)
+                .ToList();
+
+            return topTags;
         }
     }
 }

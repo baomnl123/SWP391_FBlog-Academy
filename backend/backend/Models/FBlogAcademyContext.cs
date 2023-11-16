@@ -622,9 +622,7 @@ namespace backend.Models
                     .HasColumnType("datetime")
                     .HasColumnName("created_at");
 
-                entity.Property(e => e.DownVote).HasColumnName("down_vote");
-
-                entity.Property(e => e.UpVote).HasColumnName("up_vote");
+                entity.Property(e => e.Vote).HasColumnName("vote");
 
                 entity.HasOne(d => d.Post)
                     .WithMany(p => p.VotePosts)

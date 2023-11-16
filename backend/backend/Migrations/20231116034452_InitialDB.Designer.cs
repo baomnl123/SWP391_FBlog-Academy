@@ -10,7 +10,7 @@ using backend.Models;
 namespace backend.Migrations
 {
     [DbContext(typeof(FBlogAcademyContext))]
-    [Migration("20231115151439_InitialDB")]
+    [Migration("20231116034452_InitialDB")]
     partial class InitialDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -609,13 +609,9 @@ namespace backend.Migrations
                         .HasColumnType("datetime")
                         .HasColumnName("created_at");
 
-                    b.Property<bool>("DownVote")
-                        .HasColumnType("bit")
-                        .HasColumnName("down_vote");
-
-                    b.Property<bool>("UpVote")
-                        .HasColumnType("bit")
-                        .HasColumnName("up_vote");
+                    b.Property<int>("Vote")
+                        .HasColumnType("int")
+                        .HasColumnName("vote");
 
                     b.HasKey("UserId", "PostId")
                         .HasName("PK__VotePost__CA534F79E6329B08");

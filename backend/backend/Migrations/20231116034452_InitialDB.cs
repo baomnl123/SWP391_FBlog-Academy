@@ -319,8 +319,7 @@ namespace backend.Migrations
                 {
                     user_id = table.Column<int>(type: "int", nullable: false),
                     post_id = table.Column<int>(type: "int", nullable: false),
-                    up_vote = table.Column<bool>(type: "bit", nullable: false),
-                    down_vote = table.Column<bool>(type: "bit", nullable: false),
+                    vote = table.Column<int>(type: "int", nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>

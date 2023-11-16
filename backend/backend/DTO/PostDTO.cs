@@ -8,8 +8,8 @@
         public string Title { get; set; }
         public string Content { get; set; }
         public int? Upvotes { get; set; } = 0;
-        public ICollection<UserDTO>? UsersUpvote { get; set; } = new List<UserDTO>();
         public int? Downvotes { get; set; } = 0;
+        public ICollection<UserDTO>? UsersUpvote { get; set; } = new List<UserDTO>();
         public ICollection<UserDTO>? UsersDownvote { get; set; } = new List<UserDTO>();
         public ICollection<VideoDTO>? Videos { get; set; }
         public ICollection<ImageDTO>? Images { get; set; }
@@ -17,8 +17,7 @@
         public ICollection<TagDTO>? Tags { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
-        public bool? Upvote { get; set; } = false;
-        public bool? Downvote { get; set; } = false;
+        public int Vote { get; set; } = 0;
         public bool IsApproved { get; set; }
         public bool Status { get; set; }
     }

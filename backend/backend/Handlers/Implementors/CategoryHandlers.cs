@@ -232,52 +232,21 @@ namespace backend.Handlers.Implementors
 
         public ICollection<CategoryDTO>? GetTop5Categories()
         {
+            var categories = GetCategories().Where(c => c.Status).ToList();
 
-            var categoriesList = GetCategories();
-            if (categoriesList == null || categoriesList.Count == 0)
-            {
-                return null;
-            }
-            var map = new Dictionary<CategoryDTO, int>();
-            foreach (var category in categoriesList)
-            {
-                if (category.Status)
-                {
-                    int topVotePosts = 0;
-                    var postList = _categoryRepository.GetPostsByCategory(category.Id);
-                    if (postList == null || postList.Count == 0)
-                    {
+            var topCategories = categories
+              .Select(c => new
+              {
+                  Category = c,
+                  VoteCount = _votePostRepository.GetAllUsersVotedBy(c.Id).Count
+              })
+              .OrderByDescending(x => x.VoteCount)
+              .Take(5)
+              .Select(x => x.Category)
+              .ToList();
 
-                    }
-                    else
-                    {
-                        foreach (var post in postList)
-                        {
-                            var votePost = _votePostRepository.GetAllUsersVotedBy(post.Id);
-                            if(votePost == null)
-                            {
-                            }
-                            if(votePost.Count > topVotePosts)
-                            {
-                                topVotePosts = votePost.Count;
-                            }
-                        }
-                    }
-                    map.Add(category, topVotePosts);
-                }
-            }
-            var sortedMap = map.OrderByDescending(p => p.Value)
-                           .ToDictionary(pair => pair.Key, pair => pair.Value);
-            List<CategoryDTO> keysList = new List<CategoryDTO>(sortedMap.Keys);
-            if (keysList == null || keysList.Count == 0)
-            {
-                return null;
-            }
-            if(keysList.Count > 5)
-            {
-                keysList = keysList.GetRange(0, 5);
-            }
-            return keysList;
+            return topCategories;
         }
+
     }
 }
