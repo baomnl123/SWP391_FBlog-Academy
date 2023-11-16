@@ -65,6 +65,17 @@ namespace backend.Controllers
             return Ok(list);
         }
 
+        [HttpGet("students")]
+        public IActionResult GetStudents()
+        {
+            var getStudents = _userHandlers.GetStudents();
+            if(getStudents == null || getStudents.Count == 0)
+            {
+                return Ok(new List<UserDTO>());
+            }
+            return Ok(getStudents);
+        }
+
         /// <summary>
         /// Get list of Students and Moderators. (Lecturer | Admin)
         /// </summary>
