@@ -42,24 +42,16 @@ namespace backend.Handlers.Implementors
                 //get existed user
                 var existedUser = _userRepository.GetUser(email);
                 //check if user is enable
-                if (existedUser?.Status == true)
-                {
-                    return null;
-                }
+                if (existedUser == null) return null;
+                if (existedUser.Status) return null;
                 //if user is disable then update the user into enable status
                 existedUser.Name = name;
                 existedUser.Role = lectureRole;
                 existedUser.IsAwarded = false;
                 //check if password is null
-                if (password != null)
-                {
-                    existedUser.Password = _hashingString.HashString(password);
-                }
+                if (password != null) existedUser.Password = _hashingString.HashString(password);
                 //check if avatar is null
-                if (avatarURL == null)
-                {
-                    existedUser.AvatarUrl = string.Empty;
-                }
+                if (avatarURL == null) existedUser.AvatarUrl = string.Empty;
                 else
                 {
                     existedUser.AvatarUrl = avatarURL;
@@ -67,10 +59,7 @@ namespace backend.Handlers.Implementors
                 existedUser.Status = true;
                 existedUser.CreatedAt = DateTime.Now;
                 existedUser.UpdatedAt = null;
-                if (!_userRepository.UpdateUser(existedUser))
-                {
-                    return null;
-                }
+                if (!_userRepository.UpdateUser(existedUser)) return null;
                 //return
                 return _mapper.Map<UserDTO>(existedUser);
             }
@@ -118,10 +107,8 @@ namespace backend.Handlers.Implementors
                 //get existed user
                 var existedUser = _userRepository.GetUser(email);
                 //check if user is enable
-                if (existedUser?.Status == true)
-                {
-                    return null;
-                }
+                if (existedUser == null) return null;
+                if (existedUser.Status) return null;
                 //if user is disable then update the user into enable status
                 existedUser.Role = studentRole;
                 existedUser.IsAwarded = false;
@@ -146,7 +133,8 @@ namespace backend.Handlers.Implementors
                     return null;
                 }
                 //return
-                return _mapper.Map<UserDTO>(existedUser);
+                var existedUserDTO = _mapper.Map<UserDTO>(existedUser);
+                return existedUserDTO;
             }
             //add new user
             User newUser = new()
@@ -174,7 +162,8 @@ namespace backend.Handlers.Implementors
                 return null;
             }
             //return
-            return _mapper.Map<UserDTO>(newUser);
+            var userDTO = _mapper.Map<UserDTO>(newUser);
+            return userDTO;
         }
 
         public UserDTO? DemoteStudent(int userID)
@@ -238,7 +227,7 @@ namespace backend.Handlers.Implementors
             var listDTO = new List<UserDTO>();
             foreach (var user in list)
             {
-                if(!user.Status)
+                if (!user.Status)
                 {
                     continue;
                 }
