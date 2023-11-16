@@ -1,14 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 #nullable disable
 
 namespace backend.Models
 {
+    [Table("UserSubject")]
     public partial class UserSubject
     {
+        [NotNull]
+        [Key]
+        [ForeignKey("User")]
         public int UserId { get; set; }
+
+        [NotNull]
+        [Key]
+        [ForeignKey("Subject")]
         public int SubjectId { get; set; }
+
+        [NotNull]
         public bool Status { get; set; }
 
         public virtual Subject Subject { get; set; }

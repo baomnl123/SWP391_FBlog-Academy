@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 #nullable disable
 
 namespace backend.Models
 {
+    [Table("User")]
     public partial class User
     {
         public User()
@@ -25,15 +29,41 @@ namespace backend.Models
             VotePosts = new HashSet<VotePost>();
         }
 
+        [NotNull]
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+
+        [NotNull]
+        [MaxLength]
         public string AvatarUrl { get; set; }
+
+        [NotNull]
+        [MaxLength(50)]
         public string Name { get; set; }
+
+        [NotNull]
+        [MaxLength (50)]
         public string Email { get; set; }
+
+        [NotNull]
+        [MaxLength(65)]
         public string? Password { get; set; }
+
+        [NotNull]
+        [MaxLength(2)]
         public string Role { get; set; }
+
+        [NotNull]
         public DateTime CreatedAt { get; set; }
+
+        [NotNull]
         public DateTime? UpdatedAt { get; set; }
+
+        [NotNull]
         public bool Status { get; set; }
+
+        [NotNull]
         public bool IsAwarded { get; set; }
 
         public virtual ICollection<Major> Majors { get; set; }
