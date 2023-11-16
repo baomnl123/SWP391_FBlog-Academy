@@ -34,6 +34,7 @@ export type UserEmail = {
   updatedAt: null
   status: boolean
   isAwarded: boolean
+  successReportedTimes: number
 }
 
 export interface Lecturers {

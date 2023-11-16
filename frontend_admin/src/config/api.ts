@@ -81,8 +81,18 @@ const api = {
     return axiosClient.post(url)
   },
 
+  unbanStudent(id: number) {
+    const url = `User/${id}/unban`
+    return axiosClient.post(url)
+  },
+
   getStudent() {
     const url = 'User/students-and-moderators'
+    return axiosClient.get<unknown, UserEmail[]>(url)
+  },
+
+  getStudentUnban() {
+    const url = 'User/banned'
     return axiosClient.get<unknown, UserEmail[]>(url)
   },
 
