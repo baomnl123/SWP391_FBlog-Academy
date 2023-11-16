@@ -8,10 +8,10 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace backend.Models
 {
-    [Table("Video")]
-    public partial class Video
+    [Table("Media")]
+    public partial class Media
     {
-        public Video()
+        public Media()
         {
         }
 
@@ -23,6 +23,10 @@ namespace backend.Models
         [NotNull]
         [ForeignKey("Post")]
         public int PostId { get; set; }
+
+        [NotNull]
+        [MaxLength(5)]
+        public string Type { get; set; }
 
         [NotNull]
         [MaxLength]
