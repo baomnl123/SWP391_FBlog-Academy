@@ -12,12 +12,10 @@ namespace backend.Models
     public partial class UserMajor
     {
         [NotNull]
-        [Key]
         [ForeignKey("User")]
         public int UserId { get; set; }
 
         [NotNull]
-        [Key]
         [ForeignKey("Major")]
         public int MajorId { get; set; }
 

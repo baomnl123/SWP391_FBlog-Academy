@@ -30,13 +30,11 @@ namespace backend.Models
         [NotNull]
         public DateTime CreatedAt { get; set; }
 
-        [NotNull]
         public DateTime? UpdatedAt { get; set; }
 
         [NotNull]
         public bool Status { get; set; }
 
-        public virtual User Admin { get; set; }
         public virtual ICollection<UserMajor> UserMajors { get; set; }
         public virtual ICollection<MajorSubject> MajorSubjects { get; set; }
         public virtual ICollection<PostMajor> PostMajors { get; set; }

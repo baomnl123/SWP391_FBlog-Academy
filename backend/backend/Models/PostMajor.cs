@@ -12,12 +12,10 @@ namespace backend.Models
     public partial class PostMajor
     {
         [NotNull]
-        [Key]
         [ForeignKey("Post")]
         public int PostId { get; set; }
 
         [NotNull]
-        [Key]
         [ForeignKey("Major")]
         public int MajorId { get; set; }
 

@@ -24,19 +24,17 @@ namespace backend.Models
         public int Id { get; set; }
 
         [NotNull]
-        [MaxLength(20)]
+        [MaxLength(50)]
         public string SubjectName { get; set; }
 
         [NotNull]
         public DateTime CreatedAt { get; set; }
 
-        [NotNull]
         public DateTime? UpdatedAt { get; set; }
 
         [NotNull]
         public bool Status { get; set; }
 
-        public virtual User Admin { get; set; }
         public virtual ICollection<UserSubject> UserSubjects { get; set; }
         public virtual ICollection<MajorSubject> MajorSubjects { get; set; }
         public virtual ICollection<PostSubject> PostSubjects { get; set; }
