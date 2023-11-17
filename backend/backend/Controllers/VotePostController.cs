@@ -12,7 +12,7 @@ namespace backend.Controllers
     {
         private readonly IVotePostHandlers _votePostHandlers;
         private readonly EmailSender _emailSender;
-        public VotePostController(IVotePostHandlers votePostHandlers) 
+        public VotePostController(IVotePostHandlers votePostHandlers)
         {
             _votePostHandlers = votePostHandlers;
             _emailSender = new EmailSender();
@@ -58,19 +58,21 @@ namespace backend.Controllers
         /// <param name="vote"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> CreateNewVote(int currentUserId, int postId, [FromForm] int vote) 
+        public async Task<IActionResult> CreateNewVote(int currentUserId, int postId, [FromForm] int vote)
         {
             if (vote < 1 && vote > 2) return BadRequest();
-            
+
             var createdVote = _votePostHandlers.CreateNewVotePost(currentUserId, postId, vote);
             if (createdVote == null) return BadRequest();
+            if (createdVote.Vote != 0)
+            {
+                //send email
+                var existedEmail = createdVote.Post.User.Email;
+                var existedSubject = $"{createdVote.User.Name} has voted your post.";
+                var existedMessage = $"{createdVote.User.Name} has voted {createdVote.Post.Title}.\n\nFaithfully,FBlog Academy";
 
-            //send email
-            var existedEmail = createdVote.Post.User.Email;
-            var existedSubject = $"{createdVote.User.Name} has voted your post.";
-            var existedMessage = $"{createdVote.User.Name} has voted {createdVote.Post.Title}.\n\nFaithfully,FBlog Academy";
-
-            await _emailSender.SendEmailAsync(existedEmail, existedSubject, existedMessage);
+                await _emailSender.SendEmailAsync(existedEmail, existedSubject, existedMessage);
+            }
 
             return Ok(createdVote);
         }
@@ -90,7 +92,7 @@ namespace backend.Controllers
             var updatedVote = _votePostHandlers.UpdateVotePost(currentUserId, postId, vote);
             if (updatedVote == null) return BadRequest();
 
-            if (updatedVote.UpVote)
+            if (updatedVote.Vote == 1)
             {
                 //send email
                 var existedEmail = updatedVote.Post.User.Email;
@@ -108,7 +110,7 @@ namespace backend.Controllers
         /// <param name="postId"></param>
         /// <returns></returns>
         [HttpDelete]
-        public IActionResult DeleteVote(int currentUserId, int postId) 
+        public IActionResult DeleteVote(int currentUserId, int postId)
         {
             var deletedVote = _votePostHandlers.DisableVotePost(currentUserId, postId);
             if (deletedVote == null) return BadRequest();

@@ -12,12 +12,14 @@ namespace backend.Handlers.IHandlers
         //Search Posts which contain content.
         public ICollection<PostDTO>? SearchPostsByTitle(string title, int currentUserId);
         //View pending posts' list
-        public ICollection<PostDTO>? ViewPendingPostList();
+        public ICollection<PostDTO>? ViewPendingPostList(int currentUserId);
         //View pending posts' list of particular user
         public ICollection<PostDTO>? ViewPendingPostListOf(int userId);
         public ICollection<PostDTO>? ViewDeletedPostOf(int userId);
         //Get posts by both majors and subjects
         public ICollection<PostDTO>? GetAllPosts(int[] majorIDs, int[] subjectIDs,string searchValue, int currentUserId);
+        //Get post by major and tag that user follows
+        public ICollection<PostDTO>? GetAllPostsOnLoad(int currentUserId);
         //Get post by post id and currentUserId
         public PostDTO? GetPostBy(int postId, int currentUserId);
         //Get post by post id

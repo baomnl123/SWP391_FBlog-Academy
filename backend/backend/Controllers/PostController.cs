@@ -58,9 +58,9 @@ namespace backend.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("pending")]
-        public IActionResult ViewPendingPostList()
+        public IActionResult ViewPendingPostList(int currentUserId)
         {
-            var existed = _postHandlers.ViewPendingPostList();
+            var existed = _postHandlers.ViewPendingPostList(currentUserId);
             if (existed == null || existed.Count == 0)
             {
                 existed = new List<PostDTO>();
@@ -264,12 +264,29 @@ namespace backend.Controllers
 
         /// <summary>
         /// Get list of Posts by Category or Tag or searchValue.
+        /// Use this api for filter
         /// </summary>
         /// <returns></returns>
         [HttpGet("category-tag")]
         public IActionResult GetPostByCategoryAndTag([FromQuery] int[] categoryID, [FromQuery] int[] tagID, [FromQuery] string? searchValue, [FromQuery] int currentUserId)
         {
             var postList = _postHandlers.GetAllPosts(categoryID, tagID, searchValue, currentUserId);
+            if (postList == null || postList.Count == 0)
+            {
+                postList = new List<PostDTO>();
+            }
+            return Ok(postList);
+        }
+
+        /// <summary>
+        /// Get list of Posts by Category or Tag or searchValue.
+        /// Use this api for load page
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("on-load")]
+        public IActionResult GetPostOnLoad([FromQuery] int currentUserId)
+        {
+            var postList = _postHandlers.GetAllPostsOnLoad(currentUserId);
             if (postList == null || postList.Count == 0)
             {
                 postList = new List<PostDTO>();
