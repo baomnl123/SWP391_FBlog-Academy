@@ -715,7 +715,7 @@ namespace backend.Handlers.Implementors
                 && (searchValue == null || searchValue.Equals(string.Empty))
                 && (currentUserId == null || currentUserId == 0))
             {
-                return null;
+                return null; 
             }
             if ((majorIDs == null || majorIDs.Length == 0) 
                 && (subjectIDs == null || subjectIDs.Length == 0) 
