@@ -64,7 +64,7 @@ const api = {
 
   //category
   getAllCategory() {
-    const url = 'Category/all'
+    const url = 'Major/all'
     return axiosClient.get<unknown, Category[]>(url)
   },
 
@@ -75,7 +75,7 @@ const api = {
 
   //tag
   getAllTag() {
-    const url = 'Tag/all'
+    const url = 'Subject/all'
     return axiosClient.get<unknown, Tag[]>(url)
   },
 
@@ -91,8 +91,8 @@ const api = {
   },
 
   //user
-  getUserById(id: number) {
-    const url = `User/${id}`
+  getUserById(userID: number){
+    const url = `User/${userID}`
     return axiosClient.get<unknown, User>(url)
   },
 
@@ -354,7 +354,7 @@ const api = {
   },
 
   trendingTag() {
-    const url = 'Tag/top-5-voted'
+    const url = 'Subject/top-5-voted'
     return axiosClient.get<unknown, Tag[]>(url)
   },
 
@@ -364,7 +364,7 @@ const api = {
   },
 
   trendingCategory() {
-    const url = 'Category/top-5-voted'
+    const url = 'Major/top-5-voted'
     return axiosClient.get<unknown, Category[]>(url)
   }
 }
