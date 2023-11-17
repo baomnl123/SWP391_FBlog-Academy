@@ -520,7 +520,6 @@ namespace backend.Models
                     .HasColumnName("name");
 
                 entity.Property(e => e.Password)
-                    .IsRequired()
                     .HasColumnName("password");
 
                 entity.Property(e => e.Role)

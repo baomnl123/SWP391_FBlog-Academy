@@ -1,12 +1,14 @@
+import api from '@/api'
 import { RootState } from '@/store'
 import { setDarkMode } from '@/store/reducers/theme'
 import { getLocalStorage, removeLocalStorage, setLocalStorage } from '@/utils/helpers'
 import { SearchOutlined } from '@ant-design/icons'
 import { UserButton } from '@clerk/clerk-react'
-import { Breadcrumb, ConfigProvider, Flex, Input, Layout, Space, Switch, Typography, theme } from 'antd'
-import { PropsWithChildren, ReactNode, useEffect } from 'react'
+import { Breadcrumb, Button, ConfigProvider, Flex, Input, Layout, Space, Switch, Typography, theme } from 'antd'
+import { PropsWithChildren, ReactNode, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { RouteObject, useMatches, useNavigate } from 'react-router-dom'
+import { useRequest } from 'ahooks'
 
 const { Header, Content, Sider } = Layout
 
@@ -26,6 +28,25 @@ const BaseLayout = ({
   const navigate = useNavigate()
   const { defaultAlgorithm, darkAlgorithm } = theme
   const isDarkMode = useSelector((state: RootState) => state.themeReducer.darkMode)
+  const user = useSelector((state: RootState) => state.userReducer.user)
+  const [loading, setLoading] = useState(false)
+  const { data } = useRequest(
+    async () => {
+      const response = await api.getUserById(user?.id ?? getLocalStorage('id'))
+      return response
+    },
+    {
+      onBefore() {
+        setLoading(true)
+      },
+      onFinally() {
+        setLoading(false)
+      },
+      onError(e) {
+        console.error(e)
+      }
+    }
+  )
   const dispatch = useDispatch()
 
   const matches: RouteObject[] = useMatches()
@@ -108,7 +129,7 @@ const BaseLayout = ({
               <Flex justify='space-between' align='center' className='mr-5'>
                 <Space size={10} align='center' className='cursor-pointer px-5 flex-none'>
                   <UserButton />
-                  <Typography.Text>Profile</Typography.Text>
+                  <Typography onClick={() => navigate(`/profile/${user?.id}`)}> Profile</Typography>
                 </Space>
                 <Switch onChange={(e) => handleClick(e)} className='ml-5' checked={!!isDarkMode} />
               </Flex>

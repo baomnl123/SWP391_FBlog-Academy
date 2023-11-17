@@ -1,8 +1,5 @@
-﻿using Azure;
-using backend.DTO;
+﻿using backend.DTO;
 using backend.Handlers.IHandlers;
-using backend.Handlers.Implementors;
-using backend.Models;
 using backend.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -23,14 +20,18 @@ namespace backend.Controllers
         private readonly UserRoleConstrant _userRoleConstrant;
         private readonly IUserHandlers _userHandlers;
         private readonly IFollowUserHandlers _followUserHandlers;
+        private readonly IUserMajorHandlers _userMajorHandlers;
+        private readonly IUserSubjectHandlers _userSubjectHandlers;
         private readonly EmailSender _emailSender;
         private readonly HttpClient _httpClient = new();
-        public UserController(IUserHandlers userHandlers, IFollowUserHandlers followUserHandlers)
+        public UserController(IUserHandlers userHandlers, IFollowUserHandlers followUserHandlers, IUserMajorHandlers userMajorHandlers, IUserSubjectHandlers userSubjectHandlers)
         {
             _userHandlers = userHandlers;
             _followUserHandlers = followUserHandlers;
             _emailSender = new EmailSender();
             _userRoleConstrant = new();
+            _userMajorHandlers = userMajorHandlers;
+            _userSubjectHandlers = userSubjectHandlers;
         }
 
         /// <summary>
@@ -547,6 +548,59 @@ namespace backend.Controllers
                 return BadRequest();
             }
             return Ok(user);
+        }
+
+        /// <summary>
+        /// Get all Majors of selected User. (User)
+        /// </summary>
+        /// <param name="userID"></param>
+        /// <returns></returns>
+        [HttpGet("{userID}/majors")]
+        public async Task<IActionResult> GetMajorsOf(int userID)
+        {
+            var getMajors = _userMajorHandlers.GetMajorsOf(userID);
+            if (getMajors == null || getMajors.Count == 0) return Ok(new List<MajorDTO>());
+            return Ok(getMajors);
+        }
+
+        [HttpPost("{userID}/major")]
+        public async Task<IActionResult> AddMajor(int userID, int majorID)
+        {
+            var addMajor = _userMajorHandlers.AddUserMajor(userID, majorID);
+            if (addMajor == null) return BadRequest("Added Failed !");
+            return Ok(addMajor);
+        }
+
+        [HttpDelete("{userID}/major")]
+        public async Task<IActionResult> DeleteMajor(int userID, int majorID)
+        {
+            var deleteMajor = _userMajorHandlers.DeleteUserMajor(userID, majorID);
+            if (deleteMajor == null) return BadRequest("Deleted Failed !");
+            return Ok(deleteMajor);
+        }
+
+        [HttpGet("{userID}/subjects")]
+        public async Task<IActionResult> GetSubjectsOf(int userID)
+        {
+            var getSubjects = _userSubjectHandlers.GetSubjectsOf(userID);
+            if (getSubjects == null || getSubjects.Count == 0) return Ok(new List<SubjectDTO>());
+            return Ok(getSubjects);
+        }
+
+        [HttpPost("{userID}/subject")]
+        public async Task<IActionResult> AddSubject(int userID, int subjectID)
+        {
+            var addSubject = _userSubjectHandlers.AddUserSubject(userID, subjectID);
+            if (addSubject == null) return BadRequest("Added Failed !");
+            return Ok(addSubject);
+        }
+
+        [HttpDelete("{userID}/subject")]
+        public async Task<IActionResult> DeleteSubject(int userID, int subjectID)
+        {
+            var deleteSubject = _userSubjectHandlers.DeleteUserSubject(userID, subjectID);
+            if (deleteSubject == null) return BadRequest("Deleted Failed !");
+            return Ok(deleteSubject);
         }
     }
 }

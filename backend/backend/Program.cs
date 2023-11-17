@@ -43,6 +43,8 @@ builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<IVoteCommentRepository, VoteCommentRepository>();
 builder.Services.AddScoped<IVotePostRepository, VotePostRepository>();
 builder.Services.AddScoped<IPostListRepository, PostListRepository>();
+builder.Services.AddScoped<IUserMajorRepository, UserMajorRepository>();
+builder.Services.AddScoped<IUserSubjectRepository, UserSubjectRepository>();
 //
 builder.Services.AddScoped<IFollowUserHandlers, FollowUserHandlers>();
 builder.Services.AddScoped<IReportPostHandlers, ReportPostHandlers>();
@@ -57,6 +59,8 @@ builder.Services.AddScoped<ICommentHandlers, CommentHandlers>();
 builder.Services.AddScoped<IVoteCommentHandlers, VoteCommentHandlers>();
 builder.Services.AddScoped<IVotePostHandlers, VotePostHandlers>();
 builder.Services.AddScoped<IPostListHandlers, PostListHandlers>();
+builder.Services.AddScoped<IUserMajorHandlers, UserMajorHandlers>();
+builder.Services.AddScoped<IUserSubjectHandlers, UserSubjectHandlers>();
 
 builder.Services.AddControllers();
 
