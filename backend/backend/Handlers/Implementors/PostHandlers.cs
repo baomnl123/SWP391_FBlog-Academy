@@ -17,7 +17,8 @@ namespace backend.Handlers.Implementors
         private readonly IFollowUserRepository _followUserRepository;
         private readonly IPostRepository _postRepository;
         private readonly IUserRepository _userRepository;
-        private readonly IMediaHandlers _MediaHandlers;
+        private readonly IImageHandlers _imageHandlers;
+        private readonly IVideoHandlers _videoHandlers;
         private readonly ISubjectHandlers _subjectHandlers;
         private readonly IMajorHandlers _majorHandlers;
         private readonly IPostSubjectRepository _postSubjectRepository;
@@ -30,7 +31,8 @@ namespace backend.Handlers.Implementors
 
         public PostHandlers(IPostRepository postRepository,
                             IUserRepository userRepository,
-                            IMediaHandlers MediaHandlers,
+                            IImageHandlers imageHandlers,
+                            IVideoHandlers videoHandlers,
                             ISubjectHandlers subjectHandlers,
                             IMajorHandlers majorHandlers,
                             IPostSubjectRepository postSubjectRepository,
@@ -43,7 +45,8 @@ namespace backend.Handlers.Implementors
             _postRepository = postRepository;
             _mapper = mapper;
             _userRepository = userRepository;
-            _MediaHandlers = MediaHandlers;
+            _imageHandlers = imageHandlers;
+            _videoHandlers = videoHandlers;
             _subjectHandlers = subjectHandlers;
             _majorHandlers = majorHandlers;
             _postSubjectRepository = postSubjectRepository;
@@ -96,8 +99,11 @@ namespace backend.Handlers.Implementors
                 var getSubjects = _mapper.Map<ICollection<SubjectDTO>?>(_postSubjectRepository.GetSubjectsOf(approvingPost.Id));
                 approvingPost.Subjects = (getSubjects is not null && getSubjects.Count > 0) ? getSubjects : new List<SubjectDTO>();
 
-                var getMedias = _MediaHandlers.GetMediasByPost(approvingPost.Id);
-                approvingPost.Medias = (getMedias is not null && getMedias.Count > 0) ? getMedias : new List<MediaDTO>();
+                var getImages = _imageHandlers.GetImagesByPost(approvingPost.Id);
+                approvingPost.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
+
+                var getVideos = _videoHandlers.GetVideosByPost(approvingPost.Id);
+                approvingPost.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : new List<VideoDTO>();
 
                 var postUpvote = _votePostRepository.GetAllUsersVotedBy(approvingPost.Id);
 
@@ -122,43 +128,40 @@ namespace backend.Handlers.Implementors
 
         public PostDTO? CreatePost(int userId, string title, string content,
                                                     int[]? subjectIds, int[]? majorIds,
-                                                    string[]? MediaURLs)
+                                                    string[]? imageURLs, string[]? videoURLs)
         {
             //return null if creating post is failed
             var createdPost = CreatePost(userId, title, content);
             if (createdPost == null) return null;
 
             //attach user for post
-            if (AttachUserForPost(createdPost, userId) is null)
-            {
-                return null;
-            }
+            if (AttachUserForPost(createdPost, userId) is null) return null;
 
-            //create Medias for post if it is necessary
-            if (MediaURLs is not null && MediaURLs.Length > 0)
+            //create Images for post if it is necessary
+            if (imageURLs is not null && imageURLs.Length > 0)
             {
-                var Medias = _MediaHandlers.CreateMedia(createdPost.Id, MediaURLs);
-                if (Medias is null || Medias.Count == 0)
+                var images = _imageHandlers.CreateImage(createdPost.Id, imageURLs);
+                if (images is null || images.Count == 0)
                 {
                     Delete(createdPost.Id);
                     return null;
                 };
-                createdPost.Medias = Medias;
+                createdPost.Images = images;
             }
-            else createdPost.Medias = new List<MediaDTO>();
+            else createdPost.Images = new List<ImageDTO>();
 
-            //create Medias for post if it is necessary
-            if (MediaURLs is not null && MediaURLs.Length > 0)
+            //create Videos for post if it is necessary
+            if (videoURLs is not null && videoURLs.Length > 0)
             {
-                var Medias = _MediaHandlers.CreateMedia(createdPost.Id, MediaURLs);
-                if (Medias is null || Medias.Count == 0)
+                var videos = _videoHandlers.CreateVideo(createdPost.Id, videoURLs);
+                if (videos is null || videos.Count == 0)
                 {
                     Delete(createdPost.Id);
                     return null;
                 };
-                createdPost.Medias = Medias;
+                createdPost.Videos = videos;
             }
-            else createdPost.Medias = new List<MediaDTO>();
+            else createdPost.Videos = new List<VideoDTO>();
 
             //add majors for post if it is necessary
             if (majorIds is not null && majorIds.Length > 0)
@@ -369,17 +372,29 @@ namespace backend.Handlers.Implementors
 
         public PostDTO? DisableAllRelatedToPost(PostDTO deletingPost)
         {
-            //disable Medias of post if post has Medias
-            var deletingMedias = _MediaHandlers.GetMediasByPost(deletingPost.Id);
-            if (deletingMedias is not null && deletingMedias.Count > 0)
+            //disable Images of post if post has Medias
+            var deletingImages = _imageHandlers.GetImagesByPost(deletingPost.Id);
+            if (deletingImages is not null && deletingImages.Count > 0)
             {
-                foreach (var Media in deletingMedias)
+                foreach (var image in deletingImages)
                 {
-                    var successDelete = _MediaHandlers.DisableMedia(Media.Id);
+                    var successDelete = _imageHandlers.DisableImage(image.Id);
                     if (successDelete is null) return null;
                 }
             }
-            deletingPost.Medias = new List<MediaDTO>();
+            deletingPost.Images = new List<ImageDTO>();
+
+            //disable Videos of post if post has Medias
+            var deletingVideos = _videoHandlers.GetVideosByPost(deletingPost.Id);
+            if (deletingVideos is not null && deletingVideos.Count > 0)
+            {
+                foreach (var video in deletingVideos)
+                {
+                    var successDelete = _videoHandlers.DisableVideo(video.Id);
+                    if (successDelete is null) return null;
+                }
+            }
+            deletingPost.Videos = new List<VideoDTO>();
 
             //disable subjects of post if post has subjects
             var subjectsOfPost = _postSubjectRepository.GetPostSubjectsByPostId(deletingPost.Id);
@@ -401,6 +416,7 @@ namespace backend.Handlers.Implementors
 
             return deletingPost;
         }
+
         public PostDTO? DenyPost(int reviewerId, int postId)
         {
             //return null if validReviewer is null
@@ -1161,7 +1177,7 @@ namespace backend.Handlers.Implementors
 
         public PostDTO? UpdatePost(int postId, string title, string content,
                                                 int[]? subjectIds, int[]? majorIds,
-                                                string[]? MediaURLs)
+                                                string[]? imageURLs, string[]? videoURLs)
         {
             //check post is existed
             var existedPost = _postRepository.GetPost(postId);
@@ -1181,23 +1197,23 @@ namespace backend.Handlers.Implementors
             var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(updatingPost.Id));
             updatingPost.User = (getUser is not null && getUser.Status) ? getUser : null;
 
-            //updating Medias if it is successful, return null otherwise 
-            if (MediaURLs is not null && MediaURLs.Length > 0)
+            //updating Images if it is successful, return null otherwise 
+            if (imageURLs is not null && imageURLs.Length > 0)
             {
-                var updatedMedias = UpdateMediasOfPost(postId, MediaURLs);
-                if (updatedMedias is null) return null;
-                updatingPost.Medias = updatedMedias;
+                var updatedImages = UpdateImagesOfPost(postId, imageURLs);
+                if (updatedImages is null) return null;
+                updatingPost.Images = updatedImages;
             }
-            else updatingPost.Medias = new List<MediaDTO>();
+            else updatingPost.Images = new List<ImageDTO>();
 
-            //Updating Medias if it is successful.Otherwise, return null
-            if (MediaURLs is not null && MediaURLs.Length > 0)
+            //Updating Videos if it is successful.Otherwise, return null
+            if (videoURLs is not null && videoURLs.Length > 0)
             {
-                var updatedMedias = UpdateMediasOfPost(postId, MediaURLs);
-                if (updatedMedias is null) return null;
-                updatingPost.Medias = updatedMedias;
+                var updatedVideos = UpdateVideosOfPost(postId, videoURLs);
+                if (updatedVideos is null) return null;
+                updatingPost.Videos = updatedVideos;
             }
-            else updatingPost.Medias = new List<MediaDTO>();
+            else updatingPost.Videos = new List<VideoDTO>();
 
             if (subjectIds is not null && subjectIds.Length > 0)
             {
@@ -1250,23 +1266,42 @@ namespace backend.Handlers.Implementors
             return updatingPost;
         }
 
-        public ICollection<MediaDTO>? UpdateMediasOfPost(int postId, string[] MediaURLs)
+        public ICollection<ImageDTO>? UpdateImagesOfPost(int postId, string[] imageURLs)
         {
             //disable Medias of post if post has Medias
-            var Medias = _MediaHandlers.GetMediasByPost(postId);
-            if (Medias is not null && Medias.Count > 0)
+            var images = _imageHandlers.GetImagesByPost(postId);
+            if (images is not null && images.Count > 0)
             {
-                foreach (var Media in Medias)
+                foreach (var image in images)
                 {
-                    var successDelete = _MediaHandlers.DisableMedia(Media.Id);
+                    var successDelete = _imageHandlers.DisableImage(image.Id);
                     if (successDelete is null) return null;
                 }
             }
 
             //update Medias
-            var updatedMedias = _MediaHandlers.CreateMedia(postId, MediaURLs);
-            if (updatedMedias is null || updatedMedias.Count == 0) return new List<MediaDTO>();
-            else return updatedMedias;
+            var updatedImages = _imageHandlers.CreateImage(postId, imageURLs);
+            if (updatedImages is null || updatedImages.Count == 0) return new List<ImageDTO>();
+            else return updatedImages;
+        }
+
+        public ICollection<VideoDTO>? UpdateVideosOfPost(int postId, string[] videoURLs)
+        {
+            //disable Videos of post if post has Videos
+            var videos = _videoHandlers.GetVideosByPost(postId);
+            if (videos is not null && videos.Count > 0)
+            {
+                foreach (var video in videos)
+                {
+                    var successDelete = _videoHandlers.DisableVideo(video.Id);
+                    if (successDelete is null) return null;
+                }
+            }
+
+            //update Videos
+            var updatedVideos = _videoHandlers.CreateVideo(postId, videoURLs);
+            if (updatedVideos is null || updatedVideos.Count == 0) return new List<VideoDTO>();
+            else return updatedVideos;
         }
 
         public ICollection<PostDTO>? ViewPendingPostList()
@@ -1495,11 +1530,11 @@ namespace backend.Handlers.Implementors
 
                                             postDTO.Majors = (getMajors is not null && getMajors.Count > 0) ? getMajors : new List<MajorDTO>();
 
-                                            var getSubjects = _mapper.Map<ICollection<SubjectDTO>?>(_postSubjectRepository.GetSubjectsOf(postDTO.Id));
-                                            postDTO.Subjects = (getSubjects is not null && getSubjects.Count > 0) ? getSubjects : new List<SubjectDTO>();
+                                    var getImages = _imageHandlers.GetImagesByPost(existingPost.Id);
+                                    existingPost.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
 
-                                            var getMedias = _MediaHandlers.GetMediasByPost(postDTO.Id);
-                                            postDTO.Medias = (getMedias is not null && getMedias.Count > 0) ? getMedias : new List<MediaDTO>();
+                                    var getVideos = _videoHandlers.GetVideosByPost(existingPost.Id);
+                                    existingPost.Videos = (getVideos is not null && getVideos.Count > 0) ? getVideos : new List<VideoDTO>();
 
                                             var postUpvote = _votePostRepository.GetAllUsersVotedBy(postDTO.Id);
 
@@ -1582,7 +1617,19 @@ namespace backend.Handlers.Implementors
                                 }
                             }
                         }
+
+        public ICollection<PostDTO>? GetPostsHaveImage(int currentUserId)
+        {
+            var posts = GetAllPosts(currentUserId);
+
+            return posts?.Where(p => p.Images?.Any() == true).ToList();
                     }
+
+        public ICollection<PostDTO>? GetPostsHaveVideo(int currentUserId)
+        {
+            var posts = GetAllPosts(currentUserId);
+
+            return posts?.Where(p => p.Videos?.Any() == true).ToList();
                 }
             }
             else
