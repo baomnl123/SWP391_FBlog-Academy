@@ -226,9 +226,18 @@ namespace backend.Controllers
         /// <param name="password"></param>
         /// <returns></returns>
         [HttpPost("lecturer")]
-        public async Task<IActionResult> CreateLecturer([FromForm] string name, [FromForm] string? avatarUrl, [FromForm] string email, [FromForm] string? password)
+        public async Task<IActionResult> CreateLecturer([FromForm] string name, [FromForm] string? avatarUrl, [FromForm] string email, [FromForm] string password)
         {
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {this.token}");
+            var getUser = _userHandlers.GetUserByEmail(email);
+            if (getUser != null)
+            {
+                if (getUser.Status) return BadRequest("Lecturer is existed !");
+            }
+            if(password.Length <= 8)
+            {
+                return BadRequest("Password must be over 8 characters");
+            }
 
             var content = new StringContent(JsonConvert.SerializeObject(new
             {
