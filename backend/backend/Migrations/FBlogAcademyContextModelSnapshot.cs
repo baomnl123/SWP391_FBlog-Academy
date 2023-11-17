@@ -441,7 +441,6 @@ namespace backend.Migrations
                         .HasColumnName("name");
 
                     b.Property<string>("Password")
-                        .IsRequired()
                         .HasMaxLength(65)
                         .HasColumnType("nvarchar(65)")
                         .HasColumnName("password");
