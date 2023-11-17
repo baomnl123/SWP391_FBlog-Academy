@@ -3,9 +3,10 @@ import React from 'react';
 
 export default function Profile() {
   const textStyle: React.CSSProperties = {
-    fontSize: '20px', 
+    fontSize: '19px', 
     color: '#333', 
-    border: '0.1px solid #333', 
+    border: '0.005px solid #333', 
+    textAlign: 'center',
     
   };
   return (
