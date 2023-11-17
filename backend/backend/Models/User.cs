@@ -44,7 +44,6 @@ namespace backend.Models
         [MaxLength (50)]
         public string Email { get; set; }
 
-        [NotNull]
         [MaxLength(65)]
         public string? Password { get; set; }
 
