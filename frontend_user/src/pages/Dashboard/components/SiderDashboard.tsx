@@ -86,8 +86,8 @@ const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: Si
     <div>
       <div className='mb-6'>
         <SelectLabel
-          label='Tag'
-          placeHolder='Select Tag'
+          label='Subject'
+          placeHolder='Select Subject'
           optionData={tagsData}
           onChange={(value) => {
             onGetTags?.(value)
@@ -96,8 +96,8 @@ const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: Si
       </div>
       <div className='mb-6'>
         <SelectLabel
-          label='Category'
-          placeHolder='Select Category'
+          label='Major'
+          placeHolder='Select Major'
           optionData={categoriesData}
           onChange={(value) => {
             onGetCategories?.(value)

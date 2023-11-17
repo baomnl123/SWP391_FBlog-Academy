@@ -3,6 +3,7 @@
 import { Category, PendingPost, PostByUserId, SavePost, Tag, User, Post } from '@/types'
 import axiosClient from './axiosClient'
 import { CreatePostBodyRequest } from './types/post'
+import { UserMajor } from './types/user'
 
 const api = {
   // post
@@ -60,6 +61,10 @@ const api = {
   getPostByUserId(userId: number) {
     const url = `Post/user/${userId}`
     return axiosClient.get<unknown, PostByUserId[]>(url)
+  },
+  getUserMajorbyID(userID: number) {
+    const url = `User/${userID}/majors`
+    return axiosClient.get<unknown, UserMajor>(url)
   },
 
   //category
@@ -153,6 +158,8 @@ const api = {
     })
   },
 
+ 
+
   reportPost({ reporterID, postID, content }: { reporterID: number; postID: number; content: string }) {
     const url = 'ReportPost'
     const formData = new FormData()
@@ -164,6 +171,7 @@ const api = {
       }
     })
   },
+  
 
   // get user by email
   getUserByEmail({ email }: { email: string }) {
@@ -188,6 +196,7 @@ const api = {
       }
     })
   },
+
 
   promote(id: number) {
     const url = `User/${id}/promote`
@@ -287,7 +296,7 @@ const api = {
     return axiosClient.put(url, payload)
   },
 
-  votePost({ currentUserId, postId, vote }: { currentUserId: number; postId: number; vote: boolean }) {
+  votePost({ currentUserId, postId, vote }: { currentUserId: number; postId: number; vote: number }) {
     const url = 'VotePost'
     const formData = new FormData()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -300,7 +309,7 @@ const api = {
     })
   },
 
-  voteUpdate({ currentUserId, postId, vote }: { currentUserId: number; postId: number; vote: boolean }) {
+  voteUpdate({ currentUserId, postId, vote }: { currentUserId: number; postId: number; vote: number }) {
     const url = 'VotePost'
     const formData = new FormData()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

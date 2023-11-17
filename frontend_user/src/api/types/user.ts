@@ -39,3 +39,12 @@ export interface User {
   status: boolean
   isAwarded: boolean
 }
+
+export interface UserMajor {
+  id: number
+  adminId: number
+  majorName: string
+  createdAt: Date
+  updatedAt: Date
+  status: boolean
+}

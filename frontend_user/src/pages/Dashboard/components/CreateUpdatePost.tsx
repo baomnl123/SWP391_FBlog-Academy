@@ -113,8 +113,8 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
       const tagIds = res.tags?.map((item) => item.id)
       form.setFieldValue('title', res?.title)
       form.setFieldValue('content', res?.content)
-      form.setFieldValue('categoryIds', categories)
-      form.setFieldValue('tagIds', tagIds)
+      form.setFieldValue('Major', categories)
+      form.setFieldValue('Subject', tagIds)
 
       const filesUpdated: FileData[] = []
       const fileUploads: FileUploaded[] = []
@@ -305,11 +305,11 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
           </div>
 
           <div className='w-[35%]'>
-            <Form.Item name='categoryIds' rules={[{ required: true, message: 'Please select your category' }]}>
+            <Form.Item name='categoryIds' rules={[{ required: true, message: 'Please select your Major' }]}>
               <Select
                 mode='multiple'
                 style={{ width: '100%' }}
-                placeholder='Category'
+                placeholder='Major'
                 options={categoryOptions}
                 loading={categoryLoading}
               />
@@ -323,7 +323,7 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
           </div>
 
           <div className='w-[35%]'>
-            <Form.Item name='tagIds' rules={[{ required: true, message: 'Please select your tag!' }]}>
+            <Form.Item name='tagIds' rules={[{ required: true, message: 'Please select your Subject!' }]}>
               <Select
                 mode='multiple'
                 style={{ width: '100%' }}

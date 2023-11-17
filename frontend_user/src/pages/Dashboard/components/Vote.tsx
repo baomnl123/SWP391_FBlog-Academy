@@ -21,8 +21,8 @@ const Vote = ({
   vote: number
   userId?: number
   postId?: number
-  upvote?: boolean
-  downvote?: boolean
+  upvote?: number
+  downvote?: number
   usersVote?: User[]
   onVoteSuccess?: () => void
 }) => {
@@ -62,20 +62,20 @@ const Vote = ({
     <>
       <Button
         onClick={async () => {
-          if (upvote) {
+          if (vote === 1) {
             await onRemoveVote()
           } else {
-            if (!upvote && !downvote) {
+            if (vote === 0) {
               await votePost({
                 currentUserId: userId ?? 0,
                 postId: postId ?? 0,
-                vote: true
+                vote: 1
               })
             } else {
               await voteUpdate({
                 currentUserId: userId ?? 0,
                 postId: postId ?? 0,
-                vote: true
+                vote: 1
               })
             }
           }
@@ -88,20 +88,20 @@ const Vote = ({
       </Typography>
       <Button
         onClick={async () => {
-          if (downvote) {
+          if (vote === 2) {
             await onRemoveVote()
           } else {
-            if (!upvote && !downvote) {
+            if (vote === 0) {
               await votePost({
                 currentUserId: userId ?? 0,
                 postId: postId ?? 0,
-                vote: false
+                vote: 2
               })
             } else {
               await voteUpdate({
                 currentUserId: userId ?? 0,
                 postId: postId ?? 0,
-                vote: false
+                vote: 2
               })
             }
           }
