@@ -30,7 +30,7 @@ const BaseLayout = ({
   const isDarkMode = useSelector((state: RootState) => state.themeReducer.darkMode)
   const user = useSelector((state: RootState) => state.userReducer.user)
   const [loading, setLoading] = useState(false)
-  const { data, refresh } = useRequest(
+  const { data } = useRequest(
     async () => {
       const response = await api.getUserById(user?.id ?? getLocalStorage('id'))
       return response
