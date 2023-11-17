@@ -10,7 +10,7 @@ using backend.Models;
 namespace backend.Migrations
 {
     [DbContext(typeof(FBlogAcademyContext))]
-    [Migration("20231116153224_Re-initial DB")]
+    [Migration("20231117030538_Re-initial DB")]
     partial class ReinitialDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -443,7 +443,6 @@ namespace backend.Migrations
                         .HasColumnName("name");
 
                     b.Property<string>("Password")
-                        .IsRequired()
                         .HasMaxLength(65)
                         .HasColumnType("nvarchar(65)")
                         .HasColumnName("password");

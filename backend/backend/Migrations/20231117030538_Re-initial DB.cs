@@ -48,7 +48,7 @@ namespace backend.Migrations
                     avatar_url = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    password = table.Column<string>(type: "nvarchar(65)", maxLength: 65, nullable: false),
+                    password = table.Column<string>(type: "nvarchar(65)", maxLength: 65, nullable: true),
                     role = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime", nullable: false),
                     updated_at = table.Column<DateTime>(type: "datetime", nullable: true),
