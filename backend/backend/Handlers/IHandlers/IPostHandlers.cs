@@ -23,15 +23,16 @@ namespace backend.Handlers.IHandlers
         //Get post by post id
         public PostDTO? GetPostBy(int postId);
         //Get posts have Media
-        public ICollection<PostDTO>? GetPostsHaveMedia(int currentUserId);
+        public ICollection<PostDTO>? GetPostsHaveImage(int currentUserId);
+        public ICollection<PostDTO>? GetPostsHaveVideo(int currentUserId);
         //Get top 5 post with highest vote.
         public ICollection<PostDTO>? GetTop5VotedPost(int currentUserId);
 
 
         //Create post
         public PostDTO? CreatePost(int userId, string title, string content, 
-                                                    int[]? subjectIds, int[]? majorIds, 
-                                                    string[]? MediaURLs);
+                                                    int[]? subjectIds, int[]? majorIds,
+                                                    string[]? imageURLs, string[]? videoURLs);
         public PostDTO? CreatePost(int userId, string title, string content);
         public ICollection<SubjectDTO>? AttachSubjectsForPost(PostDTO createdPost, int[] subjectIds);
         public ICollection<MajorDTO>? AttachMajorsForPost(PostDTO createdPost, int[] majorIds);
@@ -39,8 +40,9 @@ namespace backend.Handlers.IHandlers
         //Update post
         public PostDTO? UpdatePost(int postId, string title, string content,
                                                 int[] subjectIds, int[] majorIds,
-                                                string[] MediaURLs);
-        public ICollection<MediaDTO>? UpdateMediasOfPost(int postId, string[] MediaURLs);
+                                                string[]? imageURLs, string[]? videoURLs);
+        public ICollection<ImageDTO>? UpdateImagesOfPost(int postId, string[] imageURLs);
+        public ICollection<VideoDTO>? UpdateVideosOfPost(int postId, string[] videoURLs);
 
         //Delete post
         public PostDTO? DisablePost(int postId);

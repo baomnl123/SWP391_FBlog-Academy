@@ -1,6 +1,6 @@
 ﻿namespace backend.DTO
 {
-    public class MediaDTO
+    public class ImageDTO
     {
         public int Id { get; set; }
         public int PostId { get; set; }

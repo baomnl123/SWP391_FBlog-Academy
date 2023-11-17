@@ -167,10 +167,10 @@ namespace backend.Controllers
                                         [FromForm] string content,
                                         [FromQuery] int[]? tagIds,
                                         [FromQuery] int[]? categoryIds,
-                                        [FromQuery] string[]? MediaURLs,
-                                        [FromQuery] string[]? mediaURLs)
+                                        [FromQuery] string[]? imageURLs,
+                                        [FromQuery] string[]? videoURLs)
         {
-            var newPost = _postHandlers.CreatePost(userId, title, content, tagIds, categoryIds, MediaURLs);
+            var newPost = _postHandlers.CreatePost(userId, title, content, tagIds, categoryIds, imageURLs, videoURLs);
             if (newPost != null)
             {
                 return Ok(newPost);
@@ -195,10 +195,10 @@ namespace backend.Controllers
                                         [FromForm] string content,
                                         [FromQuery] int[] tagIds,
                                         [FromQuery] int[] categoryIds,
-                                        [FromQuery] string[] MediaURLs,
-                                        [FromQuery] string[] mediaURLs)
+                                        [FromQuery] string[] imageURLs,
+                                        [FromQuery] string[] videoURLs)
         {
-            var updatedPost = _postHandlers.UpdatePost(postId, title, content, tagIds, categoryIds, MediaURLs);
+            var updatedPost = _postHandlers.UpdatePost(postId, title, content, tagIds, categoryIds, imageURLs, videoURLs);
             if (updatedPost != null)
             {
                 return Ok(updatedPost);
@@ -290,13 +290,13 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Get Posts which have media
+        /// Get Posts which have image
         /// </summary>
         /// <returns></returns>
-        [HttpGet("all-post-has-media")]
-        public IActionResult GetPostsHavemedia(int currentUserId)
+        [HttpGet("all-post-has-image")]
+        public IActionResult GetPostsHaveImage(int currentUserId)
         {
-            var posts = _postHandlers.GetPostsHaveMedia(currentUserId);
+            var posts = _postHandlers.GetPostsHaveImage(currentUserId);
             if (posts is null || posts.Count == 0)
             {
                 posts = new List<PostDTO>();
@@ -305,13 +305,13 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Get Posts which have Media
+        /// Get Posts which have video
         /// </summary>
         /// <returns></returns>
-        [HttpGet("all-post-has-Media")]
-        public IActionResult GetPostsHaveMedia(int currentUserId)
+        [HttpGet("all-post-has-video")]
+        public IActionResult GetPostsHaveVideo(int currentUserId)
         {
-            var posts = _postHandlers.GetPostsHaveMedia(currentUserId);
+            var posts = _postHandlers.GetPostsHaveVideo(currentUserId);
             if (posts is null || posts.Count == 0)
             {
                 posts = new List<PostDTO>();
