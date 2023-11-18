@@ -3,10 +3,10 @@ import { Form, Input, Modal, ModalProps, Space, message } from 'antd'
 import { useWatch } from 'antd/es/form/Form'
 import { useEffect } from 'react'
 
-const CreateTag = (
+const CreateSubject = (
   props: ModalProps & {
     initialValues?: {
-      tag?: {
+      subject?: {
         id: number
         name: string
       }
@@ -16,7 +16,7 @@ const CreateTag = (
 ) => {
   const { open, onOk, onCancel, initialValues, onSuccess, ...rest } = props
   const [form] = Form.useForm()
-  const tagName = useWatch('name', form)
+  const subjectName = useWatch('name', form)
 
   // const { data } = useRequest(
   //   async () => {
@@ -30,9 +30,9 @@ const CreateTag = (
   //   }
   // )
 
-  // const { data: detailTag, run } = useRequest(
+  // const { data: detailSubject, run } = useRequest(
   //   async (id: number) => {
-  //     const response = await api.getTagById(id)
+  //     const response = await api.getSubjectById(id)
   //     return response
   //   },
   //   {
@@ -45,10 +45,10 @@ const CreateTag = (
 
   useEffect(() => {
     form.setFieldsValue({
-      name: initialValues?.tag?.name,
-      category: {}
+      name: initialValues?.subject?.name,
+      major: {}
     })
-    // if(initialValues?.tag?.id) {
+    // if(initialValues?.subject?.id) {
     //   form.setFieldsValue()
     // }
   }, [form, initialValues])
@@ -56,7 +56,7 @@ const CreateTag = (
   return (
     <Modal
       {...rest}
-      title='Update Tag'
+      title='Update Subject'
       destroyOnClose
       open={open}
       onOk={(e) => {
@@ -68,7 +68,7 @@ const CreateTag = (
         onCancel?.(e)
       }}
       okButtonProps={{
-        disabled: initialValues?.tag?.name === tagName || tagName === ''
+        disabled: initialValues?.subject?.name === subjectName || subjectName === ''
       }}
     >
       <Form
@@ -78,14 +78,14 @@ const CreateTag = (
           try {
             const adminId = localStorage.getItem('id') ?? ''
             const formData = new FormData()
-            if (initialValues?.tag?.id) {
-              formData.append('newTagName', value.name)
-              await api.updateTag(initialValues.tag.id, formData)
-              message.success('Update tag successfully')
+            if (initialValues?.subject?.id) {
+              formData.append('newSubjectName', value.name)
+              await api.updateSubject(initialValues.subject.id, formData)
+              message.success('Update subject successfully')
             } else {
-              formData.append('tagName', value.name)
-              await api.createTag(Number(adminId), value.category, formData)
-              message.success('Create tag successfully')
+              formData.append('subjectName', value.name)
+              await api.createSubject(Number(adminId), value.major, formData)
+              message.success('Create subject successfully')
             }
             onSuccess?.()
           } catch (e) {
@@ -94,19 +94,19 @@ const CreateTag = (
         }}
       >
         <Space className='w-full' direction='vertical' size={20}>
-          <Form.Item label='Name' name='name' rules={[{ required: true, message: 'Name tag is required' }]}>
-            <Input placeholder='Name tag' />
+          <Form.Item label='Name' name='name' rules={[{ required: true, message: 'Name subject is required' }]}>
+            <Input placeholder='Name subject' />
           </Form.Item>
           {/* <Form.Item
-            label='Category'
-            name='category'
-            rules={[{ required: true, message: 'Name category is required' }]}
+            label='Major'
+            name='major'
+            rules={[{ required: true, message: 'Name major is required' }]}
           >
             <Select
               allowClear
-              placeholder='Select category'
+              placeholder='Select major'
               options={data?.map((option) => ({
-                label: option.categoryName,
+                label: option.majorName,
                 value: option.id
               }))}
             />
@@ -117,4 +117,4 @@ const CreateTag = (
   )
 }
 
-export default CreateTag
+export default CreateSubject

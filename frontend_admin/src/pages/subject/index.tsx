@@ -3,12 +3,12 @@ import { useAntdTable } from 'ahooks'
 import { Button, ConfigProvider, Form, Input, Modal, Space, Table, Typography, message } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import { useCallback, useState } from 'react'
-import CreateTag from './CreateTag'
+import CreateSubject from './CreateSubject'
 
 type DataType = {
   id: number
   name: string
-  category: string
+  major: string
 }
 
 type Result = {
@@ -16,12 +16,12 @@ type Result = {
   list: DataType[]
 }
 
-export default function Tag() {
-  // data category
-  const [createTag, setCreateTag] = useState(false)
+export default function Subject() {
+  // data major
+  const [createSubject, setCreateSubject] = useState(false)
   const [initialValues, setInitialValues] = useState<
     | {
-        tag?: {
+        subject?: {
           id: number
           name: string
         }
@@ -32,16 +32,16 @@ export default function Tag() {
   const [form] = Form.useForm()
 
   const getTableData = async (_: never, { search }: { search: string }): Promise<Result> => {
-    const response = await api.getTags()
-    const data = response.filter((item) => item.tagName.toLowerCase().includes(search?.toLowerCase() ?? ''))
+    const response = await api.getAllSubject()
+    const data = response.filter((item) => item.subjectName.toLowerCase().includes(search?.toLowerCase() ?? ''))
     console.log('search', search)
 
     return Promise.resolve({
       total: data.length,
       list: data.map((item) => ({
         id: item.id,
-        name: item.tagName,
-        category: item.categories.map((category) => category.categoryName).join(', ')
+        name: item.subjectName,
+        major: item.major.map((major) => major.majorName).join(', ')
       }))
     })
   }
@@ -54,7 +54,7 @@ export default function Tag() {
   const onDelete = useCallback(
     async (id: number) => {
       try {
-        await api.deleteTag(id)
+        await api.deleteSubject(id)
         message.success('Delete successfully')
         refresh()
       } catch (e) {
@@ -78,9 +78,9 @@ export default function Tag() {
       dataIndex: 'name'
     },
     {
-      title: 'Category',
-      key: 'category',
-      dataIndex: 'category'
+      title: 'Major',
+      key: 'major',
+      dataIndex: 'major'
     },
     {
       title: 'Action',
@@ -93,12 +93,12 @@ export default function Tag() {
             onClick={(e) => {
               e.stopPropagation()
               setInitialValues({
-                tag: {
+                subject: {
                   id: record.id,
                   name: record.name
                 }
               })
-              setCreateTag(true)
+              setCreateSubject(true)
             }}
           >
             Update
@@ -109,9 +109,9 @@ export default function Tag() {
             onClick={(e) => {
               e.stopPropagation()
               modal.confirm({
-                title: 'Delete tag',
+                title: 'Delete subject',
                 centered: true,
-                content: 'Do you want to delete this tag?',
+                content: 'Do you want to delete this subject?',
                 onOk() {
                   onDelete(record.id)
                 },
@@ -155,10 +155,10 @@ export default function Tag() {
           <Button
             type='primary'
             onClick={() => {
-              setCreateTag(true)
+              setCreateSubject(true)
             }}
           >
-            Create Tag
+            Create Subject
           </Button>
         </Flex> */}
         <Space align='start' direction='vertical' className='w-full'>
@@ -166,18 +166,18 @@ export default function Tag() {
         </Space>
         <Table rowKey='id' {...tableProps} columns={columns} />
       </Space>
-      <CreateTag
+      <CreateSubject
         initialValues={initialValues}
         centered
-        open={createTag}
+        open={createSubject}
         onCancel={() => {
-          setCreateTag(false)
+          setCreateSubject(false)
           setInitialValues(undefined)
         }}
         onSuccess={() => {
           refresh()
           setInitialValues(undefined)
-          setCreateTag(false)
+          setCreateSubject(false)
         }}
       />
       {contextHolder}
