@@ -555,5 +555,13 @@ namespace backend.Handlers.Implementors
             listDTO.OrderByDescending(u => u.followerNumber).ThenByDescending(u => u.postNumber);
             return listDTO;
         }
+
+        public UserDTO? GetBannedUser(int userID)
+        {
+            var getUser = _userRepository.GetUser(userID);
+            if (getUser == null) return null;
+            var userDTO = _mapper.Map<UserDTO>(getUser);
+            return userDTO;
+        }
     } 
 }

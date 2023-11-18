@@ -295,7 +295,7 @@ namespace backend.Controllers
         [HttpPost("{userID}/unban")]
         public async Task<IActionResult> UnbanUser(int userID)
         {
-            var getUser = _userHandlers.GetUser(userID);
+            var getUser = _userHandlers.GetBannedUser(userID);
             if (getUser == null)
             {
                 return BadRequest("User is invalid in DB !");

@@ -13,6 +13,7 @@ namespace backend.Handlers.IHandlers
         public UserDTO? GetUser(int userID);
         public ICollection<UserDTO>? GetStudents();
         public ICollection<UserDTO>? GetBannedUsers();
+        public UserDTO? GetBannedUser(int userID);
         //Modify User
         public UserDTO? CreateUser(string name,string avatarURL, string email, string password);
         public UserDTO? CreateLecturer(string name, string avatarURL, string email, string password);
