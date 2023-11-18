@@ -866,10 +866,10 @@ namespace backend.Handlers.Implementors
             var postOwner = _userRepository.GetUser(getUser.Id);
 
             var followRelationship = _followUserRepository.GetFollowRelationship(currentUser, postOwner);
-            if (followRelationship == null || !followRelationship.Status) return null;
-
-            getUser.isFollowed = true;
-
+            if (followRelationship != null)
+            {
+                if (followRelationship.Status) getUser.isFollowed = true;
+            }
             existingPost.User = (getUser is not null && getUser.Status) ? getUser : null;
 
             var getMajors = _mapper.Map<ICollection<MajorDTO>?>(_postMajorRepository.GetMajorsOf(existingPost.Id));
@@ -900,8 +900,11 @@ namespace backend.Handlers.Implementors
                         if (user == null || !user.Status) continue;
                         followRelationship = _followUserRepository.GetFollowRelationship(currentUser, user);
 
-                        if (followRelationship == null || !followRelationship.Status) continue;
-                        userDTO.isFollowed = true;
+                        if (followRelationship != null)
+                        {
+                            if (followRelationship.Status) userDTO.isFollowed = true;
+                        }
+
                     }
                 }
             }
@@ -925,8 +928,11 @@ namespace backend.Handlers.Implementors
                         if (user == null || !user.Status) continue;
                         followRelationship = _followUserRepository.GetFollowRelationship(currentUser, user);
 
-                        if (followRelationship == null || !followRelationship.Status) continue;
-                        userDTO.isFollowed = true;
+                        if (followRelationship != null)
+                        {
+                            if (followRelationship.Status) userDTO.isFollowed = true;
+                        }
+
                     }
                 }
             }
@@ -1144,8 +1150,10 @@ namespace backend.Handlers.Implementors
                                 if (userUpvote == null || !userUpvote.Status) continue;
 
                                 followRelationship = _followUserRepository.GetFollowRelationship(validViewer, userUpvote);
-                                if (followRelationship == null || !followRelationship.Status) continue;
-                                userUpvoteDTO.isFollowed = true;
+                                if (followRelationship != null)
+                                {
+                                    if (followRelationship.Status) userUpvoteDTO.isFollowed = true;
+                                }
                             }
                         }
                     }
@@ -1167,8 +1175,10 @@ namespace backend.Handlers.Implementors
                                 var userDownvote = _userRepository.GetUser(userDownvoteDTO.Id);
                                 if (userDownvote == null || !userDownvote.Status) continue;
                                 followRelationship = _followUserRepository.GetFollowRelationship(validViewer, userDownvote);
-                                if (followRelationship == null || !followRelationship.Status) continue;
-                                userDownvoteDTO.isFollowed = true;
+                                if (followRelationship != null)
+                                {
+                                    if (followRelationship.Status) userDownvoteDTO.isFollowed = true;
+                                }
                             }
                         }
                     }
@@ -1237,8 +1247,10 @@ namespace backend.Handlers.Implementors
                                 if (userUpvote == null || !userUpvote.Status) continue;
 
                                 followRelationship = _followUserRepository.GetFollowRelationship(validViewer, userUpvote);
-                                if (followRelationship == null || !followRelationship.Status) continue;
-                                userUpvoteDTO.isFollowed = true;
+                                if (followRelationship != null)
+                                {
+                                    if (followRelationship.Status) userUpvoteDTO.isFollowed = true;
+                                }
                             }
                         }
                     }
@@ -1260,8 +1272,10 @@ namespace backend.Handlers.Implementors
                                 var userDownvote = _userRepository.GetUser(userDownvoteDTO.Id);
                                 if (userDownvote == null || !userDownvote.Status) continue;
                                 followRelationship = _followUserRepository.GetFollowRelationship(validViewer, userDownvote);
-                                if (followRelationship == null || !followRelationship.Status) continue;
-                                userDownvoteDTO.isFollowed = true;
+                                if (followRelationship != null)
+                                {
+                                    if (followRelationship.Status) userDownvoteDTO.isFollowed = true;
+                                }
                             }
                         }
                     }
