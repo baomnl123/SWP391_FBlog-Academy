@@ -73,7 +73,7 @@ const RightSiderDashboard = ({
             onCategoryChange?.(categorySelect === value ? undefined : value)
           }}
           idSelect={categorySelect}
-          title='Trending Category'
+          title='Trending Major'
           data={(trendingCategory ?? []).map((item) => ({
             title: item.categoryName,
             value: item.id
@@ -86,7 +86,7 @@ const RightSiderDashboard = ({
             setTagSelect(tagSelect === value ? -1 : value)
             onTagChange?.(tagSelect === value ? undefined : value)
           }}
-          title='Trending Tag'
+          title='Trending Subject'
           idSelect={tagSelect}
           data={(trendingTag ?? []).map((item) => ({
             title: item.tagName,

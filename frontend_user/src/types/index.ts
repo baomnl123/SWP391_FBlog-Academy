@@ -64,6 +64,8 @@ export type User = {
   email: string
   avatarUrl: string
   role: string
+  followerNumber: number
+  postNumber: number
   createdAt: Date
   updatedAt: Date
   status: boolean
@@ -74,7 +76,7 @@ export type User = {
 export type Category = {
   id: number
   adminId: number
-  categoryName: string
+  majorName: string
   createdAt: Date
   updatedAt: Date
   status: boolean
@@ -83,7 +85,7 @@ export type Category = {
 export type Tag = {
   id: number
   adminId: number
-  tagName: string
+  subjectName: string
   createdAt: Date
   updatedAt: null
   status: boolean

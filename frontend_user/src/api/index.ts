@@ -27,7 +27,7 @@ const api = {
     currentUserId?: number
     searchValue?: string
   }) {
-    const url = 'Post/category-tag'
+    const url = 'Post/on-load'
     return axiosClient.get<unknown, PendingPost[]>(url, {
       params: {
         categoryID,
@@ -157,7 +157,16 @@ const api = {
       }
     })
   },
+  createdUserMajor ({userID, majorID}: {userID:number ; majorID:number}){
+  const url = `User/${userID}/major`
+  return axiosClient.post(url, {
+    params: {
+      userID,
+      majorID
+    }
 
+  })
+  },
  
 
   reportPost({ reporterID, postID, content }: { reporterID: number; postID: number; content: string }) {
@@ -171,7 +180,6 @@ const api = {
       }
     })
   },
-  
 
   // get user by email
   getUserByEmail({ email }: { email: string }) {
@@ -196,7 +204,6 @@ const api = {
       }
     })
   },
-
 
   promote(id: number) {
     const url = `User/${id}/promote`

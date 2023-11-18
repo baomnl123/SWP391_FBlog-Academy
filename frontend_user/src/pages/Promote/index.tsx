@@ -73,9 +73,13 @@ export default function Promote() {
                     className='cursor-pointer'
                     onClick={() => navigate(`/profile/${user?.id}`)}
                   >
-                    <Space size={10}>
+                    <Space size={20}>
                       <Avatar size={64} src={user.avatarUrl} />
                       <Typography.Text>{user.name}</Typography.Text>
+                    </Space>
+                    <Space size={30}>
+                      <Typography.Text> {user.followerNumber} Followers</Typography.Text>
+                      <Typography.Text>{user.postNumber} Post</Typography.Text>
                     </Space>
                     {user.role === 'MD' && (
                       <Button

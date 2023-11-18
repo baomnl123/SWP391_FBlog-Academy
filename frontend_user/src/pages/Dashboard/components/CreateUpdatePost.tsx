@@ -113,8 +113,8 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
       const tagIds = res.tags?.map((item) => item.id)
       form.setFieldValue('title', res?.title)
       form.setFieldValue('content', res?.content)
-      form.setFieldValue('Major', categories)
-      form.setFieldValue('Subject', tagIds)
+      form.setFieldValue('categoryIds', categories)
+      form.setFieldValue('tagIds', tagIds)
 
       const filesUpdated: FileData[] = []
       const fileUploads: FileUploaded[] = []
@@ -163,7 +163,7 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
     if (categoriesData) {
       const categories: SelectProps['options'] = categoriesData.map((item) => {
         return {
-          label: item.categoryName,
+          label: item.majorName,
           value: item.id
         }
       })
@@ -175,7 +175,7 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
     if (tagsData) {
       const options: SelectProps['options'] = tagsData.map((item) => {
         return {
-          label: item.tagName,
+          label: item.subjectName,
           value: item.id
         }
       })
@@ -305,7 +305,7 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
           </div>
 
           <div className='w-[35%]'>
-            <Form.Item name='categoryIds' rules={[{ required: true, message: 'Please select your Major' }]}>
+            <Form.Item name='categoryIds' rules={[{ required: true, message: 'Please select your category' }]}>
               <Select
                 mode='multiple'
                 style={{ width: '100%' }}
@@ -323,11 +323,11 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
           </div>
 
           <div className='w-[35%]'>
-            <Form.Item name='tagIds' rules={[{ required: true, message: 'Please select your Subject!' }]}>
+            <Form.Item name='tagIds' rules={[{ required: true, message: 'Please select your tag!' }]}>
               <Select
                 mode='multiple'
                 style={{ width: '100%' }}
-                placeholder='Tag'
+                placeholder='Subject'
                 options={tagOptions}
                 loading={tagsLoading}
               />

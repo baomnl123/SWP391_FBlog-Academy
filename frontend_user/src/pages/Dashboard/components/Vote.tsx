@@ -72,6 +72,7 @@ const Vote = ({
                 vote: 1
               })
             } else {
+              // console.log(vote)
               await voteUpdate({
                 currentUserId: userId ?? 0,
                 postId: postId ?? 0,
@@ -81,7 +82,7 @@ const Vote = ({
           }
         }}
       >
-        <IconUpLong width={15} height={15} color={upvote && !downvote ? 'blue' : isDarkMode ? '#fff' : '#000'} />
+        <IconUpLong width={15} height={15} color={vote === 1 ? 'blue' : isDarkMode ? '#fff' : '#000'} />
       </Button>
       <Typography className='min-w-[50px] cursor-pointer' onClick={() => setOpen(true)}>
         {vote}
@@ -107,7 +108,7 @@ const Vote = ({
           }
         }}
       >
-        <IconDownLong width={15} height={15} color={downvote && !upvote ? 'blue' : isDarkMode ? '#fff' : '#000'} />
+        <IconDownLong width={15} height={15} color={vote === 2 ? 'blue' : isDarkMode ? '#fff' : '#000'} />
       </Button>
       <ModalUserVote open={open} users={usersVote ?? ([] as User[])} footer={false} onCancel={() => setOpen(false)} />
     </>

@@ -39,7 +39,6 @@ export interface User {
   status: boolean
   isAwarded: boolean
 }
-
 export interface UserMajor {
   id: number
   adminId: number
@@ -48,3 +47,4 @@ export interface UserMajor {
   updatedAt: Date
   status: boolean
 }
+

@@ -58,7 +58,7 @@ export default function UserProfile() {
   )
   const { data: userMajor } = useRequest(
     async () => {
-      const response = await api.getUserMajorbyID(Number(id ?? 0)) 
+      const response = await api.getUserMajorbyID(Number(id ?? 0))
       return { ...response }
     },
     {
@@ -73,6 +73,7 @@ export default function UserProfile() {
       }
     }
   )
+  console.log(userMajor)
 
   const { data: posts } = useRequest(
     async () => {
@@ -315,6 +316,7 @@ export default function UserProfile() {
               </Flex>
             </div>
           </div>
+
           {posts?.map((post) => (
             <Card
               className='mb-5'
@@ -366,7 +368,7 @@ export default function UserProfile() {
           }}
         />
         <ModalMajor
-        
+          idPost={idPost}
           isOpen={openReport}
           setModal={(value) => {
             if (!value) {
