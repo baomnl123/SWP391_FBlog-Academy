@@ -2,6 +2,7 @@ import api from '@/api'
 import BaseLayout from '@/components/BaseLayout'
 import Card from '@/components/Card'
 import { RootState } from '@/store'
+
 import { getLocalStorage } from '@/utils/helpers'
 import { CheckCircleFilled, MoreOutlined } from '@ant-design/icons'
 import { useRequest } from 'ahooks'
@@ -13,14 +14,21 @@ import { useParams } from 'react-router-dom'
 import ModalListUsers from './components/ModalListUsers'
 import { User } from '@/types'
 import SubSide from '../Dashboard/components/SubSide'
+import IconReport from '@/assets/images/svg/IconReport'
+import { UserAddOutlined } from '@ant-design/icons'
+
+import ModalMajor from './components/ModalMajor'
 
 export default function UserProfile() {
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
-  const [idPost, setIdPost] = useState<number | undefined>()
   const [titleModal, setTitleModal] = useState('Followers')
   const [users, setUsers] = useState<User[]>([])
   const [modal, contextHolder] = Modal.useModal()
+  const [openPost, setOpenPost] = useState(false)
+  const [idPost, setIdPost] = useState<undefined | number>(undefined)
+  const [openReport, setOpenReport] = useState(false)
+  const isDarkMode = useSelector((state: RootState) => state.themeReducer.darkMode)
 
   // const navigate = useNavigate()
   const { id } = useParams()
@@ -35,6 +43,23 @@ export default function UserProfile() {
       const follow = await runAsyncFollower()
       const isFollowed = !!follow.find((user) => user.id === Number(currentId ?? getLocalStorage('id')))
       return { ...response, isFollowed }
+    },
+    {
+      onBefore() {
+        setLoading(true)
+      },
+      onFinally() {
+        setLoading(false)
+      },
+      onError(e) {
+        console.error(e)
+      }
+    }
+  )
+  const { data: userMajor } = useRequest(
+    async () => {
+      const response = await api.getUserMajorbyID(Number(id ?? 0)) 
+      return { ...response }
     },
     {
       onBefore() {
@@ -249,6 +274,7 @@ export default function UserProfile() {
                     </Typography.Link>
                   )}
                 </Space>
+
                 <Flex gap={100} align='center'>
                   <Typography.Text>{posts?.length ?? 0} Posts</Typography.Text>
                   <Typography.Text
@@ -273,6 +299,18 @@ export default function UserProfile() {
                   >
                     {following?.length ?? 0} Following
                   </Typography.Text>
+                  <div key={4} className='flex justify-end'>
+                    <div
+                      onClick={() => {
+                        setOpenReport(true)
+                      }}
+                    >
+                      <UserAddOutlined color={isDarkMode ? '#fff' : '#000'} />
+                    </div>
+                  </div>
+                </Flex>
+                <Flex gap={100} align='center'>
+                  <Typography.Text>Major : {userMajor?.majorName}</Typography.Text>
                 </Flex>
               </Flex>
             </div>
@@ -325,6 +363,16 @@ export default function UserProfile() {
           users={users}
           onToggleFollow={() => {
             titleModal === 'Followers' ? getFollower() : getFollowing()
+          }}
+        />
+        <ModalMajor
+        
+          isOpen={openReport}
+          setModal={(value) => {
+            if (!value) {
+              setIdPost(undefined)
+            }
+            setOpenReport(value)
           }}
         />
       </Spin>
