@@ -52,9 +52,9 @@ namespace backend.Handlers.Implementors
 
                 var existedVoteDTO = _mapper.Map<VotePostDTO>(existedVote);
                 existedVoteDTO.User = _mapper.Map<UserDTO>(existedUser);
-                existedVoteDTO.Post = _mapper.Map<PostDTO>(existedPost);
+                existedVoteDTO.Post = _mapper.Map<PostDTO>(_postHandlers.GetPostBy(existedPost.Id,currentUserId));
 
-                return existedVoteDTO;
+                 return existedVoteDTO;
             }
 
             //Create new vote

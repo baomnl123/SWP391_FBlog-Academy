@@ -67,7 +67,7 @@ namespace backend.Controllers
             if (createdVote.Vote != 0)
             {
                 //send email
-                var existedEmail = createdVote.Post.User.Email;
+                 var existedEmail = createdVote.Post.User.Email;
                 var existedSubject = $"{createdVote.User.Name} has voted your post.";
                 var existedMessage = $"{createdVote.User.Name} has voted {createdVote.Post.Title}.\n\nFaithfully,FBlog Academy";
 
