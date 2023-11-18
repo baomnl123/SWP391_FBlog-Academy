@@ -1,52 +1,52 @@
-import { Categories, Lecturers, ReportPost, Tag, UserEmail } from '@/types'
+import { Major, Lecturers, ReportPost, Subject, UserEmail } from '@/types'
 import axiosClient from './axios'
 
 const api = {
-  // category
-  getCategories() {
-    const url = 'Category/all'
-    return axiosClient.get<unknown, Categories[]>(url)
+  // major
+  getAllMajor() {
+    const url = 'Major/all'
+    return axiosClient.get<unknown, Major[]>(url)
   },
-  createCategory(adminId: number, payload: FormData) {
-    const url = `Category?adminId=${adminId}`
+  createMajor(adminId: number, payload: FormData) {
+    const url = `Major?adminId=${adminId}`
     return axiosClient.post(url, payload)
   },
-  updateCategory(categoryId: number, payload: FormData) {
-    const url = `Category/${categoryId}`
+  updateMajor(majorId: number, payload: FormData) {
+    const url = `Major/${majorId}`
     return axiosClient.put(url, payload)
   },
-  deleteCategory(id: number) {
-    const url = `Category/${id}`
+  deleteMajor(id: number) {
+    const url = `Major/${id}`
     return axiosClient.delete(url)
   },
 
-  // tag
-  getTagByCategory(id: number) {
-    const url = `Category/${id}/tags`
-    return axiosClient.get<unknown, Tag[]>(url)
+  // subject
+  getSubjectByMajor(id: number) {
+    const url = `Major/${id}/subjects`
+    return axiosClient.get<unknown, Subject[]>(url)
   },
-  getTags() {
-    const url = 'Tag/all'
-    return axiosClient.get<unknown, Tag[]>(url)
+  getAllSubject() {
+    const url = 'Subject/all'
+    return axiosClient.get<unknown, Subject[]>(url)
   },
-  getTagById(tagId: number) {
-    const url = `Tag/${tagId}`
+  getSubjectById(subjectId: number) {
+    const url = `Subject/${subjectId}`
     return axiosClient.get(url)
   },
-  deleteTag(id: number) {
-    const url = `Tag/${id}`
+  deleteSubject(id: number) {
+    const url = `Subject/${id}`
     return axiosClient.delete(url)
   },
-  deleteTagFromCategory(categoryId: number, tagId: number) {
-    const url = `Tag/${categoryId}/${tagId}`
+  deleteSubjectFromMajor(majorId: number, subjectId: number) {
+    const url = `Subject/${majorId}/${subjectId}`
     return axiosClient.delete(url)
   },
-  createTag(adminId: number, categoryId: number, payload: FormData) {
-    const url = `Tag?adminId=${adminId}&categoryId=${categoryId}`
+  createSubject(adminId: number, majorId: number, payload: FormData) {
+    const url = `Subject?adminId=${adminId}&majorId=${majorId}`
     return axiosClient.post(url, payload)
   },
-  updateTag(tagId: number, payload: FormData) {
-    const url = `Tag/${tagId}`
+  updateSubject(subjectId: number, payload: FormData) {
+    const url = `Subject/${subjectId}`
     return axiosClient.put(url, payload)
   },
 

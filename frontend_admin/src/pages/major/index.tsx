@@ -3,8 +3,8 @@ import { useAntdTable } from 'ahooks'
 import { Button, ConfigProvider, Flex, Form, Input, Modal, Space, Table, Typography, message } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import React, { useCallback, useState } from 'react'
-import CreateCategory from './CreateCategory'
-import ListTag from './ListTag'
+import CreateMajor from './CreateMajor'
+import ListSubject from './ListSubject'
 
 type DataType = {
   id: number
@@ -16,22 +16,22 @@ type Result = {
   list: DataType[]
 }
 
-export default function Category() {
-  const [createCategory, setCreateCategory] = useState(false)
+export default function Major() {
+  const [createMajor, setCreateMajor] = useState(false)
   const [initialValues, setInitValues] = useState<{ id: number; name: string } | undefined>()
-  const [category, setCategory] = useState<{ id: number; name: string } | undefined>()
-  const [tag, setTag] = useState(false)
+  const [major, setMajor] = useState<{ id: number; name: string } | undefined>()
+  const [subject, setSubject] = useState(false)
   const [form] = Form.useForm()
   const [modal, contextHolder] = Modal.useModal()
 
   const getTableData = async (_: never, { search }: { search: string }): Promise<Result> => {
-    const response = await api.getCategories()
-    const data = response.filter((item) => item.categoryName.toLowerCase().includes(search?.toLowerCase() ?? ''))
+    const response = await api.getAllMajor()
+    const data = response.filter((item) => item.majorName.toLowerCase().includes(search?.toLowerCase() ?? ''))
     return Promise.resolve({
       total: data.length,
       list: data.map((item) => ({
         id: item.id,
-        name: item.categoryName
+        name: item.majorName
       }))
     })
   }
@@ -57,13 +57,13 @@ export default function Category() {
     (e: React.MouseEvent, id: number) => {
       e.stopPropagation()
       modal.confirm({
-        title: 'Delete category',
+        title: 'Delete major',
         centered: true,
-        content: 'Do you want to delete this category?',
+        content: 'Do you want to delete this major?',
         async onOk() {
           try {
-            await api.deleteCategory(id)
-            message.success('Delete category success!')
+            await api.deleteMajor(id)
+            message.success('Delete major success!')
             refresh()
           } catch (e) {
             console.error(e)
@@ -102,7 +102,7 @@ export default function Category() {
                 name: record.name,
                 id: record.id
               })
-              setCreateCategory(true)
+              setCreateMajor(true)
             }}
           >
             Update
@@ -128,8 +128,8 @@ export default function Category() {
       <Space className='w-full' size={20} direction='vertical'>
         <Flex justify='space-between' align='center'>
           <Typography.Title level={5}>Quantiy: {data?.total}</Typography.Title>
-          <Button onClick={() => setCreateCategory(true)} type='primary'>
-            Create category
+          <Button onClick={() => setCreateMajor(true)} type='primary'>
+            Create major
           </Button>
         </Flex>
         <Space align='start' direction='vertical' className='w-full'>
@@ -144,8 +144,8 @@ export default function Category() {
             return {
               className: 'cursor-pointer',
               onClick: () => {
-                setTag(true)
-                setCategory({
+                setSubject(true)
+                setMajor({
                   name: data.name,
                   id: data.id
                 })
@@ -154,28 +154,28 @@ export default function Category() {
           }}
         />
       </Space>
-      <CreateCategory
+      <CreateMajor
         initialValues={initialValues}
         centered
-        open={createCategory}
+        open={createMajor}
         onCancel={() => {
-          setCreateCategory(false)
+          setCreateMajor(false)
           setInitValues(undefined)
         }}
         onSuccess={() => {
-          setCreateCategory(false)
+          setCreateMajor(false)
           setInitValues(undefined)
           refresh()
         }}
       />
-      {category && (
-        <ListTag
-          category={category}
+      {major && (
+        <ListSubject
+          major={major}
           centered
-          open={tag}
+          open={subject}
           onCancel={() => {
-            setTag(false)
-            setCategory(undefined)
+            setSubject(false)
+            setMajor(undefined)
           }}
         />
       )}
