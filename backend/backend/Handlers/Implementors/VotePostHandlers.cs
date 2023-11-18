@@ -40,21 +40,23 @@ namespace backend.Handlers.Implementors
 
             if (existedVote != null)
             {
-                if (existedVote.Vote != 0) return null;
-
-                if (vote != 0)
+                //Click the Upvote/Downvote AGAIN
+                if (existedVote.Vote == vote)
                 {
-                    existedVote.Vote = vote;
-                    existedVote.CreatedAt = DateTime.Now;
+                    var votePostDTO = DisableVotePost(currentUserId, postId);
+                    if (votePostDTO == null) return null;
+                    return votePostDTO;
                 }
+
+                existedVote.Vote = vote;
 
                 if (!_votePostRepository.Update(existedVote)) return null;
 
                 var existedVoteDTO = _mapper.Map<VotePostDTO>(existedVote);
                 existedVoteDTO.User = _mapper.Map<UserDTO>(existedUser);
-                existedVoteDTO.Post = _mapper.Map<PostDTO>(_postHandlers.GetPostBy(existedPost.Id,currentUserId));
+                existedVoteDTO.Post = _mapper.Map<PostDTO>(_postHandlers.GetPostBy(existedPost.Id, currentUserId));
 
-                 return existedVoteDTO;
+                return existedVoteDTO;
             }
 
             //Create new vote
