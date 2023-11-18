@@ -1,24 +1,15 @@
-export type Categories = {
+export type Major = {
   id: number
-  adminId: number
-  categoryName: string
+  majorName: string
   createdAt: Date
   updatedAt: Date
   status: boolean
 }
 
-export type Tag = {
+export type Subject = {
   id: number
-  adminId: number
-  categories: {
-    id: number
-    adminId: number
-    categoryName: string
-    createdAt: Date
-    updatedAt: Date
-    status: boolean
-  }[]
-  tagName: string
+  major: Major[]
+  subjectName: string
   createdAt: Date
   updatedAt: Date
   status: boolean
@@ -48,9 +39,10 @@ export interface Lecturers {
   status: boolean
   isAwarded: boolean
 }
-export type Image = {
+export type Media = {
   id: number
   postId: number
+  type: string
   url: string
   createdAt: Date
   status: boolean
@@ -62,10 +54,10 @@ export type PendingPost = {
   reviewerId: null
   title: string
   content: string
-  videos: Image[]
-  images: Image[]
+  videos: Media[]
+  images: Media[]
   categories: null
-  tags: null
+  subjects: null
   createdAt: Date
   updatedAt: null
   isApproved: boolean
@@ -100,10 +92,10 @@ export interface Post {
   title: string
   content: string
   upvotes: number
-  videos: Image[]
-  images: Image[]
-  categories: { id: number; adminId: number; categoryName: string; createdAt: Date; updatedAt: Date; status: boolean }[]
-  tags: { id: number; adminId: number; categoryName: string; createdAt: Date; updatedAt: Date; status: boolean }[]
+  videos: Media[]
+  images: Media[]
+  majors: Major[]
+  subjects: Subject[]
   createdAt: Date
   updatedAt: Date
   isApproved: boolean

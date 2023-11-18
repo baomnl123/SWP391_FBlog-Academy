@@ -1,9 +1,9 @@
-const category: {
+const major: {
   id: number
   name: string
 }[] = []
 
-const tag: {
+const subject: {
   id: number
   name: string
 }[] = []
@@ -19,14 +19,14 @@ const student: {
 }[] = []
 
 for (let i = 0; i < 20; i++) {
-  category.push({
+  major.push({
     id: i,
-    name: `category${i}`
+    name: `major${i}`
   })
 
-  tag.push({
+  subject.push({
     id: i,
-    name: `tag${i}`
+    name: `subject${i}`
   })
 
   lecturer.push({
@@ -40,4 +40,4 @@ for (let i = 0; i < 20; i++) {
   })
 }
 
-export { category, tag, lecturer, student }
+export { major, subject, lecturer, student }

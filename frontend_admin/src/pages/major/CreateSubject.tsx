@@ -3,22 +3,22 @@ import { Form, Input, Modal, ModalProps, Select, Space, message } from 'antd'
 import { useWatch } from 'antd/es/form/Form'
 import { useCallback, useEffect } from 'react'
 
-const CreateTag = (
+const CreateSubject = (
   props: ModalProps & {
-    initialValues?: { tag?: { name: string; id: number }; category?: { id: number; name: string } }
+    initialValues?: { subject?: { name: string; id: number }; major?: { id: number; name: string } }
     onSuccess?: () => void
   }
 ) => {
   const { open, onOk, onCancel, initialValues, onSuccess, ...rest } = props
   const [form] = Form.useForm()
-  const tagName = useWatch('name', form)
+  const subjectName = useWatch('name', form)
 
   useEffect(() => {
     form.setFieldsValue({
-      name: initialValues?.tag?.name,
-      category: {
-        label: initialValues?.category?.name,
-        value: initialValues?.category?.id
+      name: initialValues?.subject?.name,
+      major: {
+        label: initialValues?.major?.name,
+        value: initialValues?.major?.id
       }
     })
   }, [form, initialValues])
@@ -26,21 +26,21 @@ const CreateTag = (
   const onFinish = useCallback(
     async (value: {
       name: string
-      category: {
+      major: {
         value: number
       }
     }) => {
       try {
         const adminId = localStorage.getItem('id') ?? ''
         const formData = new FormData()
-        if (initialValues?.tag?.name) {
-          formData.append('newTagName', value.name)
-          await api.updateTag(initialValues.tag?.id ?? 0, formData)
-          message.success('Update tag successfully')
+        if (initialValues?.subject?.name) {
+          formData.append('newSubjectName', value.name)
+          await api.updateSubject(initialValues.subject?.id ?? 0, formData)
+          message.success('Update subject successfully')
         } else {
-          formData.append('tagName', value.name)
-          await api.createTag(Number(adminId), value.category.value, formData)
-          message.success('Create tag successfully')
+          formData.append('subjectName', value.name)
+          await api.createSubject(Number(adminId), value.major.value, formData)
+          message.success('Create subject successfully')
         }
 
         onSuccess?.()
@@ -48,13 +48,13 @@ const CreateTag = (
         console.error(e)
       }
     },
-    [initialValues?.tag?.id, initialValues?.tag?.name, onSuccess]
+    [initialValues?.subject?.id, initialValues?.subject?.name, onSuccess]
   )
 
   return (
     <Modal
       {...rest}
-      title={initialValues?.tag?.id ? 'Update Tag' : 'Create Tag'}
+      title={initialValues?.subject?.id ? 'Update Subject' : 'Create Subject'}
       destroyOnClose
       open={open}
       onOk={(e) => {
@@ -66,19 +66,15 @@ const CreateTag = (
         onCancel?.(e)
       }}
       okButtonProps={{
-        disabled: initialValues?.tag?.name === tagName || tagName === ''
+        disabled: initialValues?.subject?.name === subjectName || subjectName === ''
       }}
     >
       <Form form={form} layout='vertical' onFinish={onFinish}>
         <Space className='w-full' direction='vertical' size={20}>
-          <Form.Item label='Name' name='name' rules={[{ required: true, message: 'Name tag is required' }]}>
-            <Input placeholder='Name tag' />
+          <Form.Item label='Name' name='name' rules={[{ required: true, message: 'Name subject is required' }]}>
+            <Input placeholder='Name subject' />
           </Form.Item>
-          <Form.Item
-            label='Category'
-            name='category'
-            rules={[{ required: true, message: 'Name category is required' }]}
-          >
+          <Form.Item label='Category' name='major' rules={[{ required: true, message: 'Name major is required' }]}>
             <Select disabled />
           </Form.Item>
         </Space>
@@ -87,4 +83,4 @@ const CreateTag = (
   )
 }
 
-export default CreateTag
+export default CreateSubject
