@@ -39,7 +39,7 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                return _fblogAcademyContext.UserMajors.Where(e => e.UserId == userID).Select(e => e.Major).ToList();
+                return _fblogAcademyContext.UserMajors.Where(e => e.UserId == userID && e.Status == true).Select(e => e.Major).ToList();
             }
             catch (InvalidOperationException)
             {
@@ -51,7 +51,7 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                return _fblogAcademyContext.UserMajors.Where(e => e.MajorId == majorID).Select(e => e.User).ToList();
+                return _fblogAcademyContext.UserMajors.Where(e => e.MajorId == majorID && e.Status == true).Select(e => e.User).ToList();
             }
             catch (InvalidOperationException)
             {

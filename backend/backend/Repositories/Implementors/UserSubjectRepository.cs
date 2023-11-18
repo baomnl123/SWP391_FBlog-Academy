@@ -52,7 +52,7 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                return _fblogAcademyContext.UserSubjects.Where(e => e.UserId == userID).Select(e => e.Subject).ToList();
+                return _fblogAcademyContext.UserSubjects.Where(e => e.UserId == userID && e.Status == true).Select(e => e.Subject).ToList();
             }
             catch (InvalidOperationException)
             {
@@ -64,7 +64,7 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                return _fblogAcademyContext.UserSubjects.Where(e => e.SubjectId == subjectID).Select(e => e.User).ToList();
+                return _fblogAcademyContext.UserSubjects.Where(e => e.SubjectId == subjectID && e.Status == true).Select(e => e.User).ToList();
             }
             catch (InvalidOperationException)
             {
