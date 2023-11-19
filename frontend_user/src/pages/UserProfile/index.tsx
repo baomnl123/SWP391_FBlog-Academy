@@ -14,7 +14,7 @@ import { useParams } from 'react-router-dom'
 import ModalListUsers from './components/ModalListUsers'
 import { User } from '@/types'
 import SubSide from '../Dashboard/components/SubSide'
-import IconReport from '@/assets/images/svg/IconReport'
+
 import { UserAddOutlined } from '@ant-design/icons'
 
 import ModalMajor from './components/ModalMajor'
@@ -25,7 +25,7 @@ export default function UserProfile() {
   const [titleModal, setTitleModal] = useState('Followers')
   const [users, setUsers] = useState<User[]>([])
   const [modal, contextHolder] = Modal.useModal()
-  const [openPost, setOpenPost] = useState(false)
+
   const [idPost, setIdPost] = useState<undefined | number>(undefined)
   const [openReport, setOpenReport] = useState(false)
   const isDarkMode = useSelector((state: RootState) => state.themeReducer.darkMode)

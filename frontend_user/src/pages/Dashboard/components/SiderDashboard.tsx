@@ -37,7 +37,7 @@ const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: Si
       const res = await api.getAllCategory()
       return res.map((item) => {
         return {
-          label: item.categoryName,
+          label: item.majorName,
           value: item.id
         }
       })
@@ -51,7 +51,7 @@ const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: Si
       const res = await api.getAllTag()
       return res.map((item) => {
         return {
-          label: item.tagName,
+          label: item.subjectName,
           value: item.id
         }
       })
