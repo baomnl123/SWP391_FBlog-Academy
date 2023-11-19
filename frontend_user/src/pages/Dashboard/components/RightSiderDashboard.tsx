@@ -75,7 +75,7 @@ const RightSiderDashboard = ({
           idSelect={categorySelect}
           title='Trending Category'
           data={(trendingCategory ?? []).map((item) => ({
-            title: item.categoryName,
+            title: item.majorName,
             value: item.id
           }))}
         />
@@ -89,7 +89,7 @@ const RightSiderDashboard = ({
           title='Trending Tag'
           idSelect={tagSelect}
           data={(trendingTag ?? []).map((item) => ({
-            title: item.tagName,
+            title: item.subjectName,
             value: item.id
           }))}
         />

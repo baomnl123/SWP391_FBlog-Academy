@@ -4,8 +4,8 @@ import { setDarkMode } from '@/store/reducers/theme'
 import { getLocalStorage, removeLocalStorage, setLocalStorage } from '@/utils/helpers'
 import { SearchOutlined } from '@ant-design/icons'
 import { UserButton } from '@clerk/clerk-react'
-import { Breadcrumb, Button, ConfigProvider, Flex, Input, Layout, Space, Switch, Typography, theme } from 'antd'
-import { PropsWithChildren, ReactNode, useEffect, useState } from 'react'
+import { Breadcrumb, ConfigProvider, Flex, Input, Layout, Space, Switch, Typography, theme } from 'antd'
+import { PropsWithChildren, ReactNode, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { RouteObject, useMatches, useNavigate } from 'react-router-dom'
 import { useRequest } from 'ahooks'
@@ -29,24 +29,11 @@ const BaseLayout = ({
   const { defaultAlgorithm, darkAlgorithm } = theme
   const isDarkMode = useSelector((state: RootState) => state.themeReducer.darkMode)
   const user = useSelector((state: RootState) => state.userReducer.user)
-  const [loading, setLoading] = useState(false)
-  const { data } = useRequest(
-    async () => {
-      const response = await api.getUserById(user?.id ?? getLocalStorage('id'))
-      return response
-    },
-    {
-      onBefore() {
-        setLoading(true)
-      },
-      onFinally() {
-        setLoading(false)
-      },
-      onError(e) {
-        console.error(e)
-      }
-    }
-  )
+
+  const {} = useRequest(async () => {
+    const response = await api.getUserById(user?.id ?? getLocalStorage('id'))
+    return response
+  })
   const dispatch = useDispatch()
 
   const matches: RouteObject[] = useMatches()

@@ -163,7 +163,7 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
     if (categoriesData) {
       const categories: SelectProps['options'] = categoriesData.map((item) => {
         return {
-          label: item.categoryName,
+          label: item.majorName,
           value: item.id
         }
       })
@@ -175,7 +175,7 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
     if (tagsData) {
       const options: SelectProps['options'] = tagsData.map((item) => {
         return {
-          label: item.tagName,
+          label: item.subjectName,
           value: item.id
         }
       })
