@@ -57,15 +57,7 @@ const api = {
       }
     })
   },
-  createdUserMajor({ userID, majorID }: { userID: number; majorID: number[] }) {
-    const url = `User/${userID}/major`
-    return axiosClient.post(url, null, {
-      params: {
-        userID,
-        majorID
-      }
-    })
-  },
+
   getPostByUserId(userId: number) {
     const url = `Post/user/${userId}`
     return axiosClient.get<unknown, PostByUserId[]>(url)
@@ -104,7 +96,7 @@ const api = {
   },
 
   //user
-  getUserById(userID: number){
+  getUserById(userID: number) {
     const url = `User/${userID}`
     return axiosClient.get<unknown, User>(url)
   },
@@ -165,8 +157,24 @@ const api = {
       }
     })
   },
+  createdUserMajor({ userID, majorID }: { userID: number; majorID: number[] }) {
+    const url = `User/${userID}/major`
+    return axiosClient.post(url, null, {
+      params: {
+        userID,
+        majorID
+      }
+    })
+  },
 
- 
+  deleteUserMajor(userID: number, majorID: number[]) {
+    const url = `User/${userID}/major`
+    return axiosClient.delete(url, {
+      params: {
+        majorID
+      }
+    })
+  },
 
   reportPost({ reporterID, postID, content }: { reporterID: number; postID: number; content: string }) {
     const url = 'ReportPost'
@@ -179,7 +187,6 @@ const api = {
       }
     })
   },
-  
 
   // get user by email
   getUserByEmail({ email }: { email: string }) {
@@ -204,7 +211,6 @@ const api = {
       }
     })
   },
-
 
   promote(id: number) {
     const url = `User/${id}/promote`
