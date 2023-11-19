@@ -64,7 +64,7 @@ const api = {
   },
   getUserMajorbyID(userID: number) {
     const url = `User/${userID}/majors`
-    return axiosClient.get<unknown, UserMajor>(url)
+    return axiosClient.get<unknown, UserMajor[]>(url)
   },
 
   //category
