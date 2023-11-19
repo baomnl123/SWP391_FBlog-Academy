@@ -9,6 +9,7 @@
         public string Content { get; set; }
         public int? Upvotes { get; set; } = 0;
         public int? Downvotes { get; set; } = 0;
+        public int? Reports { get; set; } = 0;
         public ICollection<UserDTO>? UsersUpvote { get; set; } = new List<UserDTO>();
         public ICollection<UserDTO>? UsersDownvote { get; set; } = new List<UserDTO>();
         public ICollection<VideoDTO>? Videos { get; set; } = new List<VideoDTO>();

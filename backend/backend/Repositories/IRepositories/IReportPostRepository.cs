@@ -11,6 +11,7 @@ namespace backend.Repositories.IRepositories
         //public ReportPost? GetReportPostByID(int postID);
         public ReportPost? GetReportPostByIDs(int reporterID, int postID);
         public ICollection<ReportPost>? GetApprovedReportsAbout(int reportedID);
+        public ICollection<ReportPost>? GetAllReportsAboutPost(int postID);
         //CRUD Report Post
         public bool AddReportPost(ReportPost reportpost);
         public bool UpdateReportPost(ReportPost reportpost);
