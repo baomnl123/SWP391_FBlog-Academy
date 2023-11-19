@@ -12,12 +12,14 @@ namespace backend.Handlers.Implementors
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-        private readonly UserRoleConstrant _userRoleConstrant;
         private readonly IReportPostRepository _reportPostRepository;
         private readonly IFollowUserRepository _followUserRepository;
         private readonly IPostHandlers _postHandlers;
+        private readonly IUserMajorRepository _userMajorRepository;
+        private readonly IUserSubjectRepository _userSubjectRepository;
+        private readonly UserRoleConstrant _userRoleConstrant;
         private HashingString _hashingString;
-        public UserHandlers(IUserRepository userRepository, IMapper mapper, IReportPostRepository reportPostRepository, IFollowUserRepository followUserRepository, IPostHandlers postHandlers)
+        public UserHandlers(IUserRepository userRepository, IMapper mapper, IReportPostRepository reportPostRepository, IFollowUserRepository followUserRepository, IPostHandlers postHandlers, IUserMajorRepository userMajorRepository, IUserSubjectRepository userSubjectRepository)
         {
             _userRepository = userRepository;
             _mapper = mapper;
@@ -26,14 +28,14 @@ namespace backend.Handlers.Implementors
             _postHandlers = postHandlers;
             _userRoleConstrant = new();
             _hashingString = new();
+            _userMajorRepository = userMajorRepository;
+            _userSubjectRepository = userSubjectRepository;
         }
         public UserDTO? CreateLecturer(string name, string avatarURL, string email, string password)
         {
             //make sure that info is not null
-            if (name == null || email == null)
-            {
-                return null;
-            }
+            if (name == null || email == null) return null;
+            
             //get lecture role
             var lectureRole = _userRoleConstrant.GetLecturerRole();
             //check if existed
@@ -52,10 +54,7 @@ namespace backend.Handlers.Implementors
                 if (password != null) existedUser.Password = _hashingString.HashString(password);
                 //check if avatar is null
                 if (avatarURL == null) existedUser.AvatarUrl = string.Empty;
-                else
-                {
-                    existedUser.AvatarUrl = avatarURL;
-                }
+                else existedUser.AvatarUrl = avatarURL;
                 existedUser.Status = true;
                 existedUser.CreatedAt = DateTime.Now;
                 existedUser.UpdatedAt = null;
@@ -75,19 +74,11 @@ namespace backend.Handlers.Implementors
                 IsAwarded = false,
             };
             //if avatar is null
-            if (newUser.AvatarUrl == null)
-            {
-                newUser.AvatarUrl = string.Empty;
-            }
-            if (password != null)
-            {
-                newUser.Password = _hashingString.HashString(password);
-            }
+            if (newUser.AvatarUrl == null) newUser.AvatarUrl = string.Empty;
+            if (password != null) newUser.Password = _hashingString.HashString(password);
             //add to db
-            if (!_userRepository.CreateUser(newUser))
-            {
-                return null;
-            }
+            if (!_userRepository.CreateUser(newUser)) return null;
+            
             //return
             return _mapper.Map<UserDTO>(newUser);
         }
@@ -219,39 +210,16 @@ namespace backend.Handlers.Implementors
             //get user list
             var list = _userRepository.GetAllUsers();
             //check if list is null of empty
-            if (list == null || list.Count == 0)
-            {
-                return null;
-            }
+            if (list == null || list.Count == 0) return null;
+            
             //init list dto
             var listDTO = new List<UserDTO>();
             foreach (var user in list)
             {
-                if (!user.Status)
-                {
-                    continue;
-                }
+                if (!user.Status) continue;
                 //check user status then map to dto
-                var userDTO = _mapper.Map<UserDTO>(user);
-                var getReports = _reportPostRepository.GetApprovedReportsAbout(userDTO.Id);
-                if (getReports != null)
-                {
-                    userDTO.successReportedTimes = getReports.Count();
-                }
-
-                var getFollowers = _followUserRepository.GetAllFollowerUsers(user);
-                if (getFollowers != null)
-                {
-                    userDTO.followersList = _mapper.Map<ICollection<UserDTO>?>(getFollowers);
-                    userDTO.followerNumber = getFollowers.Count();
-                }
-
-                var getPosts = _postHandlers.SearchPostByUserId(userDTO.Id);
-                if (getPosts != null)
-                {
-                    userDTO.postNumber = getPosts.Count();
-                    userDTO.postsList = _mapper.Map<ICollection<PostDTO>?>(getPosts);
-                }
+                var userDTO = this.GetUser(user.Id);
+                if (userDTO == null || !userDTO.Status) continue;
 
                 listDTO.Add(userDTO);
             }
@@ -276,17 +244,15 @@ namespace backend.Handlers.Implementors
             foreach (var user in list)
             {
                 //map if user status is true
-                if (user.Status)
-                {
-                    var userDTO = _mapper.Map<UserDTO>(user);
-                    var getReports = _reportPostRepository.GetApprovedReportsAbout(userDTO.Id);
-                    if (getReports != null)
-                    {
-                        userDTO.successReportedTimes = getReports.Count();
-                    }
-                    listDTO.Add(userDTO);
-                }
+                if (!user.Status) continue;
+
+                var userDTO = this.GetUser(user.Id);
+
+                if (userDTO == null || !userDTO.Status) return null;
+
+                listDTO.Add(userDTO);
             }
+            if (listDTO.Count == 0) return null;
             //return
             return listDTO;
         }
@@ -305,39 +271,15 @@ namespace backend.Handlers.Implementors
             foreach (var user in list)
             {
                 //map if user status is true
-                if (!user.Status)
-                {
-                    continue;
-                }
-
-                var userDTO = _mapper.Map<UserDTO>(user);
-
-                var getReports = _reportPostRepository.GetApprovedReportsAbout(userDTO.Id);
-                if (getReports != null)
-                {
-                    userDTO.successReportedTimes = getReports.Count;
-                }
-
-                var getFollowers = _followUserRepository.GetAllFollowerUsers(user);
-                if (getFollowers != null)
-                {
-                    userDTO.followersList = _mapper.Map<ICollection<UserDTO>?>(getFollowers);
-                    userDTO.followerNumber = getFollowers.Count();
-                }
-
-                var getPosts = _postHandlers.SearchPostByUserId(userDTO.Id);
-                if (getPosts != null)
-                {
-                    userDTO.postNumber = getPosts.Count();
-                    userDTO.postsList = _mapper.Map<ICollection<PostDTO>?>(getPosts);
-                }
+                if (!user.Status) continue;
+                
+                var userDTO = this.GetUser(user.Id);
+                if (userDTO == null || !userDTO.Status) return null;
 
                 listDTO.Add(userDTO);
             }
-            if (listDTO.Count == 0)
-            {
-                return null;
-            }
+            if (listDTO.Count == 0) return null;
+            
             listDTO.OrderByDescending(u => u.followerNumber).ThenByDescending(u => u.postNumber);
             //return
             return listDTO;
@@ -350,7 +292,51 @@ namespace backend.Handlers.Implementors
             {
                 return null;
             }
-            return _mapper.Map<UserDTO>(user);
+            var userDTO = _mapper.Map<UserDTO>(user);
+
+            var getMajors = _userMajorRepository.GetMajorsOf(userDTO.Id);
+            if(getMajors != null)
+            {
+                userDTO.majorsList = _mapper.Map<ICollection<MajorDTO>?>(getMajors);
+                userDTO.majorsNumber = getMajors.Count();
+            }
+
+            var getSubjects = _userSubjectRepository.GetSubjectsOf(userDTO.Id);
+            if (getSubjects != null)
+            {
+                userDTO.subjectsList = _mapper.Map<ICollection<SubjectDTO>?>(getSubjects);
+                userDTO.subjectsNumber = getSubjects.Count();
+            }
+
+            var getReports = _reportPostRepository.GetApprovedReportsAbout(userDTO.Id);
+            if (getReports != null)
+            {
+                userDTO.successReportedTimes = getReports.Count;
+            }
+
+            var getFollowers = _followUserRepository.GetAllFollowerUsers(user);
+            if (getFollowers != null)
+            {
+                //userDTO.followersList = _mapper.Map<ICollection<UserDTO>?>(getFollowers);
+                userDTO.followerNumber = getFollowers.Count();
+            }
+
+            var getFollowings = _followUserRepository.GetAllFollowingUsers(user);
+            if (getFollowings != null)
+            {
+                //userDTO.followingsList = _mapper.Map<ICollection<UserDTO>?>(getFollowings);
+                userDTO.followingNumber = getFollowings.Count();
+            }
+
+            var getPosts = _postHandlers.SearchPostByUserId(userDTO.Id);
+            if (getPosts != null)
+            {
+                userDTO.postsList = _mapper.Map<ICollection<PostDTO>?>(getPosts);
+                userDTO.postNumber = getPosts.Count();
+            }
+
+
+            return userDTO;
         }
 
         public ICollection<UserDTO>? GetAllDisableUsers()
@@ -430,7 +416,11 @@ namespace backend.Handlers.Implementors
             var user = _userRepository.GetUser(email);
             if (user == null || !user.Status) return null;
             //return userdto info
-            return _mapper.Map<UserDTO>(user);
+            var userDTO = this.GetUser(user.Id);
+
+            if (userDTO == null || !userDTO.Status) return null;
+
+            return userDTO;
         }
 
         public UserDTO? GiveAward(int userID)
@@ -448,7 +438,12 @@ namespace backend.Handlers.Implementors
             {
                 return null;
             }
-            return _mapper.Map<UserDTO>(existedUser);
+
+            var userDTO = this.GetUser(existedUser.Id);
+
+            if (userDTO == null || !userDTO.Status) return null;
+
+            return userDTO;
         }
 
         public UserDTO? RemoveAward(int userID)
@@ -466,7 +461,11 @@ namespace backend.Handlers.Implementors
             {
                 return null;
             }
-            return _mapper.Map<UserDTO>(existedUser);
+            var userDTO = this.GetUser(existedUser.Id);
+
+            if (userDTO == null || !userDTO.Status) return null;
+
+            return userDTO;
         }
 
         public UserDTO? UnbanUser(int userID)
@@ -486,7 +485,10 @@ namespace backend.Handlers.Implementors
             {
                 return null;
             }
-            var userDTO = _mapper.Map<UserDTO>(getUser);
+            var userDTO = this.GetUser(getUser.Id);
+
+            if (userDTO == null || !userDTO.Status) return null;
+
             return userDTO;
         }
 
@@ -508,6 +510,7 @@ namespace backend.Handlers.Implementors
                 }
                 listDTO.Add(userDTO);
             }
+            if (listDTO.Count == 0) return null;
             return listDTO;
         }
 
@@ -521,37 +524,16 @@ namespace backend.Handlers.Implementors
             var listDTO = new List<UserDTO>();
             foreach (var user in getUsers)
             {
-                if (!user.Status)
-                {
-                    continue;
-                }
-                var userDTO = _mapper.Map<UserDTO>(user);
+                if (!user.Status) continue;
+                
+                var userDTO = this.GetUser(user.Id);
 
-                var successReport = _reportPostRepository.GetApprovedReportsAbout(userDTO.Id);
-                if (successReport != null)
-                {
-                    userDTO.successReportedTimes = successReport.Count();
-                }
+                if (userDTO == null || !userDTO.Status) return null;
 
-                var getFollowers = _followUserRepository.GetAllFollowerUsers(user);
-                if (getFollowers != null)
-                {
-                    userDTO.followersList = _mapper.Map<ICollection<UserDTO>?>(getFollowers);
-                    userDTO.followerNumber = getFollowers.Count();
-                }
-
-                var getPosts = _postHandlers.SearchPostByUserId(userDTO.Id);
-                if (getPosts != null)
-                {
-                    userDTO.postNumber = getPosts.Count();
-                    userDTO.postsList = _mapper.Map<ICollection<PostDTO>?>(getPosts);
-                }
                 listDTO.Add(userDTO);
             }
-            if (listDTO.Count == 0)
-            {
-                return null;
-            }
+            if (listDTO.Count == 0) return null;
+
             listDTO.OrderByDescending(u => u.followerNumber).ThenByDescending(u => u.postNumber);
             return listDTO;
         }
