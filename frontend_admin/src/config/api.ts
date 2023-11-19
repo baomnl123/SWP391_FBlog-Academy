@@ -1,4 +1,4 @@
-import { Major, Lecturers, ReportPost, Subject, UserEmail } from '@/types'
+import { Major, Lecturers, ReportPost, Subject, UserEmail, Post } from '@/types'
 import axiosClient from './axios'
 
 const api = {
@@ -127,6 +127,11 @@ const api = {
   reportPost() {
     const url = 'ReportPost'
     return axiosClient.get<unknown, ReportPost[]>(url)
+  },
+
+  getAllPost() {
+    const url = `Post/all/1`
+    return axiosClient.get<unknown, Post[]>(url)
   }
 }
 

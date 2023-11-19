@@ -3,13 +3,13 @@ import { Navigate, createBrowserRouter } from 'react-router-dom'
 import PrivateRoute from './PrivateRoute'
 
 import Dashboard from '@/pages/dashboard'
-import Major from '@/pages/major'
 import Lecture from '@/pages/lecture'
-import Post from '@/pages/post'
+import Major from '@/pages/major'
 import Profile from '@/pages/profile'
 import Student from '@/pages/student'
 import Subject from '@/pages/subject'
 
+import ReportPost from '@/pages/report'
 import { RedirectToSignIn, SignedIn, SignedOut } from '@clerk/clerk-react'
 
 export const Routes = createBrowserRouter([
@@ -67,7 +67,7 @@ export const Routes = createBrowserRouter([
       },
       {
         path: '/report',
-        element: <Post />,
+        element: <ReportPost />,
         handle: {
           crumb: () => 'Report'
         }
