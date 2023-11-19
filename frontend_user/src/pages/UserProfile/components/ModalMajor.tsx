@@ -10,38 +10,26 @@ import SelectLabel from '@/components/SelectLabel'
 interface ModalMajorProps {
   isOpen: boolean
   setModal?: (value: boolean) => void
-  userId?: number | null
+  idPost?: number | null
   onSuccess?: () => void
   onGetCategories?: (data: string[] | string | number | number[]) => void
+  onOk?: () => void
+  onCancel?: () => void
+  majorSelect?: any[]
 }
 
-const ModalMajor = ({ isOpen, setModal, userId, onSuccess, onGetCategories }: ModalMajorProps) => {
+const ModalMajor = ({ isOpen, setModal, onSuccess, onOk, majorSelect }: ModalMajorProps) => {
   const [isModalOpen, setIsModalOpen] = useState(isOpen)
+  const [major, setMajor] = useState<any[]>()
   const [form] = Form.useForm()
   const { user } = useSelector((state: RootState) => state.userReducer)
-  
 
-  const { runAsync: sendReport, loading: reportLoading } = useRequest(api.createUserMajor, {
-    manual: true,
-    onSuccess: (res) => {
-      if (res) {
-        message.success('Create User Success')
-        onSuccess?.()
-        form.resetFields()
-        setIsModalOpen(false)
-        setModal?.(false)
-      }
-    },
-    onError: (err) => {
-      console.log(err)
-    }
-  })
   const { data: categoriesData } = useRequest(async () => {
     try {
       const res = await api.getAllCategory()
       return res.map((item) => {
         return {
-          label: item.categoryName,
+          label: item.majorName,
           value: item.id
         }
       })
@@ -54,8 +42,25 @@ const ModalMajor = ({ isOpen, setModal, userId, onSuccess, onGetCategories }: Mo
     setIsModalOpen(isOpen)
   }, [isOpen])
 
-  const handleOk = () => {
-    form.submit()
+  const handleOk = async () => {
+    try {
+      if ((majorSelect ?? []).length > 0) {
+        if (major?.length ?? 0 > 0) {
+          await api.deleteUserMajor(user?.id ?? 0, major ?? [])
+        } else {
+          await api.deleteUserMajor(user?.id ?? 0, majorSelect ?? [])
+        }
+      }
+      if (major?.length ?? 0 > 0) {
+        await api.createdUserMajor({
+          majorID: major ?? [],
+          userID: user?.id ?? 0
+        })
+      }
+      onOk?.()
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   const handleCancel = () => {
@@ -63,27 +68,24 @@ const ModalMajor = ({ isOpen, setModal, userId, onSuccess, onGetCategories }: Mo
     onSuccess?.()
     setIsModalOpen(false)
     setModal?.(false)
+    setMajor([])
   }
 
-  const onFinish = async (value: { majorId: number, userId:number }) => {
-    await sendReport({
-      content: value.content,
-      postID: idPost ?? 0,
-      reporterID: user?.id ?? 0
-    })
-  }
-  
+  useEffect(() => {
+    setMajor(majorSelect)
+  }, [majorSelect])
 
   return (
-    <Spin spinning={reportLoading}>
+    <Spin>
       <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
         <SelectLabel
           label='Major'
           placeHolder='Select Major'
           optionData={categoriesData}
           onChange={(value) => {
-            onGetCategories?.(value)
+            setMajor(value as number[])
           }}
+          value={major}
         />
       </Modal>
     </Spin>
