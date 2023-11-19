@@ -11,6 +11,7 @@ namespace backend.Handlers.Implementors
     public class PostHandlers : IPostHandlers
     {
         private readonly IFollowUserRepository _followUserRepository;
+        private readonly IReportPostRepository _reportPostRepository;
         private readonly IPostRepository _postRepository;
         private readonly IUserRepository _userRepository;
         private readonly IImageHandlers _imageHandlers;
@@ -40,7 +41,8 @@ namespace backend.Handlers.Implementors
                             IUserSubjectRepository userSubjectRepository,
                             IUserMajorRepository userMajorRepository,
                             IMapper mapper,
-                            IFollowUserRepository followUserRepository)
+                            IFollowUserRepository followUserRepository,
+                            IReportPostRepository reportPostRepository)
         {
             _postRepository = postRepository;
             _mapper = mapper;
@@ -58,6 +60,7 @@ namespace backend.Handlers.Implementors
             _userRoleConstrant = new UserRoleConstrant();
             _specialMajors = new SpecialMajors();
             _followUserRepository = followUserRepository;
+            _reportPostRepository = reportPostRepository;
         }
 
         public PostDTO? ApprovePost(int reviewerId, int postId)
@@ -1080,6 +1083,12 @@ namespace backend.Handlers.Implementors
                 postDTO.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
                 postDTO.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
 
+                var getReports = _reportPostRepository.GetAllReportsAboutPost(postDTO.Id);
+                if (getReports != null)
+                {
+                    postDTO.Reports = getReports.Count();
+                }
+
                 returnList.Add(postDTO);
             }
 
@@ -1186,6 +1195,12 @@ namespace backend.Handlers.Implementors
                     postDTO.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
                     postDTO.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
 
+                    var getReports = _reportPostRepository.GetAllReportsAboutPost(postDTO.Id);
+                    if(getReports != null)
+                    {
+                        postDTO.Reports = getReports.Count();
+                    }
+
                     if (validViewer != null)
                     {
                         var vote = _votePostRepository.GetVotePost(currentUserId, postDTO.Id);
@@ -1282,6 +1297,12 @@ namespace backend.Handlers.Implementors
 
                     postDTO.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
                     postDTO.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
+
+                    var getReports = _reportPostRepository.GetAllReportsAboutPost(postDTO.Id);
+                    if (getReports != null)
+                    {
+                        postDTO.Reports = getReports.Count();
+                    }
 
                     if (validViewer != null)
                     {

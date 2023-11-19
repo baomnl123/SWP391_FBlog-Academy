@@ -180,5 +180,24 @@ namespace backend.Repositories.Implementors
             var reportList = _fblogAcademyContext.ReportPosts.Where(r => r.Post.UserId.Equals(reportedID) && r.Status.Trim().Contains(approvedStatus)).ToList();
             return reportList;
         }
+
+        public ICollection<ReportPost>? GetAllReportsAboutPost(int postID)
+        {
+            try
+            {
+                var getPendingStatus = _reportStatusConstrant.GetPendingStatus();
+                var getDisableStatus = _reportStatusConstrant.GetDisableStatus();
+                var getDeclineStatus = _reportStatusConstrant.GetDeclinedStatus();
+                var getReports = _fblogAcademyContext.ReportPosts.Where(r => r.PostId == postID && (r.Status.Equals(getPendingStatus)
+                                                                                                 || r.Status.Equals(getDisableStatus)
+                                                                                                 || r.Status.Equals(getDeclineStatus)))
+                                                                 .ToList();
+                return getReports;
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
+            }
+        }
     }
 }
