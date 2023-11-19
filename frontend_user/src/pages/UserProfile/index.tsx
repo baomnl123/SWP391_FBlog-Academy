@@ -73,6 +73,23 @@ export default function UserProfile() {
       }
     }
   )
+  const { data: userSubject } = useRequest(
+    async () => {
+      const response = await api.getUserSubjectbyID(Number(id ?? 0))
+      return response
+    },
+    {
+      onBefore() {
+        setLoading(true)
+      },
+      onFinally() {
+        setLoading(false)
+      },
+      onError(e) {
+        console.error(e)
+      }
+    }
+  )
 
   const { data: posts } = useRequest(
     async () => {
@@ -310,7 +327,10 @@ export default function UserProfile() {
                   </div>
                 </Flex>
                 <Flex gap={100} align='center'>
-                  <Typography.Text>Major : {userMajor?.map((item) => item.majorName)}</Typography.Text>
+                  <Typography.Text> Major :{userMajor?.map((item) => item.majorName)} </Typography.Text>
+                </Flex>
+                <Flex gap={100} align='center'>
+                  <Typography.Text>Subject : {userSubject?.map((item) => item.subjectName)}</Typography.Text>
                 </Flex>
               </Flex>
             </div>

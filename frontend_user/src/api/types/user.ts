@@ -48,3 +48,11 @@ export interface UserMajor {
   updatedAt: Date
   status: boolean
 }
+export interface UserSubject {
+  id: number
+  adminId: number
+  subjectName: string
+  createdAt: Date
+  updatedAt: Date
+  status: boolean
+}
