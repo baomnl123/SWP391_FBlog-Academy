@@ -62,10 +62,10 @@ const Vote = ({
     <>
       <Button
         onClick={async () => {
-          if (vote === 1) {
+          if (vote == 1) {
             await onRemoveVote()
           } else {
-            if (vote === 0) {
+            if (vote == 0) {
               await votePost({
                 currentUserId: userId ?? 0,
                 postId: postId ?? 0,
@@ -81,17 +81,17 @@ const Vote = ({
           }
         }}
       >
-        <IconUpLong width={15} height={15} color={vote === 1 ? 'blue' : isDarkMode ? '#fff' : '#000'} />
+        <IconUpLong width={15} height={15} color={vote == 1 ? 'blue' : isDarkMode ? '#fff' : '#000'} />
       </Button>
       <Typography className='min-w-[50px] cursor-pointer' onClick={() => setOpen(true)}>
         {vote}
       </Typography>
       <Button
         onClick={async () => {
-          if (vote === 2) {
+          if (vote == 2) {
             await onRemoveVote()
           } else {
-            if (vote === 0) {
+            if (vote == 0) {
               await votePost({
                 currentUserId: userId ?? 0,
                 postId: postId ?? 0,
@@ -107,7 +107,7 @@ const Vote = ({
           }
         }}
       >
-        <IconDownLong width={15} height={15} color={vote === 2 ? 'blue' : isDarkMode ? '#fff' : '#000'} />
+        <IconDownLong width={15} height={15} color={vote == 2 ? 'blue' : isDarkMode ? '#fff' : '#000'} />
       </Button>
       <ModalUserVote open={open} users={usersVote ?? ([] as User[])} footer={false} onCancel={() => setOpen(false)} />
     </>

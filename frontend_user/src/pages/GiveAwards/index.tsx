@@ -119,6 +119,10 @@ export default function GiveAwards() {
                     <Avatar size={64} src={user.avatarUrl} />
                     <Typography.Text>{user.name}</Typography.Text>
                   </Space>
+                  <Space size={10}>
+                    <Typography.Text>Followers: {user.followerNumber}</Typography.Text>
+                    <Typography.Text> Posts: {user.postNumber}</Typography.Text>
+                  </Space>
                   {user.isAwarded ? (
                     <Button
                       type='primary'
