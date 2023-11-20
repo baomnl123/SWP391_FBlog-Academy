@@ -196,6 +196,23 @@ const api = {
       }
     })
   },
+  createdUserSubject({ userID, subjectID }: { userID: number; subjectID: number[] }) {
+    const url = `User/${userID}/subject`
+    return axiosClient.post(url, null, {
+      params: {
+        userID,
+        subjectID
+      }
+    })
+  },
+  deleteUserSubject(userID: number, subjectID: number[]) {
+    const url = `User/${userID}/subject`
+    return axiosClient.delete(url, {
+      params: {
+        subjectID
+      }
+    })
+  },
 
   reportPost({ reporterID, postID, content }: { reporterID: number; postID: number; content: string }) {
     const url = 'ReportPost'

@@ -44,6 +44,19 @@ const ModalSubject = ({ isOpen, setModal, onSuccess, onOk, subjectSelect }: Moda
 
   const handleOk = async () => {
     try {
+      if ((subjectSelect ?? []).length > 0) {
+        if (subject?.length ?? 0 > 0) {
+          await api.deleteUserSubject(user?.id ?? 0, subject ?? [])
+        } else {
+          await api.deleteUserSubject(user?.id ?? 0, subject ?? [])
+        }
+      }
+      if (subject?.length ?? 0 > 0) {
+        await api.createdUserSubject({
+          subjectID: subject ?? [],
+          userID: user?.id ?? 0
+        })
+      }
       onOk?.()
     } catch (e) {
       console.error(e)
