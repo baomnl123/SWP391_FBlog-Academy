@@ -48,7 +48,7 @@ const ModalSubject = ({ isOpen, setModal, onSuccess, onOk, subjectSelect }: Moda
         if (subject?.length ?? 0 > 0) {
           await api.deleteUserSubject(user?.id ?? 0, subject ?? [])
         } else {
-          await api.deleteUserSubject(user?.id ?? 0, subject ?? [])
+          await api.deleteUserSubject(user?.id ?? 0, subjectSelect ?? [])
         }
       }
       if (subject?.length ?? 0 > 0) {
@@ -79,8 +79,8 @@ const ModalSubject = ({ isOpen, setModal, onSuccess, onOk, subjectSelect }: Moda
     <Spin>
       <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
         <SelectLabel
-          label='Major'
-          placeHolder='Select Major'
+          label='Subject'
+          placeHolder='Select Subject'
           optionData={tagsData}
           onChange={(value) => {
             setSubject(value as number[])
