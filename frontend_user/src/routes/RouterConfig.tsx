@@ -3,6 +3,7 @@ import PrivateRoute from './PrivateRoute'
 import { RedirectToSignIn, SignedIn, SignedOut } from '@clerk/clerk-react'
 import Dashboard from '@/pages/Dashboard'
 import PendingList from '@/pages/PendingList'
+import UserPendingPost from '@/pages/UserPending/UserPendingPost'
 import GiveAwards from '@/pages/GiveAwards'
 import UserProfile from '@/pages/UserProfile'
 import SaveList from '@/pages/SaveList'
@@ -39,6 +40,13 @@ export const Routes = createBrowserRouter([
         element: <PendingList />,
         handle: {
           crumb: () => 'View Pending List'
+        }
+      },
+      {
+        path: '/view-pending-post',
+        element: <UserPendingPost />,
+        handle: {
+          crumb: () => 'View User Pending'
         }
       },
       {

@@ -4,6 +4,7 @@ import { Category, PendingPost, PostByUserId, SavePost, Tag, User, Post } from '
 import axiosClient from './axiosClient'
 import { CreatePostBodyRequest } from './types/post'
 import { UserMajor, UserSubject } from './types/user'
+import axios from 'axios'
 
 const api = {
   // post
@@ -78,6 +79,10 @@ const api = {
   getPostByUserId(userId: number) {
     const url = `Post/user/${userId}`
     return axiosClient.get<unknown, PostByUserId[]>(url)
+  },
+  getUserPendingPost(userId:number){
+    const url = `Post/pending/${userId}`
+    return axiosClient.get<unknown, PendingPost[]>(url)
   },
   getUserMajorbyID(userID: number) {
     const url = `User/${userID}/majors`

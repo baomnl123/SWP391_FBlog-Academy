@@ -167,6 +167,7 @@ const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: Si
             Save list
           </Button>
         )}
+
         {((userInfo as User)?.role === 'LT' || (userInfo as User)?.role === 'MD') && (
           <>
             <Button
@@ -178,6 +179,14 @@ const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: Si
               View pending list
             </Button>
             <Button
+              className='w-full text-left mb-4'
+              icon={<FileSyncOutlined className={isDarkMode ? 'text-[#468CCE]' : 'text-[#3178B9]'} />}
+              size='large'
+              onClick={() => navigate('/view-pending-post/')}
+            >
+              View My Pending Post
+            </Button>
+            <Button
               size='large'
               className='w-full text-left mb-4'
               icon={<GiftOutlined className={isDarkMode ? 'text-[#468CCE]' : 'text-[#3178B9]'} />}
@@ -186,6 +195,16 @@ const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: Si
               Give awards
             </Button>
           </>
+        )}
+        {(userInfo as User)?.role === 'SU' && (
+          <Button
+            icon={<AuditOutlined className={isDarkMode ? 'text-[#468CCE]' : 'text-[#3178B9]'} />}
+            size='large'
+            className='w-full text-left mb-4'
+            onClick={() => navigate('/view-pending-post')}
+          >
+            View My Pending Post
+          </Button>
         )}
         {(userInfo as User)?.role !== 'AD' ? (
           <Button
