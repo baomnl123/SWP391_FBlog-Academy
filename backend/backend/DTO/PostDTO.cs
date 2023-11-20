@@ -16,6 +16,7 @@
         public ICollection<ImageDTO>? Images { get; set; } = new List<ImageDTO>();
         public ICollection<MajorDTO>? Majors { get; set; } = new List<MajorDTO>();
         public ICollection<SubjectDTO>? Subjects { get; set; } = new List<SubjectDTO>();
+        public ICollection<ReportPostDTO>? ReportList { get; set; } = new List<ReportPostDTO>();
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public int Vote { get; set; } = 0;
