@@ -15,10 +15,16 @@ export default function PendingList() {
 
   const navigate = useNavigate()
   const reviewerId = useSelector((state: RootState) => state.userReducer.user?.id)
+  const user = useSelector((state: RootState) => state.userReducer.user)
 
   const { data, refresh } = useRequest(
-    async () => {
-      const response = await api.postPending()
+    async ({ categoryID, tagID, searchValue }: { categoryID?: number[]; tagID?: number[]; searchValue?: string }) => {
+      const response = await api.postPending({
+        categoryID,
+        tagID,
+        currentUserId: Number(user?.id ?? 0),
+        searchValue
+      })
       return response
     },
     {

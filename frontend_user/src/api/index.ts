@@ -7,9 +7,26 @@ import { UserMajor, UserSubject } from './types/user'
 
 const api = {
   // post
-  postPending() {
+  postPending({
+    categoryID,
+    tagID,
+    currentUserId,
+    searchValue
+  }: {
+    categoryID?: number[]
+    tagID?: number[]
+    currentUserId?: number
+    searchValue?: string
+  }) {
     const url = 'Post/pending'
-    return axiosClient.get<unknown, PendingPost[]>(url)
+    return axiosClient.get<unknown, PendingPost[]>(url,{
+      params:{
+        categoryID,
+        tagID,
+        currentUserId,
+        searchValue
+      }
+    })
   },
   postApproved() {
     const url = 'Post/all'

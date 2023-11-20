@@ -173,7 +173,7 @@ const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: Si
               className='w-full text-left mb-4'
               icon={<FileSyncOutlined className={isDarkMode ? 'text-[#468CCE]' : 'text-[#3178B9]'} />}
               size='large'
-              onClick={() => navigate('/view-pending-list')}
+              onClick={() => navigate('/view-pending-list/')}
             >
               View pending list
             </Button>
