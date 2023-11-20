@@ -11,15 +11,16 @@ export default function PrivateRoute() {
   useRequest(
     async () => {
       const response = await api.getEmail(user?.emailAddresses[0].emailAddress ?? '')
-      
-      // if (response.role !== 'AD') {
-      //   signOut(() => navigate('/'))
-      // }
+      localStorage.setItem('id', response.id.toString())
+
+      if (response.role !== 'AD') {
+        signOut(() => navigate('/'))
+      }
       return response
     },
     {
       onError(e) {
-        // signOut(() => navigate('/'))
+        signOut(() => navigate('/'))
         console.error(e)
       }
     }

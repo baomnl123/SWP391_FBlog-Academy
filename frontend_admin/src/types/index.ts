@@ -92,6 +92,7 @@ export interface Post {
   title: string
   content: string
   upvotes: number
+  downvotes: number
   videos: Media[]
   images: Media[]
   majors: Major[]
@@ -100,4 +101,13 @@ export interface Post {
   updatedAt: Date
   isApproved: boolean
   status: boolean
+  reports: number
+  reportList: {
+    admin: unknown
+    content: string
+    createdAt: string
+    post: Post
+    reporter: User
+    status: string
+  }[]
 }

@@ -132,6 +132,15 @@ const api = {
   getAllPost() {
     const url = `Post/all/1`
     return axiosClient.get<unknown, Post[]>(url)
+  },
+
+  getPostById(postId: number) {
+    const url = `Post/${postId}`
+    return axiosClient.get<unknown, Post>(url, {
+      params: {
+        currentUserId: Number(localStorage.getItem('id'))
+      }
+    })
   }
 }
 
