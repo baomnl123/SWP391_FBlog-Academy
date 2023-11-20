@@ -4,7 +4,7 @@ import { Category, PendingPost, PostByUserId, SavePost, Tag, User, Post } from '
 import axiosClient from './axiosClient'
 import { CreatePostBodyRequest } from './types/post'
 import { UserMajor, UserSubject } from './types/user'
-import axios from 'axios'
+
 
 const api = {
   // post

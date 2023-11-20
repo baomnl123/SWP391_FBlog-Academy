@@ -13,8 +13,6 @@ const Vote = ({
   vote,
   userId,
   postId,
-  upvote,
-  downvote,
   usersVote,
   onVoteSuccess
 }: {
