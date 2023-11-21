@@ -28,7 +28,7 @@ namespace backend.Controllers
         [HttpGet("all/{currentUserId}")]
         public IActionResult GetAllPosts(int currentUserId)
         {
-            var existed = _postHandlers.GetAllPosts(currentUserId);
+            var existed = _postHandlers.GetAllPostsForAdmin(currentUserId);
             if (existed == null || existed.Count == 0)
             {
                 existed = new List<PostDTO>();

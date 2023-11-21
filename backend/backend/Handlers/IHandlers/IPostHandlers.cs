@@ -29,6 +29,8 @@ namespace backend.Handlers.IHandlers
         public ICollection<PostDTO>? GetPostsHaveVideo(int currentUserId);
         //Get top 5 post with highest vote.
         public ICollection<PostDTO>? GetTop5VotedPost(int currentUserId);
+        //Get all posts for admin
+        public ICollection<PostDTO>? GetAllPostsForAdmin(int currentUserId);
 
 
         //Create post

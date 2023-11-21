@@ -490,6 +490,16 @@ namespace backend.Handlers.Implementors
             return GetPostInformationByRole(existed, currentUserId);
         }
 
+        public ICollection<PostDTO>? GetAllPostsForAdmin(int currentUserId)
+        {
+            //return null if get all posts is failed
+            var existed = _postRepository.GetAllPosts();
+            if (existed == null || existed.Count == 0) return null;
+
+            //return posts'list
+            return GetAllRelatedDataForPost(existed);
+        }
+
         public ICollection<PostDTO>? SearchPostByUserId(int userId)
         {
             //check that user is not null
