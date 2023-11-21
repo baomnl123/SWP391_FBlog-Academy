@@ -81,10 +81,10 @@ export const Routes = createBrowserRouter([
         }
       },
       {
-        path: '/policy',
+        path: '/policies',
         element: <Profile />,
         handle: {
-          crumb: () => 'Policy'
+          crumb: () => 'Policies'
         }
       },
 

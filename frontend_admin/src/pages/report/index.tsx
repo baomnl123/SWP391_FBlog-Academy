@@ -107,10 +107,10 @@ export default function ReportPost() {
         rowKey='id'
         columns={columns}
         loading={loading}
-        onRow={(_, index) => {
+        onRow={(data) => {
           return {
             onClick() {
-              setIndexPost(index ?? 0)
+              setIndexPost(data.id ?? 0)
               setShowModal(true)
               // if (!data.reported) {
               //   setShowModal(true)
@@ -125,9 +125,10 @@ export default function ReportPost() {
         open={showModal}
         onCancel={() => {
           setShowModal(false)
+          setIndexPost(-1)
         }}
         footer={false}
-        data={post[indexPost]}
+        data={(post ?? {}).find((x) => x.id === indexPost) as Post}
         onBan={() => {
           setShowModal(false)
           refresh()
