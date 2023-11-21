@@ -3,13 +3,31 @@
 import { Category, PendingPost, PostByUserId, SavePost, Tag, User, Post } from '@/types'
 import axiosClient from './axiosClient'
 import { CreatePostBodyRequest } from './types/post'
-import { UserMajor } from './types/user'
+import { UserMajor, UserSubject } from './types/user'
+
 
 const api = {
   // post
-  postPending() {
+  postPending({
+    categoryID,
+    tagID,
+    currentUserId,
+    searchValue
+  }: {
+    categoryID?: number[]
+    tagID?: number[]
+    currentUserId?: number
+    searchValue?: string
+  }) {
     const url = 'Post/pending'
-    return axiosClient.get<unknown, PendingPost[]>(url)
+    return axiosClient.get<unknown, PendingPost[]>(url,{
+      params:{
+        categoryID,
+        tagID,
+        currentUserId,
+        searchValue
+      }
+    })
   },
   postApproved() {
     const url = 'Post/all'
@@ -27,7 +45,7 @@ const api = {
     currentUserId?: number
     searchValue?: string
   }) {
-    const url = 'Post/category-tag'
+    const url = 'Post/on-load'
     return axiosClient.get<unknown, PendingPost[]>(url, {
       params: {
         categoryID,
@@ -62,9 +80,17 @@ const api = {
     const url = `Post/user/${userId}`
     return axiosClient.get<unknown, PostByUserId[]>(url)
   },
+  getUserPendingPost(userId:number){
+    const url = `Post/pending/${userId}`
+    return axiosClient.get<unknown, PendingPost[]>(url)
+  },
   getUserMajorbyID(userID: number) {
     const url = `User/${userID}/majors`
     return axiosClient.get<unknown, UserMajor[]>(url)
+  },
+  getUserSubjectbyID(userID: number) {
+    const url = `User/${userID}/subjects`
+    return axiosClient.get<unknown, UserSubject[]>(url)
   },
 
   //category
@@ -172,6 +198,23 @@ const api = {
     return axiosClient.delete(url, {
       params: {
         majorID
+      }
+    })
+  },
+  createdUserSubject({ userID, subjectID }: { userID: number; subjectID: number[] }) {
+    const url = `User/${userID}/subject`
+    return axiosClient.post(url, null, {
+      params: {
+        userID,
+        subjectID
+      }
+    })
+  },
+  deleteUserSubject(userID: number, subjectID: number[]) {
+    const url = `User/${userID}/subject`
+    return axiosClient.delete(url, {
+      params: {
+        subjectID
       }
     })
   },
