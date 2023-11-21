@@ -14,16 +14,16 @@ namespace backend.Repositories.Implementors
             _context = new();
         }
 
-        public bool CreateMajor(Major category)
+        public bool CreateMajor(Major major)
         {
             // Add Major
-            _context.Add(category);
+            _context.Add(major);
             return Save();
         }
 
-        public bool DisableMajor(Major category)
+        public bool DisableMajor(Major major)
         {
-            var postMajors = _context.PostMajors.Where(c => c.MajorId == category.Id).ToList();
+            var postMajors = _context.PostMajors.Where(c => c.MajorId == major.Id).ToList();
 
             foreach (var postMajor in postMajors)
             {
@@ -31,20 +31,20 @@ namespace backend.Repositories.Implementors
                 _context.Update(postMajor);
             }
 
-            category.Status = false;
-            _context.Update(category);
+            major.Status = false;
+            _context.Update(major);
             return Save();
         }
 
-        public bool EnableMajor(Major category)
+        public bool EnableMajor(Major major)
         {
-            var categorySubjects = _context.MajorSubjects.Where(c => c.MajorId ==  category.Id).ToList();
-            var postMajors = _context.PostMajors.Where(c => c.MajorId == category.Id).ToList();
+            var majorSubjects = _context.MajorSubjects.Where(c => c.MajorId ==  major.Id).ToList();
+            var postMajors = _context.PostMajors.Where(c => c.MajorId == major.Id).ToList();
 
-            foreach (var categorySubject in categorySubjects)
+            foreach (var majorSubject in majorSubjects)
             {
-                categorySubject.Status = true;
-                _context.Update(categorySubject);
+                majorSubject.Status = true;
+                _context.Update(majorSubject);
             }
 
             foreach (var postMajor in postMajors)
@@ -53,8 +53,8 @@ namespace backend.Repositories.Implementors
                 _context.Update(postMajor);
             }
 
-            category.Status = true;
-            _context.Update(category);
+            major.Status = true;
+            _context.Update(major);
             return Save();
         }
 
@@ -68,33 +68,33 @@ namespace backend.Repositories.Implementors
             return _context.Majors.Where(c => c.Status == false).ToList();
         }
 
-        public Major? GetMajorById(int categoryId)
+        public Major? GetMajorById(int majorId)
         {
-            return _context.Majors.FirstOrDefault(e => e.Id == categoryId);
+            return _context.Majors.FirstOrDefault(e => e.Id == majorId);
         }
 
-        public Major? GetMajorByName(string categoryName)
+        public Major? GetMajorByName(string majorName)
         {
-            return _context.Majors.FirstOrDefault(c => c.MajorName.Trim().ToUpper() == categoryName.Trim().ToUpper());
+            return _context.Majors.FirstOrDefault(c => c.MajorName.Trim().ToUpper() == majorName.Trim().ToUpper());
         }
 
-        public ICollection<Post> GetPostsByMajor(int categoryId)
+        public ICollection<Post> GetPostsByMajor(int majorId)
         {
-            return _context.PostMajors.Where(e => e.MajorId == categoryId && e.Status == true)
+            return _context.PostMajors.Where(e => e.MajorId == majorId && e.Status == true)
                                           .Select(e => e.Post)
                                           .Where(c => c.Status == true).ToList();
         }
 
-        public ICollection<Subject> GetSubjectsByMajor(int categoryId)
+        public ICollection<Subject> GetSubjectsByMajor(int majorId)
         {
-            return _context.MajorSubjects.Where(e => e.MajorId == categoryId && e.Status == true)
+            return _context.MajorSubjects.Where(e => e.MajorId == majorId && e.Status == true)
                                         .Select(e => e.Subject)
                                         .Where(c => c.Status == true).ToList();
         }
 
-        public bool UpdateMajor(Major category)
+        public bool UpdateMajor(Major major)
         {
-            _context.Update(category);
+            _context.Update(major);
             return Save();
         }
 

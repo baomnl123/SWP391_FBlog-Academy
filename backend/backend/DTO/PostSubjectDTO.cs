@@ -1,9 +1,9 @@
 ﻿namespace backend.DTO
 {
-    public class PostTagDTO
+    public class PostSubjectDTO
     {
         public int PostId { get; set; }
-        public int TagId { get; set; }
+        public int SubjectId { get; set; }
         public bool Status { get; set; }
     }
 }

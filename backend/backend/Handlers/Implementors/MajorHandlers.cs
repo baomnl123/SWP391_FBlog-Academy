@@ -18,8 +18,8 @@ namespace backend.Handlers.Implementors
         private readonly IUserRepository _userRepository;
         private readonly IImageHandlers _imageHandlers;
         private readonly IVideoHandlers _videoHandlers;
-        private readonly IMajorRepository _categoryRepository;
-        private readonly IMajorSubjectRepository _categorySubjectRepository;
+        private readonly IMajorRepository _majorRepository;
+        private readonly IMajorSubjectRepository _majorSubjectRepository;
         private readonly IPostMajorRepository _postMajorRepository;
         private readonly IPostSubjectRepository _postSubjectRepository;
         private readonly IVotePostRepository _votePostRepository;
@@ -28,8 +28,8 @@ namespace backend.Handlers.Implementors
         public MajorHandlers(IUserRepository userRepository,
                                 IImageHandlers imageHandlers,
                                 IVideoHandlers videoHandlers,
-                                IMajorRepository categoryRepository,
-                                IMajorSubjectRepository categorySubjectRepository,
+                                IMajorRepository majorRepository,
+                                IMajorSubjectRepository majorSubjectRepository,
                                 IPostMajorRepository postMajorRepository,
                                 IPostSubjectRepository postSubjectRepository,
                                 IVotePostRepository votePostRepository,
@@ -39,8 +39,8 @@ namespace backend.Handlers.Implementors
             _userRepository = userRepository;
             _imageHandlers = imageHandlers;
             _videoHandlers = videoHandlers;
-            _categoryRepository = categoryRepository;
-            _categorySubjectRepository = categorySubjectRepository;
+            _majorRepository = majorRepository;
+            _majorSubjectRepository = majorSubjectRepository;
             _postMajorRepository = postMajorRepository;
             _postSubjectRepository = postSubjectRepository;
             _votePostRepository = votePostRepository;
@@ -50,38 +50,38 @@ namespace backend.Handlers.Implementors
 
         public ICollection<MajorDTO>? GetMajors()
         {
-            var categories = _categoryRepository.GetAllMajors();
-            return _mapper.Map<List<MajorDTO>>(categories);
+            var majors = _majorRepository.GetAllMajors();
+            return _mapper.Map<List<MajorDTO>>(majors);
         }
 
         public ICollection<MajorDTO>? GetDisableMajors()
         {
-            var categories = _categoryRepository.GetDisableMajors();
-            return _mapper.Map<List<MajorDTO>>(categories);
+            var majors = _majorRepository.GetDisableMajors();
+            return _mapper.Map<List<MajorDTO>>(majors);
         }
 
-        public MajorDTO? GetMajorById(int categoryId)
+        public MajorDTO? GetMajorById(int majorId)
         {
-            var category = _categoryRepository.GetMajorById(categoryId);
-            if (category == null) return null;
+            var major = _majorRepository.GetMajorById(majorId);
+            if (major == null) return null;
 
-            return _mapper.Map<MajorDTO>(category);
+            return _mapper.Map<MajorDTO>(major);
         }
 
-        public MajorDTO? GetMajorByName(string categoryName)
+        public MajorDTO? GetMajorByName(string majorName)
         {
-            var category = _categoryRepository.GetMajorByName(categoryName);
-            if (category == null) return null;
+            var major = _majorRepository.GetMajorByName(majorName);
+            if (major == null) return null;
 
-            return _mapper.Map<MajorDTO>(category);
+            return _mapper.Map<MajorDTO>(major);
         }
 
-        public ICollection<PostDTO>? GetPostsByMajor(int categoryId)
+        public ICollection<PostDTO>? GetPostsByMajor(int majorId)
         {
-            var category = _categoryRepository.GetMajorById(categoryId);
-            if (category == null || category.Status == false) return null;
+            var major = _majorRepository.GetMajorById(majorId);
+            if (major == null || major.Status == false) return null;
 
-            var posts = _categoryRepository.GetPostsByMajor(categoryId);
+            var posts = _majorRepository.GetPostsByMajor(majorId);
             if (posts == null || posts.Count == 0) return null;
 
             //map to list DTO
@@ -113,30 +113,30 @@ namespace backend.Handlers.Implementors
             return resultList;
         }
 
-        public ICollection<SubjectDTO>? GetSubjectsByMajor(int categoryId)
+        public ICollection<SubjectDTO>? GetSubjectsByMajor(int majorId)
         {
-            var category = _categoryRepository.GetMajorById(categoryId);
-            if (category == null || category.Status == false) return null;
+            var major = _majorRepository.GetMajorById(majorId);
+            if (major == null || major.Status == false) return null;
 
-            var tags = _categoryRepository.GetSubjectsByMajor(categoryId);
-            if (tags == null || tags.Count == 0) return null;
+            var subjects = _majorRepository.GetSubjectsByMajor(majorId);
+            if (subjects == null || subjects.Count == 0) return null;
 
-            return _mapper.Map<List<SubjectDTO>>(tags);
+            return _mapper.Map<List<SubjectDTO>>(subjects);
         }
 
-        public MajorDTO? CreateMajor(int adminId, string categoryName)
+        public MajorDTO? CreateMajor(int adminId, string majorName)
         {
-            // Create a new tacategory object 
-            var category = new Major()
+            // Create a new tamajor object 
+            var major = new Major()
             {
-                MajorName = categoryName,
+                MajorName = majorName,
                 CreatedAt = DateTime.Now,
                 Status = true,
             };
 
-            // Create the category, and return the mapped tag DTO if succeed.
-            if (_categoryRepository.CreateMajor(category))
-                return _mapper.Map<MajorDTO>(category);
+            // Create the major, and return the mapped subject DTO if succeed.
+            if (_majorRepository.CreateMajor(major))
+                return _mapper.Map<MajorDTO>(major);
 
             // Otherwise, return null.
             return null;
@@ -144,96 +144,96 @@ namespace backend.Handlers.Implementors
 
         public MajorDTO? UpdateMajor(int currentMajorId, string newMajorName)
         {
-            // Find category and categorySubject
-            var category = _categoryRepository.GetMajorById(currentMajorId);
-            if (category == null || category.Status == false) return null;
+            // Find major and majorSubject
+            var major = _majorRepository.GetMajorById(currentMajorId);
+            if (major == null || major.Status == false) return null;
 
             // Set new MajorName and UpdatedAt
-            category.MajorName = newMajorName;
-            category.UpdatedAt = DateTime.Now;
+            major.MajorName = newMajorName;
+            major.UpdatedAt = DateTime.Now;
 
-            // Return the mapped tag DTO if all updates succeeded, otherwise return null.
-            return _categoryRepository.UpdateMajor(category) ? _mapper.Map<MajorDTO>(category) : null;
+            // Return the mapped subject DTO if all updates succeeded, otherwise return null.
+            return _majorRepository.UpdateMajor(major) ? _mapper.Map<MajorDTO>(major) : null;
         }
 
-        public MajorDTO? EnableMajor(int categoryId)
+        public MajorDTO? EnableMajor(int majorId)
         {
-            // Find category and categorySubjects and postMajors
-            var category = _categoryRepository.GetMajorById(categoryId);
-            var categorySubjects = _categorySubjectRepository.GetMajorSubjectsByMajorId(category.Id);
-            var postMajors = _postMajorRepository.GetPostMajorsByMajorId(category.Id);
-            if (category == null || category.Status == true) return null;
+            // Find major and majorSubjects and postMajors
+            var major = _majorRepository.GetMajorById(majorId);
+            var majorSubjects = _majorSubjectRepository.GetMajorSubjectsByMajorId(major.Id);
+            var postMajors = _postMajorRepository.GetPostMajorsByMajorId(major.Id);
+            if (major == null || major.Status == true) return null;
 
             // Check if all enables succeeded.
-            var checkMajor = _categoryRepository.EnableMajor(category);
-            var checkMajorSubject = categorySubjects.All(categorySubject => _categorySubjectRepository.EnableMajorSubject(categorySubject));
+            var checkMajor = _majorRepository.EnableMajor(major);
+            var checkMajorSubject = majorSubjects.All(majorSubject => _majorSubjectRepository.EnableMajorSubject(majorSubject));
             var checkPostMajor = postMajors.All(postMajor => _postMajorRepository.EnablePostMajor(postMajor));
 
-            // Return the mapped tag DTO if all enables succeeded, otherwise return null.
-            return (checkMajor) ? _mapper.Map<MajorDTO>(category) : null;
+            // Return the mapped subject DTO if all enables succeeded, otherwise return null.
+            return (checkMajor) ? _mapper.Map<MajorDTO>(major) : null;
         }
 
-        public MajorDTO? DisableMajor(int categoryId)
+        public MajorDTO? DisableMajor(int majorId)
         {
-            // Find category and categorySubjects and postMajors
-            var category = _categoryRepository.GetMajorById(categoryId);
-            var categorySubjects = _categorySubjectRepository.GetMajorSubjectsByMajorId(category.Id);
-            var postMajors = _postMajorRepository.GetPostMajorsByMajorId(category.Id);
-            if (category == null || category.Status == false) return null;
+            // Find major and majorSubjects and postMajors
+            var major = _majorRepository.GetMajorById(majorId);
+            var majorSubjects = _majorSubjectRepository.GetMajorSubjectsByMajorId(major.Id);
+            var postMajors = _postMajorRepository.GetPostMajorsByMajorId(major.Id);
+            if (major == null || major.Status == false) return null;
             // Check if all disable succeeded.
-            var checkMajor = _categoryRepository.DisableMajor(category);
-            var checkMajorSubject = categorySubjects.All(categorySubject => _categorySubjectRepository.DisableMajorSubject(categorySubject));
+            var checkMajor = _majorRepository.DisableMajor(major);
+            var checkMajorSubject = majorSubjects.All(majorSubject => _majorSubjectRepository.DisableMajorSubject(majorSubject));
             var checkPostMajor = postMajors.All(postMajor => _postMajorRepository.DisablePostMajor(postMajor));
 
-            // Return the mapped tag DTO if all disable succeeded, otherwise return null.
-            return (checkMajor) ? _mapper.Map<MajorDTO>(category) : null;
+            // Return the mapped subject DTO if all disable succeeded, otherwise return null.
+            return (checkMajor) ? _mapper.Map<MajorDTO>(major) : null;
         }
 
-        public MajorDTO? CreatePostMajor(PostDTO post, MajorDTO category)
+        public MajorDTO? CreatePostMajor(PostDTO post, MajorDTO major)
         {
             // If relationship exists, then return null.
-            var isExists = _postMajorRepository.GetPostMajor(post.Id, category.Id);
+            var isExists = _postMajorRepository.GetPostMajor(post.Id, major.Id);
             if (isExists != null && isExists.Status) return null;
 
             // If relationship is disabled, enable it and return it.
             if (isExists != null && !isExists.Status)
             {
                 _postMajorRepository.EnablePostMajor(isExists);
-                return _mapper.Map<MajorDTO>(category);
+                return _mapper.Map<MajorDTO>(major);
             }
 
             // Create a new postSubject object if isExists is null, or return isExists otherwise.
             var postMajor = new PostMajor()
             {
                 PostId = post.Id,
-                MajorId = category.Id,
+                MajorId = major.Id,
                 Status = true
             };
 
             // Add relationship
             if (_postMajorRepository.CreatePostMajor(postMajor))
-                return _mapper.Map<MajorDTO>(category);
+                return _mapper.Map<MajorDTO>(major);
 
             return null;
         }
 
-        public MajorDTO? DisablePostMajor(int postId, int categoryId)
+        public MajorDTO? DisablePostMajor(int postId, int majorId)
         {
-            var category = _categoryRepository.GetMajorById(categoryId);
-            var postMajor = _postMajorRepository.GetPostMajor(postId, categoryId);
+            var major = _majorRepository.GetMajorById(majorId);
+            var postMajor = _postMajorRepository.GetPostMajor(postId, majorId);
             if (postMajor == null) return null;
             // || postMajor.Status == false
             if (_postMajorRepository.DisablePostMajor(postMajor))
-                return _mapper.Map<MajorDTO>(category);
+                return _mapper.Map<MajorDTO>(major);
 
             return null;
         }
 
         public ICollection<MajorDTO>? GetTop5Majors()
         {
-            var categories = GetMajors().Where(c => c.Status).ToList();
+            var majors = GetMajors().Where(c => c.Status).ToList();
 
-            var topMajors = categories
+            var topMajors = majors
               .Select(c => new
               {
                   Major = c,
