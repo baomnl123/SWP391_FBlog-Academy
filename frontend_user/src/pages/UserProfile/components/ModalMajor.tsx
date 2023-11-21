@@ -12,7 +12,7 @@ interface ModalMajorProps {
   setModal?: (value: boolean) => void
   idPost?: number | null
   onSuccess?: () => void
-  onGetCategories?: (data: string[] | string | number | number[]) => void
+  onGetMajors?: (data: string[] | string | number | number[]) => void
   onOk?: () => void
   onCancel?: () => void
   majorSelect?: any[]
@@ -24,9 +24,9 @@ const ModalMajor = ({ isOpen, setModal, onSuccess, onOk, majorSelect }: ModalMaj
   const [form] = Form.useForm()
   const { user } = useSelector((state: RootState) => state.userReducer)
 
-  const { data: categoriesData } = useRequest(async () => {
+  const { data: majorsData } = useRequest(async () => {
     try {
-      const res = await api.getAllCategory()
+      const res = await api.getAllMajor()
       // Filter all major, expect Only Student
       const filter = res.filter((item) => item.majorName !== 'Only Students')
 
@@ -84,7 +84,7 @@ const ModalMajor = ({ isOpen, setModal, onSuccess, onOk, majorSelect }: ModalMaj
         <SelectLabel
           label='Major'
           placeHolder='Select Major'
-          optionData={categoriesData}
+          optionData={majorsData}
           onChange={(value) => {
             setMajor(value as number[])
           }}

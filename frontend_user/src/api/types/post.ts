@@ -6,8 +6,8 @@ export interface Post {
   content?: string
   videos?: Video[]
   images?: Image[]
-  categories?: string
-  tags?: Tag[]
+  majors?: string
+  subjects?: Tag[]
   createdAt?: string
   updatedAt?: string
   isApproved?: boolean
@@ -33,7 +33,7 @@ export interface Video {
 export interface Tag {
   id?: number
   adminId?: number
-  tagName?: string
+  subjectName?: string
   createdAt?: string
   updatedAt?: string
   status?: boolean
@@ -42,8 +42,8 @@ export interface Tag {
 export interface CreatePostBodyRequest {
   title: string
   content: string
-  tagIds: number[]
-  categoryIds: number[]
+  subjectIds: number[]
+  majorIds: number[]
   videoURLs: string[]
   imageURLs: string[]
 }

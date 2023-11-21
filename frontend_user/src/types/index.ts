@@ -14,8 +14,8 @@ export type Post = {
   content: string
   videos: Image[]
   images: Image[]
-  categories: Category[] | null
-  tags: Tag[] | null
+  majors: Major[] | null
+  subjects: Subject[] | null
   createdAt: Date
   updatedAt: Date
   isApproved: boolean
@@ -31,8 +31,8 @@ export type PendingPost = {
   content: string
   videos: Image[]
   images: Image[]
-  categories: null
-  tags: null
+  majors: null
+  subjects: null
   createdAt: Date
   updatedAt: null
   isApproved: boolean
@@ -50,8 +50,8 @@ export type PostByUserId = {
   content: string
   videos: Image[]
   images: Image[]
-  categories: null
-  tags: null
+  majors: null
+  subjects: null
   createdAt: Date
   updatedAt: Date
   isApproved: boolean
@@ -73,7 +73,7 @@ export type User = {
   isFollowed: boolean
 }
 
-export type Category = {
+export type Major = {
   id: number
   adminId: number
   majorName: string
@@ -82,7 +82,7 @@ export type Category = {
   status: boolean
 }
 
-export type Tag = {
+export type Subject = {
   id: number
   adminId: number
   subjectName: string

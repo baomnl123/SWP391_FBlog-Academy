@@ -35,12 +35,12 @@ export default function UserPendingPost() {
     }
   )
 
-  // const { data: categories } = useRequest(
+  // const { data: majors } = useRequest(
   //   async () => {
-  //     const response = await api.getAllCategory()
-  //     return response.map((category) => ({
-  //       label: category.categoryName,
-  //       value: category.id
+  //     const response = await api.getAllMajor()
+  //     return response.map((major) => ({
+  //       label: major.majorName,
+  //       value: major.id
   //     }))
   //   },
   //   {
@@ -50,12 +50,12 @@ export default function UserPendingPost() {
   //   }
   // )
 
-  // const { data: tags } = useRequest(
+  // const { data: subjects } = useRequest(
   //   async () => {
-  //     const response = await api.getAllTag()
-  //     return response.map((tag) => ({
-  //       label: tag.tagName,
-  //       value: tag.id
+  //     const response = await api.getAllSubject()
+  //     return response.map((subject) => ({
+  //       label: subject.subjectName,
+  //       value: subject.id
   //     }))
   //   },
   //   {

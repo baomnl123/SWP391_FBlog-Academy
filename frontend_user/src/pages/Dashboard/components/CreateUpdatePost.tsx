@@ -36,17 +36,17 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
   // const [images, setImages] = useState<string[]>([])
   const [form] = Form.useForm()
   const [loading, setLoading] = useState(false)
-  const [categoryOptions, setCategoryOptions] = useState<SelectProps['options']>([])
-  const [tagOptions, setTagOptions] = useState<SelectProps['options']>([])
+  const [majorOptions, setMajorOptions] = useState<SelectProps['options']>([])
+  const [subjectOptions, setSubjectOptions] = useState<SelectProps['options']>([])
   const { user } = useSelector((state: RootState) => state.userReducer)
 
   const {
-    data: categoriesData,
-    loading: categoryLoading,
+    data: majorsData,
+    loading: majorLoading,
     run: getAllCate
   } = useRequest(
     async () => {
-      const res = await api.getAllCategory()
+      const res = await api.getAllMajor()
       return res
     },
     {
@@ -58,12 +58,12 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
   )
 
   const {
-    data: tagsData,
-    loading: tagsLoading,
-    run: getAllTag
+    data: subjectsData,
+    loading: subjectsLoading,
+    run: getAllSubject
   } = useRequest(
     async () => {
-      const res = await api.getAllTag()
+      const res = await api.getAllSubject()
       return res
     },
     {
@@ -109,12 +109,12 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
     manual: true,
     onSuccess: (res) => {
       console.log(res)
-      const categories = res.categories?.map((item) => item.id)
-      const tagIds = res.tags?.map((item) => item.id)
+      const majors = res.majors?.map((item) => item.id)
+      const subjectIds = res.subjects?.map((item) => item.id)
       form.setFieldValue('title', res?.title)
       form.setFieldValue('content', res?.content)
-      form.setFieldValue('Major', categories)
-      form.setFieldValue('Subject', tagIds)
+      form.setFieldValue('Major', majors)
+      form.setFieldValue('Subject', subjectIds)
 
       const filesUpdated: FileData[] = []
       const fileUploads: FileUploaded[] = []
@@ -160,35 +160,35 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
   }, [form, getPostById, id])
 
   useEffect(() => {
-    if (categoriesData) {
-      const categories: SelectProps['options'] = categoriesData.map((item) => {
+    if (majorsData) {
+      const majors: SelectProps['options'] = majorsData.map((item) => {
         return {
           label: item.majorName,
           value: item.id
         }
       })
-      setCategoryOptions(categories)
+      setMajorOptions(majors)
     }
-  }, [categoriesData])
+  }, [majorsData])
 
   useEffect(() => {
-    if (tagsData) {
-      const options: SelectProps['options'] = tagsData.map((item) => {
+    if (subjectsData) {
+      const options: SelectProps['options'] = subjectsData.map((item) => {
         return {
           label: item.subjectName,
           value: item.id
         }
       })
-      setTagOptions(options)
+      setSubjectOptions(options)
     }
-  }, [tagsData])
+  }, [subjectsData])
 
   useEffect(() => {
     if (isOpen) {
       getAllCate()
-      getAllTag()
+      getAllSubject()
     }
-  }, [getAllCate, getAllTag, isOpen])
+  }, [getAllCate, getAllSubject, isOpen])
 
   useEffect(() => {
     setIsModalOpen(isOpen)
@@ -208,7 +208,7 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
     // setImages([])
   }
 
-  const onFinish = async (value: { title: string; content: string; categoryIds: number[]; tagIds: number[] }) => {
+  const onFinish = async (value: { title: string; content: string; majorIds: number[]; subjectIds: number[] }) => {
     const imageURLs = filesUploaded.filter((item) => item.type === 'image').map((item) => item.url)
     const videoURLs = filesUploaded.filter((item) => item.type === 'video').map((item) => item.url)
     if (!id) {
@@ -305,13 +305,13 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
           </div>
 
           <div className='w-[35%]'>
-            <Form.Item name='categoryIds' rules={[{ required: true, message: 'Please select your Major' }]}>
+            <Form.Item name='majorIds' rules={[{ required: true, message: 'Please select your Major' }]}>
               <Select
                 mode='multiple'
                 style={{ width: '100%' }}
                 placeholder='Major'
-                options={categoryOptions}
-                loading={categoryLoading}
+                options={majorOptions}
+                loading={majorLoading}
               />
             </Form.Item>
           </div>
@@ -323,13 +323,13 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
           </div>
 
           <div className='w-[35%]'>
-            <Form.Item name='tagIds' rules={[{ required: true, message: 'Please select your Subject!' }]}>
+            <Form.Item name='subjectIds' rules={[{ required: true, message: 'Please select your Subject!' }]}>
               <Select
                 mode='multiple'
                 style={{ width: '100%' }}
                 placeholder='Subject'
-                options={tagOptions}
-                loading={tagsLoading}
+                options={subjectOptions}
+                loading={subjectsLoading}
               />
             </Form.Item>
           </div>

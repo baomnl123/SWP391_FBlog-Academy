@@ -35,24 +35,24 @@ const RightSiderDashboardMenu = ({ title, data, onChange, idSelect }: RightSider
 }
 
 const RightSiderDashboard = ({
-  onCategoryChange,
-  onTagChange,
+  onMajorChange,
+  onSubjectChange,
   onPostChange
 }: {
-  onCategoryChange?: (value?: number) => void
-  onTagChange?: (value?: number) => void
+  onMajorChange?: (value?: number) => void
+  onSubjectChange?: (value?: number) => void
   onPostChange?: (value?: Post) => void
 }) => {
-  const [categorySelect, setCategorySelect] = useState(-1)
-  const [tagSelect, setTagSelect] = useState(-1)
+  const [majorSelect, setMajorSelect] = useState(-1)
+  const [subjectSelect, setSubjectSelect] = useState(-1)
   const [postSelect, setPostSelect] = useState(-1)
-  const { data: trendingCategory } = useRequest(api.trendingCategory, {
+  const { data: trendingMajor } = useRequest(api.trendingMajor, {
     onError(e) {
       console.error(e)
     }
   })
 
-  const { data: trendingTag } = useRequest(api.trendingTag, {
+  const { data: trendingSubject } = useRequest(api.trendingSubject, {
     onError(e) {
       console.error(e)
     }
@@ -66,29 +66,29 @@ const RightSiderDashboard = ({
 
   return (
     <div className='px-8 mt-[80px] max-w-[300px] w-full fixed right-0'>
-      {(trendingCategory ?? []).length > 0 && (
+      {(trendingMajor ?? []).length > 0 && (
         <RightSiderDashboardMenu
           onChange={(value) => {
-            setCategorySelect(categorySelect === value ? -1 : value)
-            onCategoryChange?.(categorySelect === value ? undefined : value)
+            setMajorSelect(majorSelect === value ? -1 : value)
+            onMajorChange?.(majorSelect === value ? undefined : value)
           }}
-          idSelect={categorySelect}
-          title='Trending Category'
-          data={(trendingCategory ?? []).map((item) => ({
+          idSelect={majorSelect}
+          title='Trending Major'
+          data={(trendingMajor ?? []).map((item) => ({
             title: item.majorName,
             value: item.id
           }))}
         />
       )}
-      {(trendingTag ?? []).length > 0 && (
+      {(trendingSubject ?? []).length > 0 && (
         <RightSiderDashboardMenu
           onChange={(value) => {
-            setTagSelect(tagSelect === value ? -1 : value)
-            onTagChange?.(tagSelect === value ? undefined : value)
+            setSubjectSelect(subjectSelect === value ? -1 : value)
+            onSubjectChange?.(subjectSelect === value ? undefined : value)
           }}
-          title='Trending Tag'
-          idSelect={tagSelect}
-          data={(trendingTag ?? []).map((item) => ({
+          title='Trending Subject'
+          idSelect={subjectSelect}
+          data={(trendingSubject ?? []).map((item) => ({
             title: item.subjectName,
             value: item.id
           }))}
