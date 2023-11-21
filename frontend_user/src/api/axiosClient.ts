@@ -3,7 +3,7 @@ import axios from 'axios'
 import queryString from 'query-string'
 
 const axiosClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URI ?? 'https://fblogapi.azurewebsites.net/api/',
+  baseURL: import.meta.env.VITE_API_URI ?? 'https://fblogapibackend.azurewebsites.net/api/',
   headers: {
     'content-type': 'multipart/form-data'
   },

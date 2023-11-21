@@ -27,7 +27,10 @@ const ModalMajor = ({ isOpen, setModal, onSuccess, onOk, majorSelect }: ModalMaj
   const { data: categoriesData } = useRequest(async () => {
     try {
       const res = await api.getAllCategory()
-      return res.map((item) => {
+      // Filter all major, expect Only Student
+      const filter = res.filter((item) => item.majorName !== 'Only Students')
+
+      return filter.map((item) => {
         return {
           label: item.majorName,
           value: item.id

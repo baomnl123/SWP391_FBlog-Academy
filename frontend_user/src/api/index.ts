@@ -45,7 +45,7 @@ const api = {
     currentUserId?: number
     searchValue?: string
   }) {
-    const url = 'Post/on-load'
+    const url = 'Post/major-subject'
     return axiosClient.get<unknown, PendingPost[]>(url, {
       params: {
         categoryID,
