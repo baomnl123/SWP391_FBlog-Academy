@@ -6,7 +6,21 @@ import { RootState } from '@/store'
 import { getLocalStorage } from '@/utils/helpers'
 import { CheckCircleFilled, MoreOutlined } from '@ant-design/icons'
 import { useRequest } from 'ahooks'
-import { Alert, Avatar, Button, Dropdown, Flex, Image, MenuProps, Modal, Space, Spin, Typography, message } from 'antd'
+import {
+  Alert,
+  Avatar,
+  Button,
+  Dropdown,
+  Flex,
+  Image,
+  MenuProps,
+  Modal,
+  Space,
+  Spin,
+  Typography,
+  message,
+  Tag
+} from 'antd'
 import dayjs from 'dayjs'
 import { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux'
@@ -325,7 +339,7 @@ export default function UserProfile() {
                   >
                     <UserAddOutlined color={isDarkMode ? '#fff' : '#000'} />
                   </div>
-                  <Typography.Text>Major : {userMajor?.map((item) => item.majorName)}</Typography.Text>
+                  <Typography.Text>Major : {userMajor?.map((item) => <Tag>{item.majorName}</Tag>)}</Typography.Text>
                 </Flex>
                 <Flex gap={100} align='center'>
                   <div
@@ -335,7 +349,9 @@ export default function UserProfile() {
                   >
                     <UserAddOutlined color={isDarkMode ? '#fff' : '#000'} />
                   </div>
-                  <Typography.Text>Subject : {userSubject?.map((item) => item.subjectName)}</Typography.Text>
+                  <Typography.Text>
+                    Subject : {userSubject?.map((item) => <Tag>{item.subjectName}</Tag>)}
+                  </Typography.Text>
                 </Flex>
               </Flex>
             </div>

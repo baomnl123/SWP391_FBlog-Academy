@@ -11,6 +11,7 @@ interface ModalCommentProps {
   isOpen: boolean
   setModal?: (value: boolean) => void
   idPost?: number
+  onClose: () => void
 }
 
 const ModalComment = ({ isOpen, setModal, idPost }: ModalCommentProps) => {
