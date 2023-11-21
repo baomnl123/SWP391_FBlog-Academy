@@ -13,14 +13,14 @@ export default function PrivateRoute() {
       const response = await api.getEmail(user?.emailAddresses[0].emailAddress ?? '')
       localStorage.setItem('id', response.id.toString())
 
-      // if (response.role !== 'AD') {
-      //   signOut(() => navigate('/'))
-      // }
+       if (response.role !== 'AD') {
+         signOut(() => navigate('/'))
+       }
       return response
     },
     {
       onError(e) {
-        // signOut(() => navigate('/'))
+         signOut(() => navigate('/'))
         console.error(e)
       }
     }
