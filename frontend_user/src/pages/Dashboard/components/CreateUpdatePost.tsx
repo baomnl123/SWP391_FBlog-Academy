@@ -327,7 +327,7 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
               <Select
                 mode='multiple'
                 style={{ width: '100%' }}
-                placeholder='Tag'
+                placeholder='Subject'
                 options={tagOptions}
                 loading={tagsLoading}
               />
