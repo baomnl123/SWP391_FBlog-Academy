@@ -724,7 +724,7 @@ namespace backend.Handlers.Implementors
                 && (subjectIDs == null || subjectIDs.Length == 0)
                 && (searchValue == null || searchValue.Equals(string.Empty)))
             {
-                return GetAllPosts(currentUserId);
+                return GetAllPostsOnLoad(currentUserId);
             }
             if ((majorIDs == null || majorIDs.Length == 0)
                 && (subjectIDs == null || subjectIDs.Length == 0))

@@ -140,7 +140,8 @@ namespace backend.Repositories.Implementors
             try
             {
                 List<Post> posts = new();
-                var postList = _fBlogAcademyContext.Posts.OrderByDescending(p => p.CreatedAt).ToArray();
+                var postList = _fBlogAcademyContext.Posts.Where(p => p.Status && p.IsApproved)
+                                                         .OrderByDescending(p => p.CreatedAt).ToArray();
                 //check if post has all the category and tags
                 if(tagID == null || tagID.Length == 0)
                 {
