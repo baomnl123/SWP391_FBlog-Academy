@@ -71,6 +71,8 @@ const RightSiderDashboard = ({
           onChange={(value) => {
             setMajorSelect(majorSelect === value ? -1 : value)
             onMajorChange?.(majorSelect === value ? undefined : value)
+            // Reset the selection of Trending Post
+            setPostSelect(-1)
           }}
           idSelect={majorSelect}
           title='Trending Major'
@@ -80,11 +82,14 @@ const RightSiderDashboard = ({
           }))}
         />
       )}
+
       {(trendingSubject ?? []).length > 0 && (
         <RightSiderDashboardMenu
           onChange={(value) => {
             setSubjectSelect(subjectSelect === value ? -1 : value)
             onSubjectChange?.(subjectSelect === value ? undefined : value)
+            // Reset the selection of Trending Post
+            setPostSelect(-1)
           }}
           title='Trending Subject'
           idSelect={subjectSelect}
@@ -94,12 +99,16 @@ const RightSiderDashboard = ({
           }))}
         />
       )}
+
       {(trendingPost ?? []).length > 0 && (
         <RightSiderDashboardMenu
           onChange={(value) => {
             const post = trendingPost?.find((el) => el.id === value)
             setPostSelect(postSelect === value ? -1 : value)
             onPostChange?.(postSelect === value ? undefined : post)
+            // Reset the selection of Major and Subject
+            setMajorSelect(-1)
+            setSubjectSelect(-1)
           }}
           title='Trending Post'
           idSelect={postSelect}
