@@ -6,7 +6,7 @@ import dayjs from 'dayjs'
 import { FlagOutlined } from '@ant-design/icons'
 import { useState } from 'react'
 import ModalPost from './ModalPost'
-import ModalReportPost from './ModalReportPost'
+// import ModalReportPost from './ModalReportPost'
 import { Post } from '@/types'
 
 interface DataType {
@@ -14,7 +14,7 @@ interface DataType {
   user: string
   title: string
   createAt: string
-  reported: boolean
+  reported: number
   majors: string[]
   subjects: string[]
 }
@@ -26,7 +26,7 @@ type Result = {
 
 export default function ReportPost() {
   const [showModal, setShowModal] = useState(false)
-  const [showModalReport, setShowModalReport] = useState(false)
+  // const [showModalReport, setShowModalReport] = useState(false)
   const [indexPost, setIndexPost] = useState(-1)
   const [post, setPost] = useState<Post[]>([])
 
@@ -40,7 +40,7 @@ export default function ReportPost() {
         user: item.user.name,
         title: item.title,
         createAt: dayjs(item.createdAt).format('YYYY-MM-DD'),
-        reported: item.reports > 0,
+        reported: item.reports,
         majors: item.majors.map((major) => major.majorName),
         subjects: item.subjects.map((subject) => subject.subjectName)
       }))
@@ -70,19 +70,32 @@ export default function ReportPost() {
     {
       title: 'Subjects',
       key: 'subjects',
-      dataIndex: 'subjects'
+      dataIndex: 'subjects',
+      sorter: (a, b) => {
+        return a.subjects[0].length - b.subjects[0].length
+      }
     },
     {
       title: 'Majors',
       key: 'majors',
-      dataIndex: 'majors'
+      dataIndex: 'majors',
+      sorter: (a, b) => {
+        return a.majors[0].length - b.majors[0].length
+      }
     },
     {
       title: 'Reported',
       key: 'reported',
       dataIndex: 'reported',
       render(value) {
-        return value && <FlagOutlined className='text-red-600' />
+        return (
+          value > 0 && (
+            <>
+              <span className='mr-2 text-red-600'>{value}</span>
+              <FlagOutlined className='text-red-600' />
+            </>
+          )
+        )
       }
     }
   ]
@@ -94,15 +107,16 @@ export default function ReportPost() {
         rowKey='id'
         columns={columns}
         loading={loading}
-        onRow={(data, index) => {
+        onRow={(_, index) => {
           return {
             onClick() {
               setIndexPost(index ?? 0)
-              if (!data.reported) {
-                setShowModal(true)
-              } else {
-                setShowModalReport(true)
-              }
+              setShowModal(true)
+              // if (!data.reported) {
+              //   setShowModal(true)
+              // } else {
+              //   setShowModalReport(true)
+              // }
             }
           }
         }}
@@ -114,8 +128,12 @@ export default function ReportPost() {
         }}
         footer={false}
         data={post[indexPost]}
+        onBan={() => {
+          setShowModal(false)
+          refresh()
+        }}
       />
-      <ModalReportPost
+      {/* <ModalReportPost
         open={showModalReport}
         onCancel={() => {
           setShowModalReport(false)
@@ -126,7 +144,7 @@ export default function ReportPost() {
           setShowModalReport(false)
           refresh()
         }}
-      />
+      /> */}
     </>
   )
 }

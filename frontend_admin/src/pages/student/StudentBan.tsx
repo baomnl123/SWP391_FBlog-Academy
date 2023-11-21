@@ -36,7 +36,7 @@ export default function StudentUnban() {
     manual: true,
     onSuccess: (res) => {
       if (res) {
-        message.success('Ban lectures success')
+        message.success('Ban student success')
         submit()
       }
     },

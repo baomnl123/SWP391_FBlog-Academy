@@ -8,8 +8,9 @@ import Major from '@/pages/major'
 import Profile from '@/pages/profile'
 import Student from '@/pages/student'
 import Subject from '@/pages/subject'
-
+import Post from '@/pages/post'
 import ReportPost from '@/pages/report'
+
 import { RedirectToSignIn, SignedIn, SignedOut } from '@clerk/clerk-react'
 
 export const Routes = createBrowserRouter([
@@ -67,9 +68,16 @@ export const Routes = createBrowserRouter([
       },
       {
         path: '/report',
-        element: <ReportPost />,
+        element: <Post />,
         handle: {
           crumb: () => 'Report'
+        }
+      },
+      {
+        path: '/post',
+        element: <ReportPost />,
+        handle: {
+          crumb: () => 'Post'
         }
       },
       {
