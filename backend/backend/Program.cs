@@ -67,7 +67,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.WebHost.UseUrls("http://localhost:2510");
+//builder.WebHost.UseUrls("http://localhost:2510");
 
 var app = builder.Build();
 

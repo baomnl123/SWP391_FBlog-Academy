@@ -12,53 +12,74 @@ namespace backend.Handlers.Implementors
         private readonly ISubjectHandlers _subjectHandlers;
         private readonly IUserSubjectRepository _userSubjectRepository;
         private readonly IMapper _mapper;
-        public UserSubjectHandlers(IUserHandlers userHandlers, ISubjectHandlers subjectHandlers, IMapper mapper,IUserSubjectRepository userSubjectRepository)
+        public UserSubjectHandlers(IUserHandlers userHandlers, ISubjectHandlers subjectHandlers, IMapper mapper, IUserSubjectRepository userSubjectRepository)
         {
             _userHandlers = userHandlers;
             _subjectHandlers = subjectHandlers;
             _userSubjectRepository = userSubjectRepository;
             _mapper = mapper;
         }
-        public UserSubjectDTO? AddUserSubject(int currentUserID, int subjectID)
+        public ICollection<UserSubjectDTO>? AddUserSubject(int currentUserID, int[] subjectIDs)
         {
             //check user
             var getUser = _userHandlers.GetUser(currentUserID);
             if (getUser == null || !getUser.Status) return null;
 
             //check subject
-            var getSubject = _subjectHandlers.GetSubjectById(subjectID);
-            if (getSubject == null || !getSubject.Status) return null;
+            var getSubjects = _userSubjectRepository.GetSubjectsOf(currentUserID);
+            if (getSubjects == null) return null;
 
-            //check user subject
-            var getUserSubject = _userSubjectRepository.GetBy(currentUserID, subjectID);
-            if(getUserSubject != null)
+            var returnList = new List<UserSubjectDTO>();
+
+            foreach (var subjectid in subjectIDs)
             {
-                if (getUserSubject.Status) return null; 
-                getUserSubject.Status = true;
+                var getSubject = _subjectHandlers.GetSubjectById(subjectid);
+                var getUserSubject = _userSubjectRepository.GetBy(currentUserID, subjectid);
+                if (getSubjects.Any(item => item.Id == subjectid)){
+                    var existedUserSubjectDTO = _mapper.Map<UserSubjectDTO>(getUserSubject);
+                    existedUserSubjectDTO.User = getUser;
+                    existedUserSubjectDTO.Subject = getSubject;
 
-                if(!_userSubjectRepository.Update(getUserSubject)) return null;
+                    returnList.Add(existedUserSubjectDTO);
+                    continue;
+                }
+                if (getSubject == null || !getSubject.Status) continue;
+                //check user subject
+                
+                if (getUserSubject != null)
+                {
+                    if (getUserSubject.Status) continue;
+                    getUserSubject.Status = true;
 
-                var userSubjectDTO = _mapper.Map<UserSubjectDTO>(getUserSubject);
-                userSubjectDTO.User = getUser;
-                userSubjectDTO.Subject = getSubject;
+                    if (!_userSubjectRepository.Update(getUserSubject)) continue;
 
-                return userSubjectDTO;
+                    var userSubjectDTO = _mapper.Map<UserSubjectDTO>(getUserSubject);
+                    userSubjectDTO.User = getUser;
+                    userSubjectDTO.Subject = getSubject;
+
+                    returnList.Add(userSubjectDTO);
+                }
+                else
+                {
+                    //init
+                    var newUserSubject = new UserSubject()
+                    {
+                        UserId = currentUserID,
+                        SubjectId = subjectid,
+                        Status = true,
+                    };
+                    //add to db
+                    if (!_userSubjectRepository.Add(newUserSubject)) continue;
+
+                    var newUserSubjectDTO = _mapper.Map<UserSubjectDTO>(newUserSubject);
+                    newUserSubjectDTO.User = getUser;
+                    newUserSubjectDTO.Subject = getSubject;
+
+                    returnList.Add(newUserSubjectDTO);
+                }
             }
-            //init
-            var newUserSubject = new UserSubject(){
-                UserId = currentUserID,
-                SubjectId = subjectID,
-                Status = true,
-            };
-            //add to db
-            if(!_userSubjectRepository.Add(newUserSubject)) return null;
 
-            //map to dto
-            var newUserSubjectDTO = _mapper.Map<UserSubjectDTO>(newUserSubject);
-            newUserSubjectDTO.User = getUser;
-            newUserSubjectDTO.Subject = getSubject;
-
-            return newUserSubjectDTO;
+            return returnList;
         }
 
         public UserSubjectDTO? DeleteUserSubject(int currentUserID, int subjectID)
@@ -79,7 +100,7 @@ namespace backend.Handlers.Implementors
             getUserSubject.Status = false;
 
             //update to db
-            if(!_userSubjectRepository.Update(getUserSubject)) return null;
+            if (!_userSubjectRepository.Update(getUserSubject)) return null;
 
             //map to dto
             var userSubjectDTO = _mapper.Map<UserSubjectDTO>(getUserSubject);
@@ -122,7 +143,7 @@ namespace backend.Handlers.Implementors
 
             var listDTO = new List<UserDTO>();
 
-            foreach(var user in getUsers)
+            foreach (var user in getUsers)
             {
                 if (!user.Status) continue;
                 var userDTO = _userHandlers.GetUser(user.Id);
