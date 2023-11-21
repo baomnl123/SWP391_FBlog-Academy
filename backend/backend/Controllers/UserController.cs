@@ -573,7 +573,7 @@ namespace backend.Controllers
         }
 
         [HttpPost("{userID}/major")]
-        public async Task<IActionResult> AddMajor(int userID, int majorID)
+        public async Task<IActionResult> AddMajor(int userID, [FromQuery] int[] majorID)
         {
             var addMajor = _userMajorHandlers.AddUserMajor(userID, majorID);
             if (addMajor == null) return BadRequest("Added Failed !");
@@ -597,7 +597,7 @@ namespace backend.Controllers
         }
 
         [HttpPost("{userID}/subject")]
-        public async Task<IActionResult> AddSubject(int userID, int subjectID)
+        public async Task<IActionResult> AddSubject(int userID, [FromQuery]int[] subjectID)
         {
             var addSubject = _userSubjectHandlers.AddUserSubject(userID, subjectID);
             if (addSubject == null) return BadRequest("Added Failed !");

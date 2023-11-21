@@ -2,6 +2,7 @@
 using backend.DTO;
 using backend.Handlers.IHandlers;
 using backend.Models;
+using backend.Repositories.Implementors;
 using backend.Repositories.IRepositories;
 
 namespace backend.Handlers.Implementors
@@ -19,43 +20,66 @@ namespace backend.Handlers.Implementors
             _userMajorRepository = userMajorRepository;
             _mapper = mapper;
         }
-        public UserMajorDTO? AddUserMajor(int currentUserID, int majorID)
+        public ICollection<UserMajorDTO>? AddUserMajor(int currentUserID, int[] majorIDs)
         {
             //check user
             var getUser = _userHandlers.GetUser(currentUserID);
             if (getUser == null || !getUser.Status) return null;
 
             //check major
-            var getMajor = _majorHandlers.GetMajorById(majorID);
-            if (getMajor == null || !getMajor.Status) return null;
+            var getMajors = _userMajorRepository.GetMajorsOf(currentUserID);
+            if (getMajors == null) return null;
 
-            //check user major
-            var getUserMajor = _userMajorRepository.GetBy(currentUserID,majorID);
-            if(getUserMajor != null)
+            var returnList = new List<UserMajorDTO>();
+
+            foreach (var majorid in majorIDs)
             {
-                if (getUserMajor.Status) return null;
-                getUserMajor.Status = true;
-                if (!_userMajorRepository.Update(getUserMajor)) return null;
-                
-                var userMajorDTO = _mapper.Map<UserMajorDTO>(getUserMajor);
-                userMajorDTO.User = getUser;
-                userMajorDTO.Major = getMajor;
+                var getMajor = _majorHandlers.GetMajorById(majorid);
+                var getUserMajor = _userMajorRepository.GetBy(currentUserID, majorid);
+                if (getMajors.Any(item => item.Id == majorid))
+                {
+                    var existedUserMajorDTO = _mapper.Map<UserMajorDTO>(getUserMajor);
+                    existedUserMajorDTO.User = getUser;
+                    existedUserMajorDTO.Major = getMajor;
 
-                return userMajorDTO;
+                    returnList.Add(existedUserMajorDTO);
+                    continue;
+                }
+                if (getMajor == null || !getMajor.Status) continue;
+                //check user major
+                if (getUserMajor != null)
+                {
+                    if (getUserMajor.Status) continue;
+                    getUserMajor.Status = true;
+                    if (!_userMajorRepository.Update(getUserMajor)) continue;
+
+                    var userMajorDTO = _mapper.Map<UserMajorDTO>(getUserMajor);
+                    userMajorDTO.User = getUser;
+                    userMajorDTO.Major = getMajor;
+
+                    returnList.Add(userMajorDTO);
+                }
+                else
+                {
+                    //init
+                    var newUserMajor = new UserMajor()
+                    {
+                        UserId = currentUserID,
+                        MajorId = majorid,
+                        Status = true,
+                    };
+                    //add to db
+                    if (!_userMajorRepository.Add(newUserMajor)) return null;
+
+                    var newUserMajorDTO = _mapper.Map<UserMajorDTO>(newUserMajor);
+                    newUserMajorDTO.User = getUser;
+                    newUserMajorDTO.Major = getMajor;
+
+                    returnList.Add(newUserMajorDTO);
+                }
             }
-            var newUserMajor = new UserMajor()
-            {
-                UserId = currentUserID,
-                MajorId = majorID,
-                Status = true,
-            };
-            if(!_userMajorRepository.Add(newUserMajor)) return null;
 
-            var newUserMajorDTO = _mapper.Map<UserMajorDTO>(newUserMajor);
-            newUserMajorDTO.User = getUser;
-            newUserMajorDTO.Major = getMajor;
-
-            return newUserMajorDTO;
+            return returnList;
         }
 
         public UserMajorDTO? DeleteUserMajor(int currentUserID, int majorID)
