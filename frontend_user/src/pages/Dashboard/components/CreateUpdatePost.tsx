@@ -108,7 +108,7 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
   const { runAsync: getPostById } = useRequest(api.getPostById, {
     manual: true,
     onSuccess: (res) => {
-      console.log(res)
+      console.log('res')
       const majors = res.majors?.map((item) => item.id)
       const subjectIds = res.subjects?.map((item) => item.id)
       form.setFieldValue('title', res?.title)
@@ -156,6 +156,7 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
       })
     } else {
       form.resetFields()
+      setFilesUploaded([])
     }
   }, [form, getPostById, id])
 
