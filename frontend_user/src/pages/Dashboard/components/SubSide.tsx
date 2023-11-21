@@ -10,8 +10,8 @@ export type FilterType = 'image' | 'video'
 
 const SubSide = () => {
   const navigate = useNavigate()
-  // const [categoryOptions, setCategoryOptions] = useState<SelectProps['options']>([])
-  // const [tagOptions, setTagOptions] = useState<SelectProps['options']>([])
+  // const [majorOptions, setMajorOptions] = useState<SelectProps['options']>([])
+  // const [subjectOptions, setSubjectOptions] = useState<SelectProps['options']>([])
   const userInfo = useSelector<RootState>((state) => state.userReducer.user)
   const isDarkMode = useSelector((state: RootState) => state.themeReducer.darkMode)
 

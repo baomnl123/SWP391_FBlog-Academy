@@ -13,8 +13,8 @@ import { useNavigate } from 'react-router-dom'
 
 interface SiderDashboardProps {
   createPost?: () => void
-  onGetTags?: (data: string[] | string | number | number[]) => void
-  onGetCategories?: (data: string[] | string | number | number[]) => void
+  onGetSubjects?: (data: string[] | string | number | number[]) => void
+  onGetMajors?: (data: string[] | string | number | number[]) => void
   onFilter?: (data: FilterType | null) => void
 }
 
@@ -24,17 +24,17 @@ const handleClick = () => {
   window.location.href = 'http://fblogadmin.netlify.app'
 }
 
-const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: SiderDashboardProps) => {
+const SiderDashboard = ({ createPost, onGetSubjects, onGetMajors, onFilter }: SiderDashboardProps) => {
   const navigate = useNavigate()
   const [filter, setFilter] = useState<FilterType | null>(null)
-  // const [categoryOptions, setCategoryOptions] = useState<SelectProps['options']>([])
-  // const [tagOptions, setTagOptions] = useState<SelectProps['options']>([])
+  // const [majorOptions, setMajorOptions] = useState<SelectProps['options']>([])
+  // const [subjectOptions, setSubjectOptions] = useState<SelectProps['options']>([])
   const userInfo = useSelector<RootState>((state) => state.userReducer.user)
   const isDarkMode = useSelector((state: RootState) => state.themeReducer.darkMode)
 
-  const { data: categoriesData } = useRequest(async () => {
+  const { data: majorsData } = useRequest(async () => {
     try {
-      const res = await api.getAllCategory()
+      const res = await api.getAllMajor()
       return res.map((item) => {
         return {
           label: item.majorName,
@@ -46,9 +46,9 @@ const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: Si
     }
   })
 
-  const { data: tagsData } = useRequest(async () => {
+  const { data: subjectsData } = useRequest(async () => {
     try {
-      const res = await api.getAllTag()
+      const res = await api.getAllSubject()
       return res.map((item) => {
         return {
           label: item.subjectName,
@@ -61,26 +61,26 @@ const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: Si
   })
 
   // useEffect(() => {
-  //   if (!categoriesData) return
-  //   const categories: SelectProps['options'] = categoriesData.map((item) => {
+  //   if (!majorsData) return
+  //   const majors: SelectProps['options'] = majorsData.map((item) => {
   //     return {
-  //       label: item.categoryName,
+  //       label: item.majorName,
   //       value: item.id
   //     }
   //   })
-  //   setCategoryOptions(categories)
-  // }, [categoriesData])
+  //   setMajorOptions(majors)
+  // }, [majorsData])
 
   // useEffect(() => {
-  //   if (!tagsData) return
-  //   const options: SelectProps['options'] = tagsData.map((item) => {
+  //   if (!subjectsData) return
+  //   const options: SelectProps['options'] = subjectsData.map((item) => {
   //     return {
-  //       label: item.tagName,
+  //       label: item.subjectName,
   //       value: item.id
   //     }
   //   })
-  //   setTagOptions(options)
-  // }, [tagsData])
+  //   setSubjectOptions(options)
+  // }, [subjectsData])
 
   return (
     <div>
@@ -88,9 +88,9 @@ const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: Si
         <SelectLabel
           label='Subject'
           placeHolder='Select Subject'
-          optionData={tagsData}
+          optionData={subjectsData}
           onChange={(value) => {
-            onGetTags?.(value)
+            onGetSubjects?.(value)
           }}
         />
       </div>
@@ -98,9 +98,9 @@ const SiderDashboard = ({ createPost, onGetTags, onGetCategories, onFilter }: Si
         <SelectLabel
           label='Major'
           placeHolder='Select Major'
-          optionData={categoriesData}
+          optionData={majorsData}
           onChange={(value) => {
-            onGetCategories?.(value)
+            onGetMajors?.(value)
           }}
         />
       </div>

@@ -9,7 +9,7 @@ export interface FileCloudResponse {
   format: string
   resource_type: string
   created_at: Date
-  tags: string[]
+  subjects: string[]
   bytes: number
   type: string
   etag: string

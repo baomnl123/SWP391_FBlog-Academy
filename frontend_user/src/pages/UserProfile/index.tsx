@@ -6,7 +6,7 @@ import { RootState } from '@/store'
 import { getLocalStorage } from '@/utils/helpers'
 import { CheckCircleFilled, MoreOutlined } from '@ant-design/icons'
 import { useRequest } from 'ahooks'
-import { Avatar, Button, Dropdown, Flex, Image, MenuProps, Modal, Space, Spin, Typography, message } from 'antd'
+import { Alert, Avatar, Button, Dropdown, Flex, Image, MenuProps, Modal, Space, Spin, Typography, message } from 'antd'
 import dayjs from 'dayjs'
 import { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux'
@@ -170,7 +170,7 @@ export default function UserProfile() {
   //   }
   // )
 
-  // const optionsTag: SelectProps['options'] = [
+  // const optionsSubject: SelectProps['options'] = [
   //   {
   //     label: 'Option 1',
   //     value: 1
@@ -185,17 +185,17 @@ export default function UserProfile() {
   //   }
   // ]
 
-  // const optionsCategory: SelectProps['options'] = [
+  // const optionsMajor: SelectProps['options'] = [
   //   {
-  //     label: 'Category 1',
+  //     label: 'Major 1',
   //     value: 1
   //   },
   //   {
-  //     label: 'Category 2',
+  //     label: 'Major 2',
   //     value: 2
   //   },
   //   {
-  //     label: 'Category 3',
+  //     label: 'Major 3',
   //     value: 3
   //   }
   // ]
@@ -405,20 +405,31 @@ export default function UserProfile() {
             refresh()
           }}
         />
-        <ModalSubject
-          idPost={idPost}
-          isOpen={openSubject}
-          subjectSelect={userSubject?.map((subject) => subject.id)}
-          setModal={(value) => {
-            if (!value) {
-              setIdPost(undefined)
-            }
-            setOpenSubject(value)
-          }}
-          onOk={() => {
-            getUserSubjectbyID()
-          }}
-        />
+        {userMajor && userMajor.length > 0 ? (
+          <ModalSubject
+            idPost={idPost}
+            isOpen={openSubject}
+            subjectSelect={userSubject?.map((subject) => subject.id)}
+            setModal={(value) => {
+              setOpenSubject(value)
+            }}
+            onOk={() => {
+              getUserSubjectbyID()
+            }}
+          />
+        ) : (
+          <Modal
+            visible={openSubject}
+            onCancel={() => {
+              setOpenSubject(false)
+            }}
+            onOk={() => {
+              setOpenSubject(false)
+            }}
+          >
+            <Alert type='warning' message='Bạn cần nhập Major trước khi nhập Subject!' />
+          </Modal>
+        )}
       </Spin>
       {contextHolder}
     </BaseLayout>

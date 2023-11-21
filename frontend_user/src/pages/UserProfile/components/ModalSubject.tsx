@@ -7,26 +7,26 @@ import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import SelectLabel from '@/components/SelectLabel'
 
-interface ModalMajorProps {
+interface ModalSubjectProps {
   isOpen: boolean
   setModal?: (value: boolean) => void
   idPost?: number | null
   onSuccess?: () => void
-  onGetCategories?: (data: string[] | string | number | number[]) => void
+  onGetSubjects?: (data: string[] | string | number | number[]) => void
   onOk?: () => void
   onCancel?: () => void
   subjectSelect?: any[]
 }
 
-const ModalSubject = ({ isOpen, setModal, onSuccess, onOk, subjectSelect }: ModalMajorProps) => {
+const ModalSubject = ({ isOpen, setModal, onSuccess, onOk, subjectSelect }: ModalSubjectProps) => {
   const [isModalOpen, setIsModalOpen] = useState(isOpen)
   const [subject, setSubject] = useState<any[]>()
   const [form] = Form.useForm()
   const { user } = useSelector((state: RootState) => state.userReducer)
 
-  const { data: tagsData } = useRequest(async () => {
+  const { data: subjectsData } = useRequest(async () => {
     try {
-      const res = await api.getAllTag()
+      const res = await api.getAllSubject()
       return res.map((item) => {
         return {
           label: item.subjectName,
@@ -81,7 +81,7 @@ const ModalSubject = ({ isOpen, setModal, onSuccess, onOk, subjectSelect }: Moda
         <SelectLabel
           label='Subject'
           placeHolder='Select Subject'
-          optionData={tagsData}
+          optionData={subjectsData}
           onChange={(value) => {
             setSubject(value as number[])
           }}

@@ -1,6 +1,6 @@
 // import axiosClient from './axiosClient'
 
-import { Category, PendingPost, PostByUserId, SavePost, Tag, User, Post } from '@/types'
+import { Major, PendingPost, PostByUserId, SavePost, Subject, User, Post } from '@/types'
 import axiosClient from './axiosClient'
 import { CreatePostBodyRequest } from './types/post'
 import { UserMajor, UserSubject } from './types/user'
@@ -9,21 +9,21 @@ import { UserMajor, UserSubject } from './types/user'
 const api = {
   // post
   postPending({
-    categoryID,
-    tagID,
+    majorID,
+    subjectID,
     currentUserId,
     searchValue
   }: {
-    categoryID?: number[]
-    tagID?: number[]
+    majorID?: number[]
+    subjectID?: number[]
     currentUserId?: number
     searchValue?: string
   }) {
     const url = 'Post/pending'
     return axiosClient.get<unknown, PendingPost[]>(url,{
       params:{
-        categoryID,
-        tagID,
+        majorID,
+        subjectID,
         currentUserId,
         searchValue
       }
@@ -34,22 +34,22 @@ const api = {
     return axiosClient.get<unknown, PendingPost[]>(url)
   },
 
-  postCategoryTag({
-    categoryID,
-    tagID,
+  postMajorSubject({
+    majorID,
+    subjectID,
     currentUserId,
     searchValue
   }: {
-    categoryID?: number[]
-    tagID?: number[]
+    majorID?: number[]
+    subjectID?: number[]
     currentUserId?: number
     searchValue?: string
   }) {
     const url = 'Post/major-subject'
     return axiosClient.get<unknown, PendingPost[]>(url, {
       params: {
-        categoryID,
-        tagID,
+        majorID,
+        subjectID,
         currentUserId,
         searchValue
       }
@@ -93,10 +93,10 @@ const api = {
     return axiosClient.get<unknown, UserSubject[]>(url)
   },
 
-  //category
-  getAllCategory() {
+  //major
+  getAllMajor() {
     const url = 'Major/all'
-    return axiosClient.get<unknown, Category[]>(url)
+    return axiosClient.get<unknown, Major[]>(url)
   },
 
   deletePost(postId: number) {
@@ -104,18 +104,18 @@ const api = {
     return axiosClient.delete(url)
   },
 
-  //tag
-  getAllTag() {
+  //subject
+  getAllSubject() {
     const url = 'Subject/all'
-    return axiosClient.get<unknown, Tag[]>(url)
+    return axiosClient.get<unknown, Subject[]>(url)
   },
 
-  filterCategoryTag(categoryID?: number[], tagID?: number[], searchValue?: string) {
-    const url = `Post/category-tag`
+  filterMajorSubject(majorID?: number[], subjectID?: number[], searchValue?: string) {
+    const url = `Post/major-subject`
     return axiosClient.get(url, {
       params: {
-        categoryID,
-        tagID,
+        majorID,
+        subjectID,
         searchValue
       }
     })
@@ -168,7 +168,7 @@ const api = {
   //post
   createPost({ body, id }: { body: CreatePostBodyRequest; id: number }) {
     const url = 'Post'
-    const { categoryIds, content, imageURLs, tagIds, title, videoURLs } = body
+    const { majorIds, content, imageURLs, subjectIds, title, videoURLs } = body
     const formData = new FormData()
     formData.append('title', title)
     formData.append('content', content)
@@ -176,9 +176,9 @@ const api = {
     return axiosClient.post(url, formData, {
       params: {
         userId: id,
-        categoryIds,
+        majorIds,
         imageURLs,
-        tagIds,
+        subjectIds,
         videoURLs
       }
     })
@@ -298,14 +298,14 @@ const api = {
     postId,
     imageURLs,
     videoURLs,
-    categoryIds,
-    tagIds,
+    majorIds,
+    subjectIds,
     content,
     title
   }: {
     postId: number
-    categoryIds?: number[]
-    tagIds?: number[]
+    majorIds?: number[]
+    subjectIds?: number[]
     videoURLs: string[]
     imageURLs: string[]
     title: string
@@ -319,8 +319,8 @@ const api = {
       params: {
         imageURLs,
         videoURLs,
-        categoryIds,
-        tagIds
+        majorIds,
+        subjectIds
       }
     })
   },
@@ -419,9 +419,9 @@ const api = {
     })
   },
 
-  trendingTag() {
+  trendingSubject() {
     const url = 'Subject/top-5-voted'
-    return axiosClient.get<unknown, Tag[]>(url)
+    return axiosClient.get<unknown, Subject[]>(url)
   },
 
   trendingPost() {
@@ -429,9 +429,9 @@ const api = {
     return axiosClient.get<unknown, Post[]>(url)
   },
 
-  trendingCategory() {
+  trendingMajor() {
     const url = 'Major/top-5-voted'
-    return axiosClient.get<unknown, Category[]>(url)
+    return axiosClient.get<unknown, Major[]>(url)
   }
 }
 

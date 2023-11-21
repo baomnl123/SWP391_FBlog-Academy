@@ -30,8 +30,8 @@ export default function Dashboard() {
   const isDarkMode = useSelector((state: RootState) => state.themeReducer.darkMode)
   const user = useSelector((state: RootState) => state.userReducer.user)
   const navigate = useNavigate()
-  const [categories, setCategories] = useState<string | string[] | number | number[] | null>([])
-  const [tag, setTags] = useState<string | string[] | number | number[]>([])
+  const [majors, setMajors] = useState<string | string[] | number | number[] | null>([])
+  const [subject, setSubjects] = useState<string | string[] | number | number[]>([])
   const [filter, setFilter] = useState<FilterType | null>(null)
   const [postFilter, setPostFilter] = useState<PendingPost[] | null>(null)
 
@@ -125,10 +125,10 @@ export default function Dashboard() {
     run: getPost,
     refresh
   } = useRequest(
-    async ({ categoryID, tagID, searchValue }: { categoryID?: number[]; tagID?: number[]; searchValue?: string }) => {
-      const res = await api.postCategoryTag({
-        categoryID,
-        tagID,
+    async ({ majorID, subjectID, searchValue }: { majorID?: number[]; subjectID?: number[]; searchValue?: string }) => {
+      const res = await api.postMajorSubject({
+        majorID,
+        subjectID,
         currentUserId: Number(user?.id ?? 0),
         searchValue
       })
@@ -155,25 +155,25 @@ export default function Dashboard() {
   useEffect(() => {
     if (user) {
       getPost({
-        categoryID: !categories ? undefined : (categories as unknown as number[]),
-        tagID: !tag ? undefined : (tag as unknown as number[])
+        majorID: !majors ? undefined : (majors as unknown as number[]),
+        subjectID: !subject ? undefined : (subject as unknown as number[])
       })
     }
-  }, [categories, getPost, tag, user])
+  }, [majors, getPost, subject, user])
 
   const follow = useCallback(
     async (id: number) => {
       try {
         await api.follow(user?.id ?? getLocalStorage('id'), id)
         getPost({
-          categoryID: !categories ? undefined : (categories as unknown as number[]),
-          tagID: !tag ? undefined : (tag as unknown as number[])
+          majorID: !majors ? undefined : (majors as unknown as number[]),
+          subjectID: !subject ? undefined : (subject as unknown as number[])
         })
       } catch (e) {
         console.error(e)
       }
     },
-    [categories, getPost, tag, user?.id]
+    [majors, getPost, subject, user?.id]
   )
 
   const unFollow = useCallback(
@@ -181,14 +181,14 @@ export default function Dashboard() {
       try {
         await api.unFollow(user?.id ?? getLocalStorage('id'), id)
         getPost({
-          categoryID: !categories ? undefined : (categories as unknown as number[]),
-          tagID: !tag ? undefined : (tag as unknown as number[])
+          majorID: !majors ? undefined : (majors as unknown as number[]),
+          subjectID: !subject ? undefined : (subject as unknown as number[])
         })
       } catch (e) {
         console.error(e)
       }
     },
-    [categories, getPost, tag, user?.id]
+    [majors, getPost, subject, user?.id]
   )
   const data = !postFilter ? postData : postFilter
 
@@ -200,11 +200,11 @@ export default function Dashboard() {
       }}
       rightSider={
         <RightSiderDashboard
-          onCategoryChange={(value) => {
-            setCategories(value as string | number | number[] | string[])
+          onMajorChange={(value) => {
+            setMajors(value as string | number | number[] | string[])
           }}
-          onTagChange={(value) => {
-            setTags(value as string | number | number[] | string[])
+          onSubjectChange={(value) => {
+            setSubjects(value as string | number | number[] | string[])
           }}
           onPostChange={(value) => {
             setPostFilter(value ? ([value] as unknown as PendingPost[]) : null)
@@ -213,11 +213,11 @@ export default function Dashboard() {
       }
       sider={
         <SiderDashboard
-          onGetCategories={(data) => {
-            setCategories(data)
+          onGetMajors={(data) => {
+            setMajors(data)
           }}
-          onGetTags={(data) => {
-            setTags(data)
+          onGetSubjects={(data) => {
+            setSubjects(data)
           }}
           createPost={() => {
             setOpenPost(true)
