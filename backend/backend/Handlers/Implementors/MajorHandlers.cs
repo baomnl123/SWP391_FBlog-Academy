@@ -14,7 +14,7 @@ namespace backend.Handlers.Implementors
 {
     public class MajorHandlers : IMajorHandlers
     {
-        private readonly IPostRepository _postRepository;
+        private readonly ISubjectRepository _subjectRepository;
         private readonly IUserRepository _userRepository;
         private readonly IImageHandlers _imageHandlers;
         private readonly IVideoHandlers _videoHandlers;
@@ -34,7 +34,8 @@ namespace backend.Handlers.Implementors
                                 IPostSubjectRepository postSubjectRepository,
                                 IVotePostRepository votePostRepository,
                                 IMapper mapper,
-                                IPostRepository postRepository)
+                                IPostRepository postRepository,
+                                ISubjectRepository subjectRepository)
         {
             _userRepository = userRepository;
             _imageHandlers = imageHandlers;
@@ -45,13 +46,23 @@ namespace backend.Handlers.Implementors
             _postSubjectRepository = postSubjectRepository;
             _votePostRepository = votePostRepository;
             _mapper = mapper;
-            _postRepository = postRepository;
+            _subjectRepository = subjectRepository;
         }
 
         public ICollection<MajorDTO>? GetMajors()
         {
             var majors = _majorRepository.GetAllMajors();
-            return _mapper.Map<List<MajorDTO>>(majors);
+            if (majors == null || majors.Count == 0) return null;
+            var returnList = new List<MajorDTO>();
+            foreach (var major in majors)
+            {
+                var majorDTO = _mapper.Map<MajorDTO>(major);
+                if (!majorDTO.Status) continue;
+                var getSubjects = _majorRepository.GetSubjectsByMajor(majorDTO.Id);
+                if (getSubjects != null) majorDTO.Subjects = _mapper.Map<List<SubjectDTO>?>(getSubjects);
+                returnList.Add(majorDTO);
+            }
+            return returnList;
         }
 
         public ICollection<MajorDTO>? GetDisableMajors()
@@ -64,8 +75,10 @@ namespace backend.Handlers.Implementors
         {
             var major = _majorRepository.GetMajorById(majorId);
             if (major == null) return null;
-
-            return _mapper.Map<MajorDTO>(major);
+            var majorDTO = _mapper.Map<MajorDTO>(major);
+            var getSubjects = _majorRepository.GetSubjectsByMajor(majorDTO.Id);
+            if (getSubjects != null) majorDTO.Subjects = _mapper.Map<List<SubjectDTO>?>(getSubjects);
+            return majorDTO;
         }
 
         public MajorDTO? GetMajorByName(string majorName)
@@ -73,7 +86,10 @@ namespace backend.Handlers.Implementors
             var major = _majorRepository.GetMajorByName(majorName);
             if (major == null) return null;
 
-            return _mapper.Map<MajorDTO>(major);
+            var majorDTO = _mapper.Map<MajorDTO>(major);
+            var getSubjects = _majorRepository.GetSubjectsByMajor(majorDTO.Id);
+            if (getSubjects != null) majorDTO.Subjects = _mapper.Map<List<SubjectDTO>?>(getSubjects);
+            return majorDTO;
         }
 
         public ICollection<PostDTO>? GetPostsByMajor(int majorId)
