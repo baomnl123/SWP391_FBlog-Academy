@@ -1,4 +1,4 @@
-import { Avatar, Card, Image, Modal, ModalProps, Space } from 'antd'
+import { Avatar, Button, Card, Image, Modal, ModalProps, Space, message } from 'antd'
 import { Swiper, SwiperSlide } from 'swiper/react'
 
 import dayjs from 'dayjs'
@@ -9,21 +9,45 @@ import 'swiper/css/pagination'
 import { Post } from '@/types'
 import { ArrowDownOutlined, ArrowUpOutlined } from '@ant-design/icons'
 import { Keyboard, Mousewheel, Navigation, Pagination } from 'swiper/modules'
+import { useCallback } from 'react'
+import api from '@/config/api'
 
-export default function ModalPost(props: ModalProps & { data: Post }) {
+export default function ModalPost(props: ModalProps & { data: Post; onBan?: () => void }) {
   const { data, ...rest } = props
+  const onDelete = useCallback(
+    async (id: number) => {
+      try {
+        await api.deletPost(id)
+        rest.onBan?.()
+      } catch (e) {
+        console.error(e)
+      }
+    },
+    [rest]
+  )
 
   return (
     <Modal {...rest} width={rest.width ? rest.width : 700}>
       <Card>
-        <div className='ml-2 flex gap-2'>
-          <div>
-            <Avatar className='w-9 h-9 rounded-[50%]' src={data?.user.avatarUrl} alt={data?.user.name} />
+        <div className='flex justify-between items-center'>
+          <div className='ml-2 flex gap-2'>
+            <div>
+              <Avatar className='w-9 h-9 rounded-[50%]' src={data?.user.avatarUrl} alt={data?.user.name} />
+            </div>
+            <div>
+              <h1 className='text-base font-semibold'>{data?.user.name}</h1>
+              <p>{dayjs(data?.user.createdAt).fromNow()}</p>
+            </div>
           </div>
-          <div>
-            <h1 className='text-base font-semibold'>{data?.user.name}</h1>
-            <p>{dayjs(data?.user.createdAt).fromNow()}</p>
-          </div>
+          <Button
+            danger
+            onClick={() => {
+              onDelete(data?.id)
+              message.success('Delete post success')
+            }}
+          >
+            Delete
+          </Button>
         </div>
         <div className='mt-4'>
           <div className='text-base'>

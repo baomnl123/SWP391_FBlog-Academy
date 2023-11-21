@@ -141,6 +141,11 @@ const api = {
         currentUserId: Number(localStorage.getItem('id'))
       }
     })
+  },
+
+  deletPost(postId: number) {
+    const url = `Post/${postId}`
+    return axiosClient.delete(url)
   }
 }
 

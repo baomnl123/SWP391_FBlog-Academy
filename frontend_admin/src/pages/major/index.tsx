@@ -92,26 +92,27 @@ export default function Major() {
       title: 'Action',
       key: 'action',
       width: 250,
-      render: (_, record) => (
-        <Space size='middle'>
-          <Button
-            type='text'
-            onClick={(e) => {
-              e.stopPropagation()
-              setInitValues({
-                name: record.name,
-                id: record.id
-              })
-              setCreateMajor(true)
-            }}
-          >
-            Update
-          </Button>
-          <Button type='text' danger onClick={(e) => onDelete(e, record.id)}>
-            Delete
-          </Button>
-        </Space>
-      )
+      render: (_, record) =>
+        record.name !== 'Only Students' && (
+          <Space size='middle'>
+            <Button
+              type='text'
+              onClick={(e) => {
+                e.stopPropagation()
+                setInitValues({
+                  name: record.name,
+                  id: record.id
+                })
+                setCreateMajor(true)
+              }}
+            >
+              Update
+            </Button>
+            <Button type='text' danger onClick={(e) => onDelete(e, record.id)}>
+              Delete
+            </Button>
+          </Space>
+        )
     }
   ]
 
@@ -142,13 +143,15 @@ export default function Major() {
           columns={columns}
           onRow={(data) => {
             return {
-              className: 'cursor-pointer',
+              className: data.name !== 'Only Students' ? 'cursor-pointer' : '',
               onClick: () => {
-                setSubject(true)
-                setMajor({
-                  name: data.name,
-                  id: data.id
-                })
+                if (data.name !== 'Only Students') {
+                  setSubject(true)
+                  setMajor({
+                    name: data.name,
+                    id: data.id
+                  })
+                }
               }
             }
           }}
