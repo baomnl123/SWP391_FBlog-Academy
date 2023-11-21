@@ -1037,9 +1037,8 @@ namespace backend.Handlers.Implementors
                 hashMap.Add(postDTO, countUpvotes / daysDiff);
             }
 
-            hashMap.OrderByDescending(p => p.Value).Take(5).ToList();
-
-            postList = new List<PostDTO>(hashMap.Keys);
+            var sortedKeyValuePairs = hashMap.OrderByDescending(p => p.Value).Take(5);
+            postList = sortedKeyValuePairs.Select(p => p.Key).ToList();
 
             return postList;
         }
