@@ -6,10 +6,8 @@ export default function Profile() {
     fontSize: '19px', 
     color: '#333', 
     border: '0.005px solid #333', 
-    textAlign: 'left',
-    paddingLeft: '12px',
-    paddingTop: '10px',
-    paddingBottom: '10px',
+    textAlign: 'center',
+    
   };
   return (
     <div style={textStyle}>
