@@ -14,7 +14,8 @@ const Vote = ({
   userId,
   postId,
   usersVote,
-  onVoteSuccess
+  onVoteSuccess,
+  upvote
 }: {
   vote: number
   userId?: number
@@ -82,7 +83,7 @@ const Vote = ({
         <IconUpLong width={15} height={15} color={vote == 1 ? 'blue' : isDarkMode ? '#fff' : '#000'} />
       </Button>
       <Typography className='min-w-[50px] cursor-pointer' onClick={() => setOpen(true)}>
-        {vote}
+        {upvote}
       </Typography>
       <Button
         onClick={async () => {

@@ -40,6 +40,7 @@ export type PendingPost = {
   upvotes?: number
   upvote?: number
   downvote?: number
+  vote :number
 }
 
 export type PostByUserId = {
