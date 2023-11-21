@@ -1023,7 +1023,7 @@ namespace backend.Handlers.Implementors
                 return null;
             }
 
-            var hashMap = new Dictionary<PostDTO, int>();
+            var hashMap = new Dictionary<PostDTO, float>();
             foreach (var postDTO in postList)
             {
                 DateTime currentDate = DateTime.Now;
@@ -1034,7 +1034,7 @@ namespace backend.Handlers.Implementors
                 int daysDiff = daySpan.Days;
 
                 int countUpvotes = postDTO.Upvotes.HasValue ? postDTO.Upvotes.Value : 0;
-                hashMap.Add(postDTO, countUpvotes / daysDiff);
+                hashMap.Add(postDTO, (float) countUpvotes / daysDiff);
             }
 
             var sortedKeyValuePairs = hashMap.OrderByDescending(p => p.Value).Take(5);
