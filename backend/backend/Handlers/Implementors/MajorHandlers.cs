@@ -51,7 +51,18 @@ namespace backend.Handlers.Implementors
         public ICollection<MajorDTO>? GetMajors()
         {
             var majors = _majorRepository.GetAllMajors();
-            return _mapper.Map<List<MajorDTO>>(majors);
+            List<MajorDTO> returnList = new List<MajorDTO>();
+
+            foreach (var major in majors)
+            {
+                var majorDTO = _mapper.Map<MajorDTO>(major);
+
+                var subjects = GetSubjectsByMajor(major.Id);
+                majorDTO.Subject = (subjects is not null && subjects.Count > 0) ? subjects : new List<SubjectDTO>();
+                returnList.Add(majorDTO);
+            }
+
+            return returnList;
         }
 
         public ICollection<MajorDTO>? GetDisableMajors()
@@ -99,7 +110,7 @@ namespace backend.Handlers.Implementors
                 var getSubjects = _mapper.Map<ICollection<SubjectDTO>?>(_postSubjectRepository.GetSubjectsOf(post.Id));
                 post.Subjects = (getSubjects is not null && getSubjects.Count > 0) ? getSubjects : new List<SubjectDTO>();
 
-                var getImages= _imageHandlers.GetImagesByPost(post.Id);
+                var getImages = _imageHandlers.GetImagesByPost(post.Id);
                 post.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
 
                 var getVideos = _videoHandlers.GetVideosByPost(post.Id);
