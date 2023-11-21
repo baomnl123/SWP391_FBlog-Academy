@@ -7,7 +7,7 @@ export default function Profile() {
     color: '#333', 
     border: '0.005px solid #333', 
     textAlign: 'left',
-    paddingLeft: '10px',
+    paddingLeft: '12px',
     paddingTop: '10px',
     paddingBottom: '10px',
   };
