@@ -73,7 +73,7 @@ export default function UserProfile() {
       }
     }
   )
-  const { data: userSubject } = useRequest(
+  const { data: userSubject, refresh: getUserSubjectbyID } = useRequest(
     async () => {
       const response = await api.getUserSubjectbyID(Number(id ?? 0))
       return response
@@ -416,7 +416,7 @@ export default function UserProfile() {
             setOpenSubject(value)
           }}
           onOk={() => {
-            refresh()
+            getUserSubjectbyID()
           }}
         />
       </Spin>
