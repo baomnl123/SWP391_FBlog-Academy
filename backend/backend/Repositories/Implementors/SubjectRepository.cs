@@ -14,15 +14,15 @@ namespace backend.Repositories.Implementors
             _context = new();
         }
 
-        public bool CreateSubject(Subject tag)
+        public bool CreateSubject(Subject subject)
         {
-            _context.Add(tag);
+            _context.Add(subject);
             return Save();
         }
 
-        public bool DisableSubject(Subject tag)
+        public bool DisableSubject(Subject subject)
         {
-            var postSubjects = _context.PostSubjects.Where(c => c.SubjectId == tag.Id).ToList();
+            var postSubjects = _context.PostSubjects.Where(c => c.SubjectId == subject.Id).ToList();
 
             foreach (var postSubject in postSubjects)
             {
@@ -30,14 +30,14 @@ namespace backend.Repositories.Implementors
                 _context.Update(postSubject);
             }
 
-            tag.Status = false;
-            _context.Update(tag);
+            subject.Status = false;
+            _context.Update(subject);
             return Save();
         }
 
-        public bool EnableSubject(Subject tag)
+        public bool EnableSubject(Subject subject)
         {
-            var postSubjects = _context.PostSubjects.Where(c => c.SubjectId == tag.Id).ToList();
+            var postSubjects = _context.PostSubjects.Where(c => c.SubjectId == subject.Id).ToList();
 
             foreach (var postSubject in postSubjects)
             {
@@ -45,8 +45,8 @@ namespace backend.Repositories.Implementors
                 _context.Update(postSubject);
             }
 
-            tag.Status = true;
-            _context.Update(tag);
+            subject.Status = true;
+            _context.Update(subject);
             return Save();
         }
 
@@ -60,33 +60,33 @@ namespace backend.Repositories.Implementors
             return _context.Subjects.Where(c => c.Status == false).ToList();
         }
 
-        public Subject? GetSubjectById(int tagId)
+        public Subject? GetSubjectById(int subjectId)
         {
-            return _context.Subjects.FirstOrDefault(c => c.Id == tagId);
+            return _context.Subjects.FirstOrDefault(c => c.Id == subjectId);
         }
 
-        public Subject? GetSubjectByName(string tagName)
+        public Subject? GetSubjectByName(string subjectName)
         {
-            return _context.Subjects.FirstOrDefault(c => c.SubjectName.Trim().ToUpper() == tagName.Trim().ToUpper());
+            return _context.Subjects.FirstOrDefault(c => c.SubjectName.Trim().ToUpper() == subjectName.Trim().ToUpper());
         }
 
-        public ICollection<Post> GetPostsBySubject(int tagId)
+        public ICollection<Post> GetPostsBySubject(int subjectId)
         {
-            return _context.PostSubjects.Where(e => e.SubjectId == tagId && e.Status == true)
+            return _context.PostSubjects.Where(e => e.SubjectId == subjectId && e.Status == true)
                                     .Select(e => e.Post)
                                     .Where(c => c.Status == true).ToList();
         }
 
-        public ICollection<Major> GetMajorsBySubject(int tagId)
+        public ICollection<Major> GetMajorsBySubject(int subjectId)
         {
-            return _context.MajorSubjects.Where(e => e.SubjectId == tagId && e.Status == true)
+            return _context.MajorSubjects.Where(e => e.SubjectId == subjectId && e.Status == true)
                                         .Select(e => e.Major)
                                         .Where(c => c.Status == true).ToList();
         }
 
-        public bool UpdateSubject(Subject tag)
+        public bool UpdateSubject(Subject subject)
         {
-            _context.Update(tag);
+            _context.Update(subject);
             return Save();
         }
 

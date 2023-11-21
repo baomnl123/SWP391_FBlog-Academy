@@ -156,8 +156,8 @@ namespace backend.Controllers
         /// <param name="userId"></param>
         /// <param name="title"></param>
         /// <param name="content"></param>
-        /// <param name="tagIds"></param>
-        /// <param name="categoryIds"></param>
+        /// <param name="subjectIds"></param>
+        /// <param name="majorIds"></param>
         /// <param name="MediaURLs"></param>
         /// <param name="mediaURLs"></param>
         /// <returns></returns>
@@ -165,12 +165,12 @@ namespace backend.Controllers
         public IActionResult CreatePost(int userId,
                                         [FromForm] string title,
                                         [FromForm] string content,
-                                        [FromQuery] int[]? tagIds,
-                                        [FromQuery] int[]? categoryIds,
+                                        [FromQuery] int[]? subjectIds,
+                                        [FromQuery] int[]? majorIds,
                                         [FromQuery] string[]? imageURLs,
                                         [FromQuery] string[]? videoURLs)
         {
-            var newPost = _postHandlers.CreatePost(userId, title, content, tagIds, categoryIds, imageURLs, videoURLs);
+            var newPost = _postHandlers.CreatePost(userId, title, content, subjectIds, majorIds, imageURLs, videoURLs);
             if (newPost != null)
             {
                 return Ok(newPost);
@@ -184,21 +184,21 @@ namespace backend.Controllers
         /// <param name="postId"></param>
         /// <param name="title"></param>
         /// <param name="content"></param>
-        /// <param name="tagIds"></param>
-        /// <param name="categoryIds"></param>
-        /// <param name="MediaURLs"></param>
-        /// <param name="mediaURLs"></param>
+        /// <param name="subjectIds"></param>
+        /// <param name="majorIds"></param>
+        /// <param name="imageURLs"></param>
+        /// <param name="videoURLs"></param>
         /// <returns></returns>
         [HttpPut]
         public IActionResult UpdatePost(int postId,
                                         [FromForm] string title,
                                         [FromForm] string content,
-                                        [FromQuery] int[] tagIds,
-                                        [FromQuery] int[] categoryIds,
+                                        [FromQuery] int[] subjectIds,
+                                        [FromQuery] int[] majorIds,
                                         [FromQuery] string[] imageURLs,
                                         [FromQuery] string[] videoURLs)
         {
-            var updatedPost = _postHandlers.UpdatePost(postId, title, content, tagIds, categoryIds, imageURLs, videoURLs);
+            var updatedPost = _postHandlers.UpdatePost(postId, title, content, subjectIds, majorIds, imageURLs, videoURLs);
             if (updatedPost != null)
             {
                 return Ok(updatedPost);
@@ -263,14 +263,14 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Get list of Posts by Category or Tag or searchValue.
+        /// Get list of Posts by Major or Subject or searchValue.
         /// Use this api for filter
         /// </summary>
         /// <returns></returns>
-        [HttpGet("category-tag")]
-        public IActionResult GetPostByCategoryAndTag([FromQuery] int[] categoryID, [FromQuery] int[] tagID, [FromQuery] string? searchValue, [FromQuery] int currentUserId)
+        [HttpGet("major-subject")]
+        public IActionResult GetPostByMajorAndSubject([FromQuery] int[] majorID, [FromQuery] int[] subjectID, [FromQuery] string? searchValue, [FromQuery] int currentUserId)
         {
-            var postList = _postHandlers.GetAllPosts(categoryID, tagID, searchValue, currentUserId);
+            var postList = _postHandlers.GetAllPosts(majorID, subjectID, searchValue, currentUserId);
             if (postList == null || postList.Count == 0)
             {
                 postList = new List<PostDTO>();
@@ -279,7 +279,7 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Get list of Posts by Category or Tag or searchValue.
+        /// Get list of Posts by Major or Subject or searchValue.
         /// Use this api for load page
         /// </summary>
         /// <returns></returns>

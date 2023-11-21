@@ -32,15 +32,15 @@ namespace backend.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<Major>))]
         public IActionResult GetMajors()
         {
-            var categories = _majorHandlers.GetMajors();
+            var majors = _majorHandlers.GetMajors();
 
-            if (categories == null)
+            if (majors == null)
             {
                 var emptyList = new List<MajorDTO>();
                 return Ok(emptyList);
             }
 
-            return Ok(categories);
+            return Ok(majors);
         }
 
         /// <summary>
@@ -51,15 +51,15 @@ namespace backend.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<Major>))]
         public IActionResult GetDisableMajors()
         {
-            var categories = _majorHandlers.GetDisableMajors();
+            var majors = _majorHandlers.GetDisableMajors();
 
-            if (categories == null)
+            if (majors == null)
             {
                 var emptyList = new List<MajorDTO>();
                 return Ok(emptyList);
             }
 
-            return Ok(categories);
+            return Ok(majors);
         }
 
         /// <summary>
