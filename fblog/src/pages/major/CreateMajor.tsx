@@ -3,12 +3,10 @@ import { Form, Input, Modal, ModalProps, message } from 'antd'
 import { useWatch } from 'antd/es/form/Form'
 import { useCallback, useEffect } from 'react'
 
-const CreateCategory = (
-  props: ModalProps & { initialValues?: { name: string; id: number }; onSuccess?: () => void }
-) => {
+const CreateMajor = (props: ModalProps & { initialValues?: { name: string; id: number }; onSuccess?: () => void }) => {
   const { open, onOk, onCancel, initialValues, onSuccess, ...rest } = props
   const [form] = Form.useForm()
-  const categoryName = useWatch('name', form)
+  const majorName = useWatch('name', form)
 
   useEffect(() => {
     form.setFieldsValue(initialValues)
@@ -20,15 +18,15 @@ const CreateCategory = (
         const payload = new FormData()
         if (initialValues) {
           if (initialValues.name !== value.name) {
-            payload.append('newCategoryName', value.name)
-            await api.updateCategory(initialValues.id, payload)
-            message.success('Update category successfully')
+            payload.append('newMajorName', value.name)
+            await api.updateMajor(initialValues.id, payload)
+            message.success('Update major successfully')
           }
         } else {
           const id = Number(localStorage.getItem('id'))
-          payload.append('categoryName', value.name)
-          await api.createCategory(id, payload)
-          message.success('Create category successfully')
+          payload.append('majorName', value.name)
+          await api.createMajor(id, payload)
+          message.success('Create major successfully')
         }
         form.resetFields()
         onSuccess?.()
@@ -42,7 +40,7 @@ const CreateCategory = (
   return (
     <Modal
       {...rest}
-      title={initialValues ? 'Update Category' : 'Create Category'}
+      title={initialValues ? 'Update Major' : 'Create Major'}
       destroyOnClose
       open={open}
       onOk={(e) => {
@@ -54,16 +52,16 @@ const CreateCategory = (
         onCancel?.(e)
       }}
       okButtonProps={{
-        disabled: initialValues?.name === categoryName || categoryName === ''
+        disabled: initialValues?.name === majorName || majorName === ''
       }}
     >
       <Form<{ name: string }> form={form} layout='vertical' onFinish={onFinish}>
-        <Form.Item label='Name' name='name' rules={[{ required: true, message: 'Name category is required' }]}>
-          <Input placeholder='Name category' />
+        <Form.Item label='Name' name='name' rules={[{ required: true, message: 'Name major is required' }]}>
+          <Input placeholder='Name major' />
         </Form.Item>
       </Form>
     </Modal>
   )
 }
 
-export default CreateCategory
+export default CreateMajor

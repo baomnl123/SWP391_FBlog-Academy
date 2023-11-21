@@ -67,7 +67,7 @@ const Dashboard = () => {
         />
         <DashBoardCard
           amount={(post ?? []).length}
-          title='Post'
+          title='Reports'
           className='w-full'
           selected={activeTab === 'post'}
           onClick={() => handleChangeTab('post')}

@@ -3,12 +3,14 @@ import { Navigate, createBrowserRouter } from 'react-router-dom'
 import PrivateRoute from './PrivateRoute'
 
 import Dashboard from '@/pages/dashboard'
-import Category from '@/pages/category'
 import Lecture from '@/pages/lecture'
-import Post from '@/pages/post'
+import Major from '@/pages/major'
 import Profile from '@/pages/profile'
 import Student from '@/pages/student'
-import Tag from '@/pages/tag'
+import Subject from '@/pages/subject'
+import Post from '@/pages/post'
+import ReportPost from '@/pages/report'
+
 import { RedirectToSignIn, SignedIn, SignedOut } from '@clerk/clerk-react'
 
 export const Routes = createBrowserRouter([
@@ -37,17 +39,17 @@ export const Routes = createBrowserRouter([
         }
       },
       {
-        path: '/category',
-        element: <Category />,
+        path: '/major',
+        element: <Major />,
         handle: {
-          crumb: () => 'Category List'
+          crumb: () => 'Major List'
         }
       },
       {
-        path: '/tag',
-        element: <Tag />,
+        path: '/subject',
+        element: <Subject />,
         handle: {
-          crumb: () => 'Tag List'
+          crumb: () => 'Subject List'
         }
       },
       {
@@ -65,19 +67,27 @@ export const Routes = createBrowserRouter([
         }
       },
       {
-        path: '/post',
+        path: '/report',
         element: <Post />,
+        handle: {
+          crumb: () => 'Report'
+        }
+      },
+      {
+        path: '/post',
+        element: <ReportPost />,
         handle: {
           crumb: () => 'Post'
         }
       },
       {
-        path: '/profile',
+        path: '/policies',
         element: <Profile />,
         handle: {
-          crumb: () => 'Profile'
+          crumb: () => 'Policies'
         }
       },
+
       {
         path: '*',
         element: <Navigate to='/' />
