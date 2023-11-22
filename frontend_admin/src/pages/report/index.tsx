@@ -71,6 +71,9 @@ export default function ReportPost() {
       title: 'Subjects',
       key: 'subjects',
       dataIndex: 'subjects',
+      render(value) {
+        return value.join(', ')
+      },
       sorter: (a, b) => {
         return a.subjects[0].length - b.subjects[0].length
       }
@@ -79,6 +82,9 @@ export default function ReportPost() {
       title: 'Majors',
       key: 'majors',
       dataIndex: 'majors',
+      render(value) {
+        return value.join(', ')
+      },
       sorter: (a, b) => {
         return a.majors[0].length - b.majors[0].length
       }
