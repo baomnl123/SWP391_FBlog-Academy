@@ -41,6 +41,9 @@ export default function UserProfile() {
   const [modal, contextHolder] = Modal.useModal()
   const [idPost, setIdPost] = useState<undefined | number>(undefined)
   const [openReport, setOpenReport] = useState(false)
+  const [showSuccessMajor, setShowSuccessMajor] = useState(false);
+  const [showSuccessSubject, setShowSuccessSubject] = useState(false);
+  const [showModal1, setShowModal1] = useState(false);
   const [openSubject, setOpenSubject] = useState(false)
   const isDarkMode = useSelector((state: RootState) => state.themeReducer.darkMode)
 
@@ -408,19 +411,33 @@ export default function UserProfile() {
           }}
         />
         <ModalMajor
-          idPost={idPost}
-          isOpen={openReport}
-          majorSelect={userMajor?.map((major) => major.id)}
-          setModal={(value) => {
-            if (!value) {
-              setIdPost(undefined)
-            }
-            setOpenReport(value)
-          }}
-          onOk={() => {
-            refresh()
-          }}
-        />
+  idPost={idPost}
+  isOpen={openReport}
+  majorSelect={userMajor?.map((major) => major.id)}
+  setModal={(value) => {
+    if (!value) {
+      setIdPost(undefined);
+    }
+    setOpenReport(value);
+  }}
+  onOk={() => {
+    refresh();
+    setShowSuccessMajor(true);
+    setOpenReport(false);
+  }}
+/>
+<Modal
+  title="Thành công"
+  visible={showSuccessMajor}
+  onCancel={() => setShowSuccessMajor(false)}
+  footer={[
+    <button key="close" onClick={() => setShowSuccessMajor(false)}>
+      Đóng
+    </button>
+  ]}
+>
+  <p>Thay đổi Major thành công! 🎉</p>
+</Modal>
         {userMajor && userMajor.length > 0 ? (
           <ModalSubject
             idPost={idPost}
@@ -431,21 +448,37 @@ export default function UserProfile() {
             }}
             onOk={() => {
               getUserSubjectbyID()
+              setShowSuccessSubject(true);
             }}
           />
         ) : (
           <Modal
-            visible={openSubject}
-            onCancel={() => {
-              setOpenSubject(false)
-            }}
-            onOk={() => {
-              setOpenSubject(false)
-            }}
-          >
-            <Alert type='warning' message='Bạn cần nhập Major trước khi nhập Subject!' />
-          </Modal>
-        )}
+    visible={openSubject}
+    onCancel={() => {
+      setOpenSubject(false);
+    }}
+    onOk={() => {
+      setOpenSubject(false);
+    }}
+  >
+    <Alert type="warning" message="Bạn cần nhập Major trước khi nhập Subject!" />
+  </Modal>
+)}
+<Modal
+  title="Thành công"
+  visible={showSuccessSubject}
+  onCancel={() => setShowSuccessSubject(false)}
+  footer={[
+    <button key="close" onClick={() => {
+      setShowSuccessSubject(false);
+      setShowModal1(false); // Tắt tất cả Modal khác nếu có
+    }}>
+      Đóng
+    </button>,
+  ]}
+>
+  <p>Thay đổi Subject thành công 🎉</p>
+</Modal>
       </Spin>
       {contextHolder}
     </BaseLayout>
