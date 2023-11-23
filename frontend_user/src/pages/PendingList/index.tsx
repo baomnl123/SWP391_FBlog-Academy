@@ -3,7 +3,7 @@ import BaseLayout from '@/components/BaseLayout'
 import Card from '@/components/Card'
 import { RootState } from '@/store'
 import { useRequest } from 'ahooks'
-import { Button, Image, Space, Spin, message } from 'antd'
+import { Button, Image, Space, Spin, message, Modal } from 'antd'
 import dayjs from 'dayjs'
 import { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux'
@@ -16,7 +16,9 @@ export default function PendingList() {
   const navigate = useNavigate()
   const reviewerId = useSelector((state: RootState) => state.userReducer.user?.id)
   const user = useSelector((state: RootState) => state.userReducer.user)
-
+  const [confirmDenyModalVisible, setConfirmDenyModalVisible] = useState(false);
+const [postIdToDeny, setPostIdToDeny] = useState(0);
+  
   const { data, refresh } = useRequest(
     async () => {
       const response = await api.postPending({
@@ -36,6 +38,20 @@ export default function PendingList() {
       }
     }
   )
+  const showConfirmDenyModal = (postId:number) => {
+    setPostIdToDeny(postId);
+    setConfirmDenyModalVisible(true);
+  };
+  
+  const handleConfirmDeny = () => {
+    setConfirmDenyModalVisible(false);
+    deny(postIdToDeny);
+  };
+  
+  const handleCancelDeny = () => {
+    setConfirmDenyModalVisible(false);
+  };
+
 
   const approve = useCallback(
     async (postId: number) => {
@@ -112,10 +128,13 @@ export default function PendingList() {
                   <Button size='large' block onClick={() => approve(post?.id)}>
                     Approve
                   </Button>,
-                  <Button size='large' block danger onClick={() => deny(post?.id)}>
-                    Deny
-                  </Button>
+                  <Button size="large" block danger onClick={() => showConfirmDenyModal(post?.id)}>
+                  Deny
+                </Button> 
+            
+                
                 ]}
+                
                 user={{
                   username: post?.user?.name,
                   avatar: post?.user?.avatarUrl
@@ -140,6 +159,14 @@ export default function PendingList() {
                 ]}
               />
             ))}
+            <Modal
+                  title="Confirm Deny"
+                  visible={confirmDenyModalVisible}
+                  onOk={handleConfirmDeny}
+                  onCancel={handleCancelDeny}
+                >
+                  <p>Are you sure you want to deny this post?</p>
+                </Modal>
           </Space>
         </div>
       </Spin>
