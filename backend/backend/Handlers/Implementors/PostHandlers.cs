@@ -1000,6 +1000,24 @@ namespace backend.Handlers.Implementors
             existingPost.UsersDownvote = (UsersDownvote is not null && UsersDownvote.Count > 0) ? UsersDownvote : new List<UserDTO>();
             existingPost.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
 
+            var getReports = _reportPostRepository.GetAllReportsAboutPost(existingPost.Id);
+            if (getReports != null)
+            {
+                var reportPostsDTO = new List<ReportPostDTO>();
+                foreach (var report in getReports)
+                {
+                    var reportDTO = _mapper.Map<ReportPostDTO>(report);
+                    var getReporterUser = _userRepository.GetUser(report.ReporterId);
+                    var getReportedPost = this.GetPostBy(report.PostId);
+                    if (getReporterUser == null || !getReporterUser.Status) continue;
+                    if (getReportedPost == null || !getReportedPost.Status) continue;
+                    reportDTO.Reporter = _mapper.Map<UserDTO>(getReporterUser);
+                    reportDTO.Post = getReportedPost;
+                    reportPostsDTO.Add(reportDTO);
+                }
+                existingPost.Reports = getReports.Count();
+            }
+
             return existingPost;
         }
 
