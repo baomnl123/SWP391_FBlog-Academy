@@ -43,7 +43,7 @@ export default function UserProfile() {
   const [openReport, setOpenReport] = useState(false)
   const [showSuccessMajor, setShowSuccessMajor] = useState(false);
   const [showSuccessSubject, setShowSuccessSubject] = useState(false);
-  const [showModal1, setShowModal1] = useState(false);
+
   const [openSubject, setOpenSubject] = useState(false)
   const isDarkMode = useSelector((state: RootState) => state.themeReducer.darkMode)
 
@@ -471,7 +471,6 @@ export default function UserProfile() {
   footer={[
     <button key="close" onClick={() => {
       setShowSuccessSubject(false);
-      setShowModal1(false); // Tắt tất cả Modal khác nếu có
     }}>
       Đóng
     </button>,
