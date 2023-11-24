@@ -27,10 +27,11 @@ const handleClick = () => {
 const SiderDashboard = ({ createPost, onGetSubjects, onGetMajors, onFilter }: SiderDashboardProps) => {
   const navigate = useNavigate()
   const [filter, setFilter] = useState<FilterType | null>(null)
-  // const [majorOptions, setMajorOptions] = useState<SelectProps['options']>([])
-  // const [subjectOptions, setSubjectOptions] = useState<SelectProps['options']>([])
+
   const userInfo = useSelector<RootState>((state) => state.userReducer.user)
   const isDarkMode = useSelector((state: RootState) => state.themeReducer.darkMode)
+  const [_selectedMajor, setSelectedMajor] = useState<string | null>(null);
+  const [_selectedSubject, setSelectedSubject] = useState<string | null>(null);
 
   const { data: majorsData } = useRequest(async () => {
     try {
@@ -60,67 +61,58 @@ const SiderDashboard = ({ createPost, onGetSubjects, onGetMajors, onFilter }: Si
     }
   })
 
-  // useEffect(() => {
-  //   if (!majorsData) return
-  //   const majors: SelectProps['options'] = majorsData.map((item) => {
-  //     return {
-  //       label: item.majorName,
-  //       value: item.id
-  //     }
-  //   })
-  //   setMajorOptions(majors)
-  // }, [majorsData])
-
-  // useEffect(() => {
-  //   if (!subjectsData) return
-  //   const options: SelectProps['options'] = subjectsData.map((item) => {
-  //     return {
-  //       label: item.subjectName,
-  //       value: item.id
-  //     }
-  //   })
-  //   setSubjectOptions(options)
-  // }, [subjectsData])
+  
 
   return (
     <div>
       <div className='mb-6'>
-        <SelectLabel
-          label='Subject'
-          placeHolder='Select Subject'
-          optionData={subjectsData}
-          onChange={(value) => {
-            onGetSubjects?.(value)
-          }}
-        />
-      </div>
-      <div className='mb-6'>
-        <SelectLabel
-          label='Major'
-          placeHolder='Select Major'
-          optionData={majorsData}
-          onChange={(value) => {
-            onGetMajors?.(value)
-          }}
-        />
+      <SelectLabel
+  label='Major'
+  placeHolder='Select Major'
+  optionData={majorsData}
+  onChange={(value) => {
+        setSelectedSubject(null); // Reset lựa chọn của Subject
+        onGetMajors?.(typeof value === 'number' ? value.toString() : value);
+        setFilter(null); // Reset lựa chọn của Image
+        onFilter?.(null);
+        return typeof value === 'number' ? value.toString() : value; // Cập nhật giá trị mới khi lựa chọn thay đổi
+      }
+    }
+/>
+
+<SelectLabel
+  label='Subject'
+  placeHolder='Select Subject'
+  optionData={subjectsData}
+  onChange={(value) => {
+    
+        setSelectedMajor(null); // Reset lựa chọn của Major
+        onGetSubjects?.(typeof value === 'number' ? value.toString() : value);
+        setFilter(null); // Reset lựa chọn của Image
+        onFilter?.(null);
+        return typeof value === 'number' ? value.toString() : value; // Cập nhật giá trị mới khi lựa chọn thay đổi
+      }
+    }
+
+/>
       </div>
       <Flex
-        align='center'
-        className={`mb-8 mt-8 w-full cursor-pointer 
-        ${filter === 'image' && !isDarkMode ? 'bg-[#C7DCF0]' : ''} 
-        ${filter === 'image' && isDarkMode ? 'bg-[#0F2438]' : ''} 
-        py-2 px-4 rounded-md`}
-        gap={10}
-        onClick={() => {
-          if (filter !== 'image') {
-            setFilter('image')
-            onFilter?.('image')
-            return
-          }
-          setFilter(null)
-          onFilter?.(null)
-        }}
-      >
+  align='center'
+  className={`mb-8 mt-8 w-full cursor-pointer 
+  ${filter === 'image' && !isDarkMode ? 'bg-[#C7DCF0]' : ''} 
+  ${filter === 'image' && isDarkMode ? 'bg-[#0F2438]' : ''} 
+  py-2 px-4 rounded-md`}
+  gap={10}
+  onClick={() => {
+    if (filter !== 'image') {
+      setFilter('image');
+      onFilter?.('image');
+    } else {
+      setFilter(null); // Reset lựa chọn của Image và Video
+      onFilter?.(null);
+    }
+  }}
+>
         <IconPicture color={isDarkMode ? '#468CCE' : '#3178B9'} width={30} height={30} />
         <Typography.Text>Image</Typography.Text>
       </Flex>
