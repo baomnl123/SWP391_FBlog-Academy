@@ -2,6 +2,7 @@
 using backend.DTO;
 using backend.Handlers.IHandlers;
 using backend.Models;
+using backend.Repositories.Implementors;
 using backend.Repositories.IRepositories;
 
 namespace backend.Handlers.Implementors
@@ -34,6 +35,7 @@ namespace backend.Handlers.Implementors
             foreach (var subjectid in subjectIDs)
             {
                 var getSubject = _subjectHandlers.GetSubjectById(subjectid);
+                if (getSubject == null || !getSubject.Status) continue;
                 var getUserSubject = _userSubjectRepository.GetBy(currentUserID, subjectid);
                 if (getSubjects.Any(item => item.Id == subjectid)){
                     var existedUserSubjectDTO = _mapper.Map<UserSubjectDTO>(getUserSubject);
@@ -43,7 +45,6 @@ namespace backend.Handlers.Implementors
                     returnList.Add(existedUserSubjectDTO);
                     continue;
                 }
-                if (getSubject == null || !getSubject.Status) continue;
                 //check user subject
                 
                 if (getUserSubject != null)
@@ -82,32 +83,40 @@ namespace backend.Handlers.Implementors
             return returnList;
         }
 
-        public UserSubjectDTO? DeleteUserSubject(int currentUserID, int subjectID)
+        public ICollection<UserSubjectDTO>? DeleteUserSubject(int currentUserID, int[] subjectIDs)
         {
             //check user
             var getUser = _userHandlers.GetUser(currentUserID);
             if (getUser == null || !getUser.Status) return null;
 
             //check subject
-            var getSubject = _subjectHandlers.GetSubjectById(subjectID);
-            if (getSubject == null || !getSubject.Status) return null;
+            var getSubjects = _userSubjectRepository.GetSubjectsOf(currentUserID);
+            if (getSubjects == null) return null;
 
-            //check user subject
-            var getUserSubject = _userSubjectRepository.GetBy(currentUserID, subjectID);
-            if (getUserSubject == null || !getUserSubject.Status) return null;
+            var returnList = new List<UserSubjectDTO>();
 
-            //disable
-            getUserSubject.Status = false;
+            foreach (var subjectID in subjectIDs)
+            {
+                var getSubject = _subjectHandlers.GetSubjectById(subjectID);
+                if (getSubject == null || !getSubject.Status) continue;
+                var getUserSubject = _userSubjectRepository.GetBy(currentUserID, subjectID);
+                //check user subject
+                if (getUserSubject != null)
+                {
+                    if (!getUserSubject.Status) continue;
 
-            //update to db
-            if (!_userSubjectRepository.Update(getUserSubject)) return null;
+                    getUserSubject.Status = false;
 
-            //map to dto
-            var userSubjectDTO = _mapper.Map<UserSubjectDTO>(getUserSubject);
-            userSubjectDTO.User = getUser;
-            userSubjectDTO.Subject = getSubject;
+                    var userSubjectDTO = _mapper.Map<UserSubjectDTO>(getUserSubject);
+                    userSubjectDTO.User = getUser;
+                    userSubjectDTO.Subject = getSubject;
 
-            return userSubjectDTO;
+                    if (!_userSubjectRepository.Update(getUserSubject)) continue;
+
+                    returnList.Add(userSubjectDTO);
+                }
+            }
+            return returnList;
         }
 
         public ICollection<SubjectDTO>? GetSubjectsOf(int userID)

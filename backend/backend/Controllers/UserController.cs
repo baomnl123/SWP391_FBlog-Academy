@@ -581,7 +581,7 @@ namespace backend.Controllers
         }
 
         [HttpDelete("{userID}/major")]
-        public async Task<IActionResult> DeleteMajor(int userID, int majorID)
+        public async Task<IActionResult> DeleteMajor(int userID, [FromQuery] int[] majorID)
         {
             var deleteMajor = _userMajorHandlers.DeleteUserMajor(userID, majorID);
             if (deleteMajor == null) return BadRequest("Deleted Failed !");
@@ -605,7 +605,7 @@ namespace backend.Controllers
         }
 
         [HttpDelete("{userID}/subject")]
-        public async Task<IActionResult> DeleteSubject(int userID, int subjectID)
+        public async Task<IActionResult> DeleteSubject(int userID, [FromQuery] int[] subjectID)
         {
             var deleteSubject = _userSubjectHandlers.DeleteUserSubject(userID, subjectID);
             if (deleteSubject == null) return BadRequest("Deleted Failed !");

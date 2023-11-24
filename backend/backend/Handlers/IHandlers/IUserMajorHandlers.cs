@@ -4,8 +4,8 @@ namespace backend.Handlers.IHandlers
 {
     public interface IUserMajorHandlers
     {
-        public ICollection<UserMajorDTO>? AddUserMajor(int currentUserID, int[] majorID);
-        public UserMajorDTO? DeleteUserMajor(int currentUserID, int majorID);
+        public ICollection<UserMajorDTO>? AddUserMajor(int currentUserID, int[] majorIDs);
+        public ICollection<UserMajorDTO>? DeleteUserMajor(int currentUserID, int[] majorIDs);
         public ICollection<MajorDTO>? GetMajorsOf(int userID);
         public ICollection<UserDTO>? GetUsersOf(int majorID);
     }
