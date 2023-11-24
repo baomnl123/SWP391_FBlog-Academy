@@ -108,13 +108,13 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
   const { runAsync: getPostById } = useRequest(api.getPostById, {
     manual: true,
     onSuccess: (res) => {
-      console.log('res')
+      console.log('res', res)
       const majors = res.majors?.map((item) => item.id)
       const subjectIds = res.subjects?.map((item) => item.id)
       form.setFieldValue('title', res?.title)
       form.setFieldValue('content', res?.content)
-      form.setFieldValue('Major', majors)
-      form.setFieldValue('Subject', subjectIds)
+      form.setFieldValue('majorIds', majors)
+      form.setFieldValue('subjectIds', subjectIds)
 
       const filesUpdated: FileData[] = []
       const fileUploads: FileUploaded[] = []
@@ -221,14 +221,17 @@ export default function CreateUpdatePost({ id, isOpen, setModal, onFinish: onFin
           videoURLs
         }
       })
-      return
+    } else {
+      await updatePost({
+        ...value,
+        imageURLs,
+        videoURLs,
+        postId: id
+      })
     }
-    await updatePost({
-      ...value,
-      imageURLs,
-      videoURLs,
-      postId: id
-    })
+    form.resetFields()
+    setFiles([])
+    setFilesUploaded([])
   }
 
   const handleChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
