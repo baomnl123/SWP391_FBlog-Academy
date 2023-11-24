@@ -185,12 +185,8 @@ namespace backend.Repositories.Implementors
         {
             try
             {
-                var getPendingStatus = _reportStatusConstrant.GetPendingStatus();
-                var getDisableStatus = _reportStatusConstrant.GetDisableStatus();
-                var getDeclineStatus = _reportStatusConstrant.GetDeclinedStatus();
-                var getReports = _fblogAcademyContext.ReportPosts.Where(r => r.PostId == postID && (r.Status.Equals(getPendingStatus)
-                                                                                                 || r.Status.Equals(getDisableStatus)
-                                                                                                 || r.Status.Equals(getDeclineStatus)))
+                var getApprovedStatus = _reportStatusConstrant.GetApprovedStatus();
+                var getReports = _fblogAcademyContext.ReportPosts.Where(r => r.PostId == postID && (!r.Status.Equals(getApprovedStatus)))
                                                                  .ToList();
                 return getReports;
             }
