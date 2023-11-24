@@ -45,8 +45,7 @@ export default function UserProfile() {
   const [modal, contextHolder] = Modal.useModal()
   const [idPost, setIdPost] = useState<undefined | number>(undefined)
   const [openReport, setOpenReport] = useState(false)
-  const [showSuccessMajor, setShowSuccessMajor] = useState(false)
-  const [showSuccessSubject, setShowSuccessSubject] = useState(false)
+
   const [majors, setMajors] = useState<UserMajor[]>([])
   const [subjects, setSubjects] = useState<UserSubject[]>([])
 
@@ -179,51 +178,6 @@ export default function UserProfile() {
       }
     }
   )
-
-  // const { data: isFollow, refresh: checkIsFollow } = useRequest(
-  //   async () => {
-  //     const response = await api.followingByUserId(Number(currentId ?? getLocalStorage('id')))
-  //     if (response.find((user) => user.id === Number(id))) {
-  //       return true
-  //     }
-  //     return false
-  //   },
-  //   {
-  //     onError(e) {
-  //       console.error(e)
-  //     }
-  //   }
-  // )
-
-  // const optionsSubject: SelectProps['options'] = [
-  //   {
-  //     label: 'Option 1',
-  //     value: 1
-  //   },
-  //   {
-  //     label: 'Option 2',
-  //     value: 2
-  //   },
-  //   {
-  //     label: 'Option 3',
-  //     value: 3
-  //   }
-  // ]
-
-  // const optionsMajor: SelectProps['options'] = [
-  //   {
-  //     label: 'Major 1',
-  //     value: 1
-  //   },
-  //   {
-  //     label: 'Major 2',
-  //     value: 2
-  //   },
-  //   {
-  //     label: 'Major 3',
-  //     value: 3
-  //   }
-  // ]
 
   const onDelete = useCallback(async (id: number) => {
     try {
@@ -547,22 +501,11 @@ export default function UserProfile() {
           }}
           onOk={() => {
             refresh()
-            setShowSuccessMajor(true)
+            message.success('Thay đổi Major thành công! 🎉')
             setOpenReport(false)
           }}
         />
-        <Modal
-          title='Thành công'
-          visible={showSuccessMajor}
-          onCancel={() => setShowSuccessMajor(false)}
-          footer={[
-            <button key='close' onClick={() => setShowSuccessMajor(false)}>
-              Đóng
-            </button>
-          ]}
-        >
-          <p>Thay đổi Major thành công! 🎉</p>
-        </Modal>
+
         {userMajor && userMajor.length > 0 ? (
           <ModalSubject
             idPost={idPost}
@@ -573,7 +516,8 @@ export default function UserProfile() {
             }}
             onOk={() => {
               getUserSubjectbyID()
-              setShowSuccessSubject(true)
+              message.success('Thay đổi Major thành công! 🎉')
+              setOpenReport(false)
             }}
           />
         ) : (
@@ -589,23 +533,6 @@ export default function UserProfile() {
             <Alert type='warning' message='Bạn cần nhập Major trước khi nhập Subject!' />
           </Modal>
         )}
-        <Modal
-          title='Thành công'
-          visible={showSuccessSubject}
-          onCancel={() => setShowSuccessSubject(false)}
-          footer={[
-            <button
-              key='close'
-              onClick={() => {
-                setShowSuccessSubject(false)
-              }}
-            >
-              Đóng
-            </button>
-          ]}
-        >
-          <p>Thay đổi Subject thành công 🎉</p>
-        </Modal>
       </Spin>
       {contextHolder}
     </BaseLayout>
