@@ -9,5 +9,6 @@
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public bool Status { get; set; }
+        public ICollection<SubjectDTO>? Subject { get; set; } = new List<SubjectDTO>();
     }
 }

@@ -115,7 +115,7 @@ namespace backend.Handlers.Implementors
                 var getSubjects = _mapper.Map<ICollection<SubjectDTO>?>(_postSubjectRepository.GetSubjectsOf(post.Id));
                 post.Subjects = (getSubjects is not null && getSubjects.Count > 0) ? getSubjects : new List<SubjectDTO>();
 
-                var getImages= _imageHandlers.GetImagesByPost(post.Id);
+                var getImages = _imageHandlers.GetImagesByPost(post.Id);
                 post.Images = (getImages is not null && getImages.Count > 0) ? getImages : new List<ImageDTO>();
 
                 var getVideos = _videoHandlers.GetVideosByPost(post.Id);
