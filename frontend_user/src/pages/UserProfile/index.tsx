@@ -2,6 +2,7 @@ import api from '@/api'
 import BaseLayout from '@/components/BaseLayout'
 import Card from '@/components/Card'
 import { RootState } from '@/store'
+import { TweenOneGroup } from 'rc-tween-one'
 
 import { getLocalStorage } from '@/utils/helpers'
 import { CheckCircleFilled, MoreOutlined } from '@ant-design/icons'
@@ -32,17 +33,22 @@ import { UserAddOutlined } from '@ant-design/icons'
 
 import ModalMajor from './components/ModalMajor'
 import ModalSubject from './components/ModalSubject'
+import { UserMajor, UserSubject } from '@/api/types/user'
 
 export default function UserProfile() {
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
   const [titleModal, setTitleModal] = useState('Followers')
   const [users, setUsers] = useState<User[]>([])
+  const { user } = useSelector((state: RootState) => state.userReducer)
+
   const [modal, contextHolder] = Modal.useModal()
   const [idPost, setIdPost] = useState<undefined | number>(undefined)
   const [openReport, setOpenReport] = useState(false)
-  const [showSuccessMajor, setShowSuccessMajor] = useState(false);
-  const [showSuccessSubject, setShowSuccessSubject] = useState(false);
+  const [showSuccessMajor, setShowSuccessMajor] = useState(false)
+  const [showSuccessSubject, setShowSuccessSubject] = useState(false)
+  const [majors, setMajors] = useState<UserMajor[]>([])
+  const [subjects, setSubjects] = useState<UserSubject[]>([])
 
   const [openSubject, setOpenSubject] = useState(false)
   const isDarkMode = useSelector((state: RootState) => state.themeReducer.darkMode)
@@ -76,6 +82,7 @@ export default function UserProfile() {
   const { data: userMajor, refresh } = useRequest(
     async () => {
       const response = await api.getUserMajorbyID(Number(id ?? 0))
+      setMajors([...response])
       return response
     },
     {
@@ -93,6 +100,7 @@ export default function UserProfile() {
   const { data: userSubject, refresh: getUserSubjectbyID } = useRequest(
     async () => {
       const response = await api.getUserSubjectbyID(Number(id ?? 0))
+      setSubjects([...response])
       return response
     },
     {
@@ -286,6 +294,88 @@ export default function UserProfile() {
     }
   ]
 
+  // Remove Major and Subject on User's Profile
+  const { runAsync: deleteUserMajor } = useRequest(api.deleteUserMajor, {
+    manual: true,
+    onSuccess: (res) => {
+      if (res) {
+        message.success('Delete major success')
+      }
+    },
+    onError: (err) => {
+      console.log(err)
+    }
+  })
+
+  const deleteMajor = (removedMajor: UserMajor) => {
+    const majorList = majors.map((major) => major.id)
+    deleteUserMajor(user?.id ?? 0, majorList ?? [])
+    const newMajor = majors.filter((major) => major.majorName !== removedMajor.majorName)
+    console.log(newMajor)
+    setMajors(newMajor)
+  }
+
+  const mapUserMajor = (major: UserMajor) => {
+    const tagElem = (
+      <Tag
+        closable
+        onClose={(e) => {
+          e.preventDefault()
+          deleteMajor(major)
+        }}
+      >
+        {major.majorName}
+      </Tag>
+    )
+    return (
+      <span key={major.id} style={{ display: 'inline-block' }}>
+        {tagElem}
+      </span>
+    )
+  }
+
+  const { runAsync: deleteUserSubject } = useRequest(api.deleteUserSubject, {
+    manual: true,
+    onSuccess: (res) => {
+      if (res) {
+        message.success('Delete subject success')
+      }
+    },
+    onError: (err) => {
+      console.log(err)
+    }
+  })
+
+  const deleteSubject = (removedSubject: UserSubject) => {
+    const subjectList = subjects.map((subject) => subject.id)
+    deleteUserSubject(user?.id ?? 0, subjectList ?? [])
+    const newSubject = subjects.filter((subject) => subject.subjectName !== removedSubject.subjectName)
+    console.log(newSubject)
+    setSubjects(newSubject)
+  }
+
+  const mapUserSubject = (subject: UserSubject) => {
+    const tagElem = (
+      <Tag
+        closable
+        onClose={(e) => {
+          e.preventDefault()
+          deleteSubject(subject)
+        }}
+      >
+        {subject.subjectName}
+      </Tag>
+    )
+    return (
+      <span key={subject.id} style={{ display: 'inline-block' }}>
+        {tagElem}
+      </span>
+    )
+  }
+
+  const majorChild = majors?.map(mapUserMajor)
+  const subjectChild = subjects?.map(mapUserSubject)
+
   return (
     <BaseLayout sider={<SubSide />}>
       <Spin spinning={loading}>
@@ -342,7 +432,26 @@ export default function UserProfile() {
                   >
                     <UserAddOutlined color={isDarkMode ? '#fff' : '#000'} />
                   </div>
-                  <Typography.Text>Major : {userMajor?.map((item) => <Tag>{item.majorName}</Tag>)}</Typography.Text>
+                  {/* {userMajor?.map((item) => <Tag>{item.majorName}</Tag>) */}
+                  <Typography.Text>
+                    <TweenOneGroup
+                      enter={{
+                        scale: 0.8,
+                        opacity: 0,
+                        type: 'from',
+                        duration: 100
+                      }}
+                      onEnd={(e) => {
+                        if (e.type === 'appear' || e.type === 'enter') {
+                          ;(e.target as any).style = 'display: inline-block'
+                        }
+                      }}
+                      leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}
+                      appear={false}
+                    >
+                      Major: {majorChild}
+                    </TweenOneGroup>
+                  </Typography.Text>
                 </Flex>
                 <Flex gap={100} align='center'>
                   <div
@@ -353,7 +462,23 @@ export default function UserProfile() {
                     <UserAddOutlined color={isDarkMode ? '#fff' : '#000'} />
                   </div>
                   <Typography.Text>
-                    Subject : {userSubject?.map((item) => <Tag>{item.subjectName}</Tag>)}
+                    <TweenOneGroup
+                      enter={{
+                        scale: 0.8,
+                        opacity: 0,
+                        type: 'from',
+                        duration: 100
+                      }}
+                      onEnd={(e) => {
+                        if (e.type === 'appear' || e.type === 'enter') {
+                          ;(e.target as any).style = 'display: inline-block'
+                        }
+                      }}
+                      leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}
+                      appear={false}
+                    >
+                      Subject: {subjectChild}
+                    </TweenOneGroup>
                   </Typography.Text>
                 </Flex>
               </Flex>
@@ -411,33 +536,33 @@ export default function UserProfile() {
           }}
         />
         <ModalMajor
-  idPost={idPost}
-  isOpen={openReport}
-  majorSelect={userMajor?.map((major) => major.id)}
-  setModal={(value) => {
-    if (!value) {
-      setIdPost(undefined);
-    }
-    setOpenReport(value);
-  }}
-  onOk={() => {
-    refresh();
-    setShowSuccessMajor(true);
-    setOpenReport(false);
-  }}
-/>
-<Modal
-  title="Thành công"
-  visible={showSuccessMajor}
-  onCancel={() => setShowSuccessMajor(false)}
-  footer={[
-    <button key="close" onClick={() => setShowSuccessMajor(false)}>
-      Đóng
-    </button>
-  ]}
->
-  <p>Thay đổi Major thành công! 🎉</p>
-</Modal>
+          idPost={idPost}
+          isOpen={openReport}
+          majorSelect={userMajor?.map((major) => major.id)}
+          setModal={(value) => {
+            if (!value) {
+              setIdPost(undefined)
+            }
+            setOpenReport(value)
+          }}
+          onOk={() => {
+            refresh()
+            setShowSuccessMajor(true)
+            setOpenReport(false)
+          }}
+        />
+        <Modal
+          title='Thành công'
+          visible={showSuccessMajor}
+          onCancel={() => setShowSuccessMajor(false)}
+          footer={[
+            <button key='close' onClick={() => setShowSuccessMajor(false)}>
+              Đóng
+            </button>
+          ]}
+        >
+          <p>Thay đổi Major thành công! 🎉</p>
+        </Modal>
         {userMajor && userMajor.length > 0 ? (
           <ModalSubject
             idPost={idPost}
@@ -448,36 +573,39 @@ export default function UserProfile() {
             }}
             onOk={() => {
               getUserSubjectbyID()
-              setShowSuccessSubject(true);
+              setShowSuccessSubject(true)
             }}
           />
         ) : (
           <Modal
-    visible={openSubject}
-    onCancel={() => {
-      setOpenSubject(false);
-    }}
-    onOk={() => {
-      setOpenSubject(false);
-    }}
-  >
-    <Alert type="warning" message="Bạn cần nhập Major trước khi nhập Subject!" />
-  </Modal>
-)}
-<Modal
-  title="Thành công"
-  visible={showSuccessSubject}
-  onCancel={() => setShowSuccessSubject(false)}
-  footer={[
-    <button key="close" onClick={() => {
-      setShowSuccessSubject(false);
-    }}>
-      Đóng
-    </button>,
-  ]}
->
-  <p>Thay đổi Subject thành công 🎉</p>
-</Modal>
+            visible={openSubject}
+            onCancel={() => {
+              setOpenSubject(false)
+            }}
+            onOk={() => {
+              setOpenSubject(false)
+            }}
+          >
+            <Alert type='warning' message='Bạn cần nhập Major trước khi nhập Subject!' />
+          </Modal>
+        )}
+        <Modal
+          title='Thành công'
+          visible={showSuccessSubject}
+          onCancel={() => setShowSuccessSubject(false)}
+          footer={[
+            <button
+              key='close'
+              onClick={() => {
+                setShowSuccessSubject(false)
+              }}
+            >
+              Đóng
+            </button>
+          ]}
+        >
+          <p>Thay đổi Subject thành công 🎉</p>
+        </Modal>
       </Spin>
       {contextHolder}
     </BaseLayout>
