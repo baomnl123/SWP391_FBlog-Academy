@@ -511,25 +511,15 @@ export default function UserProfile() {
             idPost={idPost}
             isOpen={openSubject}
             subjectSelect={userSubject?.map((subject) => subject.id)}
-            setModal={(value) => {
-              setOpenSubject(value)
-            }}
+            setModal={(value) => setOpenSubject(value)}
             onOk={() => {
               getUserSubjectbyID()
-              message.success('Thay đổi Major thành công! 🎉')
-              setOpenReport(false)
+              message.success('Thay đổi Subject thành công! 🎉')
+              setOpenSubject(false)
             }}
           />
         ) : (
-          <Modal
-            visible={openSubject}
-            onCancel={() => {
-              setOpenSubject(false)
-            }}
-            onOk={() => {
-              setOpenSubject(false)
-            }}
-          >
+          <Modal visible={openSubject} onCancel={() => setOpenSubject(false)} onOk={() => setOpenSubject(false)}>
             <Alert type='warning' message='Bạn cần nhập Major trước khi nhập Subject!' />
           </Modal>
         )}
