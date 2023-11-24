@@ -35,6 +35,7 @@ namespace backend.Handlers.Implementors
             foreach (var majorid in majorIDs)
             {
                 var getMajor = _majorHandlers.GetMajorById(majorid);
+                if (getMajor == null || !getMajor.Status) continue;
                 var getUserMajor = _userMajorRepository.GetBy(currentUserID, majorid);
                 if (getMajors.Any(item => item.Id == majorid))
                 {
@@ -45,7 +46,6 @@ namespace backend.Handlers.Implementors
                     returnList.Add(existedUserMajorDTO);
                     continue;
                 }
-                if (getMajor == null || !getMajor.Status) continue;
                 //check user major
                 if (getUserMajor != null)
                 {
@@ -82,28 +82,40 @@ namespace backend.Handlers.Implementors
             return returnList;
         }
 
-        public UserMajorDTO? DeleteUserMajor(int currentUserID, int majorID)
+        public ICollection<UserMajorDTO>? DeleteUserMajor(int currentUserID, int[] majorIDs)
         {
             //check user
             var getUser = _userHandlers.GetUser(currentUserID);
             if (getUser == null || !getUser.Status) return null;
 
             //check major
-            var getMajor = _majorHandlers.GetMajorById(majorID);
-            if (getMajor == null || !getMajor.Status) return null;
+            var getMajors = _userMajorRepository.GetMajorsOf(currentUserID);
+            if (getMajors == null) return null;
 
-            //check user major
-            var getUserMajor = _userMajorRepository.GetBy(currentUserID, majorID);
-            if (getUserMajor == null || !getUserMajor.Status) return null;
+            var returnList = new List<UserMajorDTO>();
 
-            getUserMajor.Status = false;
-            if (!_userMajorRepository.Update(getUserMajor)) return null;
+            foreach (var majorid in majorIDs)
+            {
+                var getMajor = _majorHandlers.GetMajorById(majorid);
+                if (getMajor == null || !getMajor.Status) continue;
+                var getUserMajor = _userMajorRepository.GetBy(currentUserID, majorid);
+                //check user major
+                if (getUserMajor != null)
+                {
+                    if (!getUserMajor.Status) continue;
 
-            var userMajorDTO = _mapper.Map<UserMajorDTO>(getUserMajor);
-            userMajorDTO.User = getUser;
-            userMajorDTO.Major = getMajor;
+                    getUserMajor.Status = false;
 
-            return userMajorDTO;
+                    var userMajorDTO = _mapper.Map<UserMajorDTO>(getUserMajor);
+                    userMajorDTO.User = getUser;
+                    userMajorDTO.Major = getMajor;
+
+                    if (!_userMajorRepository.Update(getUserMajor)) continue;
+
+                    returnList.Add(userMajorDTO);
+                }
+            }
+            return returnList;
         }
 
         public ICollection<MajorDTO>? GetMajorsOf(int userID)
