@@ -1001,22 +1001,8 @@ namespace backend.Handlers.Implementors
             existingPost.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
 
             var getReports = _reportPostRepository.GetAllReportsAboutPost(existingPost.Id);
-            if (getReports != null)
-            {
-                var reportPostsDTO = new List<ReportPostDTO>();
-                foreach (var report in getReports)
-                {
-                    var reportDTO = _mapper.Map<ReportPostDTO>(report);
-                    var getReporterUser = _userRepository.GetUser(report.ReporterId);
-                    var getReportedPost = this.GetPostBy(report.PostId);
-                    if (getReporterUser == null || !getReporterUser.Status) continue;
-                    if (getReportedPost == null || !getReportedPost.Status) continue;
-                    reportDTO.Reporter = _mapper.Map<UserDTO>(getReporterUser);
-                    reportDTO.Post = getReportedPost;
-                    reportPostsDTO.Add(reportDTO);
-                }
-                existingPost.Reports = getReports.Count();
-            }
+            
+            if (getReports != null) existingPost.Reports = getReports.Count;
 
             return existingPost;
         }
@@ -1062,7 +1048,7 @@ namespace backend.Handlers.Implementors
                 int daysDiff = daySpan.Days;
 
                 int countUpvotes = postDTO.Upvotes.HasValue ? postDTO.Upvotes.Value : 0;
-                hashMap.Add(postDTO, (float) countUpvotes / daysDiff);
+                hashMap.Add(postDTO, (float)countUpvotes / daysDiff);
             }
 
             var sortedKeyValuePairs = hashMap.OrderByDescending(p => p.Value).Take(5);
@@ -1355,11 +1341,11 @@ namespace backend.Handlers.Implementors
                     if (getReports != null)
                     {
                         var reportPostsDTO = new List<ReportPostDTO>();
-                        foreach(var report in getReports)
+                        foreach (var report in getReports)
                         {
                             var reportDTO = _mapper.Map<ReportPostDTO>(report);
                             var getReporterUser = _userRepository.GetUser(report.ReporterId);
-                            var getReportedPost = this.GetPostBy(report.PostId);
+                            var getReportedPost = GetPostBy(report.PostId);
                             if (getReporterUser == null || !getReporterUser.Status) continue;
                             if (getReportedPost == null || !getReportedPost.Status) continue;
                             reportDTO.Reporter = _mapper.Map<UserDTO>(getReporterUser);
