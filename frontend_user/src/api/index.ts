@@ -5,7 +5,6 @@ import axiosClient from './axiosClient'
 import { CreatePostBodyRequest } from './types/post'
 import { UserMajor, UserSubject } from './types/user'
 
-
 const api = {
   // post
   postPending({
@@ -20,8 +19,8 @@ const api = {
     searchValue?: string
   }) {
     const url = 'Post/pending'
-    return axiosClient.get<unknown, PendingPost[]>(url,{
-      params:{
+    return axiosClient.get<unknown, PendingPost[]>(url, {
+      params: {
         majorID,
         subjectID,
         currentUserId,
@@ -80,7 +79,7 @@ const api = {
     const url = `Post/user/${userId}`
     return axiosClient.get<unknown, PostByUserId[]>(url)
   },
-  getUserPendingPost(userId:number){
+  getUserPendingPost(userId: number) {
     const url = `Post/pending/${userId}`
     return axiosClient.get<unknown, PendingPost[]>(url)
   },
