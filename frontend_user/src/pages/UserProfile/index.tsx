@@ -277,7 +277,8 @@ export default function UserProfile() {
   const mapUserMajor = (major: UserMajor) => {
     const tagElem = (
       <Tag
-        closable
+        // If currentUserID == ID, allow to delete, else, don't show delete button
+        closable={user?.id == id}
         onClose={(e) => {
           e.preventDefault()
           deleteMajor(major)
@@ -314,10 +315,11 @@ export default function UserProfile() {
   const mapUserSubject = (subject: UserSubject) => {
     const tagElem = (
       <Tag
-        closable
+        // If currentUserID == ID, allow to delete, else, don't show delete button
+        closable={user?.id == id}
         onClose={(e) => {
           e.preventDefault()
-          deleteSubject(subject)
+          user?.id == id && deleteSubject(subject)
         }}
       >
         {subject.subjectName}
@@ -387,7 +389,8 @@ export default function UserProfile() {
                       setOpenReport(true)
                     }}
                   >
-                    <UserAddOutlined color={isDarkMode ? '#fff' : '#000'} />
+                    {/* If currentUserID = ID, allow to add Major, else, don't show add button */}
+                    {user?.id == id && <UserAddOutlined color={isDarkMode ? '#fff' : '#000'} />}
                   </div>
                   <Typography.Text>
                     <TweenOneGroup
@@ -415,7 +418,8 @@ export default function UserProfile() {
                       setOpenSubject(true)
                     }}
                   >
-                    <UserAddOutlined color={isDarkMode ? '#fff' : '#000'} />
+                    {/* If currentUserID = ID, allow to add Subject, else, don't show add button */}
+                    {user?.id == id && <UserAddOutlined color={isDarkMode ? '#fff' : '#000'} />}
                   </div>
                   <Typography.Text>
                     <TweenOneGroup
