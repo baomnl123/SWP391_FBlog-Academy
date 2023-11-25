@@ -383,13 +383,12 @@ export default function UserProfile() {
                     {following?.length ?? 0} Following
                   </Typography.Text>
                 </Flex>
-                <Flex gap={100} align='center'>
+                <Flex gap={10} align='center'>
                   <div
                     onClick={() => {
                       setOpenReport(true)
                     }}
                   >
-                    {/* If currentUserID = ID, allow to add Major, else, don't show add button */}
                     {user?.id == id && <UserAddOutlined color={isDarkMode ? '#fff' : '#000'} />}
                   </div>
                   <Typography.Text>
@@ -412,7 +411,7 @@ export default function UserProfile() {
                     </TweenOneGroup>
                   </Typography.Text>
                 </Flex>
-                <Flex gap={100} align='center'>
+                <Flex gap={10} align='center'>
                   <div
                     onClick={() => {
                       setOpenSubject(true)
