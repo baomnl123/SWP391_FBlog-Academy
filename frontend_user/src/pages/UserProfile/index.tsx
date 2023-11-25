@@ -264,6 +264,13 @@ export default function UserProfile() {
   const deleteMajor = (removedMajor: UserMajor) => {
     const majorList = [removedMajor.id]
     deleteUserMajor(user?.id ?? 0, majorList)
+
+    // If there is no major, delete all subjects
+    if (majors.length - 1 == 0 && subjects.length > 0) {
+      const subjectID = subjects.map((subject) => subject.id)
+      api.deleteUserSubject(user?.id ?? 0, subjectID ?? [])
+      setSubjects([])
+    }
     setMajors(majors.filter((major) => major.majorName !== removedMajor.majorName))
   }
 
