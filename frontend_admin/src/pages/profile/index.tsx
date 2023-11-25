@@ -3,10 +3,11 @@ import React from 'react'
 
 export default function Profile() {
   const textStyle: React.CSSProperties = {
-    color: '#333', 
-    border: '0.005px solid #F5F5F5', 
+    
+    color: '#333',
+    border: '0.005px solid #f5f5f5',
     textAlign: 'left',
-    paddingLeft: '10px',
+    paddingLeft: '7px',
     paddingTop: '3px',
     paddingBottom: '3px',
   }
