@@ -402,6 +402,8 @@ export default function UserProfile() {
                       onEnd={(e) => {
                         if (e.type === 'appear' || e.type === 'enter') {
                           ;(e.target as any).style = 'display: inline-block'
+                        } else if (e.type === 'leave') {
+                          window.location.reload() // Refresh trang khi sự kiện leave xảy ra
                         }
                       }}
                       leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}
@@ -417,7 +419,6 @@ export default function UserProfile() {
                       setOpenSubject(true)
                     }}
                   >
-                    {/* If currentUserID = ID, allow to add Subject, else, don't show add button */}
                     {user?.id == id && <UserAddOutlined color={isDarkMode ? '#fff' : '#000'} />}
                   </div>
                   <Typography.Text>
@@ -431,6 +432,8 @@ export default function UserProfile() {
                       onEnd={(e) => {
                         if (e.type === 'appear' || e.type === 'enter') {
                           ;(e.target as any).style = 'display: inline-block'
+                        } else if (e.type === 'leave') {
+                          window.location.reload() // Refresh trang khi sự kiện leave xảy ra
                         }
                       }}
                       leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}
