@@ -262,11 +262,9 @@ export default function UserProfile() {
   })
 
   const deleteMajor = (removedMajor: UserMajor) => {
-    const majorList = majors.map((major) => major.id)
-    deleteUserMajor(user?.id ?? 0, majorList ?? [])
-    const newMajor = majors.filter((major) => major.majorName !== removedMajor.majorName)
-    console.log(newMajor)
-    setMajors(newMajor)
+    const majorList = [removedMajor.id]
+    deleteUserMajor(user?.id ?? 0, majorList)
+    setMajors(majors.filter((major) => major.majorName !== removedMajor.majorName))
   }
 
   const mapUserMajor = (major: UserMajor) => {
@@ -301,11 +299,9 @@ export default function UserProfile() {
   })
 
   const deleteSubject = (removedSubject: UserSubject) => {
-    const subjectList = subjects.map((subject) => subject.id)
-    deleteUserSubject(user?.id ?? 0, subjectList ?? [])
-    const newSubject = subjects.filter((subject) => subject.subjectName !== removedSubject.subjectName)
-    console.log(newSubject)
-    setSubjects(newSubject)
+    const subjectList = [removedSubject.id]
+    deleteUserSubject(user?.id ?? 0, subjectList)
+    setSubjects(subjects.filter((subject) => subject.subjectName !== removedSubject.subjectName))
   }
 
   const mapUserSubject = (subject: UserSubject) => {

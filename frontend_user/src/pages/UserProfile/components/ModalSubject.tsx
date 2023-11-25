@@ -46,7 +46,9 @@ const ModalSubject = ({ isOpen, setModal, onSuccess, onOk, subjectSelect }: Moda
     try {
       if ((subjectSelect ?? []).length > 0) {
         if (subject?.length ?? 0 > 0) {
-          await api.deleteUserSubject(user?.id ?? 0, subject ?? [])
+          // Delete all unselected subjects
+          const subjectList = subjectSelect?.filter((item) => !subject?.includes(item))
+          await api.deleteUserSubject(user?.id ?? 0, subjectList ?? [])
         } else {
           await api.deleteUserSubject(user?.id ?? 0, subjectSelect ?? [])
         }

@@ -49,7 +49,9 @@ const ModalMajor = ({ isOpen, setModal, onSuccess, onOk, majorSelect }: ModalMaj
     try {
       if ((majorSelect ?? []).length > 0) {
         if (major?.length ?? 0 > 0) {
-          await api.deleteUserMajor(user?.id ?? 0, major ?? [])
+          // Delete all unselected majors
+          const majorList = majorSelect?.filter((item) => !major?.includes(item))
+          await api.deleteUserMajor(user?.id ?? 0, majorList ?? [])
         } else {
           await api.deleteUserMajor(user?.id ?? 0, majorSelect ?? [])
         }
