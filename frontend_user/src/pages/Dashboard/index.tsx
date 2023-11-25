@@ -34,6 +34,7 @@ export default function Dashboard() {
   const [subject, setSubjects] = useState<string | string[] | number | number[]>([])
   const [filter, setFilter] = useState<FilterType | null>(null)
   const [postFilter, setPostFilter] = useState<PendingPost[] | null>(null)
+  const [postTrending, setPostTrending] = useState('')
 
   const { runAsync: deletePost } = useRequest(api.deletePost, {
     manual: true,
@@ -93,7 +94,11 @@ export default function Dashboard() {
       : undefined
   }
 
-  const { runAsync: getAllPostHasImages, loading: allPostImgsLoading } = useRequest(api.allPostHasImages, {
+  const {
+    runAsync: getAllPostHasImages,
+    loading: allPostImgsLoading,
+    refresh: refreshImages
+  } = useRequest(api.allPostHasImages, {
     manual: true,
     onSuccess: (res) => {
       if (res) {
@@ -106,7 +111,11 @@ export default function Dashboard() {
     }
   })
 
-  const { runAsync: getAllPostHasVideos, loading: allPostVideosLoading } = useRequest(api.allPostHasVideo, {
+  const {
+    runAsync: getAllPostHasVideos,
+    loading: allPostVideosLoading,
+    refresh: refreshVideos
+  } = useRequest(api.allPostHasVideo, {
     manual: true,
     onSuccess: (res) => {
       if (res) {
@@ -156,10 +165,11 @@ export default function Dashboard() {
     if (user) {
       getPost({
         majorID: !majors ? undefined : (majors as unknown as number[]),
-        subjectID: !subject ? undefined : (subject as unknown as number[])
+        subjectID: !subject ? undefined : (subject as unknown as number[]),
+        searchValue: postTrending
       })
     }
-  }, [majors, getPost, subject, user])
+  }, [majors, getPost, subject, user, postTrending])
 
   const follow = useCallback(
     async (id: number) => {
@@ -192,8 +202,6 @@ export default function Dashboard() {
   )
   const data = !postFilter ? postData : postFilter
 
-  console.log(idPost)
-
   return (
     <BaseLayout
       showSearch
@@ -209,7 +217,7 @@ export default function Dashboard() {
             setSubjects(value as string | number | number[] | string[])
           }}
           onPostChange={(value) => {
-            setPostFilter(value ? ([value] as unknown as PendingPost[]) : null)
+            setPostTrending(value ?? '')
           }}
         />
       }
@@ -303,7 +311,12 @@ export default function Dashboard() {
                             downvote={post.downvote}
                             upvote={post.upvotes}
                             onVoteSuccess={() => {
-                              refresh()
+                              if (!filter) {
+                                refresh()
+                              } else if (filter) {
+                                if (filter === 'image') refreshImages()
+                                else refreshVideos()
+                              }
                             }}
                             // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             usersVote={(post as any)?.usersUpvote}

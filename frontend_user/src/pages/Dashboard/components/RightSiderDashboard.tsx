@@ -1,6 +1,6 @@
 import api from '@/api'
 import { RootState } from '@/store'
-import { Post } from '@/types'
+
 import { useRequest } from 'ahooks'
 import { Card } from 'antd'
 import { useState } from 'react'
@@ -41,7 +41,7 @@ const RightSiderDashboard = ({
 }: {
   onMajorChange?: (value?: number) => void
   onSubjectChange?: (value?: number) => void
-  onPostChange?: (value?: Post) => void
+  onPostChange?: (value?: string) => void
 }) => {
   const [majorSelect, setMajorSelect] = useState(-1)
   const [subjectSelect, setSubjectSelect] = useState(-1)
@@ -105,7 +105,7 @@ const RightSiderDashboard = ({
           onChange={(value) => {
             const post = trendingPost?.find((el) => el.id === value)
             setPostSelect(postSelect === value ? -1 : value)
-            onPostChange?.(postSelect === value ? undefined : post)
+            onPostChange?.(postSelect === value ? undefined : post?.title)
             // Reset the selection of Major and Subject
             setMajorSelect(-1)
             setSubjectSelect(-1)
