@@ -78,6 +78,7 @@ export type Major = {
   id: number
   adminId: number
   majorName: string
+  subjects :Subject[]
   createdAt: Date
   updatedAt: Date
   status: boolean
