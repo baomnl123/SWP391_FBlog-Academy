@@ -1,5 +1,6 @@
-import { Avatar, Card, Checkbox, Flex } from 'antd'
+import { Avatar, Card, Checkbox, Flex, Space } from 'antd'
 import { CheckboxChangeEvent } from 'antd/es/checkbox'
+import { ArrowDownOutlined, ArrowUpOutlined } from '@ant-design/icons'
 import { CardProps } from 'antd/lib'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -23,6 +24,11 @@ export interface PostDetailProps extends CardProps {
   slideContent?: ReactNode[]
   reporterName?: string
   reportDate?: Date
+  upvote?: number
+  downvote?: number
+  reports?: number
+  major?: string[]
+  subject?: string[]
   reporterAvt?: string
   reportContent?: string
   handleChangeStatus?: (value: boolean) => void
@@ -71,6 +77,7 @@ const PostDetail = ({
             </div>
           </div>
         </div>
+        
       </Flex>
       <p className='my-3'>{reportContent}</p>
       <Card {...props}>
@@ -80,12 +87,21 @@ const PostDetail = ({
           </div>
           <div>
             <h1 className='text-base font-semibold'>{author}</h1>
+            <p>
+              <b>Majors:</b> {props.major?.join(', ')}  
+            </p>
+            <p>
+              <b>Subjects:</b> {props.subject?.join(', ')}
+            </p>
+            <p>
+              <b>Reports:</b> {props?.reports}
+            </p>
             <p>{dayjs(time).fromNow()}</p>
           </div>
         </div>
         <div className='mt-4'>
           <p className='text-base'>
-            <div className='mt-3'>{title && <div dangerouslySetInnerHTML={{ __html: title }} />}</div>
+            <div className='mt-3'>{description && <div dangerouslySetInnerHTML={{ __html: title }} />}</div>
           </p>
           <div className='my-3'>{description && <div dangerouslySetInnerHTML={{ __html: description }} />}</div>
           <Swiper
@@ -100,6 +116,14 @@ const PostDetail = ({
             {slideContent?.map((slide, index) => <SwiperSlide key={index}>{slide}</SwiperSlide>)}
           </Swiper>
         </div>
+        <Space size={20} className='mt-5'>
+          <div>
+            <ArrowUpOutlined /> {props?.upvote}
+          </div>
+          <div>
+            <ArrowDownOutlined /> {props?.downvote}
+          </div>
+        </Space>
       </Card>
     </Card>
   )
