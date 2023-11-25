@@ -3,6 +3,7 @@ import { CheckboxChangeEvent } from 'antd/es/checkbox'
 import { CardProps } from 'antd/lib'
 import dayjs from 'dayjs'
 import { ReactNode, useEffect, useState } from 'react'
+import { ArrowDownOutlined, ArrowUpOutlined } from '@ant-design/icons'
 import relativeTime from 'dayjs/plugin/relativeTime'
 dayjs.extend(relativeTime)
 
@@ -28,6 +29,12 @@ export interface PostDetailProps extends CardProps {
   handleChangeStatus?: (value: boolean) => void
   onApprove?: () => void
   onDeny?: () => void
+  upvote?: number
+  downvote?: number
+  reports?: number
+  major?: string[]
+  subject?: string[]
+  
 }
 
 const PostDetail = ({
@@ -90,6 +97,15 @@ const PostDetail = ({
           </div>
           <div>
             <h1 className='text-base font-semibold'>{author}</h1>
+            <p>
+              <b>Majors:</b> {props.major?.join(', ')}
+            </p>
+            <p>
+              <b>Subjects:</b> {props.subject?.join(', ')}
+            </p>
+            <p>
+              <b>Reports:</b> {props?.reports}
+            </p>
             <p>{dayjs(time).fromNow()}</p>
           </div>
         </div>
@@ -110,6 +126,14 @@ const PostDetail = ({
             {slideContent?.map((slide, index) => <SwiperSlide key={index}>{slide}</SwiperSlide>)}
           </Swiper>
         </div>
+        <Space size={20} className='mt-5'>
+          <div>
+            <ArrowUpOutlined /> {props?.upvote}
+          </div>
+          <div>
+            <ArrowDownOutlined /> {props?.downvote}
+          </div>
+        </Space>
       </Card>
     </Card>
   )

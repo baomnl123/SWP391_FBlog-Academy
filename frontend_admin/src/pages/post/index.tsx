@@ -101,6 +101,10 @@ export default function Post() {
                 reporterName={item?.reporter?.name}
                 reportDate={item?.reporter?.createdAt}
                 reportContent={item?.content}
+                upvote={item?.post.upvotes}
+                downvote={item?.post.downvotes}
+                major={item?.post.majors.map((major) => major.majorName)}
+                subject={item?.post.majors.map((subject) => subject.majorName)}
                 onApprove={async () => {
                   await approvePost(item?.reporter?.id, id)
                 }}
