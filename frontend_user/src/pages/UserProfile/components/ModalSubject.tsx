@@ -23,6 +23,7 @@ const ModalSubject = ({ isOpen, setModal, majorIds, onSuccess, onOk, subjectSele
   const [optionDatas, setOptionDatas] = useState<any[]>([])
   const [form] = Form.useForm()
   const { user } = useSelector((state: RootState) => state.userReducer)
+  console.log(subject)
 
   const { data: subjectsData } = useRequest(async () => {
     try {
@@ -57,13 +58,11 @@ const ModalSubject = ({ isOpen, setModal, majorIds, onSuccess, onOk, subjectSele
   const handleOk = async () => {
     try {
       if ((subjectSelect ?? []).length > 0) {
-          // Delete all unselected subjects
-          const subjectList = subjectSelect?.filter((item) => !subject?.includes(item))
-          await api.deleteUserSubject(user?.id ?? 0, subjectList ?? [])
+        await api.deleteUserSubject(user?.id ?? 0, subjectSelect ?? [])
       }
       if (subject.length > 0) {
         await api.createdUserSubject({
-          subjectID: subject.map((item) => item.value),
+          subjectID: subject,
           userID: user?.id ?? 0
         })
       }
@@ -83,9 +82,9 @@ const ModalSubject = ({ isOpen, setModal, majorIds, onSuccess, onOk, subjectSele
 
   useEffect(() => {
     if (subjectSelect !== undefined) {
-      setSubject(subjectSelect)
+      setSubject(subjectSelect);
     }
-  }, [subjectSelect])
+  }, [subjectSelect]);
 
   return (
     <Spin>
