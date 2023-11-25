@@ -78,7 +78,7 @@ export default function UserProfile() {
       }
     }
   )
-  const { data: userMajor, refresh } = useRequest(
+  const { refresh } = useRequest(
     async () => {
       const response = await api.getUserMajorbyID(Number(id ?? 0))
       setMajors([...response])
@@ -96,7 +96,7 @@ export default function UserProfile() {
       }
     }
   )
-  const { data: userSubject, refresh: getUserSubjectbyID } = useRequest(
+  const { refresh: getUserSubjectbyID } = useRequest(
     async () => {
       const response = await api.getUserSubjectbyID(Number(id ?? 0))
       setSubjects([...response])
@@ -262,11 +262,16 @@ export default function UserProfile() {
   })
 
   const deleteMajor = (removedMajor: UserMajor) => {
-    const majorList = majors.map((major) => major.id)
-    deleteUserMajor(user?.id ?? 0, majorList ?? [])
-    const newMajor = majors.filter((major) => major.majorName !== removedMajor.majorName)
-    console.log(newMajor)
-    setMajors(newMajor)
+    const majorList = [removedMajor.id]
+    deleteUserMajor(user?.id ?? 0, majorList)
+
+    // If there is no major, delete all subjects
+    if (majors.length - 1 == 0 && subjects.length > 0) {
+      const subjectID = subjects.map((subject) => subject.id)
+      api.deleteUserSubject(user?.id ?? 0, subjectID ?? [])
+      setSubjects([])
+    }
+    setMajors(majors.filter((major) => major.majorName !== removedMajor.majorName))
   }
 
   const mapUserMajor = (major: UserMajor) => {
@@ -301,11 +306,9 @@ export default function UserProfile() {
   })
 
   const deleteSubject = (removedSubject: UserSubject) => {
-    const subjectList = subjects.map((subject) => subject.id)
-    deleteUserSubject(user?.id ?? 0, subjectList ?? [])
-    const newSubject = subjects.filter((subject) => subject.subjectName !== removedSubject.subjectName)
-    console.log(newSubject)
-    setSubjects(newSubject)
+    const subjectList = [removedSubject.id]
+    deleteUserSubject(user?.id ?? 0, subjectList)
+    setSubjects(subjects.filter((subject) => subject.subjectName !== removedSubject.subjectName))
   }
 
   const mapUserSubject = (subject: UserSubject) => {
@@ -386,7 +389,6 @@ export default function UserProfile() {
                   >
                     <UserAddOutlined color={isDarkMode ? '#fff' : '#000'} />
                   </div>
-                  {/* {userMajor?.map((item) => <Tag>{item.majorName}</Tag>) */}
                   <Typography.Text>
                     <TweenOneGroup
                       enter={{
@@ -492,7 +494,7 @@ export default function UserProfile() {
         <ModalMajor
           idPost={idPost}
           isOpen={openReport}
-          majorSelect={userMajor?.map((major) => major.id)}
+          majorSelect={majors?.map((major) => major.id)}
           setModal={(value) => {
             if (!value) {
               setIdPost(undefined)
@@ -506,11 +508,11 @@ export default function UserProfile() {
           }}
         />
 
-        {userMajor && userMajor.length > 0 ? (
+        {majors && majors.length > 0 ? (
           <ModalSubject
             idPost={idPost}
             isOpen={openSubject}
-            subjectSelect={userSubject?.map((subject) => subject.id)}
+            subjectSelect={subjects?.map((subject) => subject.id)}
             setModal={(value) => setOpenSubject(value)}
             onOk={() => {
               getUserSubjectbyID()

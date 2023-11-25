@@ -57,7 +57,9 @@ const ModalSubject = ({ isOpen, setModal, majorIds, onSuccess, onOk, subjectSele
   const handleOk = async () => {
     try {
       if ((subjectSelect ?? []).length > 0) {
-        await api.deleteUserSubject(user?.id ?? 0, subjectSelect ?? [])
+          // Delete all unselected subjects
+          const subjectList = subjectSelect?.filter((item) => !subject?.includes(item))
+          await api.deleteUserSubject(user?.id ?? 0, subjectList ?? [])
       }
       if (subject.length > 0) {
         await api.createdUserSubject({
