@@ -7,11 +7,11 @@ This is my [Project's Requirement](https://docs.google.com/spreadsheets/d/1QgbaD
 
 ## System Design
 ### Use Case Diagram
-![UseCaseDiagram](/diagram/Requirement.png)
+![UseCaseDiagram](/diagram/UseCaseDiagram.png)
 ### Entity Relationship Diagram
-![ERD](/diagram/ERD.png)
+![ERD](/diagram/ERDdiagram.png)
 ### Database
-![Database](/diagram/Physical.png)
+![Database](/diagram/DatabaseDiagram.png)
 
 ## Directory
 
