@@ -402,8 +402,6 @@ export default function UserProfile() {
                       onEnd={(e) => {
                         if (e.type === 'appear' || e.type === 'enter') {
                           ;(e.target as any).style = 'display: inline-block'
-                        } else if (e.type === 'leave') {
-                          window.location.reload() // Refresh trang khi sự kiện leave xảy ra
                         }
                       }}
                       leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}
