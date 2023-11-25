@@ -85,8 +85,8 @@ const Dashboard = () => {
                 reportDate={item?.reporter?.createdAt}
                 time={createdAt}
                 reportContent={item?.content}
-                upvote={item?.post.upvote}
-                downvote={item?.post.downvote}
+                upvote={item?.post.upvotes}
+                downvote={item?.post.downvotes}
                 reports={item?.post.reports}
                 major={item?.post.majors.map((major) => major.majorName)}
                 subject={item?.post.majors.map((subject) => subject.majorName)}
