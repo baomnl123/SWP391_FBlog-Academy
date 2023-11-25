@@ -78,7 +78,7 @@ export default function UserProfile() {
       }
     }
   )
-  const { data: userMajor, refresh } = useRequest(
+  const { refresh } = useRequest(
     async () => {
       const response = await api.getUserMajorbyID(Number(id ?? 0))
       setMajors([...response])
@@ -96,7 +96,7 @@ export default function UserProfile() {
       }
     }
   )
-  const { data: userSubject, refresh: getUserSubjectbyID } = useRequest(
+  const { refresh: getUserSubjectbyID } = useRequest(
     async () => {
       const response = await api.getUserSubjectbyID(Number(id ?? 0))
       setSubjects([...response])
@@ -389,7 +389,6 @@ export default function UserProfile() {
                   >
                     <UserAddOutlined color={isDarkMode ? '#fff' : '#000'} />
                   </div>
-                  {/* {userMajor?.map((item) => <Tag>{item.majorName}</Tag>) */}
                   <Typography.Text>
                     <TweenOneGroup
                       enter={{
@@ -495,7 +494,7 @@ export default function UserProfile() {
         <ModalMajor
           idPost={idPost}
           isOpen={openReport}
-          majorSelect={userMajor?.map((major) => major.id)}
+          majorSelect={majors?.map((major) => major.id)}
           setModal={(value) => {
             if (!value) {
               setIdPost(undefined)
@@ -509,11 +508,11 @@ export default function UserProfile() {
           }}
         />
 
-        {userMajor && userMajor.length > 0 ? (
+        {majors && majors.length > 0 ? (
           <ModalSubject
             idPost={idPost}
             isOpen={openSubject}
-            subjectSelect={userSubject?.map((subject) => subject.id)}
+            subjectSelect={subjects?.map((subject) => subject.id)}
             setModal={(value) => setOpenSubject(value)}
             onOk={() => {
               getUserSubjectbyID()
