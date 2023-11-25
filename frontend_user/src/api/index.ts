@@ -87,6 +87,10 @@ const api = {
     const url = `User/${userID}/majors`
     return axiosClient.get<unknown, UserMajor[]>(url)
   },
+  getSubjectMajor(majorID:number){
+    const url = `User/${majorID}/subjects`
+    return axiosClient.get<unknown, Subject[]>(url)
+  },
   getUserSubjectbyID(userID: number) {
     const url = `User/${userID}/subjects`
     return axiosClient.get<unknown, UserSubject[]>(url)
@@ -97,6 +101,7 @@ const api = {
     const url = 'Major/all'
     return axiosClient.get<unknown, Major[]>(url)
   },
+  
 
   deletePost(postId: number) {
     const url = `Post/${postId}`

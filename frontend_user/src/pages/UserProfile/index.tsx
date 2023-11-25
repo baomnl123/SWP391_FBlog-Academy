@@ -519,6 +519,7 @@ export default function UserProfile() {
               message.success('Thay đổi Subject thành công! 🎉')
               setOpenSubject(false)
             }}
+            majorIds={userMajor?.map((major) => major.id)}
           />
         ) : (
           <Modal visible={openSubject} onCancel={() => setOpenSubject(false)} onOk={() => setOpenSubject(false)}>
