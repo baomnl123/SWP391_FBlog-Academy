@@ -116,7 +116,14 @@ const BaseLayout = ({
               <Flex justify='space-between' align='center' className='mr-5'>
                 <Space size={10} align='center' className='cursor-pointer px-5 flex-none'>
                   <UserButton />
-                  <Typography onClick={() => navigate(`/profile/${user?.id}`)}> Profile</Typography>
+                  <Typography
+                    onClick={() => {
+                      navigate(`/profile/${user?.id}`)
+                      window.location.reload() // Làm mới trang khi click vào
+                    }}
+                  >
+                    Profile
+                  </Typography>
                 </Space>
                 <Switch onChange={(e) => handleClick(e)} className='ml-5' checked={!!isDarkMode} />
               </Flex>
