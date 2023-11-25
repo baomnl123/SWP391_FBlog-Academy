@@ -78,7 +78,7 @@ export default function UserProfile() {
       }
     }
   )
-  const { refresh } = useRequest(
+  const { data: userMajor, refresh } = useRequest(
     async () => {
       const response = await api.getUserMajorbyID(Number(id ?? 0))
       setMajors([...response])
