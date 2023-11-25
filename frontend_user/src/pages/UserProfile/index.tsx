@@ -252,6 +252,7 @@ export default function UserProfile() {
   const { runAsync: deleteUserMajor } = useRequest(api.deleteUserMajor, {
     manual: true,
     onSuccess: (res) => {
+      refresh()
       if (res) {
         message.success('Delete major success')
       }
@@ -297,6 +298,7 @@ export default function UserProfile() {
   const { runAsync: deleteUserSubject } = useRequest(api.deleteUserSubject, {
     manual: true,
     onSuccess: (res) => {
+      refresh()
       if (res) {
         message.success('Delete subject success')
       }
