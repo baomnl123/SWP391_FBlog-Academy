@@ -13,42 +13,18 @@ export default function Profile() {
   }
   return (
     <div className='text-center border border-[#333] text-lg' style={textStyle}>
-      <Typography.Text>Chấp Nhận Điều Khoản:</Typography.Text><br/>
+      <Typography.Text> Users:</Typography.Text><br/>
       <Typography.Text>
-        a. Bằng cách truy cập và sử dụng trang web chúng tôi, bạn đồng ý tuân thủ tất cả các điều khoản và điều kiện
-        được mô tả trong tài liệu này.
+        - Users has over 1000 followers will be rewarded.<br/>
+        - Users can posts in any subjects and any majors they want.<br/>
+        - Users can report other users equally.<br/>
+        - Anyone reaches 5 approved reports will be banned by the Admin.<br/>
       </Typography.Text><br/>
-      <Typography.Text>Bản Quyền:</Typography.Text><br/>
+      <Typography.Text>Posts:</Typography.Text><br/>
       <Typography.Text>
-        a. Tất cả nội dung trên trang web này là tài sản của chúng tôi và được bảo vệ bởi luật bản quyền.
-      </Typography.Text><br/>
-      <Typography.Text>
-        b. Bạn có thể chia sẻ và tái sử dụng nội dung với điều kiện phải có sự đồng ý bằng văn bản từ chúng tôi và phải
-        giữ nguyên thông tin về bản quyền.
-      </Typography.Text><br/>
-      <Typography.Text>Nội Dung Người Dùng:</Typography.Text><br/>
-      <Typography.Text>
-        a. Bất kỳ nội dung nào bạn đăng tải trên trang web phải tuân thủ các quy định về bản quyền và không được vi phạm
-        quyền riêng tư, quyền của bên thứ ba, hoặc bất kỳ quy định pháp luật nào.
-      </Typography.Text><br/>
-      <Typography.Text>Tạo Lập Liên Kết:</Typography.Text><br/>
-      <Typography.Text>
-        a. Bạn có thể tạo liên kết đến trang web của chúng tôi, nhưng chúng tôi không chịu trách nhiệm về nội dung hoặc
-        hành động của bất kỳ trang web nào mà liên kết đến.
-      </Typography.Text><br/>
-      <Typography.Text>Chấm Dứt Truy Cập:</Typography.Text><br/>
-      <Typography.Text>
-        a. Chúng tôi có quyền chấm dứt quyền truy cập của bạn vào trang web nếu chúng tôi cho rằng bạn đã vi phạm bất kỳ
-        điều khoản nào trong tài liệu này.
-      </Typography.Text><br/>
-      <Typography.Text>Miễn Trừ Trách Nhiệm:</Typography.Text><br/>
-      <Typography.Text>
-        a. Chúng tôi không chịu trách nhiệm về bất kỳ tổn thất hoặc thiệt hại nào phát sinh từ việc sử dụng trang web
-        của chúng tôi.
-      </Typography.Text><br/>
-      <Typography.Text>Thay Đổi Điều Khoản:</Typography.Text><br/>
-      <Typography.Text>
-        a. Chúng tôi có quyền thay đổi điều khoản này bất cứ lúc nào và sẽ công bố những thay đổi này trên trang web.
+        - Posts must not content any sensitive words or contents.<br/>
+        - Posts must support academic purposes.<br/>
+        - Posts must be relative to the subjects and majors that it is tagged.<br/>
       </Typography.Text><br/>
     </div>
   )
