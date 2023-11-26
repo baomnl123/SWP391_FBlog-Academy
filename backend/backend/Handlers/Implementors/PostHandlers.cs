@@ -545,23 +545,15 @@ namespace backend.Handlers.Implementors
             var getUser = _mapper.Map<UserDTO?>(_userRepository.GetUserByPostID(updatingPost.Id));
             updatingPost.User = (getUser is not null && getUser.Status) ? getUser : null;
 
-            //updating Images if it is successful, return null otherwise 
-            if (imageURLs is not null && imageURLs.Length > 0)
-            {
-                var updatedImages = UpdateImagesOfPost(postId, imageURLs);
-                if (updatedImages is null) return null;
-                updatingPost.Images = updatedImages;
-            }
-            else updatingPost.Images = new List<ImageDTO>();
+            //updating Images if it is successful, return null otherwise
+            var updatedImages = UpdateImagesOfPost(postId, imageURLs);
+            if (updatedImages is null || updatedImages.Count == 0) updatingPost.Images = new List<ImageDTO>();
+            updatingPost.Images = updatedImages;
 
             //Updating Videos if it is successful.Otherwise, return null
-            if (videoURLs is not null && videoURLs.Length > 0)
-            {
-                var updatedVideos = UpdateVideosOfPost(postId, videoURLs);
-                if (updatedVideos is null) return null;
-                updatingPost.Videos = updatedVideos;
-            }
-            else updatingPost.Videos = new List<VideoDTO>();
+            var updatedVideos = UpdateVideosOfPost(postId, videoURLs);
+            if (updatedVideos is null || updatedVideos.Count == 0) updatingPost.Videos = new List<VideoDTO>();
+            updatingPost.Videos = updatedVideos;
 
             if (subjectIds is not null && subjectIds.Length > 0)
             {
@@ -627,6 +619,8 @@ namespace backend.Handlers.Implementors
                 }
             }
 
+            if (imageURLs is null || imageURLs.Length == 0) return new List<ImageDTO>();
+
             //update Medias
             var updatedImages = _imageHandlers.CreateImage(postId, imageURLs);
             if (updatedImages is null || updatedImages.Count == 0) return new List<ImageDTO>();
@@ -645,6 +639,8 @@ namespace backend.Handlers.Implementors
                     if (successDelete is null) return null;
                 }
             }
+
+            if (videoURLs is null || videoURLs.Length == 0) return new List<VideoDTO>();
 
             //update Videos
             var updatedVideos = _videoHandlers.CreateVideo(postId, videoURLs);
@@ -1001,7 +997,7 @@ namespace backend.Handlers.Implementors
             existingPost.Downvotes = (UsersDownvote == null || UsersDownvote.Count == 0) ? 0 : UsersDownvote.Count;
 
             var getReports = _reportPostRepository.GetAllReportsAboutPost(existingPost.Id);
-            
+
             if (getReports != null) existingPost.Reports = getReports.Count;
 
             return existingPost;
