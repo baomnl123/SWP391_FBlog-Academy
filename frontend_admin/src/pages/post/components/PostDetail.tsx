@@ -76,7 +76,7 @@ const PostDetail = ({
             </div>
             <div>
               <h1 className='text-base font-semibold'>{reporterName}</h1>
-              <p>{dayjs(reportDate).fromNow()}</p>
+              <p>{dayjs(reportDate).format('YYYY-MM-DD')}</p>
             </div>
           </div>
         </div>
@@ -97,8 +97,9 @@ const PostDetail = ({
           </div>
           <div>
             <h1 className='text-base font-semibold'>{author}</h1>
+            <p>{dayjs(time).format('YYYY-MM-DD')}</p>
             <p>
-              <b>Majors:</b> {props.major?.join(', ')}
+              <b>Majors:</b> {props.major?.join(', ')}  
             </p>
             <p>
               <b>Subjects:</b> {props.subject?.join(', ')}
@@ -106,7 +107,7 @@ const PostDetail = ({
             <p>
               <b>Reports:</b> {props?.reports}
             </p>
-            <p>{dayjs(time).fromNow()}</p>
+            
           </div>
         </div>
         <div className='mt-4'>
