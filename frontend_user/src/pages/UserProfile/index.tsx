@@ -252,6 +252,7 @@ export default function UserProfile() {
   const { runAsync: deleteUserMajor } = useRequest(api.deleteUserMajor, {
     manual: true,
     onSuccess: (res) => {
+      refresh()
       if (res) {
         message.success('Delete major success')
       }
@@ -297,6 +298,7 @@ export default function UserProfile() {
   const { runAsync: deleteUserSubject } = useRequest(api.deleteUserSubject, {
     manual: true,
     onSuccess: (res) => {
+      refresh()
       if (res) {
         message.success('Delete subject success')
       }
@@ -402,8 +404,6 @@ export default function UserProfile() {
                       onEnd={(e) => {
                         if (e.type === 'appear' || e.type === 'enter') {
                           ;(e.target as any).style = 'display: inline-block'
-                        } else if (e.type === 'leave') {
-                          window.location.reload() // Refresh trang khi sự kiện leave xảy ra
                         }
                       }}
                       leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}
@@ -432,8 +432,6 @@ export default function UserProfile() {
                       onEnd={(e) => {
                         if (e.type === 'appear' || e.type === 'enter') {
                           ;(e.target as any).style = 'display: inline-block'
-                        } else if (e.type === 'leave') {
-                          window.location.reload() // Refresh trang khi sự kiện leave xảy ra
                         }
                       }}
                       leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}

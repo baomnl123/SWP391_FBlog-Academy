@@ -9,6 +9,7 @@ import { PropsWithChildren, ReactNode, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { RouteObject, useMatches, useNavigate } from 'react-router-dom'
 import { useRequest } from 'ahooks'
+import { Link } from 'react-router-dom'
 
 const { Header, Content, Sider } = Layout
 
@@ -116,14 +117,9 @@ const BaseLayout = ({
               <Flex justify='space-between' align='center' className='mr-5'>
                 <Space size={10} align='center' className='cursor-pointer px-5 flex-none'>
                   <UserButton />
-                  <Typography
-                    onClick={() => {
-                      navigate(`/profile/${user?.id}`)
-                      window.location.reload() // Làm mới trang khi click vào
-                    }}
-                  >
-                    Profile
-                  </Typography>
+                  <Link to={`/profile/${user?.id}`}>
+                    <Typography>Profile</Typography>
+                  </Link>
                 </Space>
                 <Switch onChange={(e) => handleClick(e)} className='ml-5' checked={!!isDarkMode} />
               </Flex>
