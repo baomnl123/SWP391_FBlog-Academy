@@ -507,7 +507,7 @@ export default function UserProfile() {
           }}
           onOk={() => {
             refresh()
-            message.success('Thay đổi Major thành công! 🎉')
+            message.success('Change Major Success! ')
             setOpenReport(false)
           }}
         />
@@ -520,14 +520,14 @@ export default function UserProfile() {
             setModal={(value) => setOpenSubject(value)}
             onOk={() => {
               getUserSubjectbyID()
-              message.success('Thay đổi Subject thành công! 🎉')
+              message.success('Change Subject Success ! ')
               setOpenSubject(false)
             }}
             majorIds={userMajor?.map((major) => major.id)}
           />
         ) : (
           <Modal visible={openSubject} onCancel={() => setOpenSubject(false)} onOk={() => setOpenSubject(false)}>
-            <Alert type='warning' message='Bạn cần nhập Major trước khi nhập Subject!' />
+            <Alert type='warning' message='Please add Major before add Subject' />
           </Modal>
         )}
       </Spin>
