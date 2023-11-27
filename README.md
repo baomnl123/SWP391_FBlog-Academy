@@ -27,7 +27,7 @@ This is my [Project's Requirement](https://docs.google.com/spreadsheets/d/1QgbaD
 Clone the project
 
 ```bash
-git clone https://github.com/<YOUR_GITHUB_USERNAME>/SWP391_FBlog-Academy.git
+git clone https://github.com/baomnl123/SWP391_FBlog-Academy.git
 ```
 
 Go to the project directory
